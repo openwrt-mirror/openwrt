@@ -8,9 +8,8 @@ logger "$BUTTON pressed for $SEEN seconds"
 
 if [ "$SEEN" -lt 1 ]
 then
-	echo "REBOOT" > /dev/console
-	sync
-	reboot
+	echo "WPS_PBC" > /dev/console
+	hostapd_cli wps_pbc | logger
 elif [ "$SEEN" -gt 5 ]
 then
 	echo "FACTORY RESET" > /dev/console

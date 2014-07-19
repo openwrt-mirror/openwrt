@@ -107,7 +107,7 @@ static struct gpio_keys_button archer_c7_gpio_keys[] __initdata = {
 	{
 		.desc		= "Reset button",
 		.type		= EV_KEY,
-		.code		= KEY_WPS_BUTTON,
+		.code		= KEY_RESTART,
 		.debounce_interval = ARCHER_C7_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= ARCHER_C7_GPIO_BTN_RESET,
 		.active_low	= 1,

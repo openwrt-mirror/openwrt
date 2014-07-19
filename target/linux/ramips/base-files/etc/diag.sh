@@ -182,6 +182,9 @@ get_status_led() {
 	na930)
 		status_led="na930:blue:power"
 		;;
+	ai-br100)
+		status_led="aigale:blue:wlan"
+		;;
 	esac
 }
 
