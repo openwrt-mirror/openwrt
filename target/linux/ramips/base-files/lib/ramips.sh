@@ -304,6 +304,9 @@ ramips_board_detect() {
 	*"Wansview NCS601W")
 		name="ncs601w"
 		;;
+	*"Aigale Ai-BR100")
+		name="ai-br100"
+		;;
 	*"Sercomm NA930")
 		name="na930"
 		;;

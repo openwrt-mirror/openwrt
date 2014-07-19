@@ -91,6 +91,7 @@ platform_check_image() {
 	wmr300 |\
 	wr8305rt |\
 	wrtnode |\
+	ai-br100 |\
 	x5 |\
 	x8 |\
 	zbt-wa05)

@@ -153,6 +153,10 @@ case $board in
 		set_usb_led "alfa:blue:usb"
 		set_wifi_led "rt2800pci-phy0::radio"
 		;;
+	ai-br100)
+		ucidef_set_led_netdev "wan" "wan" "aigale:blue:wan" "eth0.2"
+		set_wifi_led "aigale:blue:wlan"
+		;;
 	wcr-150gn)
 		set_usb_led "wcr150gn:amber:user"
 		;;
