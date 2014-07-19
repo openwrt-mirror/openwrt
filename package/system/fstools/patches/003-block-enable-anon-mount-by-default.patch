@@ -1,0 +1,11 @@
+--- a/block.c	2014-07-06 14:45:46.803857000 +0800
++++ b/block.c	2014-07-06 16:22:17.350719216 +0800
+@@ -1100,7 +1100,7 @@
+ 	cache_load(0);
+ 	printf("config 'global'\n");
+ 	printf("\toption\tanon_swap\t'0'\n");
+-	printf("\toption\tanon_mount\t'0'\n");
++	printf("\toption\tanon_mount\t'1'\n");
+ 	printf("\toption\tauto_swap\t'1'\n");
+ 	printf("\toption\tauto_mount\t'1'\n");
+ 	printf("\toption\tdelay_root\t'5'\n");
