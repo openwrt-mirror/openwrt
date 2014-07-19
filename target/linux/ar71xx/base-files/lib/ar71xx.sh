@@ -208,6 +208,9 @@ tplink_board_detect() {
 	"49000002")
 		model="TP-Link TL-WDR4900"
 		;;
+	"83050803")
+		model="MERCURY MW305R 8M"
+		;;
 	"453000"*)
 		model="MERCURY MW4530R"
 		;;
