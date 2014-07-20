@@ -1,0 +1,274 @@
+
+diff -ruN linux-3.10.27/include/linux/skbuff.h linux-3.10.27-imq/include/linux/skbuff.h
+--- linux-3.10.27/include/linux/skbuff.h	2014-01-16 00:29:14.000000000 +0100
++++ linux-3.10.27-imq/include/linux/skbuff.h	2014-01-18 10:18:22.220271201 +0100
+@@ -33,6 +33,9 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/netdev_features.h>
+ #include <net/flow_keys.h>
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++#include <linux/imq.h>
++#endif
+ 
+ /* Don't change this without changing skb_csum_unnecessary! */
+ #define CHECKSUM_NONE 0
+@@ -414,6 +417,9 @@
+ 	 * first. This is owned by whoever has the skb queued ATM.
+ 	 */
+ 	char			cb[48] __aligned(8);
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	void			*cb_next;
++#endif
+ 
+ 	unsigned long		_skb_refdst;
+ #ifdef CONFIG_XFRM
+@@ -449,6 +455,9 @@
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	struct nf_conntrack	*nfct;
+ #endif
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	struct nf_queue_entry	*nf_queue_entry;
++#endif
+ #ifdef CONFIG_BRIDGE_NETFILTER
+ 	struct nf_bridge_info	*nf_bridge;
+ #endif
+@@ -487,7 +496,9 @@
+ 	__u8			encapsulation:1;
+ 	/* 7/9 bit hole (depending on ndisc_nodetype presence) */
+ 	kmemcheck_bitfield_end(flags2);
+-
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	__u8			imq_flags:IMQ_F_BITS;
++#endif
+ #ifdef CONFIG_NET_DMA
+ 	dma_cookie_t		dma_cookie;
+ #endif
+@@ -616,7 +627,10 @@
+ {
+ 	return (struct rtable *)skb_dst(skb);
+ }
+-
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++extern int skb_save_cb(struct sk_buff *skb);
++extern int skb_restore_cb(struct sk_buff *skb);
++#endif
+ extern void kfree_skb(struct sk_buff *skb);
+ extern void kfree_skb_list(struct sk_buff *segs);
+ extern void skb_tx_error(struct sk_buff *skb);
+@@ -2749,6 +2763,10 @@
+ 	nf_conntrack_get(src->nfct);
+ 	dst->nfctinfo = src->nfctinfo;
+ #endif
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	dst->imq_flags = src->imq_flags;
++	dst->nf_queue_entry = src->nf_queue_entry;
++#endif
+ #ifdef CONFIG_BRIDGE_NETFILTER
+ 	dst->nf_bridge  = src->nf_bridge;
+ 	nf_bridge_get(src->nf_bridge);
+diff -ruN linux-3.10.27/include/net/netfilter/nf_queue.h linux-3.10.27-imq/include/net/netfilter/nf_queue.h
+--- linux-3.10.27/include/net/netfilter/nf_queue.h	2014-01-16 00:29:14.000000000 +0100
++++ linux-3.10.27-imq/include/net/netfilter/nf_queue.h	2014-01-18 10:19:59.345342949 +0100
+@@ -29,6 +29,12 @@
+ void nf_register_queue_handler(const struct nf_queue_handler *qh);
+ void nf_unregister_queue_handler(void);
+ extern void nf_reinject(struct nf_queue_entry *entry, unsigned int verdict);
++extern void nf_queue_entry_release_refs(struct nf_queue_entry *entry);
++
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++extern void nf_register_queue_imq_handler(const struct nf_queue_handler *qh);
++extern void nf_unregister_queue_imq_handler(void);
++#endif
+ 
+ bool nf_queue_entry_get_refs(struct nf_queue_entry *entry);
+ void nf_queue_entry_release_refs(struct nf_queue_entry *entry);
+diff -ruN linux-3.10.27/include/uapi/linux/netfilter.h linux-3.10.27-imq/include/uapi/linux/netfilter.h
+--- linux-3.10.27/include/uapi/linux/netfilter.h	2014-01-16 00:29:14.000000000 +0100
++++ linux-3.10.27-imq/include/uapi/linux/netfilter.h	2014-01-18 10:19:59.345342949 +0100
+@@ -13,7 +13,8 @@
+ #define NF_QUEUE 3
+ #define NF_REPEAT 4
+ #define NF_STOP 5
+-#define NF_MAX_VERDICT NF_STOP
++#define NF_IMQ_QUEUE 6
++#define NF_MAX_VERDICT NF_IMQ_QUEUE
+ 
+ /* we overload the higher bits for encoding auxiliary data such as the queue
+  * number or errno values. Not nice, but better than additional function
+diff -ruN linux-3.10.27/net/core/dev.c linux-3.10.27-imq/net/core/dev.c
+--- linux-3.10.27/net/core/dev.c	2014-01-16 00:29:14.000000000 +0100
++++ linux-3.10.27-imq/net/core/dev.c	2014-01-18 10:19:59.347342963 +0100
+@@ -129,6 +129,9 @@
+ #include <linux/inetdevice.h>
+ #include <linux/cpu_rmap.h>
+ #include <linux/static_key.h>
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++#include <linux/imq.h>
++#endif
+ 
+ #include "net-sysfs.h"
+ 
+@@ -2578,7 +2581,12 @@
+ 			}
+ 		}
+ 
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++		if (!list_empty(&ptype_all) &&
++					!(skb->imq_flags & IMQ_F_ENQUEUE))
++#else
+ 		if (!list_empty(&ptype_all))
++#endif
+ 			dev_queue_xmit_nit(skb, dev);
+ 
+ #ifdef CONFIG_ETHERNET_PACKET_MANGLE
+diff -ruN linux-3.10.27/net/core/skbuff.c linux-3.10.27-imq/net/core/skbuff.c
+--- linux-3.10.27/net/core/skbuff.c	2014-01-16 00:29:14.000000000 +0100
++++ linux-3.10.27-imq/net/core/skbuff.c	2014-01-18 10:19:59.348342972 +0100
+@@ -76,6 +76,9 @@
+ 
+ struct kmem_cache *skbuff_head_cache __read_mostly;
+ static struct kmem_cache *skbuff_fclone_cache __read_mostly;
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++static struct kmem_cache *skbuff_cb_store_cache __read_mostly;
++#endif
+ 
+ /**
+  *	skb_panic - private function for out-of-line support
+@@ -109,6 +112,82 @@
+ 	skb_panic(skb, sz, addr, __func__);
+ }
+ 
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++/* Control buffer save/restore for IMQ devices */
++struct skb_cb_table {
++	char			cb[48] __aligned(8);
++	void			*cb_next;
++	atomic_t		refcnt;
++};
++
++static DEFINE_SPINLOCK(skb_cb_store_lock);
++
++int skb_save_cb(struct sk_buff *skb)
++{
++	struct skb_cb_table *next;
++
++	next = kmem_cache_alloc(skbuff_cb_store_cache, GFP_ATOMIC);
++	if (!next)
++		return -ENOMEM;
++
++	BUILD_BUG_ON(sizeof(skb->cb) != sizeof(next->cb));
++
++	memcpy(next->cb, skb->cb, sizeof(skb->cb));
++	next->cb_next = skb->cb_next;
++
++	atomic_set(&next->refcnt, 1);
++
++	skb->cb_next = next;
++	return 0;
++}
++EXPORT_SYMBOL(skb_save_cb);
++
++int skb_restore_cb(struct sk_buff *skb)
++{
++	struct skb_cb_table *next;
++
++	if (!skb->cb_next)
++		return 0;
++
++	next = skb->cb_next;
++
++	BUILD_BUG_ON(sizeof(skb->cb) != sizeof(next->cb));
++
++	memcpy(skb->cb, next->cb, sizeof(skb->cb));
++	skb->cb_next = next->cb_next;
++
++	spin_lock(&skb_cb_store_lock);
++
++	if (atomic_dec_and_test(&next->refcnt))
++		kmem_cache_free(skbuff_cb_store_cache, next);
++
++	spin_unlock(&skb_cb_store_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL(skb_restore_cb);
++
++static void skb_copy_stored_cb(struct sk_buff *new, const struct sk_buff *__old)
++{
++	struct skb_cb_table *next;
++	struct sk_buff *old;
++
++	if (!__old->cb_next) {
++		new->cb_next = NULL;
++		return;
++	}
++
++	spin_lock(&skb_cb_store_lock);
++
++	old = (struct sk_buff *)__old;
++
++	next = old->cb_next;
++	atomic_inc(&next->refcnt);
++	new->cb_next = next;
++
++	spin_unlock(&skb_cb_store_lock);
++}
++#endif
+ /*
+  * kmalloc_reserve is a wrapper around kmalloc_node_track_caller that tells
+  * the caller if emergency pfmemalloc reserves are being used. If it is and
+@@ -571,6 +650,28 @@
+ 		WARN_ON(in_irq());
+ 		skb->destructor(skb);
+ 	}
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	/*
++	 * This should not happen. When it does, avoid memleak by restoring
++	 * the chain of cb-backups.
++	 */
++	while (skb->cb_next != NULL) {
++		if (net_ratelimit())
++			pr_warn("IMQ: kfree_skb: skb->cb_next: %08x\n",
++				(unsigned int)skb->cb_next);
++
++		skb_restore_cb(skb);
++	}
++	/*
++	 * This should not happen either, nf_queue_entry is nullified in
++	 * imq_dev_xmit(). If we have non-NULL nf_queue_entry then we are
++	 * leaking entry pointers, maybe memory. We don't know if this is
++	 * pointer to already freed memory, or should this be freed.
++	 * If this happens we need to add refcounting, etc for nf_queue_entry.
++	 */
++	if (skb->nf_queue_entry && net_ratelimit())
++		pr_warn("%s\n", "IMQ: kfree_skb: skb->nf_queue_entry != NULL");
++#endif
+ #if IS_ENABLED(CONFIG_NF_CONNTRACK)
+ 	nf_conntrack_put(skb->nfct);
+ #endif
+@@ -702,6 +803,10 @@
+ 	new->sp			= secpath_get(old->sp);
+ #endif
+ 	memcpy(new->cb, old->cb, sizeof(old->cb));
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	new->cb_next = NULL;
++	/*skb_copy_stored_cb(new, old);*/
++#endif
+ 	new->csum		= old->csum;
+ 	new->local_df		= old->local_df;
+ 	new->pkt_type		= old->pkt_type;
+@@ -3082,6 +3187,13 @@
+ 						0,
+ 						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
+ 						NULL);
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++	skbuff_cb_store_cache = kmem_cache_create("skbuff_cb_store_cache",
++						  sizeof(struct skb_cb_table),
++						  0,
++						  SLAB_HWCACHE_ALIGN|SLAB_PANIC,
++						  NULL);
++#endif
+ }
+ 
+ /**
+
