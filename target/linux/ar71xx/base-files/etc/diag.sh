@@ -124,6 +124,9 @@ get_status_led() {
 	om2p-lc)
 		status_led="om2p:blue:power"
 		;;
+	om5p)
+		status_led="om5p:blue:power"
+		;;
 	pb44)
 		status_led="pb44:amber:jump1"
 		;;
@@ -228,6 +231,9 @@ get_status_led() {
 		;;
 	uap-pro)
 		status_led="ubnt:white:dome"
+		;;
+	airgateway)
+		status_led="ubnt:white:status"
 		;;
 	whr-g301n | \
 	whr-hp-g300n | \

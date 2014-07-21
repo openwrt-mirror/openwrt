@@ -232,6 +232,9 @@ ar71xx_board_detect() {
 	*"Oolite V1.0")
 		name="oolite"
 		;;
+	*"AirGateway")
+		name="airgateway"
+		;;
 	*"AirRouter")
 		name="airrouter"
 		;;
@@ -411,6 +414,9 @@ ar71xx_board_detect() {
 		;;
 	*"OM2P LC")
 		name="om2p-lc"
+		;;
+	*OM5P)
+		name="om5p"
 		;;
 	*PB42)
 		name="pb42"
