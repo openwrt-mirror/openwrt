@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/tsocks/Makefile
+Package: tsocks
+Submenu: Web Servers/Proxies
+Version: 1.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Transparent SOCKS v4 proxying library
+Maintainer: 
+Source: tsocks-1.8beta5.tar.gz
+Type: ipkg
+Description: Transparent SOCKS v4 proxying library
+http://tsocks.sourceforge.net/
+
+@@
+
+

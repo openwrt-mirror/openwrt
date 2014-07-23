@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/sound/ices/Makefile
+Package: ices
+Version: 2.0.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libshout +libxml2 +zlib +libogg +libvorbis +alsa-lib
+Menu-Depends: 
+Provides: 
+Section: sound
+Category: Sound
+Title: ices client for Icecast media streaming servers
+Maintainer: 
+Source: ices-2.0.1.tar.gz
+Type: ipkg
+Description:   ices is a command line source client for Icecast media streaming servers.
+  It began as the successor of the old "shout" utility, and has since gained a
+  lot of useful features.
+http://xiph.org/
+
+@@
+
+

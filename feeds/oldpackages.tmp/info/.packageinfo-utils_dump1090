@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/utils/dump1090/Makefile
+Package: dump1090
+Version: 2013-02-04
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librtlsdr
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Mode S decoder for the Realtek RTL2832U
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: dump1090-2013-02-04.tar.gz
+Type: ipkg
+Description:  Dump1090 is a Mode S decoder specifically designed for RTLSDR devices.
+ Embedded HTTP server that displays the currently detected aircrafts on
+ Google Maps. Network output in Basestation and AVR formats.
+https://github.com/antirez/dump1090
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

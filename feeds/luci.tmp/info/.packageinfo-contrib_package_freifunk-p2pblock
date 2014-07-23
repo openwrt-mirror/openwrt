@@ -1,0 +1,19 @@
+Source-Makefile: feeds/luci/contrib/package/freifunk-p2pblock/Makefile
+Package: freifunk-p2pblock
+Submenu: 9. Freifunk
+Version: 3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables-mod-filter +iptables-mod-ipp2p +l7-protocols +iptables-mod-conntrack-extra
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk p2pblock Addon
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Simple Addon for Freifunk which use iptables layer7-, ipp2p- and recent-modules 
+  to block p2p/filesharing traffic
+
+@@
+
+

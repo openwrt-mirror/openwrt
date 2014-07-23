@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/net/stunnel/Makefile
+Package: stunnel
+Version: 4.33-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libwrap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SSL TCP Wrapper
+Maintainer: 
+Source: stunnel-4.33.tar.gz
+Type: ipkg
+Description: 	Stunnel is a program that allows you to encrypt arbitrary TCP
+	connections inside SSL (Secure Sockets Layer) available on both Unix
+	and Windows. Stunnel can allow you to secure non-SSL aware daemons and
+	protocols (like POP, IMAP, LDAP, etc) by having Stunnel provide the
+	encryption, requiring no changes to the daemon's code.
+http://www.stunnel.org/
+
+@@
+
+

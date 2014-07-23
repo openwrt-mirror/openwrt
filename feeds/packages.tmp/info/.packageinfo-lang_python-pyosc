@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/lang/python-pyosc/Makefile
+Package: python-pyosc
+Submenu: Python
+Version: 0.3.5b-5294-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: python-pyosc
+Maintainer: Hamish Guthrie <hcg@openwrt.org>
+Source: pyOSC-0.3.5b-5294.tar.gz
+Type: ipkg
+Description:   A simple OpenSoundControl implementation in pure Python
+http://trac.v2.nl/wiki/pyOSC
+Hamish Guthrie <hcg@openwrt.org>
+@@
+
+

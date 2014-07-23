@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/utils/flashrom/Makefile
+Package: flashrom
+Version: 0.9.7-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +pciutils +(TARGET_x86||TARGET_x86_64):dmidecode +libftdi
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: FlashROM Utility
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: flashrom-0.9.7.tar.bz2
+Type: ipkg
+Description:  flashrom is an utility for identifying, reading, writing, verifying
+ and erasing flash chips. It's often used to flash BIOS/EFI/coreboot
+ /firmware images.
+http://www.flashrom.org/
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

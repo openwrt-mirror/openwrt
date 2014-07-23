@@ -1,0 +1,23 @@
+Source-Makefile: feeds/oldpackages/utils/zsh/Makefile
+Package: zsh
+Version: 5.0.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: The Z shell
+Maintainer: 
+Source: zsh-5.0.2.tar.bz2
+Type: ipkg
+Description:         Zsh is a UNIX command interpreter (shell) usable as an interactive
+        login  shell  and  as a shell script command processor. Of the standard
+        shells, zsh most closely resembles ksh but includes many enhancements.
+        Zsh has command line editing, builtin spelling correction, programmable
+        command completion, shell functions (with autoloading), a history
+        mechanism, and a host of other features.
+http://www.zsh.org/
+
+@@
+
+

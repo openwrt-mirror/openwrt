@@ -1,0 +1,18 @@
+Source-Makefile: feeds/telephony/admin/asterisk18-gui/Makefile
+Package: asterisk18-gui
+Version: 2.1.0-rc1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +@PACKAGE_asterisk18 +asterisk18-chan-local +asterisk18-app-exec +asterisk18-app-system
+Menu-Depends: 
+Provides: 
+Section: admin
+Category: Administration
+Title: Asterisk GUI for Asterisk 1.8.x
+Maintainer: 
+Source: asterisk-gui-2.1.0-rc1.tar.gz
+Type: ipkg
+Description:  Asterisk18 GUI is a framework for the creation of graphical interfaces 
+ for configuring Asterisk-1.8.x package.
+
+@@
+
+

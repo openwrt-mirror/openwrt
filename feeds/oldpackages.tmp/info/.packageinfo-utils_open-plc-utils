@@ -1,0 +1,1699 @@
+Source-Makefile: feeds/oldpackages/utils/open-plc-utils/Makefile
+Package: open-plc-utils
+Menu: 1
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Qualcomm Atheros Power Line Communication utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description: Qualcomm Atheros Power Line Communication utilities
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-efbu
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-efeu
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-efru
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-efsu
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-edru
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-edsu
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-nics
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-hpavkey
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-hpavkeys
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-rkey
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mac2pw
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mac2pwd
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mdioblock
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mdioblock2
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mdiodump
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mdiogen
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-hpav
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mme
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-chknvm
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-chknvm2
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-nvmsplit
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-nvmmerge
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-chkpib
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-chkpib2
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-setpib
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-getpib
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-modpib
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-pib2xml
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-pibcomp
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-pibdump
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-pibruin
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-xml2pib
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-psin
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-psout
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-pskey
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-psgraph
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-psnotch
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-pibrump
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6k
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kboot
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6keth
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kf
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6khost
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int64host
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kid
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6klist
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6klog
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kmdio
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kmdio2
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kmod
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kstat
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6ktest
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6krate
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6krule
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6ktone
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kwait
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-CMEncrypt
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-sada
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-coqos_add
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-coqos_info
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-coqos_man
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-coqos_mod
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-coqos_rel
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-mdustats
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ampboot
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-amphost
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ampID
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-amplist
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-amprate
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ampstat
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-amptest
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-amptool
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-amptone
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ampwait
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcboot
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plchost
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcID
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plclist
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcrate
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcrule
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcstat
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plctest
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plctool
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plctone
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcwait
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plchostd
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcget
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcset
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcotst
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcfwd
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcdevs
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plclog
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcmdio16
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-plcmdio32
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-config2cfg
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-sdram
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kuart
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kbaud
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ttysig
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ptsctl
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-weeder
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ttysend
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ttyrecv
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-ttycat
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+Package: open-plc-utils-int6kdetect
+Version: 2013-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread open-plc-utils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Utility  from the Open PLC utilities
+Maintainer: 
+Source: open-plc-utils-2013-01-29-6beeb6fe6ce2b16b14284c26e1b9220b68044591.tar.gz
+Type: ipkg
+Description:      Utility  from the Open PLC utilities package.
+https://github.com/qca/open-plc-utils/blob/master/README
+
+@@
+
+

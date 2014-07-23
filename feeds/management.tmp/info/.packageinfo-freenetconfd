@@ -1,0 +1,18 @@
+Source-Makefile: feeds/management/freenetconfd/Makefile
+Package: freenetconfd
+Version: 2014-07-10-e2ab83cd0f7610f31d6101d645da7ea5640a132c
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci +libubox +libubus +libssh +libroxml
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: netconf server
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: freenetconfd-2014-07-10-e2ab83cd0f7610f31d6101d645da7ea5640a132c.tar.gz
+Type: ipkg
+Description: netconf server
+http://www.freenetconf.org/
+Luka Perkov <luka@openwrt.org>
+@@
+
+

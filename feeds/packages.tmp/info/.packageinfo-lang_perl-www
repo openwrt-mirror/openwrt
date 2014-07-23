@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/lang/perl-www/Makefile
+Package: perl-www
+Submenu: Perl
+Version: 5.837-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perl-html-parser +perl-html-tagset +perl-uri
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: WWW client/server library for Perl (aka LWP)
+Maintainer: 
+Source: libwww-perl-5.837.tar.gz
+Type: ipkg
+Description: WWW client/server library for Perl (aka LWP)
+http://search.cpan.org/dist/libwww-perl/
+
+@@
+
+

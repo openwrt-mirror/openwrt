@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/cyrus-sasl/Makefile
+Package: libsasl2
+Version: 2.1.23-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libopenssl
+Section: libs
+Category: Libraries
+Title: A general purpose authentication library
+Maintainer: 
+Source: cyrus-sasl-2.1.23.tar.gz
+Type: ipkg
+Description: A general purpose authentication library
+http://asg.web.cmu.edu/sasl/
+
+@@
+
+

@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/sound/mpc/Makefile
+Package: mpc
+Version: 0.26-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libmpdclient
+Menu-Depends: 
+Provides: 
+Section: sound
+Category: Sound
+Title: Music Player Daemon Console Client
+Maintainer: Ted Hess <thess@kitschensync.net>
+Source: mpc-0.26.tar.xz
+Type: ipkg
+Description: 	MPD is a music player supporting flac, mp3 and ogg files.
+	It is typically controlled over a network using one of it's many
+	clients including mpc(console), gmpc(gnome), phpmp(php) etc.
+	this is MPC
+http://www.musicpd.org/
+Ted Hess <thess@kitschensync.net>
+@@
+
+

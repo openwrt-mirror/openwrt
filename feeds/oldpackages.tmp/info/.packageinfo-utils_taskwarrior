@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/taskwarrior/Makefile
+Package: taskwarrior
+Version: 2.3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses +libstdcpp +liblua +libuuid +libreadline +libgnutls
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: taskwarrior
+Maintainer: Xiangfu Liu <xiangfu@sharism.cc>
+Source: task-2.3.0.tar.gz
+Type: ipkg
+Description:  taskwarrior is a command-line todo list manager
+http://taskwarrior.org/projects/show/taskwarrior
+Xiangfu Liu <xiangfu@sharism.cc>
+@@
+
+

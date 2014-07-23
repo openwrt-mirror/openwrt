@@ -1,0 +1,87 @@
+Source-Makefile: feeds/oldpackages/utils/rtklib/Makefile
+Package: convbin
+Submenu: RTKLIB Suite
+Version: 2.4.2_p4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: RINEX Converter
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: rtklib-2.4.2_p4-4464e1259f34ba8a8b71f0e5f078faf62e1d9ced.tar.gz
+Type: ipkg
+Description: RINEX Converter
+http://www.rtklib.com/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+Package: pos2kml
+Submenu: RTKLIB Suite
+Version: 2.4.2_p4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Solution to KML converter
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: rtklib-2.4.2_p4-4464e1259f34ba8a8b71f0e5f078faf62e1d9ced.tar.gz
+Type: ipkg
+Description: Solution to KML converter
+http://www.rtklib.com/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+Package: rnx2rtkp
+Submenu: RTKLIB Suite
+Version: 2.4.2_p4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Post-Processing Analysis
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: rtklib-2.4.2_p4-4464e1259f34ba8a8b71f0e5f078faf62e1d9ced.tar.gz
+Type: ipkg
+Description: Post-Processing Analysis
+http://www.rtklib.com/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+Package: rtkrcv
+Submenu: RTKLIB Suite
+Version: 2.4.2_p4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Real-Time Positioning
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: rtklib-2.4.2_p4-4464e1259f34ba8a8b71f0e5f078faf62e1d9ced.tar.gz
+Type: ipkg
+Description: Real-Time Positioning
+http://www.rtklib.com/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+Package: str2str
+Submenu: RTKLIB Suite
+Version: 2.4.2_p4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Communication Server
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: rtklib-2.4.2_p4-4464e1259f34ba8a8b71f0e5f078faf62e1d9ced.tar.gz
+Type: ipkg
+Description: Communication Server
+http://www.rtklib.com/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

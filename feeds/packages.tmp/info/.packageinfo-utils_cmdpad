@@ -1,0 +1,23 @@
+Source-Makefile: feeds/packages/utils/cmdpad/Makefile
+Package: cmdpad
+Version: 0.0.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: execute commands when a key is pressed, released or hold down
+Maintainer: Ted Hess <thess@kitschensync.net>
+Source: cmdpad-0.0.3.tgz
+Type: ipkg
+Description: 	cmdpad - execute commands when a key is pressed, released or hold down.
+	Should be started from /etc/rc or /etc/rc.local. To run it as deamon you
+	need to start it with '&'. All logs are printed to standard out and standard
+	error (to write the log to disk use cmdpad > /var/log/cmdpad). Cmdpad
+	searches for /etc/cmdpad.conf and load the key bindings. Then wait for
+	key event and check each command to see if it should be run.
+http://cmdpad.sourceforge.net/index.php
+Ted Hess <thess@kitschensync.net>
+@@
+
+

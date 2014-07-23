@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/cdp/Makefile
+Package: cdp-tools
+Version: 20070302-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcap +libnet1
+Section: net
+Category: Network
+Title: CDP tools (CISCO)
+Maintainer: 
+Source: cdp-tools.tar.gz
+Type: ipkg
+Description: CDP tools (CISCO)
+http://gpl.internetconnection.net
+
+@@
+
+

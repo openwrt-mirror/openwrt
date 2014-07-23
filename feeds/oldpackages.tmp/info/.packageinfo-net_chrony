@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/chrony/Makefile
+Package: chrony
+Submenu: Time Synchronization
+Version: 1.26-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libreadline +libncurses @!TARGET_avr32 @!powerpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NTP client/server for on-demand connections
+Maintainer: 
+Source: chrony-1.26.tar.gz
+Type: ipkg
+Description: 	A NTP implementation that has been specifically written to work
+	well in the case of an intermittent (e.g. dial-on-demand)
+	connection to the network where your NTP servers are.
+http://chrony.sunsite.dk/
+
+@@
+
+

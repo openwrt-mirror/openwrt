@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/lang/perl-www-mechanize/Makefile
+Package: perl-www-mechanize
+Submenu: Perl
+Version: 1.58-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perl-www
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: Perl WWW Mechanize
+Maintainer: 
+Source: WWW-Mechanize-1.58.tar.gz
+Type: ipkg
+Description: Perl WWW Mechanize
+http://search.cpan.org/dist/WWW-Mechanize/
+
+@@
+
+

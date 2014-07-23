@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/glibmm/Makefile
+Package: glibmm
+Version: 2.22.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libsigcxx +glib2 +libstdcpp
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: glibmm
+Maintainer: 
+Source: glibmm-2.22.1.tar.bz2
+Type: ipkg
+Description: c++ bindings for glib2
+http://www.gtk.org/
+
+@@
+
+

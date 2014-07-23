@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/fakeidentd/Makefile
+Package: fakeidentd
+Version: 2.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A static, secure identd.
+Maintainer: 
+Source: fakeidentd-2.6.c
+Type: ipkg
+Description: 	A static secure identd, only one source file.
+http://www.guru-group.fi/~too/sw/releases/
+
+@@
+
+

@@ -1,0 +1,49 @@
+Source-Makefile: feeds/packages/sound/mpd/Makefile
+Package: mpd-full
+Version: 0.17.6-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libcurl +libpthread +BUILD_NLS:libiconv-full +libflac +BUILD_PATENTED:libmad +libvorbisidec +AUDIO_SUPPORT:alsa-lib +libaudiofile +BUILD_PATENTED:libfaad2 +libffmpeg +libid3tag +libmms +libogg +libsndfile +libvorbis
+Menu-Depends: 
+Provides: mpd
+Build-Variant: full
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: sound
+Category: Sound
+Title: Music Player Daemon (full)
+Maintainer: Ted Hess <thess@kitschensync.net>
+Source: mpd-0.17.6.tar.bz2
+Type: ipkg
+Description:  Music Player Daemon (MPD) is a flexible, powerful, server-side
+ application for playing music. It is typically controlled over a
+ network using one of it's many clients including mpc (console),
+ gmpc (gnome), phpmp (php), etc...
+ .
+ This package contains a full-blown Music Player Daemon.
+http://www.musicpd.org/
+Ted Hess <thess@kitschensync.net>
+@@
+
+Package: mpd-mini
+Version: 0.17.6-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libcurl +libpthread +BUILD_NLS:libiconv-full +libflac +BUILD_PATENTED:libmad +libvorbisidec
+Menu-Depends: 
+Provides: mpd
+Build-Variant: mini
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: sound
+Category: Sound
+Title: Music Player Daemon (mini)
+Maintainer: Ted Hess <thess@kitschensync.net>
+Source: mpd-0.17.6.tar.bz2
+Type: ipkg
+Description:  Music Player Daemon (MPD) is a flexible, powerful, server-side
+ application for playing music. It is typically controlled over a
+ network using one of it's many clients including mpc (console),
+ gmpc (gnome), phpmp (php), etc...
+ .
+ This package contains a minimal Music Player Daemon, with support for
+ only Flac, MP3 & OGG media types & only file: & http: protocols.
+http://www.musicpd.org/
+Ted Hess <thess@kitschensync.net>
+@@
+
+

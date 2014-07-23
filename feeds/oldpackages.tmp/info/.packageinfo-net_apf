@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/apf/Makefile
+Package: apf
+Version: 0.8.4-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Active port forwarder
+Maintainer: 
+Source: apf-0.8.4.tar.gz
+Type: ipkg
+Description: Active port forwarder
+http://gray-world.net/pr_af.shtml
+
+@@
+
+

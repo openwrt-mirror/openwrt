@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libqmi/Makefile
+Package: libqmi
+Version: 1.8.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +zlib +kmod-usb-net-qmi-wwan
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: Helper library and utils to talk to QMI enabled modems
+Maintainer: 
+Source: libqmi-1.8.0.tar.xz
+Type: ipkg
+Description:   Helper library and utils to talk to QMI enabled modems
+http://www.freedesktop.org/wiki/Software/libqmi
+
+@@
+
+

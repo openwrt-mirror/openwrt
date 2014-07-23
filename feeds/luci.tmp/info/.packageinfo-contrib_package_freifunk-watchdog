@@ -1,0 +1,20 @@
+Source-Makefile: feeds/luci/contrib/package/freifunk-watchdog/Makefile
+Package: freifunk-watchdog
+Submenu: 9. Freifunk
+Version: 8
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libuci
+Menu-Depends: 
+Provides: 
+Build-Depends: uci
+Section: luci
+Category: LuCI
+Title: Freifunk Ad-Hoc watchdog daemon
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   A watchdog daemon that monitors wireless interfaces to ensure the correct bssid and channel.
+  The process will initiate a wireless restart as soon as it detects a bssid or channel mismatch.
+
+@@
+
+

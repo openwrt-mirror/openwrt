@@ -1,0 +1,77 @@
+Source-Makefile: feeds/packages/net/fwknop/Makefile
+Package: fwknopd
+Submenu: Firewall
+Version: 2.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables +libfko +libpcap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: FireWall KNock OPerator Daemon
+Maintainer: Jonathan Bennett <JBennett@incomsystems.biz>
+Source: fwknop-2.6.2.tar.bz2
+Type: ipkg
+Description:     Fwknop implements an authorization scheme known as Single Packet Authorization
+  (SPA) for Linux systems running iptables.  This mechanism requires only a
+  single encrypted and non-replayed packet to communicate various pieces of
+  information including desired access through an iptables policy. The main
+  application of this program is to use iptables in a default-drop stance to
+  protect services such as SSH with an additional layer of security in order to
+  make the exploitation of vulnerabilities (both 0-day and unpatched code) much
+  more difficult.
+  This package contains the fwknop daemon.
+http://www.cipherdyne.org/fwknop/
+Jonathan Bennett <JBennett@incomsystems.biz>
+@@
+
+Package: fwknop
+Submenu: Firewall
+Version: 2.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libfko
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: FireWall KNock OPerator Client
+Maintainer: Jonathan Bennett <JBennett@incomsystems.biz>
+Source: fwknop-2.6.2.tar.bz2
+Type: ipkg
+Description:     Fwknop implements an authorization scheme known as Single Packet Authorization
+  (SPA) for Linux systems running iptables.  This mechanism requires only a
+  single encrypted and non-replayed packet to communicate various pieces of
+  information including desired access through an iptables policy. The main
+  application of this program is to use iptables in a default-drop stance to
+  protect services such as SSH with an additional layer of security in order to
+  make the exploitation of vulnerabilities (both 0-day and unpatched code) much
+  more difficult.
+  This package contains the fwknop client.
+http://www.cipherdyne.org/fwknop/
+Jonathan Bennett <JBennett@incomsystems.biz>
+@@
+
+Package: libfko
+Submenu: Firewall
+Version: 2.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: FireWall KNock OPerator Library
+Maintainer: Jonathan Bennett <JBennett@incomsystems.biz>
+Source: fwknop-2.6.2.tar.bz2
+Type: ipkg
+Description:     Fwknop implements an authorization scheme known as Single Packet Authorization
+  (SPA) for Linux systems running iptables.  This mechanism requires only a
+  single encrypted and non-replayed packet to communicate various pieces of
+  information including desired access through an iptables policy. The main
+  application of this program is to use iptables in a default-drop stance to
+  protect services such as SSH with an additional layer of security in order to
+  make the exploitation of vulnerabilities (both 0-day and unpatched code) much
+  more difficult.
+  This package contains the libfko shared library.
+http://www.cipherdyne.org/fwknop/
+Jonathan Bennett <JBennett@incomsystems.biz>
+@@
+
+

@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/sscep/Makefile
+Package: sscep
+Version: 20040325+ng2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A Simple SCEP (Simple Certificate Enrollment Protocol) client
+Maintainer: 
+Source: sscep.tgz
+Type: ipkg
+Description: A Simple SCEP (Simple Certificate Enrollment Protocol) client
+http://www.klake.org/~jt/sscep/
+
+@@
+
+

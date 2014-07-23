@@ -1,0 +1,44 @@
+Source-Makefile: feeds/packages/net/ctorrent/Makefile
+Package: ctorrent
+Submenu: BitTorrent
+Version: dnh3.3.2-6
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: ssl
+Section: net
+Category: Network
+Title: console-based BitTorrent client (with OpenSSL support)
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: ctorrent-dnh3.3.2.tar.gz
+Type: ipkg
+Description: 	CTorrent is a BitTorrent client written in the C programming language,
+	known to be a very robust and mature programming language, which produces
+	fast and optimized application.
+ This package is built with OpenSSL support.
+http://www.rahul.net/dholmes/ctorrent/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+Package: ctorrent-nossl
+Submenu: BitTorrent
+Version: dnh3.3.2-6
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: net
+Category: Network
+Title: console-based BitTorrent client (with builtin SHA-1)
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: ctorrent-dnh3.3.2.tar.gz
+Type: ipkg
+Description: 	CTorrent is a BitTorrent client written in the C programming language,
+	known to be a very robust and mature programming language, which produces
+	fast and optimized application.
+ This package is built with builtin (Steve Reid's public-domain) SHA-1 support
+http://www.rahul.net/dholmes/ctorrent/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

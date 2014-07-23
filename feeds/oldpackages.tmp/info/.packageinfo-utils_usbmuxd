@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/utils/usbmuxd/Makefile
+Package: usbmuxd
+Version: 1.0.8-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt +libusb-1.0 +libusbmuxd
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: USB multiplexing daemon
+Maintainer: 
+Source: usbmuxd-1.0.8.tar.bz2
+Type: ipkg
+Description:   This daemon is in charge of multiplexing connections over USB to an iPhone or
+  iPod touch. To users, it means you can sync your music, contacts, photos, etc.
+  over USB. To developers, it means you can connect to any listening localhost
+  socket on the device. usbmuxd is not used for tethering data transfer, which
+  uses a dedicated USB interface as a virtual network device.
+http://www.libimobiledevice.org/
+
+@@
+
+

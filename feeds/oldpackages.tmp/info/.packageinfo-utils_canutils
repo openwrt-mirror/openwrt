@@ -1,0 +1,157 @@
+Source-Makefile: feeds/oldpackages/utils/canutils/Makefile
+Package: canutils
+Menu: 1
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: CAN userspace utilities and tools
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: CAN userspace utilities and tools
+https://gitorious.org/linux-can
+
+@@
+
+Package: canutils-log-conversion
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: canutils log conversion
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: asc2log - convert ASC logfile to compact CAN frame logfile.
+log2asc - convert compact CAN frame logfile to ASC logfile.
+log2long - convert compact CAN frame representation into user readable.
+
+@@
+
+Package: canutils-canbusload
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: canbusload package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: canbusload - display the load percentage of can buses.
+
+@@
+
+Package: canutils-can-calc-bit-timing
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: can-calc-bit-timing package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: can-calc-bit-timing - calculate hw bittiming for supported can chips.
+
+@@
+
+Package: canutils-candump
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: candump package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: candump - dumps can frames to terminal, logfile or another can device,
+with optional filtering.
+
+@@
+
+Package: canutils-cangen
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: cangen package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: cangen - CAN frames generator for testing purposes.
+
+@@
+
+Package: canutils-cangw
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: cangw package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: cangw - manage PF_CAN netlink gateway.
+
+@@
+
+Package: canutils-canplayer
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: canplayer package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: canplayer - replay a compact CAN frame logfile to CAN devices.
+
+@@
+
+Package: canutils-cansniffer
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: cansniffer package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: cansniffer package from canutils
+
+@@
+
+Package: canutils-cansend
+Version: 2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread canutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: cansend package from canutils
+Maintainer: 
+Source: canutils-2014-02-27-67a2bdcd336e6becfa5784742e18c88dbeddc973.tar.gz
+Type: ipkg
+Description: cansend - simple command line tool to send CAN-frames via CAN_RAW sockets.
+
+@@
+
+

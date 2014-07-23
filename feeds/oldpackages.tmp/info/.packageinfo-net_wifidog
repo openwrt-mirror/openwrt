@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/net/wifidog/Makefile
+Package: wifidog
+Submenu: Captive Portals
+Version: 20130917-440445db60b0c3aff528ea703a828b0567293387
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables-mod-extra +iptables-mod-ipopt +iptables-mod-nat-extra +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A wireless captive portal solution
+Maintainer: 
+Source: wifidog-20130917-440445db60b0c3aff528ea703a828b0567293387.tar.gz
+Type: ipkg
+Description: 	The Wifidog project is a complete and embeddable captive
+	portal solution for wireless community groups or individuals
+	who wish to open a free Hotspot while still preventing abuse
+	of their Internet connection.
+http://www.wifidog.org
+
+@@
+
+

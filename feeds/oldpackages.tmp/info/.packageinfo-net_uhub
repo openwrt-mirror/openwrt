@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/uhub/Makefile
+Package: uhub
+Submenu: P2P
+Version: 0.2.8-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libevent
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: High performance ADC hub
+Maintainer: 
+Source: uhub-0.2.8-src.tar.gz
+Type: ipkg
+Description: 	uhub is a high performance peer-to-peer hub for the ADC network.
+        Its low memory footprint allows it to handle several thousand users
+        on high-end servers, or a small private hub on embedded hardware.
+http://www.extatic.org/uhub/
+
+@@
+
+

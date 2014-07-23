@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/net/flow-tools/Makefile
+Package: flow-tools
+Version: 0.68-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib
+Menu-Depends: 
+Provides: 
+Build-Depends: +zlib
+Section: net
+Category: Network
+Title: flow-tools
+Maintainer: 
+Source: flow-tools-0.68.tar.gz
+Type: ipkg
+Description: 	Flow-tools is a software package for collecting and processing
+	NetFlow data from Cisco and Juniper routers.
+http://www.splintered.net/sw/flow-tools/
+
+@@
+
+

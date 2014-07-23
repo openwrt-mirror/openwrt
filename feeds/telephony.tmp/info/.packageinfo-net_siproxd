@@ -1,0 +1,156 @@
+Source-Makefile: feeds/telephony/net/siproxd/Makefile
+Package: siproxd
+Menu: 1
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libltdl +libpthread +libosip2
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SIP (Session Initiation Protocol) proxy
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description:  Siproxd is a proxy/masquerading daemon for the SIP protocol.
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-defaulttarget
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd defaulttarget plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd defaulttarget plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-demo
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd demo plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd demo plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-fix_bogus_via
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd fix_bogus_via plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd fix_bogus_via plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-logcall
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd logcall plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd logcall plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-prefix
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd prefix plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd prefix plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-regex
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd regex plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd regex plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-shortdial
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd shortdial plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd shortdial plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+Package: siproxd-mod-stun
+Submenu: Telephony
+Version: 0.8.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread siproxd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: siproxd stun plugin
+Maintainer: 
+Source: siproxd-0.8.1.tar.gz
+Type: ipkg
+Description: siproxd stun plugin
+http://siproxd.sourceforge.net/
+
+@@
+
+

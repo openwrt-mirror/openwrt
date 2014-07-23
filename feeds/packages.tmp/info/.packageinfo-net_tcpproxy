@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/net/tcpproxy/Makefile
+Package: tcpproxy
+Submenu: Routing and Redirection
+Version: 1.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: IPv4/IPv6 tcp connection proxy
+Maintainer: Christian Pointner <equinox@spreadspace.org>
+Source: tcpproxy-1.1.tar.gz
+Type: ipkg
+Description: tcpproxy is a simple tcp connection proxy which combines the features of rinetd and 6tunnel.
+ tcpproxy supports IPv4 and IPv6 and also supports connections from IPv6 to IPv4 endpoints and vice versa.
+http://www.spreadspace.org/tcpproxy/
+Christian Pointner <equinox@spreadspace.org>
+@@
+
+

@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/mail/alpine/Makefile
+Package: alpine
+Version: 2.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libncurses +libpthread +libpam
+Menu-Depends: 
+Provides: 
+Section: mail
+Category: Mail
+Title: Alternatively Licensed Program for Internet News and Email
+Maintainer: 
+Source: alpine-2.11.tar.xz
+Type: ipkg
+Description:  Alpine (Alternatively Licenced Program for Internet News and Email) is a
+ free software email client developed at the University of Washington.
+ It is suitable for both the inexperienced email user as well as for
+ the most demanding power user.
+http://www.washington.edu/alpine
+
+@@
+
+

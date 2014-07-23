@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/lang/distribute/Makefile
+Package: distribute
+Submenu: Python
+Version: 0.6.21-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: setuptools
+Build-Depends/host: python
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Distribute
+Maintainer: 
+Source: distribute-0.6.21.tar.gz
+Type: ipkg
+Description:   Distribute (fork of Setuptools) is a collection of extensions to Distutils
+http://pypi.python.org/pypi/distribute
+
+@@
+
+

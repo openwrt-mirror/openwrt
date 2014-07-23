@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/click/Makefile
+Package: click
+Version: 20101020-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @BROKEN
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Click Modular Router
+Maintainer: 
+Source: click-20101020.tar.gz
+Type: ipkg
+Description: Click Modular Router
+http://read.cs.ucla.edu/click
+
+@@
+
+

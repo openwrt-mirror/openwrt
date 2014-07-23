@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/sysstat/Makefile
+Package: sysstat
+Version: 9.0.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Sysstat performance monitoring tools
+Maintainer: 
+Source: sysstat-9.0.6.tar.bz2
+Type: ipkg
+Description:   The sysstat utilities are a collection of performance monitoring tools for
+  Linux. These include sar, sadf, mpstat, iostat, pidstat and sa tools.
+http://pagesperso-orange.fr/sebastien.godard/index.html
+
+@@
+
+

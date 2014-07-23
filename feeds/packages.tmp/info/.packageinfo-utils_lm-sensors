@@ -1,0 +1,50 @@
+Source-Makefile: feeds/packages/utils/lm-sensors/Makefile
+Package: lm-sensors
+Version: 3.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +sysfsutils +libsensors
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lm-sensors
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: lm_sensors-3.3.5.tar.bz2
+Type: ipkg
+Description:  utility to read hardware sensor data
+http://www.lm-sensors.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: lm-sensors-detect
+Version: 3.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +sysfsutils +lm-sensors +perl +perlbase-essential +perlbase-fcntl +perlbase-file +perlbase-xsloader
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lm-sensors-detect
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: lm_sensors-3.3.5.tar.bz2
+Type: ipkg
+Description:  script to autodetect sensor hardware
+http://www.lm-sensors.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: libsensors
+Version: 3.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +sysfsutils
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libsensors
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: lm_sensors-3.3.5.tar.bz2
+Type: ipkg
+Description:  lm-sensors libraries
+http://www.lm-sensors.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

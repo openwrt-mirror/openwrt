@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/lang/luafilesystem/Makefile
+Package: luafilesystem
+Submenu: Lua
+Version: 1.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +liblua
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: LuaFileSystem
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: luafilesystem-1.6.2.tar.gz
+Type: ipkg
+Description:  This package contains the LuaFileSystem library, a set of portable
+ functions for directory creation, listing and deletion and for file
+ locking.
+http://keplerproject.github.com/luafilesystem/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+

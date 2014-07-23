@@ -1,0 +1,37 @@
+Source-Makefile: feeds/packages/utils/freecwmp/Makefile
+Package: freecwmp-curl
+Version: 2013-02-18-c1a9c1883189fec77cba32c46bc26658ca3f8123
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libfreecwmp +libuci +libubox +libubus +libmicroxml +shflags +libcurl
+Menu-Depends: 
+Provides: 
+Build-Variant: curl
+Section: utils
+Category: Utilities
+Title: CWMP client (using libcurl)
+Maintainer: 
+Source: freecwmp-2013-02-18-c1a9c1883189fec77cba32c46bc26658ca3f8123.tar.gz
+Type: ipkg
+Description: CWMP client (using libcurl)
+
+@@
+
+Package: freecwmp-zstream
+Version: 2013-02-18-c1a9c1883189fec77cba32c46bc26658ca3f8123
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libfreecwmp +libuci +libubox +libubus +libmicroxml +shflags +libzstream
+Menu-Depends: 
+Provides: 
+Build-Variant: zstream
+Section: utils
+Category: Utilities
+Title: CWMP client (using libzstream)
+Maintainer: 
+Source: freecwmp-2013-02-18-c1a9c1883189fec77cba32c46bc26658ca3f8123.tar.gz
+Type: ipkg
+Description: CWMP client (using libzstream)
+
+@@
+Config:
+	source "feeds/packages/utils/freecwmp/Config.in"
+@@
+
+

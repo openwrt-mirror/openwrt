@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/net/prosody/Makefile
+Package: prosody
+Submenu: Instant Messaging
+Version: 0.9.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luafilesystem +libidn +luaexpat +luasec +libopenssl +libidn +liblua
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: XMPP server
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: prosody-0.9.4.tar.gz
+Type: ipkg
+Description:   Prosody is an exciting new server for Jabber/XMPP
+  written in Lua. It aims to be easy to use, and light
+  on resources
+http://prosody.im/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+

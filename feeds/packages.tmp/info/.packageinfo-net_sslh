@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/net/sslh/Makefile
+Package: sslh
+Submenu: Routing and Redirection
+Version: v1.16-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SSL/SSH multiplexer
+Maintainer: Jonathan McCrohan <jmccrohan@gmail.com>
+Source: sslh-v1.16.tar.gz
+Type: ipkg
+Description: SSL/SSH multiplexer
+http://rutschle.net/tech/sslh.shtml
+Jonathan McCrohan <jmccrohan@gmail.com>
+@@
+
+

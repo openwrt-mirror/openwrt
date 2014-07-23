@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/pyyaml/Makefile
+Package: pyyaml
+Submenu: Python
+Version: 3.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +libyaml
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: pyyaml
+Maintainer: 
+Source: PyYAML-3.11.tar.gz
+Type: ipkg
+Description:   yaml python bindings
+http://pyyaml.org
+
+@@
+
+

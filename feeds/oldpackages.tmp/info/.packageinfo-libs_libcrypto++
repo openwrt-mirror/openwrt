@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/libcrypto++/Makefile
+Package: libcryptoxx
+Version: 5.6.0-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libstdcpp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Crypto++ is library for creating C++ programs which use cryptographic algorithms
+Maintainer: 
+Source: libcrypto++_5.6.0.orig.tar.gz
+Type: ipkg
+Description: Crypto++ is library for creating C++ programs which use cryptographic algorithms
+http://packages.debian.org/sid/libcrypto++-dev
+
+@@
+
+

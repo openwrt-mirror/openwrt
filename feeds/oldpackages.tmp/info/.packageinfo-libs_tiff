@@ -1,0 +1,50 @@
+Source-Makefile: feeds/oldpackages/libs/tiff/Makefile
+Package: libtiff
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libjpeg
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: TIFF library
+Maintainer: 
+Source: tiff-4.0.3.tar.gz
+Type: ipkg
+Description: TIFF library
+http://www.remotesensing.org/libtiff/
+
+@@
+
+Package: libtiffxx
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libtiff +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: TIFF library(c++ bindings)
+Maintainer: 
+Source: tiff-4.0.3.tar.gz
+Type: ipkg
+Description: TIFF library(c++ bindings)
+http://www.remotesensing.org/libtiff/
+
+@@
+
+Package: tiff-utils
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libtiff
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: TIFF utilities
+Maintainer: 
+Source: tiff-4.0.3.tar.gz
+Type: ipkg
+Description: TIFF utilities
+http://www.remotesensing.org/libtiff/
+
+@@
+
+

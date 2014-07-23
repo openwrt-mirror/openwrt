@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/lang/python-mimms/Makefile
+Package: python-mimms
+Submenu: Python
+Version: 3.2.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +libmms
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: python-mimms
+Maintainer: Hamish Guthrie <hcg@openwrt.org>
+Source: mimms-3.2.1.tar.bz2
+Type: ipkg
+Description:   mimms is an mms (e.g. mms://) stream downloader
+http://savannah.nongnu.org/projects/mimms
+Hamish Guthrie <hcg@openwrt.org>
+@@
+
+

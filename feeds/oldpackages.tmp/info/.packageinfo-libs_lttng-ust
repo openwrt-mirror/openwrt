@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/lttng-ust/Makefile
+Package: lttng-ust
+Version: 2.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +liburcu +libuuid +librt
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: LTTng Userspace Tracing Library
+Maintainer: 
+Source: lttng-ust-2.1.0.tar.bz2
+Type: ipkg
+Description:    LTTng Userspace Tracing Library
+https://lttng.org/
+
+@@
+
+

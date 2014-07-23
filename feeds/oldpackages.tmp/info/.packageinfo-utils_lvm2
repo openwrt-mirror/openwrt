@@ -1,0 +1,38 @@
+Source-Makefile: feeds/oldpackages/utils/lvm2/Makefile
+Package: libdevmapper
+Version: 2.02.105-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-dm +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: The Linux Kernel Device Mapper userspace library
+Maintainer: 
+Source: LVM2.2.02.105.tgz
+Type: ipkg
+Description:  The device-mapper is a component of the 2.6 linux kernel that supports logical
+ volume management. It is required by LVM2 and EVMS.
+http://sourceware.org/dm/
+
+@@
+
+Package: lvm2
+Submenu: disc
+Version: 2.02.105-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libdevmapper +libblkid +libreadline +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: The Linux Logical Volume Manager
+Maintainer: 
+Source: LVM2.2.02.105.tgz
+Type: ipkg
+Description:  LVM2 refers to a new userspace toolset that provide logical volume management
+ facilities on linux. It is reasonably backwards-compatible with the original
+ LVM toolset.
+http://sourceware.org/lvm2/
+
+@@
+
+

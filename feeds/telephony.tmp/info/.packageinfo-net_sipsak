@@ -1,0 +1,19 @@
+Source-Makefile: feeds/telephony/net/sipsak/Makefile
+Package: sipsak
+Submenu: Telephony
+Version: 0.9.6-1-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SIP (Session Initiation Protocol) stress and diagnostics utility
+Maintainer: 
+Source: sipsak-0.9.6-1.tar.gz
+Type: ipkg
+Description: SIP (Session Initiation Protocol) stress and diagnostics utility
+http://www.sipsak.org/
+
+@@
+
+

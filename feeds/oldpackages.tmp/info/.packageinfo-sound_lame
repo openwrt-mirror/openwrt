@@ -1,0 +1,35 @@
+Source-Makefile: feeds/oldpackages/sound/lame/Makefile
+Package: lame-lib
+Version: 398-2-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @BUILD_PATENTED
+Menu-Depends: 
+Provides: 
+Section: sound
+Category: Sound
+Title: lame-lib
+Maintainer: 
+Source: lame-398-2.tar.gz
+Type: ipkg
+Description: lame mp3 encoder libs
+http://sourceforge.net/projects/lame
+
+@@
+
+Package: lame
+Menu: 1
+Version: 398-2-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @BUILD_PATENTED +libncurses
+Menu-Depends: 
+Provides: 
+Section: sound
+Category: Sound
+Title: lame
+Maintainer: 
+Source: lame-398-2.tar.gz
+Type: ipkg
+Description: lame mp3 encoder
+http://sourceforge.net/projects/lame
+
+@@
+
+

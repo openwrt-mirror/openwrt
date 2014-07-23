@@ -1,0 +1,29 @@
+Source-Makefile: feeds/oldpackages/lang/python-imaging-library/Makefile
+Package: python-imaging-library
+Submenu: Python
+Version: 1.1.7-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +libfreetype +libjpeg +zlib
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: language-python
+Category: Languages
+Title: Python Imaging Library (PIL)
+Maintainer: 
+Source: Imaging-1.1.7.tar.gz
+Type: ipkg
+Description:  The Python Imaging Library adds image processing capabilities to your
+ Python interpreter.
+ .
+ This library provides extensive file format support, an efficient
+ internal representation, and fairly powerful image processing
+ capabilities.
+ .
+ The core image library is designed for fast access to data stored in a
+ few basic pixel formats. It should provide a solid foundation for a
+ general image processing tool.
+http://www.pythonware.com/products/pil/
+
+@@
+
+

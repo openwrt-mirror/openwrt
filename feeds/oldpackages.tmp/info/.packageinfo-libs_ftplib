@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/libs/ftplib/Makefile
+Package: ftplib
+Version: 3.1-1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: ftplib
+Maintainer: 
+Source: ftplib-3.1-1.tar.gz
+Type: ipkg
+Description: ftplib is a set of routines that implement the FTP protocol. They allow
+applications to create and access remote files through function calls instead
+of needing to fork and exec an interactive ftp client program.
+http://nbpfaus.net/~pfau/ftplib/
+
+@@
+
+

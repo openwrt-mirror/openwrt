@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/lcdproc/Makefile
+Package: lcdproc
+Version: 0.5.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-compat +libncurses +libftdi
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: LCD Display daemon and client
+Maintainer: 
+Source: lcdproc-0.5.4.tar.gz
+Type: ipkg
+Description:  LCDProc is a daemon and client for displaying system information on various displays.
+http://sourceforge.net/projects/lcdproc/
+
+@@
+
+

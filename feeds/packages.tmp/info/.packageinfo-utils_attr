@@ -1,0 +1,42 @@
+Source-Makefile: feeds/packages/utils/attr/Makefile
+Package: attr
+Submenu: Filesystem
+Version: 20140610-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libattr
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Extended attributes (xattr) manipulation utils
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Source: attr-20140610.tar.gz
+Type: ipkg
+Description:   Extended attributes support
+ This package provides xattr manipulation utilities
+ - attr
+ - getfattr
+ - setfattr
+http://savannah.nongnu.org/projects/attr
+Maxim Storchak <m.storchak@gmail.com>
+@@
+
+Package: libattr
+Submenu: Filesystem
+Version: 20140610-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Extended attributes (xattr) manipulation library
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Source: attr-20140610.tar.gz
+Type: ipkg
+Kernel-Config: CONFIG_CIFS_XATTR=y CONFIG_EXT4_FS_XATTR=y CONFIG_JFFS2_FS_XATTR=y CONFIG_REISERFS_FS_XATTR=y CONFIG_SQUASHFS_XATTR=y CONFIG_TMPFS_XATTR=y 
+Description:   Extended attributes support
+ This package provides libattr
+http://savannah.nongnu.org/projects/attr
+Maxim Storchak <m.storchak@gmail.com>
+@@
+
+

@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/net/sshtunnel/Makefile
+Package: sshtunnel
+Submenu: SSH
+Version: 3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +openssh-client
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Manages Local and Remote openssh ssh(1) tunnels
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: 
+Type: ipkg
+Description: Creates openssh ssh(1) Local and Remote tunnels configured in UCI file. Can be used to allow remote connections, possibly over NATed connections or without public IP/DNS
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

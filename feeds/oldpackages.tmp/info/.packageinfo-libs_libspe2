@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/libspe2/Makefile
+Package: libspe2
+Version: 2.3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @TARGET_ps3||TARGET_ps3chk
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: SPE Runtime Management Library for the Cell Broadband Engine
+Maintainer: 
+Source: libspe2-2.3.0.135.tar.gz
+Type: ipkg
+Description: SPE Runtime Management Library for the Cell Broadband Engine
+http://sourceforge.net/projects/libspe/
+
+@@
+
+

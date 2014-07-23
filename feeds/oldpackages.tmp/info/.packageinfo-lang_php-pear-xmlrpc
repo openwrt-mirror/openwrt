@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/php-pear-xmlrpc/Makefile
+Package: php-pear-xmlrpc
+Submenu: PHP
+Version: 1.5.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php-pear
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: PEAR XML-RPC module
+Maintainer: 
+Source: XML_RPC-1.5.1.tgz
+Type: ipkg
+Description: PEAR XML-RPC module
+http://pear.php.net/package/XML_RPC
+
+@@
+
+

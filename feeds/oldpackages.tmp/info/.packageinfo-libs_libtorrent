@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/libs/libtorrent/Makefile
+Package: libtorrent
+Version: 0.13.3-git-680576e23e7d5f642ee51486fdf301ac0195e188-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libsigcxx
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Rakshasa's BitTorrent library
+Maintainer: 
+Source: libtorrent-0.13.3-git-680576e23e7d5f642ee51486fdf301ac0195e188.tar.gz
+Type: ipkg
+Description:  LibTorrent is a BitTorrent library written in C++ for *nix, with a focus on
+ high performance and good code. The library differentiates itself from other
+ implementations by transfering directly from file pages to the network stack.
+ On high-bandwidth connections it is able to seed at 3 times the speed of the
+ official client.
+http://libtorrent.rakshasa.no/
+
+@@
+
+

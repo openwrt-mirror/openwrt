@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/gzip/Makefile
+Package: gzip
+Version: 1.4-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: gzip (GNU zip) is a compression utility.
+Maintainer: 
+Source: gzip-1.4.tar.gz
+Type: ipkg
+Description: 	gzip (GNU zip) is a compression utility designed to be a replacement for compress.
+http://www.gzip.org/
+
+@@
+
+

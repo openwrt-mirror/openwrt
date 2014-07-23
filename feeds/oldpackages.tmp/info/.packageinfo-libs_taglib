@@ -1,0 +1,34 @@
+Source-Makefile: feeds/oldpackages/libs/taglib/Makefile
+Package: taglib
+Version: 1.6.3-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib @!TARGET_avr32
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Audio output library
+Maintainer: 
+Source: taglib-1.6.3.tar.gz
+Type: ipkg
+Description: Audio output library
+http://developer.kde.org/~wheeler/taglib.html
+
+@@
+
+Package: taglibc
+Version: 1.6.3-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +taglib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Audio output library
+Maintainer: 
+Source: taglib-1.6.3.tar.gz
+Type: ipkg
+Description: Audio output library
+http://developer.kde.org/~wheeler/taglib.html
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/telephony/net/asterisk-11.x-chan-dongle/Makefile
+Package: asterisk11-chan-dongle
+Submenu: Telephony
+Version: 1.1r35-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread asterisk11 +libiconv-full +kmod-usb-acm +kmod-usb-serial +kmod-usb-serial-option +libusb-1.0 +usb-modeswitch
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Huawei UMTS 3G dongle support
+Maintainer: Jiri Slachta <slachta@cesnet.cz>
+Source: asterisk11-chan-dongle-1.1r35.tar.gz
+Type: ipkg
+Description:  Asterisk channel driver for Huawei UMTS 3G dongle.
+https://code.google.com/p/asterisk-chan-dongle/
+Jiri Slachta <slachta@cesnet.cz>
+@@
+
+

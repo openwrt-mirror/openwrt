@@ -1,0 +1,53 @@
+Source-Makefile: feeds/oldpackages/net/usbip/Makefile
+Package: usbip
+Version: 3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libsysfs +libwrap +kmod-usbip
+Menu-Depends: 
+Provides: 
+Build-Depends: glib2 sysfsutils !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: USB-over-IP (common)
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: 
+Type: ipkg
+Description: USB-over-IP (common)
+http://usbip.sourceforge.net/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+Package: usbip-client
+Version: 3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT usbip +glib2 +kmod-usbip-client
+Menu-Depends: 
+Provides: 
+Build-Depends: glib2 sysfsutils !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: USB-over-IP (client)
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: 
+Type: ipkg
+Description: USB-over-IP (client)
+http://usbip.sourceforge.net/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+Package: usbip-server
+Version: 3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT usbip +glib2 +kmod-usbip-server
+Menu-Depends: 
+Provides: 
+Build-Depends: glib2 sysfsutils !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: USB-over-IP (server)
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: 
+Type: ipkg
+Description: USB-over-IP (server)
+http://usbip.sourceforge.net/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

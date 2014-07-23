@@ -1,0 +1,50 @@
+Source-Makefile: feeds/oldpackages/utils/dbus/Makefile
+Package: libdbus
+Version: 1.4.14-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Libraries
+Title: Simple interprocess messaging system (library)
+Maintainer: 
+Source: dbus-1.4.14.tar.gz
+Type: ipkg
+Description: Simple interprocess messaging system (library)
+http://dbus.freedesktop.org/
+
+@@
+
+Package: dbus
+Version: 1.4.14-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libexpat +libdbus
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Simple interprocess messaging system (daemon)
+Maintainer: 
+Source: dbus-1.4.14.tar.gz
+Type: ipkg
+Description: Simple interprocess messaging system (daemon)
+http://dbus.freedesktop.org/
+
+@@
+
+Package: dbus-utils
+Version: 1.4.14-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread dbus
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Simple interprocess messaging system (utilities)
+Maintainer: 
+Source: dbus-1.4.14.tar.gz
+Type: ipkg
+Description: Simple interprocess messaging system (utilities)
+http://dbus.freedesktop.org/
+
+@@
+
+

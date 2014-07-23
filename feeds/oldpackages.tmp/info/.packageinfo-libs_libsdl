@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libsdl/Makefile
+Package: libsdl
+Version: 1.2.14-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +directfb +zlib +libpthread +AUDIO_SUPPORT:alsa-lib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Simple DirectMedia Layer
+Maintainer: 
+Source: SDL-1.2.14.tar.gz
+Type: ipkg
+Description:  SDL is a library that allows programs portable low level access to a video
+ framebuffer, audio output, mouse, and keyboard.
+http://www.libsdl.org
+
+@@
+
+

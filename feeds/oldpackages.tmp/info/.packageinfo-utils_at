@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/at/Makefile
+Package: at
+Version: 3.1.13-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libelf1
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Delayed job execution and batch processing
+Maintainer: Luka Perkov <openwrt@lukaperkov.net>
+Source: at_3.1.13.orig.tar.gz
+Type: ipkg
+Description:  At and batch read shell commands from standard input storing them as a job to
+ be scheduled for execution in the future.
+http://packages.debian.org/stable/at
+Luka Perkov <openwrt@lukaperkov.net>
+@@
+
+

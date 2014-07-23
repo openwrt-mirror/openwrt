@@ -1,0 +1,25 @@
+Source-Makefile: feeds/oldpackages/utils/tcsh/Makefile
+Package: tcsh
+Version: 6.17.00-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Enhanced Berkeley UNIX C shell
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: tcsh-6.17.00.tar.gz
+Type: ipkg
+Description: 	Tcsh is an enhanced, but completely compatible
+	version of the Berkeley UNIX C shell (csh). It
+	is a command language interpreter usable both
+	as an interactive login shell and a shell
+	script command processor. It includes a
+	command-line editor, programmable word
+	completion, spelling correction, a history
+	mechanism, job control and a C-like syntax.
+http://www.tcsh.org/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

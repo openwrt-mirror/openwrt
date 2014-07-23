@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/live/Makefile
+Package: openrtsp
+Version: 2012.02.04-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp
+Menu-Depends: 
+Provides: 
+Section: video
+Category: Video Streaming
+Title: live555 streaming libraries and testProgs
+Maintainer: 
+Source: live.2012.02.04.tar.gz
+Type: ipkg
+Description: live555 streaming libraries and testProgs
+http://www.live555.com/
+
+@@
+
+

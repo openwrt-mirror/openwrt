@@ -1,0 +1,95 @@
+Source-Makefile: feeds/oldpackages/multimedia/gst-plugins-ugly/Makefile
+Package: gst-mod-asf
+Version: 0.10.19-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +libgstriff +libgstrtp +libgstrtsp +libgstsdp +libgsttag
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer gst-plugins-base liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer ASF demuxer plugin (ugly)
+Maintainer: 
+Source: gst-plugins-ugly-0.10.19.tar.xz
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer ASF demuxer plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-lame
+Version: 0.10.19-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +lame-lib
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer gst-plugins-base liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer MP3 encoder (using LAME) plugin (ugly)
+Maintainer: 
+Source: gst-plugins-ugly-0.10.19.tar.xz
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer MP3 encoder (using LAME) plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-mad
+Version: 0.10.19-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +libgsttag +libid3tag +libmad
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer gst-plugins-base liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer MP3 decoder (using MAD) plugin (ugly)
+Maintainer: 
+Source: gst-plugins-ugly-0.10.19.tar.xz
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer MP3 decoder (using MAD) plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-mpeg2dec
+Version: 0.10.19-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstvideo +libmpeg2
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer gst-plugins-base liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer MPEG decoder plugin (ugly)
+Maintainer: 
+Source: gst-plugins-ugly-0.10.19.tar.xz
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer MPEG decoder plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-plugins-ugly
+Version: 0.10.19-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +gst-mod-asf +gst-mod-lame +gst-mod-mad +gst-mod-mpeg2dec
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer gst-plugins-base liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer plugins collection (ugly)
+Maintainer: 
+Source: gst-plugins-ugly-0.10.19.tar.xz
+Type: ipkg
+Description: GStreamer plugins collection (ugly)
+http://gstreamer.freedesktop.org/
+
+@@
+
+

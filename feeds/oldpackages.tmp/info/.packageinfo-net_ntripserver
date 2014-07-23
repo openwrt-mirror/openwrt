@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/ntripserver/Makefile
+Package: ntripserver
+Submenu: NTRIP
+Version: 1.5.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Ntrip Version 2.0 Command Line Server
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: ntripserver.zip
+Type: ipkg
+Description:   Ntrip Version 2.0 Command Line Server, reading from SISNeT Server, TCP/UDP IP Port, Serial port, or NtripCaster to support an Ntrip Version 1.0 or 2.0 Caster
+http://igs.bkg.bund.de/ntrip/download
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

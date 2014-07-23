@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/luacurl/Makefile
+Package: luacurl
+Submenu: Lua
+Version: 20140207-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +liblua +libcurl
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: Lua-cURL
+Maintainer: 
+Source: luacurl-20140207.tar.gz
+Type: ipkg
+Description:  Lua-cURL is aiming for a full-fledged libcurl binding (easy/multi/share
+ interface) to the functionality of Lua
+http://msva.github.io/lua-curl/
+
+@@
+
+

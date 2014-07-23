@@ -1,0 +1,259 @@
+Source-Makefile: feeds/oldpackages/utils/procps/Makefile
+Package: procps-ps
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet ps from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet ps.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-free
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet free from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet free.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-pgrep
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet pgrep from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet pgrep.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-pkill
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet pkill from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet pkill.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-pmap
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet pmap from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet pmap.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-pwdx
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet pwdx from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet pwdx.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-skill
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet skill from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet skill.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-w
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet w from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet w.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-slabtop
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet slabtop from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet slabtop.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-snice
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet snice from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet snice.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-tload
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet tload from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet tload.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-top
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet top from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet top.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-vmstat
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet vmstat from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet vmstat.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps-watch
+Default: y
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procps
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Applet watch from the procps package
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:   Installs the applet watch.
+http://procps.sourceforge.net/
+
+@@
+
+Package: procps
+Menu: 1
+Version: 3.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: proc utilities
+Maintainer: 
+Source: procps-3.2.8.tar.gz
+Type: ipkg
+Description:  procps is the package that has a bunch of small useful utilities that give
+ information about processes using the /proc filesystem. The package
+ includes the programs ps, top, vmstat, w, kill, free, slabtop, and skill.
+http://procps.sourceforge.net/
+
+@@
+
+

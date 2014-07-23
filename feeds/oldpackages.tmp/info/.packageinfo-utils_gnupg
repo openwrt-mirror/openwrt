@@ -1,0 +1,24 @@
+Source-Makefile: feeds/oldpackages/utils/gnupg/Makefile
+Package: gnupg
+Version: 1.4.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libncurses +libreadline
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: GNU privacy guard - a free PGP replacement
+Maintainer: 
+Source: gnupg-1.4.16.tar.bz2
+Type: ipkg
+Description:  GnuPG is GNU's tool for secure communication and data storage.
+ It can be used to encrypt data and to create digital signatures.
+ It includes an advanced key management facility and is compliant
+ with the proposed OpenPGP Internet standard as described in RFC2440.
+ .
+ GnuPG does not use any patented algorithms so it cannot be compatible
+ with PGP2 because it uses IDEA (which is patented worldwide).
+http://www.gnupg.org/
+
+@@
+
+

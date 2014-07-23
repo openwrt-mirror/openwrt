@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/lang/pymysql/Makefile
+Package: python-mysql
+Submenu: Python
+Version: 1.2.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +libmysqlclient
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: MySQL database adapter for Python
+Maintainer: 
+Source: MySQL-python-1.2.2.tar.gz
+Type: ipkg
+Description:  MySQLdb is an thread-compatible interface to the popular MySQL database
+ server that provides the Python database API.
+http://mysql-python.sourceforge.net/
+
+@@
+
+

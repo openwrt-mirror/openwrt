@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/transocks/Makefile
+Package: transocks
+Submenu: Web Servers/Proxies
+Version: 1.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libsocks +librpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Transparent SOCKSifying proxy
+Maintainer: 
+Source: transocks-1.3.tar.gz
+Type: ipkg
+Description: Transparent SOCKSifying proxy
+
+@@
+
+

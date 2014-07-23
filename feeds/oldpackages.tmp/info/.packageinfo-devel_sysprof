@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/devel/sysprof/Makefile
+Package: sysprof
+Version: 1.2.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2
+Menu-Depends: 
+Provides: 
+Build-Depends: glib2
+Section: devel
+Category: Development
+Title: Sysprof System Profiler
+Maintainer: 
+Source: sysprof-1.2.0.tar.gz
+Type: ipkg
+Description: 	Sysprof is a statistical, system-wide profiler for Linux
+http://sysprof.com
+
+@@
+
+

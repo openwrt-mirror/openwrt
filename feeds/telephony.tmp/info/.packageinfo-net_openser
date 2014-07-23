@@ -1,0 +1,484 @@
+Source-Makefile: feeds/telephony/net/openser/Makefile
+Package: openser
+Menu: 1
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Configurable, free SIP server
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Configurable, free SIP server
+http://www.openser.org
+
+@@
+
+Package: openser-mod-acc
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Accounting support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Accounting support
+
+@@
+
+Package: openser-mod-auth
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Authentication support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Authentication support
+
+@@
+
+Package: openser-mod-auth-db
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Authentication with database support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Authentication with database support
+
+@@
+
+Package: openser-mod-auth-radius
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Authentication with RADIUS support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Authentication with RADIUS support
+
+@@
+
+Package: openser-mod-avp-radius
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: AVP with RADIUS support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: AVP with RADIUS support
+
+@@
+
+Package: openser-mod-avpops
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: AVP options support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: AVP options support
+
+@@
+
+Package: openser-mod-dispatcher
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Dispatcher support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Dispatcher support
+
+@@
+
+Package: openser-mod-diversion
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Diversion support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Diversion support
+
+@@
+
+Package: openser-mod-flatstore
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Flatstore support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Flatstore support
+
+@@
+
+Package: openser-mod-gflags
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Gflags support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Gflags support
+
+@@
+
+Package: openser-mod-group
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Group support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Group support
+
+@@
+
+Package: openser-mod-group-radius
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Group with RADIUS support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Group with RADIUS support
+
+@@
+
+Package: openser-mod-lcr
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser openser-mod-mysql
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Least Cost Routing support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Least Cost Routing support
+
+@@
+
+Package: openser-mod-mediaproxy
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Mediaproxy support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Mediaproxy support
+
+@@
+
+Package: openser-mod-msilo
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: MSilo support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: MSilo support
+
+@@
+
+Package: openser-mod-mysql
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +libmysqlclient
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: MySQL support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: MySQL support
+
+@@
+
+Package: openser-mod-nathelper
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NAT helper support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: NAT helper support
+
+@@
+
+Package: openser-mod-options
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Options support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Options support
+
+@@
+
+Package: openser-mod-pdt
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: PDT support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: PDT support
+
+@@
+
+Package: openser-mod-permissions
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Permissions support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Permissions support
+
+@@
+
+Package: openser-mod-pike
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: PIKE support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: PIKE support
+
+@@
+
+Package: openser-mod-sms
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SMS support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: SMS support
+
+@@
+
+Package: openser-mod-speeddial
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Speeddial supporte
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Speeddial supporte
+
+@@
+
+Package: openser-mod-uac
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: UAC support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: UAC support
+
+@@
+
+Package: openser-mod-uac-redirect
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: UAC with redirect support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: UAC with redirect support
+
+@@
+
+Package: openser-mod-uri
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: URI support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: URI support
+
+@@
+
+Package: openser-mod-uri-db
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +openser-mod-mysql
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: URI with database support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: URI with database support
+
+@@
+
+Package: openser-mod-uri-radius
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: URI with RADIUS support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: URI with RADIUS support
+
+@@
+
+Package: openser-mod-xlog
+Submenu: Telephony
+Version: 1.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread openser
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Advanced logging support
+Maintainer: 
+Source: openser-1.0.1_src.tar.gz
+Type: ipkg
+Description: Advanced logging support
+
+@@
+
+

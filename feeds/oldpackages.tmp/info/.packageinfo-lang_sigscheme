@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/lang/sigscheme/Makefile
+Package: sigscheme
+Version: 0.8.3-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @!avr32
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: SigScheme
+Maintainer: 
+Source: sigscheme-0.8.3.tar.bz2
+Type: ipkg
+Description: SigScheme is a R5RS Scheme interpreter for embedded use. It features small
+footprint (64KB in library form on the 'small' configuration) like SIOD and
+TinyScheme, low memory consumption (2-words per cons cell), multibyte characters
+handling (UTF-8, EUCs and Shift_JIS) and more.
+http://code.google.com/p/sigscheme/
+
+@@
+
+

@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/libs/rblibtorrent/Makefile
+Package: rblibtorrent
+Version: 0.14.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +boost +boost-python +boost-filesystem +boost-regex +boost-thread +boost-program_options +boost-system +libopenssl @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool
+Section: libs
+Category: Libraries
+Title: Rasterbar BitTorrent library
+Maintainer: 
+Source: libtorrent-rasterbar-0.14.7.tar.gz
+Type: ipkg
+Description: Rasterbar libtorrent is a C++ library that aims to be a good alternative to
+all the other bittorrent implementations around. It is a library and not a
+full featured client, although it comes with a working example client.
+http://www.rasterbar.com/products/libtorrent/
+
+@@
+
+

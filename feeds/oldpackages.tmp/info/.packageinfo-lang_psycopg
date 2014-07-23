@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/lang/psycopg/Makefile
+Package: python-psycopg
+Submenu: Python
+Version: 1.1.21-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +libpq +python-egenix-mx
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: PostgreSQL database adapter for Python
+Maintainer: 
+Source: psycopg-1.1.21.tar.gz
+Type: ipkg
+Description:  This package contains is a PostgreSQL database adapter for the Python
+ programming language.
+http://www.initd.org/
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/net/shadowsocks-client/Makefile
+Package: shadowsocks-client
+Submenu: Web Servers/Proxies
+Version: 0.5-d8ef02715f40de0fb7ba0f7267d3f8260f38ba80
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: shadowsocks client for router
+Maintainer: Zhao, Gang <gang.zhao.42@gmail.com>
+Source: shadowsocks-client-0.5-d8ef02715f40de0fb7ba0f7267d3f8260f38ba80.tar.gz
+Type: ipkg
+Description: shadowsocks client for router
+https://github.com/zhao-gang/shadowsocks-tiny
+Zhao, Gang <gang.zhao.42@gmail.com>
+@@
+
+

@@ -1,0 +1,44 @@
+#!/bin/sh /etc/rc.common
+START=99
+
+start() {
+	config_load "xunlei"
+	
+	config_get enable config enable 0
+	config_get device config device
+	config_get up config up 0
+
+	device=$(uci get xunlei.config.device)
+	mountpoint="`mount | grep "$device" | awk '{print $3}'`"
+
+	rm -f /tmp/etc/thunder_mounts.cfg
+	rm -f /tmp/etc/etm.cfg
+	rm -f /tmp/etc/download.cfg
+
+	path1="$mountpoint/xunlei/cfg/thunder_mounts.cfg"
+	path2="$mountpoint/xunlei/cfg/etm.cfg"
+	path3="$mountpoint/xunlei/cfg/download.cfg"
+
+	ln -s "$path1" /tmp/etc/thunder_mounts.cfg
+	ln -s "$path2" /tmp/etc/etm.cfg
+	ln -s "$path3" /tmp/etc/download.cfg
+	
+	[ "$up" -eq 1 ] && /root/xlup && /root/cfg
+
+	[ "$enable" -eq 0 ] &&	exit 0
+
+	"$mountpoint"/xunlei/portal
+	sleep 5
+}
+
+stop() {
+	device=$(uci get xunlei.config.device)
+	mountpoint="`mount | grep "$device" | awk '{print $3}'`"
+        "$mountpoint"/xunlei/portal -s
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}

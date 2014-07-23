@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/remserial/Makefile
+Package: remserial
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Bridge TCP/IP port with a device
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: remserial-1.4.tar.gz
+Type: ipkg
+Description: Bridge TCP/IP port with a device
+http://lpccomp.bc.ca/remserial/
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

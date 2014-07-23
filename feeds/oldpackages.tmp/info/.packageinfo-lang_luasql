@@ -1,0 +1,62 @@
+Source-Makefile: feeds/oldpackages/lang/luasql/Makefile
+Package: luasql-mysql
+Submenu: Lua
+Version: 2.1.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +libmysqlclient
+Menu-Depends: 
+Provides: 
+Build-Variant: mysql
+Section: lang
+Category: Languages
+Title: Lua SQL binding for MySQL
+Maintainer: 
+Source: luasql-2.1.1.tar.gz
+Type: ipkg
+Description:  LuaSQL is a simple interface from Lua to a DBMS.
+ .
+ This package contains the MySQL binding.
+http://www.keplerproject.org/luasql/
+
+@@
+
+Package: luasql-pgsql
+Submenu: Lua
+Version: 2.1.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +libpq
+Menu-Depends: 
+Provides: 
+Build-Variant: postgres
+Section: lang
+Category: Languages
+Title: Lua SQL binding for PostgreSQL
+Maintainer: 
+Source: luasql-2.1.1.tar.gz
+Type: ipkg
+Description:  LuaSQL is a simple interface from Lua to a DBMS.
+ .
+ This package contains the PostgreSQL binding.
+http://www.keplerproject.org/luasql/
+
+@@
+
+Package: luasql-sqlite3
+Submenu: Lua
+Version: 2.1.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +libsqlite3
+Menu-Depends: 
+Provides: 
+Build-Variant: sqlite3
+Section: lang
+Category: Languages
+Title: Lua SQL binding for SQLite 3
+Maintainer: 
+Source: luasql-2.1.1.tar.gz
+Type: ipkg
+Description:  LuaSQL is a simple interface from Lua to a DBMS.
+ .
+ This package contains the SQLite 3 binding.
+http://www.keplerproject.org/luasql/
+
+@@
+
+

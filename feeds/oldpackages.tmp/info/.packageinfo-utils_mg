@@ -1,0 +1,23 @@
+Source-Makefile: feeds/oldpackages/utils/mg/Makefile
+Package: mg
+Submenu: Editors
+Version: 20110120-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: microscopic GNU Emacs-style editor
+Maintainer: 
+Source: mg-20110120.tar.gz
+Type: ipkg
+Description: 	This program is intended to be a small, fast, and portable
+	editor for people who can't (or don't want to) run real
+	Emacs for one reason or another.  It is compatible with GNU
+	because there shouldn't be any reason to learn more than
+	one Emacs flavor.
+http://homepage.boetes.org/software/mg/
+
+@@
+
+

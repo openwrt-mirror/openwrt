@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/net/dhcpcd/Makefile
+Package: dhcpcd
+Submenu: IP Addresses and Names
+Version: 6.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: DHCP client for automatically configuring IPv4 networking
+Maintainer: 
+Source: dhcpcd-6.1.0.tar.bz2
+Type: ipkg
+Description: 	Simple configuration: supports executions of a script when the
+	IP address changes.
+http://roy.marples.name/projects/dhcpcd
+
+@@
+
+

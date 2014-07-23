@@ -1,0 +1,50 @@
+Source-Makefile: feeds/packages/utils/dbus/Makefile
+Package: libdbus
+Version: 1.8.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Libraries
+Title: Simple interprocess messaging system (library)
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: dbus-1.8.6.tar.gz
+Type: ipkg
+Description: Simple interprocess messaging system (library)
+http://dbus.freedesktop.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: dbus
+Version: 1.8.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libexpat +libdbus
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Simple interprocess messaging system (daemon)
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: dbus-1.8.6.tar.gz
+Type: ipkg
+Description: Simple interprocess messaging system (daemon)
+http://dbus.freedesktop.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: dbus-utils
+Version: 1.8.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread dbus
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Simple interprocess messaging system (utilities)
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: dbus-1.8.6.tar.gz
+Type: ipkg
+Description: Simple interprocess messaging system (utilities)
+http://dbus.freedesktop.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

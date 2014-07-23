@@ -1,0 +1,18 @@
+Source-Makefile: feeds/luci/contrib/package/freifunk-common/Makefile
+Package: freifunk-common
+Submenu: 9. Freifunk
+Version: 1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk common files
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Common files and scripts that are needed to run free wireless mesh networks.
+
+@@
+
+

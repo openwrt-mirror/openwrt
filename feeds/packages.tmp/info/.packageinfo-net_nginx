@@ -1,0 +1,78 @@
+Source-Makefile: feeds/packages/net/nginx/Makefile
+Package: nginx
+Menu: 1
+Submenu: Web Servers/Proxies
+Version: 1.4.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +NGINX_PCRE:libpcre +(NGINX_SSL||NGINX_HTTP_CACHE||NGINX_HTTP_AUTH_BASIC):libopenssl +NGINX_HTTP_GZIP:zlib +libpthread +NGINX_LUA:liblua
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Nginx web server
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: nginx-1.4.7.tar.gz
+Type: ipkg
+Description:  nginx is an HTTP and reverse proxy server, as well as a mail proxy server,
+ written by Igor Sysoev.
+http://nginx.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+Config:
+  source "feeds/packages/net/nginx/Config.in"
+@@
+
+Package: nginx-naxsi
+Menu: 1
+Submenu: Web Servers/Proxies
+Version: 1.4.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread nginx @NGINX_NAXSI
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: nginx-naxsi
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: nginx-1.4.7.tar.gz
+Type: ipkg
+Description:         NGINX WAF NAXSI
+http://nginx.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+Package: nginx-proxyprotocol
+Menu: 1
+Submenu: Web Servers/Proxies
+Version: 1.4.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread nginx @NGINX_PROXYPROTOCOL
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: nginx 
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: nginx-1.4.7.tar.gz
+Type: ipkg
+Description:         IMPLEMENT Proxy Protocol
+http://nginx.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+Package: nginx-syslog
+Menu: 1
+Submenu: Web Servers/Proxies
+Version: 1.4.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread nginx @NGINX_SYSLOG
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: nginx-syslog
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: nginx-1.4.7.tar.gz
+Type: ipkg
+Description:         IMPLEMENT Syslog Protocol
+http://nginx.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+

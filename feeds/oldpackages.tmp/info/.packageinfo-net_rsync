@@ -1,0 +1,43 @@
+Source-Makefile: feeds/oldpackages/net/rsync/Makefile
+Package: rsync
+Submenu: File Transfer
+Version: 3.1.0-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpopt +zlib
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Fast remote file copy program (like rcp)
+Maintainer: 
+Source: rsync-3.1.0.tar.gz
+Type: ipkg
+Description:  rsync is a program that allows files to be copied to and from remote machines
+ in much the same way as rcp. It has many more options than rcp, and uses the
+ rsync remote-update protocol to greatly speed up file transfers when the
+ destination file already exists.
+
+ The rsync remote-update protocol allows rsync to transfer just the differences
+ between two sets of files across the network link.
+http://rsync.samba.org/
+
+@@
+
+Package: rsyncd
+Submenu: File Transfer
+Version: 3.1.0-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +rsync
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Rsync daemon
+Maintainer: 
+Source: rsync-3.1.0.tar.gz
+Type: ipkg
+Description:  rsyncd is a configuration file and initscript to utilize rsync as a daemon. It
+ uses the same binary as rsync.
+http://rsync.samba.org/
+
+@@
+
+

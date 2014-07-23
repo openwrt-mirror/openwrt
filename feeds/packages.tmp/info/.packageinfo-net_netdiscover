@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/net/netdiscover/Makefile
+Package: netdiscover
+Version: 0.3-beta6-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libnet1 +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: An active/passive address reconnaissance tool
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: netdiscover-0.3-beta6.tar.gz
+Type: ipkg
+Description: An active/passive address reconnaissance tool
+http://nixgeneration.com/~jaime/netdiscover/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+

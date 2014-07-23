@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/vips/Makefile
+Package: vips
+Version: 7.34.0-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libexif +libjpeg +libpng +libxml2 +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: An image manipulation library
+Maintainer: 
+Source: vips-7.34.0.tar.gz
+Type: ipkg
+Description: An image manipulation library
+http://www.vips.ecs.soton.ac.uk/
+
+@@
+
+

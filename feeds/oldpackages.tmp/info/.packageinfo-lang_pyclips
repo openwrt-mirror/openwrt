@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/pyclips/Makefile
+Package: pyclips
+Submenu: Python
+Version: 1.0.7.348-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: pyclips
+Maintainer: 
+Source: pyclips-1.0.7.348.tar.gz
+Type: ipkg
+Description:   Python module to interface the CLIPS expert system shell library.
+http://sourceforge.net/projects/pyclips/
+
+@@
+
+

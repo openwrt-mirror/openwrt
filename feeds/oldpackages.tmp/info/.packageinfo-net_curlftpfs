@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/curlftpfs/Makefile
+Package: curlftpfs
+Submenu: Filesystem
+Version: 0.9.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcurl +libfuse +glib2
+Menu-Depends: 
+Provides: 
+Build-Depends: libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: CurlFtpFS
+Maintainer: 
+Source: curlftpfs-0.9.2.tar.gz
+Type: ipkg
+Description:   CurlFtpFS is a filesystem for accessing FTP hosts
+  based on FUSE and libcurl.
+http://curlftpfs.sourceforge.net/
+
+@@
+
+

@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/net/unfs3/Makefile
+Package: unfs3
+Submenu: Filesystem
+Version: 0.9.22-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +portmap +librpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: User-space NFSv3 Server
+Maintainer: 
+Source: unfs3-0.9.22.tar.gz
+Type: ipkg
+Description: 	UNFS3 is a user-space implementation of the NFSv3 server
+	specification. It provides a daemon for the MOUNT and NFS
+	protocols, which are used by NFS clients for accessing files
+	on the server.
+http://unfs3.sourceforge.net/
+
+@@
+
+

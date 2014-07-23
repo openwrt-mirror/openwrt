@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/utils/lrzsz/Makefile
+Package: lrzsz
+Version: 0.12.20-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: X,Y and Z-modem protocols
+Maintainer: 
+Source: lrzsz-0.12.20.tar.gz
+Type: ipkg
+Description: 	Transfer files in your login sessions.
+	Very leightweight and straight forward.
+	You just need a terminal client that can do
+	either X, Y or Z-modem file transfers.
+http://www.ohse.de/uwe/software/lrzsz.html
+
+@@
+
+

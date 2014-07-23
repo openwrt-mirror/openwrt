@@ -1,0 +1,59 @@
+Source-Makefile: feeds/packages/net/nfs-kernel-server/Makefile
+Package: nfs-kernel-server
+Submenu: Filesystem
+Version: 1.3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libwrap +libblkid +libuuid +librpc +kmod-fs-nfsd +kmod-fs-nfs +portmap
+Menu-Depends: 
+Provides: 
+Build-Depends: nfs-kernel-server/host
+Build-Types: host
+Section: net
+Category: Network
+Title: Kernel NFS server support
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: nfs-utils-1.3.0.tar.bz2
+Type: ipkg
+Description:   Kernel NFS server support
+http://nfs.sourceforge.net/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+Package: nfs-kernel-server-utils
+Submenu: Filesystem
+Version: 1.3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread nfs-kernel-server
+Menu-Depends: 
+Provides: 
+Build-Depends: nfs-kernel-server/host
+Build-Types: host
+Section: net
+Category: Network
+Title: NFS server utils
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: nfs-utils-1.3.0.tar.bz2
+Type: ipkg
+Description:   NFS server utils
+http://nfs.sourceforge.net/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+Package: nfs-utils
+Submenu: Filesystem
+Version: 1.3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libwrap +libblkid +libuuid +librpc +libevent +USE_UCLIBC:librpc
+Menu-Depends: 
+Provides: 
+Build-Depends: nfs-kernel-server/host
+Build-Types: host
+Section: utils
+Category: Utilities
+Title: updated mount utility (includes nfs4)
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: nfs-utils-1.3.0.tar.bz2
+Type: ipkg
+Description:   Updated mount.nfs command - allows mounting nfs4 volumes
+http://nfs.sourceforge.net/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

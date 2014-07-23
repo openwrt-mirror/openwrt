@@ -1,0 +1,59 @@
+Source-Makefile: feeds/oldpackages/net/nfs-kernel-server/Makefile
+Package: nfs-kernel-server
+Submenu: Filesystem
+Version: 1.2.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libwrap +libblkid +libuuid +librpc +kmod-fs-nfsd +kmod-fs-nfs +portmap
+Menu-Depends: 
+Provides: 
+Build-Depends: nfs-kernel-server/host
+Build-Types: host
+Section: net
+Category: Network
+Title: Kernel NFS server support
+Maintainer: 
+Source: nfs-utils-1.2.9.tar.bz2
+Type: ipkg
+Description:   Kernel NFS server support
+http://nfs.sourceforge.net/
+
+@@
+
+Package: nfs-kernel-server-utils
+Submenu: Filesystem
+Version: 1.2.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread nfs-kernel-server
+Menu-Depends: 
+Provides: 
+Build-Depends: nfs-kernel-server/host
+Build-Types: host
+Section: net
+Category: Network
+Title: NFS server utils
+Maintainer: 
+Source: nfs-utils-1.2.9.tar.bz2
+Type: ipkg
+Description:   NFS server utils
+http://nfs.sourceforge.net/
+
+@@
+
+Package: nfs-utils
+Submenu: Filesystem
+Version: 1.2.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libwrap +libblkid +libuuid +librpc +libevent +USE_UCLIBC:librpc
+Menu-Depends: 
+Provides: 
+Build-Depends: nfs-kernel-server/host
+Build-Types: host
+Section: utils
+Category: Utilities
+Title: updated mount utility (includes nfs4)
+Maintainer: 
+Source: nfs-utils-1.2.9.tar.bz2
+Type: ipkg
+Description:   Updated mount.nfs command - allows mounting nfs4 volumes
+http://nfs.sourceforge.net/
+
+@@
+
+

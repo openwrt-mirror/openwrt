@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/utils/unrar/Makefile
+Package: unrar
+Submenu: Compression
+Version: 5.1.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +libpthread
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: UnRAR application
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: unrarsrc-5.1.6.tar.gz
+Type: ipkg
+Description:    UnRAR is an application that can decompress files and archives created using
+   the RAR compression scheme
+http://www.rarlab.com/
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

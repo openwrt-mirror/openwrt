@@ -1,0 +1,98 @@
+Source-Makefile: feeds/packages/libs/gnutls/Makefile
+Package: certtool
+Submenu: SSL
+Version: 3.2.15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgnutls
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: GNU TLS (certool utility)
+Maintainer: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Source: gnutls-3.2.15.tar.xz
+Type: ipkg
+Description:  GnuTLS is a secure communications library implementing the SSL, TLS
+ and DTLS protocols and technologies around them. It provides a simple
+ C language application programming interface (API) to access the secure
+ communications protocols as well as APIs to parse and write X.509, PKCS12,
+ OpenPGP and other required structures. It is aimed to be portable and
+ efficient with focus on security and interoperability.
+ This package contains the GnuTLS certtool utility.
+http://www.gnutls.org/
+Nikos Mavrogiannopoulos <nmav@gnutls.org>
+@@
+
+Package: gnutls-utils
+Submenu: SSL
+Version: 3.2.15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgnutls
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: GNU TLS (utilities)
+Maintainer: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Source: gnutls-3.2.15.tar.xz
+Type: ipkg
+Description:  GnuTLS is a secure communications library implementing the SSL, TLS
+ and DTLS protocols and technologies around them. It provides a simple
+ C language application programming interface (API) to access the secure
+ communications protocols as well as APIs to parse and write X.509, PKCS12,
+ OpenPGP and other required structures. It is aimed to be portable and
+ efficient with focus on security and interoperability.
+ This package contains the GnuTLS gnutls-cli, gnutls-serv, psktool,
+ and srptool utilities.
+http://www.gnutls.org/
+Nikos Mavrogiannopoulos <nmav@gnutls.org>
+@@
+
+Package: libgnutls
+Submenu: SSL
+Version: 3.2.15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnettle +!LIBNETTLE_MINI:libgmp +GNUTLS_EXT_LIBTASN1:libtasn1 +GNUTLS_PKCS11:p11-kit
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GNU TLS (library)
+Maintainer: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Source: gnutls-3.2.15.tar.xz
+Type: ipkg
+Description:  GnuTLS is a secure communications library implementing the SSL, TLS
+ and DTLS protocols and technologies around them. It provides a simple
+ C language application programming interface (API) to access the secure
+ communications protocols as well as APIs to parse and write X.509, PKCS12,
+ OpenPGP and other required structures. It is aimed to be portable and
+ efficient with focus on security and interoperability.
+ This package contains the GnuTLS shared library, needed by other programs.
+http://www.gnutls.org/
+Nikos Mavrogiannopoulos <nmav@gnutls.org>
+@@
+Config:
+	source "feeds/packages/libs/gnutls/Config.in"
+@@
+
+Package: libgnutls-openssl
+Submenu: SSL
+Version: 3.2.15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgnutls
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GNU TLS (OpenSSL compat library)
+Maintainer: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Source: gnutls-3.2.15.tar.xz
+Type: ipkg
+Description:  GnuTLS is a secure communications library implementing the SSL, TLS
+ and DTLS protocols and technologies around them. It provides a simple
+ C language application programming interface (API) to access the secure
+ communications protocols as well as APIs to parse and write X.509, PKCS12,
+ OpenPGP and other required structures. It is aimed to be portable and
+ efficient with focus on security and interoperability.
+ This package contains the GnuTLS OpenSSL compatibility layer shared library.
+http://www.gnutls.org/
+Nikos Mavrogiannopoulos <nmav@gnutls.org>
+@@
+
+

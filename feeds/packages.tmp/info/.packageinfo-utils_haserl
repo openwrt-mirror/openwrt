@@ -1,0 +1,22 @@
+Source-Makefile: feeds/packages/utils/haserl/Makefile
+Package: haserl
+Menu: 1
+Version: 0.9.33-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +HASERL_with_lua:liblua
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: A CGI wrapper to embed shell scripts in HTML documents
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Source: haserl-0.9.33.tar.gz
+Type: ipkg
+Description: A CGI wrapper to embed shell scripts in HTML documents
+http://haserl.sourceforge.net/
+Maxim Storchak <m.storchak@gmail.com>
+@@
+Config:
+	source "feeds/packages/utils/haserl/Config.in"
+@@
+
+

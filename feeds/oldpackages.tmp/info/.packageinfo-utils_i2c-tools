@@ -1,0 +1,55 @@
+Source-Makefile: feeds/oldpackages/utils/i2c-tools/Makefile
+Package: libi2c
+Version: 2013-12-15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: PACKAGE_python-smbus:python
+Section: libs
+Category: Libraries
+Title: I2C library
+Maintainer: 
+Source: i2c-tools-2013-12-15-r6204.tar.gz
+Type: ipkg
+Description: I2C library
+http://lm-sensors.org/wiki/I2CTools
+
+@@
+
+Package: i2c-tools
+Version: 2013-12-15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libi2c
+Menu-Depends: 
+Provides: 
+Build-Depends: PACKAGE_python-smbus:python
+Section: utils
+Category: Utilities
+Title: I2C tools for Linux
+Maintainer: 
+Source: i2c-tools-2013-12-15-r6204.tar.gz
+Type: ipkg
+Description:  This package contains an heterogeneous set of I2C tools for Linux. These tools
+ were originally part of the lm-sensors package.
+http://lm-sensors.org/wiki/I2CTools
+
+@@
+
+Package: python-smbus
+Submenu: Python
+Version: 2013-12-15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_python-smbus:python-mini +i2c-tools
+Menu-Depends: 
+Provides: 
+Build-Depends: PACKAGE_python-smbus:python
+Section: lang
+Category: Languages
+Title: Python bindings for the SMBUS
+Maintainer: 
+Source: i2c-tools-2013-12-15-r6204.tar.gz
+Type: ipkg
+Description:  This package contain the python bindings for Linux SMBus access through i2c-dev.
+http://lm-sensors.org/wiki/I2CTools
+
+@@
+
+

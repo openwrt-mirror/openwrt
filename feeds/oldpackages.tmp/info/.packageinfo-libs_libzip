@@ -1,0 +1,35 @@
+Source-Makefile: feeds/oldpackages/libs/libzip/Makefile
+Package: libzip
+Version: 0.10.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libzip
+Maintainer: 
+Source: libzip-0.10.1.tar.bz2
+Type: ipkg
+Description:  C library for reading, creating, and modifying zip archives
+http://www.nih.at/libzip/
+
+@@
+
+Package: libzip-utils
+Submenu: compression
+Version: 0.10.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libzip
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: libzip utilities
+Maintainer: 
+Source: libzip-0.10.1.tar.bz2
+Type: ipkg
+Description:  package contains binaries from libzip library (zipcmp, ziptorrent, zipmerge)
+http://www.nih.at/libzip/
+
+@@
+
+

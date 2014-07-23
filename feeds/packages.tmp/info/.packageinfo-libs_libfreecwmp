@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/libfreecwmp/Makefile
+Package: libfreecwmp
+Version: 2013-02-18-2131f1eaf6fe0a0de57fe45d343903227333d89d
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: CWMP library
+Maintainer: 
+Source: libfreecwmp-2013-02-18-2131f1eaf6fe0a0de57fe45d343903227333d89d.tar.gz
+Type: ipkg
+Description: CWMP library
+http://libfreecwmp.org/
+
+@@
+
+

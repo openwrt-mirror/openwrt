@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/dash/Makefile
+Package: dash
+Version: 0.5.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: base
+Category: Base system
+Title: Debian Almquist shell
+Maintainer: 
+Source: dash-0.5.7.tar.gz
+Type: ipkg
+Description:  A small footprint, POSIX complied unix shell
+http://gondor.apana.org.au/~herbert/dash/
+
+@@
+
+

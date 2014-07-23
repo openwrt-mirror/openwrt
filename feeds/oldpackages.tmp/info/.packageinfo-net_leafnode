@@ -1,0 +1,40 @@
+Source-Makefile: feeds/oldpackages/net/leafnode/Makefile
+Package: leafnode
+Submenu: NNTP
+Version: 1.11.8-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcre +xinetd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Leafnode store-and-forward NNTP proxy
+Maintainer: 
+Source: leafnode-1.11.8.tar.bz2
+Type: ipkg
+Description: 	This package contains the "leafnode", "fetchnews" and
+	"texpire" programs and the necessary configuration files
+	for the leafnode proxy
+http://leafnode.sourceforge.net
+
+@@
+
+Package: leafnode-extra
+Submenu: NNTP
+Version: 1.11.8-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread leafnode
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Leafnode extra programs
+Maintainer: 
+Source: leafnode-1.11.8.tar.bz2
+Type: ipkg
+Description: 	This package contains the more rarely used "checkgroups",
+	"applyfilter" and "leafnode-version" programs from the
+	leafnode suite
+http://leafnode.sourceforge.net
+
+@@
+
+

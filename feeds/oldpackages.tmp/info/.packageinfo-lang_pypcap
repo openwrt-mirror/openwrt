@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/pypcap/Makefile
+Package: python-pcap
+Submenu: Python
+Version: 1.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +libpcap
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: Python interface to lipcap
+Maintainer: 
+Source: pypcap-1.1.tar.gz
+Type: ipkg
+Description: Python interface to lipcap
+http://code.google.com/p/pypcap/
+
+@@
+
+

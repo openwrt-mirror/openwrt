@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/net/weechat/Makefile
+Package: weechat
+Submenu: Instant Messaging
+Version: 0.4.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcurl +libgnutls +libgcrypt +zlib +libncursesw +BUILD_NLS:libiconv-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: Lightweight IRC client
+Maintainer: 
+Source: weechat-0.4.3.tar.bz2
+Type: ipkg
+Description:  Weechat is fast, light & extensible IRC client.
+http://www.weechat.org/
+
+@@
+
+

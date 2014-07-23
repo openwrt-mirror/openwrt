@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/libs/libsigc++/Makefile
+Package: libsigcxx
+Version: 2.3.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: typesafe callback system for standard C++
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: libsigc++-2.3.1.tar.xz
+Type: ipkg
+Description:  It allows you to define signals and to connect those signals to any
+ callback function, either global or a member function, regardless of
+ whether it is static or virtual.
+http://libsigc.sourceforge.net/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

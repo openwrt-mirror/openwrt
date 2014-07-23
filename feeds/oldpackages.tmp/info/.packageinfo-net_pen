@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/net/pen/Makefile
+Package: pen
+Version: 0.18.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Simple tcp load balancer
+Maintainer: 
+Source: pen-0.18.0.tar.gz
+Type: ipkg
+Description: 	This is pen, a load balancer for "simple" tcp based protocols
+	such as http or smtp. It allows several servers to appear as
+	one to the outside and automatically detects servers that are
+	down and distributes clients among the available servers.
+	This gives high availability and scalable performance.
+http://siag.nu/pen/
+
+@@
+
+

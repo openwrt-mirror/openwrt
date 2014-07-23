@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/libs/nettle/Makefile
+Package: libnettle
+Version: 2.7.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +!LIBNETTLE_MINI:libgmp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GNU crypto library
+Maintainer: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+Source: nettle-2.7.1.tar.gz
+Type: ipkg
+Description: GNU crypto library
+http://www.lysator.liu.se/~nisse/nettle/
+Nikos Mavrogiannopoulos <nmav@gnutls.org>
+@@
+Config:
+	source "feeds/packages/libs/nettle/Config.in"
+@@
+
+

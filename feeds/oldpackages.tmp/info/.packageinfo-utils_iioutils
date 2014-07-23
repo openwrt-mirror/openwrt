@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/iioutils/Makefile
+Package: iioutils
+Version: 0.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +sysfsutils
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Linux IIO Utilities
+Maintainer: 
+Source: iioutils-0.2.tar.gz
+Type: ipkg
+Description: 	lsiio is a utility for displaying information about IndustrialIO devices in the system and
+	the sensors provided by them.
+http://sourceforge.net/projects/iioutils/
+
+@@
+
+

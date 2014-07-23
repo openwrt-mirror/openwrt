@@ -1,0 +1,39 @@
+Source-Makefile: feeds/oldpackages/libs/ldns/Makefile
+Package: libldns
+Version: 1.6.17-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: A library to simplify DNS programming
+Maintainer: 
+Source: ldns-1.6.17.tar.gz
+Type: ipkg
+Description:   The goal of ldns is to simplify DNS programming, it supports recent RFCs like
+  the DNSSEC documents, and allows developers to easily create software
+  conforming to current RFCs, and experimental software for current Internet
+  Drafts.
+http://www.nlnetlabs.nl/projects/ldns/
+
+@@
+
+Package: drill
+Submenu: IP Addresses and Names
+Version: 1.6.17-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libldns
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: DNS(SEC) information tool
+Maintainer: 
+Source: ldns-1.6.17.tar.gz
+Type: ipkg
+Description:   drill is a tool to designed to get all sorts of information out of the DNS. It
+  is specificly designed to be used with DNSSEC.
+http://www.nlnetlabs.nl/projects/ldns/
+
+@@
+
+

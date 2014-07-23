@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/vpnc-scripts/Makefile
+Package: vpnc-scripts
+Submenu: VPN
+Version: 20120423-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: VPN configuration script for vpnc and OpenConnect
+Maintainer: 
+Source: vpnc-scripts-20120423.tar.gz
+Type: ipkg
+Description: VPN configuration script for vpnc and OpenConnect
+http://www.infradead.org/openconnect/vpnc-script.html
+
+@@
+
+

@@ -1,0 +1,77 @@
+Source-Makefile: feeds/oldpackages/net/nufw/Makefile
+Package: nufw
+Submenu: Firewall
+Version: 2.2.21-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libgnutls +libgcrypt +libsasl2 +libnetfilter-queue +BUILD_NLS:libiconv-full +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: nufw
+Maintainer: 
+Source: nufw-2.2.21.tar.bz2
+Type: ipkg
+Description:   NuFW adds user-based filtering to Netfilter,
+  the state of the art IP filtering layer from
+  the Linux kernel. Its exclusive algorithm allows
+  authenticated filtering even on multiuser computers.
+http://www.nufw.org/
+
+@@
+
+Package: nutcpc
+Submenu: Firewall
+Version: 2.2.21-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libgnutls +libgcrypt +libsasl2 +libnetfilter-queue +BUILD_NLS:libiconv-full +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: client version
+Maintainer: 
+Source: nufw-2.2.21.tar.bz2
+Type: ipkg
+Description: client version
+http://www.nufw.org/
+
+@@
+
+Package: nufw-modules
+Submenu: Firewall
+Version: 2.2.21-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libgnutls +libgcrypt +libsasl2 +libnetfilter-queue +BUILD_NLS:libiconv-full +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: NuFW modules
+Maintainer: 
+Source: nufw-2.2.21.tar.bz2
+Type: ipkg
+Description: NuFW modules
+http://www.nufw.org/
+
+@@
+
+Package: nufw-python
+Submenu: Firewall
+Version: 2.2.21-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libgnutls +libgcrypt +libsasl2 +libnetfilter-queue +BUILD_NLS:libiconv-full +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: net
+Category: Network
+Title: python bindings
+Maintainer: 
+Source: nufw-2.2.21.tar.bz2
+Type: ipkg
+Description: python bindings
+http://www.nufw.org/
+
+@@
+
+

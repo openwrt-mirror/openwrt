@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/dsniff/Makefile
+Package: dsniff
+Version: 2.4b1-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libnids +libnet0 +libopenssl +libgdbm +librpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A collection of tools for network auditing and penetration testing
+Maintainer: 
+Source: dsniff-2.4b1.tar.gz
+Type: ipkg
+Description: 	A collection of tools for network auditing and penetration testing.
+http://www.monkey.org/~dugsong/dsniff/
+
+@@
+
+

@@ -1,0 +1,32 @@
+Source-Makefile: feeds/oldpackages/libs/file/Makefile
+Package: file
+Version: 5.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libmagic
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title:  utility
+Maintainer: 
+Source: file-5.11.tar.gz
+Type: ipkg
+Description:  utility
+
+@@
+
+Package: libmagic
+Version: 5.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title:  library
+Maintainer: 
+Source: file-5.11.tar.gz
+Type: ipkg
+Description:  library
+
+@@
+
+

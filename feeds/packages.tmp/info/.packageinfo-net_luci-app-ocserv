@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/net/luci-app-ocserv/Makefile
+Package: luci-app-ocserv
+Submenu: 3. Applications
+Version: 1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-lib-json +luci-lib-nixio +luci-mod-admin-full +ocserv
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: OpenConnect VPN server configuration and status module
+Maintainer: Nikos Mavrogiannopoulos <n.mavrogiannopoulos@gmail.com>
+Source: 
+Type: ipkg
+Description: 	ocserv web module for LuCi web interface
+Nikos Mavrogiannopoulos <n.mavrogiannopoulos@gmail.com>
+@@
+
+

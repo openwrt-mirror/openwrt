@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libmcrypt/Makefile
+Package: libmcrypt
+Version: 2.5.8-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Cryptographic library
+Maintainer: 
+Source: libmcrypt-2.5.8.tar.bz2
+Type: ipkg
+Description: 	libmcrypt is a cryptographic library that conveniently brings
+	together a variety of ciphers for convenient use.
+http://mcrypt.sourceforge.net/
+
+@@
+
+

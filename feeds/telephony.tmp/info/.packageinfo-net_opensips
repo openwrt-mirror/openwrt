@@ -1,0 +1,1623 @@
+Source-Makefile: feeds/telephony/net/opensips/Makefile
+Package: opensips
+Menu: 1
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: Open SIP Server
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: Open SIP Server
+http://www.opensips.org/
+
+@@
+
+Package: opensips-example
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-acc +opensips-mod-maxfwd +opensips-mod-mi-fifo +opensips-mod-registrar +opensips-mod-rr +opensips-mod-signaling +opensips-mod-sl +opensips-mod-textops +opensips-mod-tm +opensips-mod-uri +opensips-mod-uri-db +opensips-mod-usrloc +opensips-mod-xlog
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS example config
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS example config
+http://www.opensips.org/
+
+@@
+
+Package: opensips-tools
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS control tools
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS control tools
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-acc
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Accounting module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Accounting module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-alias-db
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Database-backend aliases module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Database-backend aliases module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-auth
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-signaling
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Authentication Framework module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Authentication Framework module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-auth-db
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-auth
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Database-backend authentication module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Database-backend authentication module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-auth-radius
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-auth +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS RADIUS-backend authentication module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS RADIUS-backend authentication module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-avp-radius
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS RADIUS-backend for AVP loading module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS RADIUS-backend for AVP loading module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-avpops
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS AVP operation module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS AVP operation module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-benchmark
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Config benchmark module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Config benchmark module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-call-control
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-dialog
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Prepair application module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Prepair application module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-cfgutils
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Config utilities module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Config utilities module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-closeddial
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS PBX-like features module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS PBX-like features module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-cpl-c
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm +opensips-mod-sl +opensips-mod-usrloc +libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Call Processing language interpreter module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Call Processing language interpreter module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-db-flatstore
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Fast writing-only text database-backed module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Fast writing-only text database-backed module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-db-mysql
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libmysqlclient
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS MySQL database-backend module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS MySQL database-backend module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-db-postgres
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libpq
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS PostgreSQL Database-backend module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS PostgreSQL Database-backend module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-db-text
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Text database-backend module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Text database-backend module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-dialog
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-rr +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Dialog support module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Dialog support module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-dialplan
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Dialplan management module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Dialplan management module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-dispatcher
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Dispatcher module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Dispatcher module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-diversion
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Diversion header insertion module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Diversion header insertion module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-domain
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Multi-domain support module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Multi-domain support module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-domainpolicy
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Domain policy module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Domain policy module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-drouting
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Dynaming routing module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Dynaming routing module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-enum
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS ENUM lookup module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS ENUM lookup module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-exec
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS External exec module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS External exec module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-gflags
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Global shared flags module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Global shared flags module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-group
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Database-backend user-groups module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Database-backend user-groups module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-group-radius
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS RADIUS-backend user-groups module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS RADIUS-backend user-groups module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-h350
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-ldap +libopenldap
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS H.350 module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS H.350 module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-identity
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Identity module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Identity module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-imc
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-db-mysql +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS IM conferencing module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS IM conferencing module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-jabber
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm +libexpat
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Jabber module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Jabber module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-lcr
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Least Cost Routing module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Least Cost Routing module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-ldap
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libopenldap
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS LDAP connector module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS LDAP connector module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-load_balancer
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-dialog
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Load balancer module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Load balancer module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-localcache
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Local cache module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Local cache module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-mangler
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP mangler module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP mangler module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-maxfwd
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Max-Forward processor module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Max-Forward processor module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-mi-datagram
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Datagram support for Management Interface module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Datagram support for Management Interface module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-mi-fifo
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS FIFO support for Management Interface module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS FIFO support for Management Interface module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-msilo
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP message silo module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP message silo module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-nat_traversal
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-dialog +opensips-mod-sl +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS NAT traversal module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS NAT traversal module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-nathelper
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +rtpproxy
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS NAT traversal helper module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS NAT traversal helper module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-options
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-sl
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS OPTIONS server replier module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS OPTIONS server replier module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-path
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-rr
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP path insertion module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP path insertion module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pdt
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Prefix-to-Domain translator module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Prefix-to-Domain translator module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-peering
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Perring module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Perring module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-permissions
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Permissions control module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Permissions control module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pike
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Flood detector module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Flood detector module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-presence
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-signaling +libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Presence server module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Presence server module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-presence-dialoginfo
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Dialog Event presence module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Dialog Event presence module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-presence-mwi
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Message Waiting Indication presence module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Message Waiting Indication presence module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-presence-xcapdiff
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence +opensips-mod-pua
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS XCAP-Diff presence module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS XCAP-Diff presence module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-presence-xml
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence +opensips-mod-xcap-client
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS XCAP presence module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS XCAP presence module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pua
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm +libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Presence User Agent module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Presence User Agent module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pua-bla
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence +opensips-mod-pua +opensips-mod-usrloc
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Bridged Line Appearence PUA module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Bridged Line Appearence PUA module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pua-dialoginfo
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-dialog +opensips-mod-pua
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Dialog Event PUA module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Dialog Event PUA module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pua-mi
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-pua
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS PUA Management Interface module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS PUA Management Interface module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pua-usrloc
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-pua +opensips-mod-usrloc
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS PUA User Location module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS PUA User Location module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-pua-xmpp
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence +opensips-mod-pua +opensips-mod-xmpp
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS PUA XMPP module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS PUA XMPP module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-qos
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-dialog
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS QoS control module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS QoS control module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-ratelimit
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Traffic shapping module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Traffic shapping module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-regex
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libpcre
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Regular Expression module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Regular Expression module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-registrar
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-signaling +opensips-mod-usrloc
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP Registrar module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP Registrar module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-rls
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-presence +opensips-mod-pua +opensips-mod-signaling +opensips-mod-tm +libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Resource List Server module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Resource List Server module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-rr
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Record-Route and Route module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Record-Route and Route module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-seas
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP Express Application Server module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP Express Application Server module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-signaling
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-sl +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Signaling module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Signaling module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-siptrace
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP trace module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP trace module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-sl
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Stateless replier module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Stateless replier module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-sms
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP-to-SMS IM gateway module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP-to-SMS IM gateway module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-speeddial
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Per-user speed-dial controller module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Per-user speed-dial controller module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-statistics
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Script statistics module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Script statistics module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-sst
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-dialog +opensips-mod-sl
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP Session Timer module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP Session Timer module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-textops
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Text operations module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Text operations module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-tlsops
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS TLS operations module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS TLS operations module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-tm
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Transaction module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Transaction module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-uac
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS User Agent Client module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS User Agent Client module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-uac-redirect
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS User Agent Client redirection module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS User Agent Client redirection module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-uri
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Generic URI operation module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Generic URI operation module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-uri-db
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Database-backend SIP URI checking module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Database-backend SIP URI checking module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-uri-radius
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libradiusclient-ng
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS RADIUS-backend SIP URI checking module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS RADIUS-backend SIP URI checking module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-userblacklist
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS User blacklists module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS User blacklists module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-usrloc
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS User location module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS User location module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-xcap-client
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +libcurl +libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS XCAP Client module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS XCAP Client module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-xlog
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS Advanced logger module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS Advanced logger module
+http://www.opensips.org/
+
+@@
+
+Package: opensips-mod-xmpp
+Submenu: Telephony
+Version: 1.5.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensips +opensips-mod-tm +libexpat
+Menu-Depends: 
+Provides: 
+Build-Depends: curl expat libxml2 mysql openldap openssl pcre postgresql radiusclient-ng
+Section: net
+Category: Network
+Title: OpenSIPS SIP-to-XMPP Gateway module
+Maintainer: 
+Source: opensips-1.5.3-tls_src.tar.gz
+Type: ipkg
+Description: OpenSIPS SIP-to-XMPP Gateway module
+http://www.opensips.org/
+
+@@
+
+

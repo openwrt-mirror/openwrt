@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/utils/joe/Makefile
+Package: joe
+Submenu: Editors
+Version: 3.7-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: JOE - Joes own editor
+Maintainer: 
+Source: joe-3.7.tar.gz
+Type: ipkg
+Description: Joe is world-famous Wordstar like text editor, that also features
+Emacs and Pico emulation
+http://sourceforge.net/projects/joe-editor/
+
+@@
+
+

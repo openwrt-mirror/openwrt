@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/lang/luasocket/Makefile
+Package: luasocket
+Submenu: Lua
+Version: 3.0-rc1-20130909-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: LuaSocket
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: luasocket-3.0-rc1-20130909.tar.bz2
+Type: ipkg
+Description:   LuaSocket is the most comprehensive networking support
+  library for the Lua language. It provides easy access to
+  TCP, UDP, DNS, SMTP, FTP, HTTP, MIME and much more.
+http://luasocket.luaforge.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+

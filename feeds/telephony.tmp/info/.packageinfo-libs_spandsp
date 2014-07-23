@@ -1,0 +1,17 @@
+Source-Makefile: feeds/telephony/libs/spandsp/Makefile
+Package: libspandsp
+Version: 0.0.6-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libtiff
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: spandsp library
+Maintainer: Jiri Slachta <slachta@cesnet.cz>
+Source: spandsp-0.0.6.tar.gz
+Type: ipkg
+Description: spandsp library
+Jiri Slachta <slachta@cesnet.cz>
+@@
+
+

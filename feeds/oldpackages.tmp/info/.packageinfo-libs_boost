@@ -1,0 +1,345 @@
+Source-Makefile: feeds/oldpackages/libs/boost/Makefile
+Package: boost
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (header-only)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Build-Only: 1
+Description: Boost C++ source libraries (header-only)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-chrono
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +boost-system
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (chrono)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (chrono)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-date_time
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (date_time)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (date_time)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-filesystem
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +boost-system
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (filesystem)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (filesystem)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-graph
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +boost-regex
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (graph)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (graph)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-iostreams
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +zlib
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (iostreams)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (iostreams)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-locale
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (locale)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (locale)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-math
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (math)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (math)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-program_options
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (program_options)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (program_options)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-random
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (random)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (random)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-python
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +PACKAGE_boost-python:python
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (python)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (python)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-regex
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (regex)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (regex)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-serialization
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (serialization)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (serialization)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-signals
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (signals)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (signals)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-system
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (system)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (system)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-test
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (test)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (test)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-thread
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +boost-system +boost-chrono
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (thread)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (thread)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-timer
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt boost-chrono
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (timer)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (timer)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+Package: boost-wave
+Version: 1_51_0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread +librt +boost-date_time +boost-thread +boost-filesystem
+Menu-Depends: 
+Provides: 
+Build-Depends: boost/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: Boost C++ source libraries (wave)
+Maintainer: Mirko Vogt <mirko@openwrt.org>
+Source: boost_1_51_0.tar.gz
+Type: ipkg
+Description: Boost C++ source libraries (wave)
+http://www.boost.org
+Mirko Vogt <mirko@openwrt.org>
+@@
+
+

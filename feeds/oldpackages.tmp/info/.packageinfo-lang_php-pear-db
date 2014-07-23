@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/php-pear-db/Makefile
+Package: php-pear-db
+Submenu: PHP
+Version: 1.7.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php-pear
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: PEAR DB module
+Maintainer: 
+Source: DB-1.7.11.tgz
+Type: ipkg
+Description: PEAR DB module
+http://pear.php.net/package/DB
+
+@@
+
+

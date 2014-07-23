@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/xapian-bindings/Makefile
+Package: python-xapian
+Submenu: Python
+Version: 1.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +libxapian
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: xapian python bindings
+Maintainer: 
+Source: xapian-bindings-1.2.8.tar.gz
+Type: ipkg
+Description: xapian python bindings
+http://xapian.org/
+
+@@
+
+

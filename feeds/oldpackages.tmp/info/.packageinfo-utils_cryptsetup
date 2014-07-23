@@ -1,0 +1,38 @@
+Source-Makefile: feeds/oldpackages/utils/cryptsetup/Makefile
+Package: cryptsetup
+Version: 1.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libblkid +libuuid +libpopt +lvm2 +libdevmapper +@KERNEL_DIRECT_IO +libgcrypt
+Menu-Depends: 
+Provides: 
+Build-Variant: gcrypt
+Section: utils
+Category: Utilities
+Title: Cryptsetup
+Maintainer: 
+Source: cryptsetup-1.6.2.tar.bz2
+Type: ipkg
+Description: 	Cryptsetup-luks
+linked against libgcrypt
+http://code.google.com/p/cryptsetup/
+
+@@
+
+Package: cryptsetup-openssl
+Version: 1.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libblkid +libuuid +libpopt +lvm2 +libdevmapper +@KERNEL_DIRECT_IO +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: openssl
+Section: utils
+Category: Utilities
+Title: Cryptsetup (with openssl support)
+Maintainer: 
+Source: cryptsetup-1.6.2.tar.bz2
+Type: ipkg
+Description: 	Cryptsetup-luks
+linked against openssl
+http://code.google.com/p/cryptsetup/
+
+@@
+
+

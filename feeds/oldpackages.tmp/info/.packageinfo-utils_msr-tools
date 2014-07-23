@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/utils/msr-tools/Makefile
+Package: msr-tools
+Submenu: CPU tools
+Version: 1.1.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: x86 MSR utilities.
+Maintainer: 
+Source: msr-tools-1.1.2.tar.gz
+Type: ipkg
+Description: 	Manipulate the MSR (machine state registers) on i386 and x86_64
+	processors.
+http://www.kernel.org/pub/linux/utils/cpu/msr-tools
+
+@@
+
+

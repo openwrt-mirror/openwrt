@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/utils/strace/Makefile
+Package: strace
+Version: 4.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: System call tracer
+Maintainer: 
+Source: strace-4.8.tar.xz
+Type: ipkg
+Description: A useful diagnostic, instructional, and debugging tool. Allows you to track what
+system calls a program makes while it is running.
+http://strace.sourceforge.net/
+
+@@
+
+

@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/bandwidthd/Makefile
+Package: bandwidthd
+Version: 2.0.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgd +libpcap
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Bandwidthd
+Maintainer: 
+Source: bandwidthd-2.0.1.tgz
+Type: ipkg
+Description: Bandwidthd
+http://bandwidthd.sourceforge.net/
+
+@@
+
+

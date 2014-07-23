@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/utils/zile/Makefile
+Package: zile
+Submenu: Editors
+Version: 2.3.24-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncursesw
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: very small emacs-like editor
+Maintainer: Ted Hess <thess@kitschensync.net>
+Source: zile-2.3.24.tar.gz
+Type: ipkg
+Description: 	Zile is a small Emacs clone. Zile is a customizable, self-documenting
+	real-time display editor. Zile was written to be as similar as possible
+	to Emacs; every Emacs user should feel at home with Zile.
+http://www.gnu.org/software/zile/
+Ted Hess <thess@kitschensync.net>
+@@
+
+

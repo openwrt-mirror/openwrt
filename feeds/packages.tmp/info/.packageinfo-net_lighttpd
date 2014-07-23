@@ -1,0 +1,506 @@
+Source-Makefile: feeds/packages/net/lighttpd/Makefile
+Package: lighttpd
+Menu: 1
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +LIGHTTPD_SSL:libopenssl +libpcre +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A flexible and lightweight web server
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: A flexible and lightweight web server
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+Config:
+config LIGHTTPD_SSL
+	bool "SSL support"
+	depends on PACKAGE_lighttpd
+	default y
+	help
+	  Implements SSL support in lighttpd (using libopenssl). This
+	  option is required if you enable the SSL engine in your
+	  lighttpd confguration file.
+@@
+
+Package: lighttpd-mod-access
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Access restrictions module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Access restrictions module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-accesslog
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Access logging module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Access logging module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-alias
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Directory alias module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Directory alias module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-auth
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Authentication module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Authentication module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-cgi
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: CGI module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: CGI module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-cml
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Cache Meta Language module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Cache Meta Language module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-compress
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd +zlib
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Compress output module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Compress output module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-evasive
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Evasive module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Evasive module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-evhost
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Exnhanced Virtual-Hosting module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Exnhanced Virtual-Hosting module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-expire
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Expire module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Expire module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-extforward
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Extract client IP module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Extract client IP module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-fastcgi
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: FastCGI module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: FastCGI module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-flv-streaming
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: flv streaming module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: flv streaming module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-magnet
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: magnet module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: magnet module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-proxy
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Proxy module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Proxy module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-redirect
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd +libpcre
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: URL redirection module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: URL redirection module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-rewrite
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd +libpcre
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: URL rewriting module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: URL rewriting module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-rrdtool
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: rrdtool module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: rrdtool module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-scgi
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SCGI module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: SCGI module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-secdownload
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Secure and fast download module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Secure and fast download module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-setenv
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Environment variable setting module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Environment variable setting module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-simple-vhost
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Simple virtual hosting module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Simple virtual hosting module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-ssi
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd +libpcre
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: SSI module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: SSI module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-status
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Server status display module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Server status display module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-trigger-b4-dl
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd +libpcre
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Trigger before download module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: Trigger before download module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-userdir
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: User directory module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: User directory module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-usertrack
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: User tracking module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: User tracking module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: lighttpd-mod-webdav
+Submenu: Web Servers/Proxies
+Version: 1.4.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lighttpd +libsqlite3 +libuuid +libxml2
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: WebDAV module
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: lighttpd-1.4.35.tar.xz
+Type: ipkg
+Description: WebDAV module
+http://www.lighttpd.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+

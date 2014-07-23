@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/acpid/Makefile
+Package: acpid
+Version: 2.0.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-input-evdev +kmod-acpi-button
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: The ACPI Daemon (acpid) With Netlink Support
+Maintainer: 
+Source: acpid-2.0.10.tar.gz
+Type: ipkg
+Description:   The ACPI Daemon (acpid) With Netlink Support
+http://tedfelix.com/linux/acpid-netlink.html
+
+@@
+
+

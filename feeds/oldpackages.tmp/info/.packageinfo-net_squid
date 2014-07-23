@@ -1,0 +1,186 @@
+Source-Makefile: feeds/oldpackages/net/squid/Makefile
+Package: squid
+Menu: 1
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: full-featured Web proxy cache
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: 	Squid is a high-performance proxy caching server for web clients,
+	supporting FTP, gopher, and HTTP data objects. Unlike traditional
+	caching software, Squid handles all requests in a single,
+	non-blocking, I/O-driven process.
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-cachemgr
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Web based proxy manager and reporting tool
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: Web based proxy manager and reporting tool
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-basic-auth-getpwnam
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: getpwnam basic authentication helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: getpwnam basic authentication helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-basic-auth-ncsa
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NCSA basic authentication helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: NCSA basic authentication helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-basic-auth-smb
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Samba basic authentication helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: Samba basic authentication helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-digest-auth-password
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Password digest authentication helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: Password digest authentication helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-external-acl-ip-user
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: IP user external ACL helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: IP user external ACL helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-external-acl-unix-group
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Unix group external ACL helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: Unix group external ACL helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-ntlm-auth-fakeauth
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Fakeauth NTLM authentication helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: Fakeauth NTLM authentication helper
+http://www.squid-cache.org/
+
+@@
+
+Package: squid-mod-ntlm-auth-smb-auth
+Submenu: Web Servers/Proxies
+Prereq-Check: 1
+Version: 2.7.STABLE9-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread squid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Samba NTLM authentication helper
+Maintainer: 
+Source: squid-2.7.STABLE9.tar.bz2
+Type: ipkg
+Description: Samba NTLM authentication helper
+http://www.squid-cache.org/
+
+@@
+
+

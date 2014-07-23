@@ -1,0 +1,59 @@
+Source-Makefile: feeds/oldpackages/net/mosh/Makefile
+Package: mosh-client
+Version: 1.2.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncursesw +libopenssl +protobuf
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Mosh mobile shell (client)
+Maintainer: 
+Source: mosh-1.2.4.tar.gz
+Type: ipkg
+Description:  Mosh is a remote terminal application that allows roaming, supports
+ intermittent connectivity, and provides intelligent local echo and line
+ editing of user keystrokes.
+ This is a mosh client.
+http://mosh.mit.edu/
+
+@@
+
+Package: mosh-server
+Version: 1.2.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncursesw +libopenssl +protobuf
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Mosh mobile shell (client)
+Maintainer: 
+Source: mosh-1.2.4.tar.gz
+Type: ipkg
+Description:  Mosh is a remote terminal application that allows roaming, supports
+ intermittent connectivity, and provides intelligent local echo and line
+ editing of user keystrokes.
+ This is a mosh server.
+http://mosh.mit.edu/
+
+@@
+
+Package: mosh-full
+Version: 1.2.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +mosh-client +mosh-server +perlbase-essential +perlbase-socket +perlbase-xsloader +perlbase-getopt +perlbase-errno +perlbase-config +perlbase-io +perlbase-symbol +perlbase-selectsaver +perlbase-posix +perlbase-autoloader +perlbase-fcntl +perlbase-tie
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Mosh mobile shell (client)
+Maintainer: 
+Source: mosh-1.2.4.tar.gz
+Type: ipkg
+Description:  Mosh is a remote terminal application that allows roaming, supports
+ intermittent connectivity, and provides intelligent local echo and line
+ editing of user keystrokes.
+ This is a full package with perl wrapper script
+http://mosh.mit.edu/
+
+@@
+
+

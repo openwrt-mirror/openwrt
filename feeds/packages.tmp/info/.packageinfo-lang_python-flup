@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/lang/python-flup/Makefile
+Package: python-flup
+Submenu: Python
+Version: 1.0.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: python-flup
+Maintainer: Hamish Guthrie <hcg@openwrt.org>
+Source: flup-1.0.2.tar.gz
+Type: ipkg
+Description:   Random assortment of WSGI servers
+http://pypi.python.org/pypi/flup/
+Hamish Guthrie <hcg@openwrt.org>
+@@
+
+

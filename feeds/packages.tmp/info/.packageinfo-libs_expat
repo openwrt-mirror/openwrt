@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/libs/expat/Makefile
+Package: libexpat
+Version: 2.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: An XML parsing library
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: expat-2.1.0.tar.gz
+Type: ipkg
+Description:  A fast, non-validating, stream-oriented XML parsing library.
+http://expat.sourceforge.net/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

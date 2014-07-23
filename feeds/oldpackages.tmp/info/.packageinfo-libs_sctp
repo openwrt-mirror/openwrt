@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/sctp/Makefile
+Package: sctp
+Version: 1.0.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-sctp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Network
+Title: SCTP user-land library
+Maintainer: 
+Source: lksctp-tools-1.0.11.tar.gz
+Type: ipkg
+Description:  SCTP user-land library for sctp_* functions (when socket API is too limited).
+http://lksctp.sourceforge.net
+
+@@
+
+

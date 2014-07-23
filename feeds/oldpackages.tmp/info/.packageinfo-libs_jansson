@@ -1,0 +1,17 @@
+Source-Makefile: feeds/oldpackages/libs/jansson/Makefile
+Package: jansson
+Version: 2.2.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: JSON library
+Maintainer: 
+Source: jansson-2.2.1.tar.gz
+Type: ipkg
+Description: JSON library
+
+@@
+
+

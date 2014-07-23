@@ -1,0 +1,68 @@
+Source-Makefile: feeds/oldpackages/net/tor-alpha/Makefile
+Package: tor-alpha
+Version: 0.2.5.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libevent2 +libopenssl +libpthread +librt +SSP_SUPPORT:libssp
+Menu-Depends: 
+Provides: 
+Build-Depends: libminiupnpc libnatpmp
+Section: net
+Category: Network
+Title: An anonymous Internet communication system
+Maintainer: 
+Source: tor-0.2.5.4-alpha.tar.gz
+Type: ipkg
+Description:  Tor is a toolset for a wide range of organizations and people that want to
+ improve their safety and security on the Internet. Using Tor can help you
+ anonymize web browsing and publishing, instant messaging, IRC, SSH, and
+ more. Tor also provides a platform on which software developers can build
+ new applications with built-in anonymity, safety, and privacy features.
+ This package contains the tor daemon.
+https://www.torproject.org/
+
+@@
+
+Package: tor-alpha-fw-helper
+Version: 0.2.5.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +tor-alpha +libminiupnpc +libnatpmp
+Menu-Depends: 
+Provides: 
+Build-Depends: libminiupnpc libnatpmp
+Section: net
+Category: Network
+Title: Firewall helper for tor
+Maintainer: 
+Source: tor-0.2.5.4-alpha.tar.gz
+Type: ipkg
+Description:  Tor is a toolset for a wide range of organizations and people that want to
+ improve their safety and security on the Internet. Using Tor can help you
+ anonymize web browsing and publishing, instant messaging, IRC, SSH, and
+ more. Tor also provides a platform on which software developers can build
+ new applications with built-in anonymity, safety, and privacy features.
+ This package contains a helper for automatically configuring port forwarding.
+https://www.torproject.org/
+
+@@
+
+Package: tor-alpha-geoip
+Version: 0.2.5.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +tor-alpha
+Menu-Depends: 
+Provides: 
+Build-Depends: libminiupnpc libnatpmp
+Section: net
+Category: Network
+Title: GeoIP db for tor
+Maintainer: 
+Source: tor-0.2.5.4-alpha.tar.gz
+Type: ipkg
+Description:  Tor is a toolset for a wide range of organizations and people that want to
+ improve their safety and security on the Internet. Using Tor can help you
+ anonymize web browsing and publishing, instant messaging, IRC, SSH, and
+ more. Tor also provides a platform on which software developers can build
+ new applications with built-in anonymity, safety, and privacy features.
+ This package contains a GeoIP database mapping IP addresses to countries.
+https://www.torproject.org/
+
+@@
+
+

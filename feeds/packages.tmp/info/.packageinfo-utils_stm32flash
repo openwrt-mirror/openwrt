@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/utils/stm32flash/Makefile
+Package: stm32flash
+Version: 0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Firmware flash tool for STM32's serial bootloader
+Maintainer: Christian Pointner <equinox@spreadspace.org>
+Source: stm32flash-0.3.tar.gz
+Type: ipkg
+Description:   This tool can be used to burn firmware images to STM32 ARM processors
+  using the built-in serial bootloader.
+http://code.google.com/p/stm32flash/
+Christian Pointner <equinox@spreadspace.org>
+@@
+
+

@@ -1,0 +1,110 @@
+Source-Makefile: feeds/oldpackages/net/nmap/Makefile
+Package: nmap
+Submenu: NMAP Suite
+Version: 6.46-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libstdcpp
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: net
+Category: Network
+Title: Utility for network exploration or security auditing
+Maintainer: 
+Source: nmap-6.46.tar.bz2
+Type: ipkg
+Description: Utility for network exploration or security auditing
+http://nmap.org/
+
+@@
+
+Package: nmap-ssl
+Submenu: NMAP Suite
+Version: 6.46-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libstdcpp +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: ssl
+Section: net
+Category: Network
+Title: Nmap (with OpenSSL support)
+Maintainer: 
+Source: nmap-6.46.tar.bz2
+Type: ipkg
+Description: Nmap (with OpenSSL support)
+http://nmap.org/
+
+@@
+
+Package: ncat
+Submenu: NMAP Suite
+Version: 6.46-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: net
+Category: Network
+Title: Much-improved reimplementation of Netcat
+Maintainer: 
+Source: nmap-6.46.tar.bz2
+Type: ipkg
+Description: Much-improved reimplementation of Netcat
+http://nmap.org/
+
+@@
+
+Package: ncat-ssl
+Submenu: NMAP Suite
+Version: 6.46-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: ssl
+Section: net
+Category: Network
+Title: Ncat (with OpenSSL support)
+Maintainer: 
+Source: nmap-6.46.tar.bz2
+Type: ipkg
+Description: Ncat (with OpenSSL support)
+http://nmap.org/
+
+@@
+
+Package: nping
+Submenu: NMAP Suite
+Version: 6.46-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libpthread +libstdcpp
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: net
+Category: Network
+Title: Network packet generation tool / ping utility
+Maintainer: 
+Source: nmap-6.46.tar.bz2
+Type: ipkg
+Description: Network packet generation tool / ping utility
+http://nmap.org/
+
+@@
+
+Package: ndiff
+Submenu: NMAP Suite
+Version: 6.46-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: net
+Category: Network
+Title: Utility to compare the results of Nmap scans
+Maintainer: 
+Source: nmap-6.46.tar.bz2
+Type: ipkg
+Description: Utility to compare the results of Nmap scans
+http://nmap.org/
+
+@@
+
+

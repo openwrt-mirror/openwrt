@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/python-curl/Makefile
+Package: python-curl
+Submenu: Python
+Version: 7.19.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +libcurl
+Menu-Depends: 
+Provides: 
+Section: language-python
+Category: Languages
+Title: python-curl
+Maintainer: 
+Source: pycurl-7.19.0.tar.gz
+Type: ipkg
+Description: Python module interface to the cURL library.
+http://sourceforge.net/projects/pycurl
+
+@@
+
+

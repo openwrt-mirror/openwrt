@@ -1,0 +1,53 @@
+Source-Makefile: feeds/oldpackages/utils/sane-backends/Makefile
+Package: sane-backends
+Version: 1.0.24-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +sane-libs
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Scanner Access Now Easy (backends)
+Maintainer: 
+Source: sane-backends-1.0.24.tar.gz
+Type: ipkg
+Description:  SANE (Scanner Access Now Easy) is a universal scanner interface.
+ This package contains the SANE daemon.
+http://www.sane-project.org/
+
+@@
+
+Package: sane-libs
+Version: 1.0.24-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libjpeg +libtiff +libusb-compat +libv4l +cups
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Scanner Access Now Easy (libraries)
+Maintainer: 
+Source: sane-backends-1.0.24.tar.gz
+Type: ipkg
+Description:  SANE (Scanner Access Now Easy) is a universal scanner interface.
+ This package contains the SANE shared libraries.
+http://www.sane-project.org/
+
+@@
+
+Package: sane-frontends
+Version: 1.0.24-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +sane-backends
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Scanner Access Now Easy (frontends)
+Maintainer: 
+Source: sane-backends-1.0.24.tar.gz
+Type: ipkg
+Description:  SANE (Scanner Access Now Easy) is a universal scanner interface.
+ This package contains the SANE frontends.
+http://www.sane-project.org/
+
+@@
+
+

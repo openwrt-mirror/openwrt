@@ -1,0 +1,56 @@
+Source-Makefile: feeds/oldpackages/net/deluge/Makefile
+Package: deluge
+Submenu: BitTorrent
+Version: 1.2.0-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +rblibtorrent +python2-chardet +pyxdg +twisted +twisted-web +pyopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: distribute/host
+Section: net
+Category: Network
+Title: A lightweight BitTorrent client (console UI & daemon)
+Maintainer: 
+Source: deluge-1.2.0.tar.gz
+Type: ipkg
+Description:   BitTorrent client with a client/server model.
+http://deluge-torrent.org/
+
+@@
+
+Package: deluge-ui-gtk
+Submenu: BitTorrent
+Version: 1.2.0-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread deluge +python-gtk
+Menu-Depends: 
+Provides: 
+Build-Depends: distribute/host
+Section: net
+Category: Network
+Title: A lightweight BitTorrent client (GTK+ UI)
+Maintainer: 
+Source: deluge-1.2.0.tar.gz
+Type: ipkg
+Description: A lightweight BitTorrent client (GTK+ UI)
+http://deluge-torrent.org/
+
+@@
+
+Package: deluge-ui-web
+Submenu: BitTorrent
+Version: 1.2.0-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread deluge +mako
+Menu-Depends: 
+Provides: 
+Build-Depends: distribute/host
+Section: net
+Category: Network
+Title: A lightweight BitTorrent client (Web UI)
+Maintainer: 
+Source: deluge-1.2.0.tar.gz
+Type: ipkg
+Description: A lightweight BitTorrent client (Web UI)
+http://deluge-torrent.org/
+
+@@
+
+

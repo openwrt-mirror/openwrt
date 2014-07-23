@@ -1,0 +1,17 @@
+Source-Makefile: feeds/management/freecwmp/Makefile
+Package: freecwmp
+Version: 2014-06-12-8f3c163fc85337e63bfa64da3c02f10d1fe3b169
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcurl +libfreecwmp +libuci +libubox +libubus +libmicroxml +shflags
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: CWMP client
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: freecwmp-2014-06-12-8f3c163fc85337e63bfa64da3c02f10d1fe3b169.tar.gz
+Type: ipkg
+Description:  A free client implementation of CWMP (TR-069) protocol
+Luka Perkov <luka@openwrt.org>
+@@
+
+

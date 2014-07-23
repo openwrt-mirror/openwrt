@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/aircrack-ng/Makefile
+Package: aircrack-ng
+Submenu: wireless
+Version: 1.1-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libopenssl +libpcap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: next generation of aircrack with new features
+Maintainer: 
+Source: aircrack-ng-1.1.tar.gz
+Type: ipkg
+Description: Aircrack-ng is the next generation of aircrack with new features
+http://www.aircrack-ng.org/
+
+@@
+
+

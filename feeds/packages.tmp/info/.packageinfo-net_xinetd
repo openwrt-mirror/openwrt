@@ -1,0 +1,22 @@
+Source-Makefile: feeds/packages/net/xinetd/Makefile
+Package: xinetd
+Version: 2.3.15-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A powerful and secure super-server
+Maintainer: Jonathan McCrohan <jmccrohan@gmail.com>
+Source: xinetd-2.3.15.tar.gz
+Type: ipkg
+Description: 	xinetd has access control mechanisms, extensive logging capabilities,
+	the ability to make services available based on time, can place limits
+	on the number of servers that can be started, and has deployable
+	defence mechanisms to protect against port scanners, among other
+	things.
+http://www.xinetd.org/
+Jonathan McCrohan <jmccrohan@gmail.com>
+@@
+
+

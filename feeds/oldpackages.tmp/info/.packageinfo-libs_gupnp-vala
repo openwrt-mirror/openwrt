@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/gupnp-vala/Makefile
+Package: libgupnp-vala
+Version: 0.10.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: vala/host libgssdp libgupnp libgupnp-av libgupnp-dlna !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: GUPnP Vala bindings
+Maintainer: 
+Source: gupnp-vala-0.10.3.tar.xz
+Type: ipkg
+Description: Vala bindings for GUPnP
+http://live.gnome.org/GUPnP
+
+@@
+
+

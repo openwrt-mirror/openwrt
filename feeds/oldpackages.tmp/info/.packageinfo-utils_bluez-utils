@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/bluez-utils/Makefile
+Package: bluez-utils
+Version: 3.36-12
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +bluez-libs +libpthread +dbus +BUILD_NLS:libintl-full +BUILD_NLS:libiconv-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: utils
+Category: Utilities
+Title: Bluetooth utilities
+Maintainer: 
+Source: bluez-utils-3.36.tar.gz
+Type: ipkg
+Description: Bluetooth utilities
+http://www.bluez.org/
+
+@@
+
+

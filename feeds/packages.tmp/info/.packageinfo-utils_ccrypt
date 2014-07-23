@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/utils/ccrypt/Makefile
+Package: ccrypt
+Version: 1.10-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: ccrypt is a utility for encrypting and decrypting files and streams
+Maintainer: Hannu Nyman <hannu.nyman@iki.fi>
+Source: ccrypt-1.10.tar.gz
+Type: ipkg
+Description: ccrypt is a utility for encrypting and decrypting files and streams
+http://ccrypt.sourceforge.net/
+Hannu Nyman <hannu.nyman@iki.fi>
+@@
+
+

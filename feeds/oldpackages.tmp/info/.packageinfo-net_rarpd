@@ -1,0 +1,23 @@
+Source-Makefile: feeds/oldpackages/net/rarpd/Makefile
+Package: rarpd
+Submenu: IP Addresses and Names
+Version: 1.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnet0
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Reverse ARP Daemon
+Maintainer: 
+Source: rarpd-1.1.tar.gz
+Type: ipkg
+Description: 	Rarpd is a daemon which responds to RARP requests.
+	RARP is used by some machines at boot time to discover their
+	IP address. They provide their Ethernet address and rarpd
+	responds with their IP address if it finds it in the ethers
+	database.
+ftp://ftp.dementia.org/pub/net-tools/
+
+@@
+
+

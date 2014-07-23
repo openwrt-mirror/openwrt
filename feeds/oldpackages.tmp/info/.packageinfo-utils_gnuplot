@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/utils/gnuplot/Makefile
+Package: gnuplot
+Version: 4.6.0-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib +libpng +libfreetype +libgd +BUILD_NLS:libintl-full +BUILD_NLS:libiconv-full +libpthread +libreadline
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: utils
+Category: Utilities
+Title: A portable command-line driven graphing utility
+Maintainer: 
+Source: gnuplot-4.6.0.tar.gz
+Type: ipkg
+Description:   Gnuplot is a portable command-line driven graphing utility for linux, OS/2,
+  MS Windows, OSX, VMS, and many other platforms.
+http://sourceforge.net/projects/gnuplot/
+
+@@
+
+

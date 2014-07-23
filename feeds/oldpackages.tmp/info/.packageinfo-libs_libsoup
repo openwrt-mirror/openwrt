@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libsoup/Makefile
+Package: libsoup
+Version: 2.38.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libxml2 +libgnutls
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: libsoup
+Maintainer: 
+Source: libsoup-2.38.1.tar.xz
+Type: ipkg
+Description: libsoup
+http://live.gnome.org/LibSoup
+
+@@
+
+

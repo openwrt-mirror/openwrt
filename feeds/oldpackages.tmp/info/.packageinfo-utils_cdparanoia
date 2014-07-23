@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/cdparanoia/Makefile
+Package: cdparanoia
+Version: 10.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Cdparanoia
+Maintainer: 
+Source: cdparanoia-III-10.2.src.tgz
+Type: ipkg
+Description: Cdparanoia
+http://www.xiph.org/paranoia/index.html
+
+@@
+
+

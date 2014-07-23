@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/ntpclient/Makefile
+Package: ntpclient
+Submenu: Time Synchronization
+Version: 2007_365-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NTP (Network Time Protocol) client
+Maintainer: 
+Source: ntpclient_2007_365.tar.gz
+Type: ipkg
+Description: 	NTP client for setting system time from NTP servers.
+http://doolittle.icarus.com/ntpclient/
+
+@@
+
+

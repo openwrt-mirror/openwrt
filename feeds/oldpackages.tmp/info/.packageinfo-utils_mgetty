@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/mgetty/Makefile
+Package: mgetty
+Version: 1.1.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: A data/fax solution for your analog modem
+Maintainer: 
+Source: mgetty1.1.36-Jun15.tar.gz
+Type: ipkg
+Description: A data/fax solution for your analog modem.
+http://mgetty.greenie.net/
+
+@@
+
+

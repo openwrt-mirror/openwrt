@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/picocom/Makefile
+Package: picocom
+Submenu: Terminal
+Version: 1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: A minimal dumb-terminal emulation program
+Maintainer: 
+Source: picocom-1.7.tar.gz
+Type: ipkg
+Description:  minimal dumb-terminal emulation program
+http://code.google.com/p/picocom/
+
+@@
+
+

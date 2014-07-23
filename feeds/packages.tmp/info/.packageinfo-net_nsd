@@ -1,0 +1,76 @@
+Source-Makefile: feeds/packages/net/nsd/Makefile
+Package: nsd
+Submenu: IP Addresses and Names
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: ssl
+Section: net
+Category: Network
+Title: NSD Name Server Daemon (with SSL support)
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: nsd-4.0.3.tar.gz
+Type: ipkg
+Description:     NSD is an authoritative only, high performance, simple and open source name
+  server.
+http://www.nlnetlabs.nl/projects/nsd/
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: nsd-nossl
+Submenu: IP Addresses and Names
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: net
+Category: Network
+Title: NSD Name Server Daemon (without SSL support)
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: nsd-4.0.3.tar.gz
+Type: ipkg
+Description:     NSD is an authoritative only, high performance, simple and open source name
+  server.
+http://www.nlnetlabs.nl/projects/nsd/
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: nsd-control
+Submenu: IP Addresses and Names
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NSD Name Server Daemon remote control utility
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: nsd-4.0.3.tar.gz
+Type: ipkg
+Description:     NSD is an authoritative only, high performance, simple and open source name
+  server.
+http://www.nlnetlabs.nl/projects/nsd/
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: nsd-control-setup
+Submenu: IP Addresses and Names
+Version: 4.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +openssl-util
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NSD Name Server Daemon SSL keys setup script
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: nsd-4.0.3.tar.gz
+Type: ipkg
+Description:     NSD is an authoritative only, high performance, simple and open source name
+  server.
+http://www.nlnetlabs.nl/projects/nsd/
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+

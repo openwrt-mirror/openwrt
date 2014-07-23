@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/ink/Makefile
+Package: ink
+Version: 0.5.1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libinklevel
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: A utility for reading ink levels
+Maintainer: 
+Source: ink-0.5.1.tar.gz
+Type: ipkg
+Description: A utility for reading ink levels
+http://ink.sourceforge.net/
+
+@@
+
+

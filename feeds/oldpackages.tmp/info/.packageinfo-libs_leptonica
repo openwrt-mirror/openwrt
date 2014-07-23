@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/leptonica/Makefile
+Package: libleptonica
+Version: 1.68-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +giflib +libjpeg +libpng +libtiff +zlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: A library for efficient image processing and image analysis operations
+Maintainer: 
+Source: leptonica-1.68.tar.gz
+Type: ipkg
+Description: A library for efficient image processing and image analysis operations
+http://leptonica.googlecode.com/
+
+@@
+
+

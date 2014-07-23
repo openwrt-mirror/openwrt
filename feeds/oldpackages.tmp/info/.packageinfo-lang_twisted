@@ -1,0 +1,182 @@
+Source-Makefile: feeds/oldpackages/lang/twisted/Makefile
+Package: twisted
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +zope-interface
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Python networking engine
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Python networking engine
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-conch
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Conch
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Conch
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-lore
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Lore
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Lore
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-mail
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Mail
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Mail
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-names
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Names
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Names
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-news
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - News
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - News
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-runner
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Runner
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Runner
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-web
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Web
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Web
+http://twistedmatrix.com/
+
+@@
+
+Package: twisted-words
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini twisted
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Twisted - Words
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Twisted - Words
+http://twistedmatrix.com/
+
+@@
+
+Package: zope-interface
+Submenu: Python
+Version: 2.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini
+Menu-Depends: 
+Provides: 
+Build-Depends: python USE_UCLIBC:librpc
+Section: lang
+Category: Languages
+Title: Zope interface
+Maintainer: 
+Source: Twisted-2.5.0.tar.bz2
+Type: ipkg
+Description: Zope interface
+http://twistedmatrix.com/
+
+@@
+
+

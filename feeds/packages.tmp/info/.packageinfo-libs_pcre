@@ -1,0 +1,34 @@
+Source-Makefile: feeds/packages/libs/pcre/Makefile
+Package: libpcre
+Version: 8.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: A Perl Compatible Regular Expression library
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: pcre-8.35.tar.bz2
+Type: ipkg
+Description: A Perl Compatible Regular Expression library
+http://www.pcre.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+Package: libpcrecpp
+Version: 8.35-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcre +libstdcpp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: C++ wrapper for Perl Compatible Regular Expression library
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: pcre-8.35.tar.bz2
+Type: ipkg
+Description: C++ wrapper for Perl Compatible Regular Expression library
+http://www.pcre.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+

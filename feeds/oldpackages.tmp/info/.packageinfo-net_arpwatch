@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/arpwatch/Makefile
+Package: arpwatch
+Version: 2.1a15-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Ethernet station activity monitor
+Maintainer: 
+Source: arpwatch-2.1a15.tar.gz
+Type: ipkg
+Description: 	Ethernet monitor program for keeping track of ethernet/ip address
+	pairings.
+http://www-nrg.ee.lbl.gov/
+
+@@
+
+

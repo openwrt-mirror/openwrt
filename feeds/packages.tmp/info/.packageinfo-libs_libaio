@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/libaio/Makefile
+Package: libaio
+Version: 0.3.109-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Linux kernel AIO interface access library
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: libaio_0.3.109.orig.tar.gz
+Type: ipkg
+Description: Linux kernel AIO interface access library
+http://lse.sourceforge.net/io/aio.html
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

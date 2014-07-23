@@ -1,0 +1,39 @@
+Source-Makefile: feeds/oldpackages/net/l7-protocols/Makefile
+Package: l7-protocols
+Submenu: Firewall
+Version: 2009-05-28-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables-mod-filter
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Protocols for layer7 filtering
+Maintainer: 
+Source: l7-protocols-2009-05-28.tar.gz
+Type: ipkg
+Description:        l7-filter classifies packets based on patterns in application
+       layer data. This allows correct classification of P2P traffic that
+       uses unpredictable ports as well as standard protocols running on
+       non-standard ports.
+http://l7-filter.sourceforge.net/
+
+@@
+
+Package: l7-protocols-testing
+Submenu: Firewall
+Version: 2009-05-28-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables-mod-filter l7-protocols +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: testing utilities for layer7
+Maintainer: 
+Source: l7-protocols-2009-05-28.tar.gz
+Type: ipkg
+Description: 	testing utilities for layer 7 patterns
+http://l7-filter.sourceforge.net/
+
+@@
+
+

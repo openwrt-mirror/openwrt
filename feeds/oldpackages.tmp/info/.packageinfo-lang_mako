@@ -1,0 +1,28 @@
+Source-Makefile: feeds/oldpackages/lang/mako/Makefile
+Package: mako
+Submenu: Python
+Version: 0.2.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: distribute/host
+Section: lang
+Category: Languages
+Title: Mako Templates for Python
+Maintainer: 
+Source: Mako-0.2.5.tar.gz
+Type: ipkg
+Description: Mako is a template library written in Python. It provides a familiar,
+non-XML syntax which compiles into Python modules for maximum
+performance. Mako's syntax and API borrows from the best ideas of many
+others, including Django templates, Cheetah, Myghty, and
+Genshi. Conceptually, Mako is an embedded Python (i.e. Python Server
+Page) language, which refines the familiar ideas of componentized
+layout and inheritance to produce one of the most straightforward and
+flexible models available, while also maintaining close ties to Python
+calling and scoping semantics.
+http://www.makotemplates.org/
+
+@@
+
+

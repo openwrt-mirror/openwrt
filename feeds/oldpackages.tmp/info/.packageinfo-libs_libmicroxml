@@ -1,0 +1,17 @@
+Source-Makefile: feeds/oldpackages/libs/libmicroxml/Makefile
+Package: libmicroxml
+Version: 2012-06-11-72965423184f24cc0b963d91c2d1863cdb01b6aa
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML library
+Maintainer: 
+Source: libmicroxml-2012-06-11-72965423184f24cc0b963d91c2d1863cdb01b6aa.tar.gz
+Type: ipkg
+Description:  A micro sized XML library
+
+@@
+
+

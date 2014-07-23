@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/libs/libsynce/Makefile
+Package: libsynce
+Version: 0.12-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +BUILD_NLS:libiconv-full +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: SynCE library
+Maintainer: 
+Source: libsynce-0.12.tar.gz
+Type: ipkg
+Description: The purpose of the SynCE project is to provide a means of communication with a
+Windows CE or Pocket PC device from a computer running Linux, *BSD or other unices.
+http://synce.sourceforge.net/
+
+@@
+
+

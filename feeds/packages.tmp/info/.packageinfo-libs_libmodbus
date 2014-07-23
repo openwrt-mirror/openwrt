@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/libmodbus/Makefile
+Package: libmodbus
+Version: 3.0.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libmodbus
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: libmodbus-3.0.6.tar.gz
+Type: ipkg
+Description: A Modbus library for Linux, Mac OS X, FreeBSD, QNX and Win32
+http://www.libmodbus.org
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+

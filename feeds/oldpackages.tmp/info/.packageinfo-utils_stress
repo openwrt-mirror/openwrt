@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/stress/Makefile
+Package: stress
+Version: 1.0.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: stress is a simple stress utility
+Maintainer: 
+Source: stress-1.0.4.tar.gz
+Type: ipkg
+Description: stress is a simple tool that imposes certain types of compute \ stress on
+UNIX-like operating systems.
+http://weather.ou.edu/~apw/projects/stress/
+
+@@
+
+

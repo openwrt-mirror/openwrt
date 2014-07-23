@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/tar/Makefile
+Package: tar
+Version: 1.23-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +bzip2
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: GNU tar
+Maintainer: 
+Source: tar-1.23.tar.bz2
+Type: ipkg
+Description: 	Tar is a program for packaging a set of files as a
+	single archive in tar format.
+http://www.gnu.org/software/tar/
+
+@@
+
+

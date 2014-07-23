@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/devel/perf/Makefile
+Package: perf
+Version: <LINUX_VERSION>-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libelf1 +libdw +libpthread +librt +binutils
+Menu-Depends: 
+Provides: 
+Section: devel
+Category: Development
+Title: Linux performance monitoring tool
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   perf is the Linux performance monitoring tool
+http://www.kernel.org
+
+@@
+
+

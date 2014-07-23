@@ -1,0 +1,27 @@
+Source-Makefile: feeds/routing/babels/Makefile
+Package: babels
+Submenu: Routing and Redirection
+Version: 2014-07-04-bc5d60e58e7ebd1694cef23d798df08b3b8f216f-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A loop-free distance-vector routing protocol (source-specific)
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: babels-2014-07-04-bc5d60e58e7ebd1694cef23d798df08b3b8f216f.tar.gz
+Type: ipkg
+Description:  Babel is a loop-avoiding distance-vector routing protocol roughly based
+ on DSDV and AODV, but with provisions for link cost estimation and
+ redistribution of routes from other routing protocols.
+ While it is optimised for wireless mesh networks, Babel will also work
+ efficiently on wired networks. It will generate between 1.2 and 2.4 times
+ the amount of routing traffic that RIPng would generate, while
+ never counting to infinity.
+ This is experimental source routing branch, and should be only used if you
+ know what you are doing.
+http://www.pps.univ-paris-diderot.fr/~jch/software/babel/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

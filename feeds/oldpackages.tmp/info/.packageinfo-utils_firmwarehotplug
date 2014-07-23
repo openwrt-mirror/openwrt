@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/firmwarehotplug/Makefile
+Package: firmwarehotplug
+Version: 0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +fxload
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Hotplug firmware for EZ-USB microcontrollers
+Maintainer: 
+Source: firmwarehotplug-0.1.tar.gz
+Type: ipkg
+Description: Hotplug firmware for EZ-USB microcontrollers
+http://linux-hotplug.sourceforge.net/
+
+@@
+
+

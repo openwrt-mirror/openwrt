@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/utils/pv/Makefile
+Package: pv
+Version: 1.5.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Shell pipeline element to meter data passing through
+Maintainer: 
+Source: pv-1.5.2.tar.bz2
+Type: ipkg
+Description:  Pipe Viewer is a terminal-based tool for monitoring the progress of data
+ through a pipeline. It can be inserted into any normal pipeline between
+ two processes to give a visual indication of how quickly data is passing
+ through, how long it has taken, how near to completion it is, and an
+ estimate of how long it will be until completion.
+http://www.ivarch.com/programs/pv.shtml
+
+@@
+
+

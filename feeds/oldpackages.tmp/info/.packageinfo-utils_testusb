@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/testusb/Makefile
+Package: testusb
+Version: 1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @DEVEL +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: USB testing utility
+Maintainer: 
+Source: 
+Type: ipkg
+Description: 	This tool can be used to perform various tests with use of the usbtest driver.
+http://www.linux-usb.org/usbtest/testusb.c
+
+@@
+
+

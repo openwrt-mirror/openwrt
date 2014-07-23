@@ -1,0 +1,27 @@
+#!/bin/sh /etc/rc.common
+
+device=$(uci get xunlei.config.device)
+mountpoint="`mount | grep "$device" | awk '{print $3}'`"
+DIR=$mountpoint/xunlei
+$mountpoint/xunlei/portal -s
+mkdir -p ${DIR}/cfg
+cd ${DIR}
+FILE=$(uci get xunlei.config.xware)
+VERSION=`wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest`
+ver=$(uci get xunlei.config.ver)
+zversion=$(uci get xunlei.config.zversion)
+
+{
+	if [ "$zversion" -eq 1 ];then
+        wget http://dl.lazyzhu.com/file/Thunder/Xware/${ver}/${FILE}
+	else
+        wget http://dl.lazyzhu.com/file/Thunder/Xware/${VERSION}/${FILE}
+	fi
+	}
+
+rm -rf portal && rm -rf lib && tar zxvf ${FILE}
+chmod +x *
+rm -rf ${FILE}
+rm -rf $mountpoint/xunlei/cfg/thunder_mounts.cfg>> /dev/null 2>&1
+uci set xunlei.config.up=0>> /dev/null 2>&1
+

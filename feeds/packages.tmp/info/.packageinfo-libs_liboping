@@ -1,0 +1,50 @@
+Source-Makefile: feeds/packages/libs/liboping/Makefile
+Package: liboping
+Version: 1.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: C library to generate ICMP echo requests.
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: liboping-1.6.2.tar.bz2
+Type: ipkg
+Description: C library to generate ICMP echo requests.
+http://verplant.org/liboping/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: oping
+Version: 1.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +liboping
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Send ICMP echo request to network hosts
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: liboping-1.6.2.tar.bz2
+Type: ipkg
+Description: Send ICMP echo request to network hosts
+http://verplant.org/liboping/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: noping
+Version: 1.6.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +liboping +libncurses
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Ncurses application to send ICMP echo request to network hosts
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: liboping-1.6.2.tar.bz2
+Type: ipkg
+Description: Ncurses application to send ICMP echo request to network hosts
+http://verplant.org/liboping/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

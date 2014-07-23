@@ -1,0 +1,1775 @@
+Source-Makefile: feeds/luci/contrib/package/luci-addons/Makefile
+Package: luci-mod-freifunk-community
+Submenu: 9. Freifunk
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-mod-freifunk-community:iptables-mod-nat-extra +PACKAGE_luci-mod-freifunk-community:iptables-mod-ipopt +luci-app-splash +luci-i18n-german +PACKAGE_luci-mod-freifunk-community:olsrd +PACKAGE_luci-mod-freifunk-community:olsrd-mod-dyn-gw-plain +PACKAGE_luci-mod-freifunk-community:olsrd-mod-jsoninfo +PACKAGE_luci-mod-freifunk-community:olsrd-mod-nameservice +PACKAGE_luci-mod-freifunk-community:olsrd-mod-watchdog +PACKAGE_luci-mod-freifunk-community:kmod-tun +PACKAGE_luci-mod-freifunk-community:ip +PACKAGE_luci-mod-freifunk-community:freifunk-watchdog +luci-app-olsr +luci-app-olsr-services +PACKAGE_luci-mod-freifunk-community:freifunk-gwcheck +PACKAGE_luci-mod-freifunk-community:freifunk-mapupdate
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Freifunk Community Meta-Package
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Freifunk Community Meta-Package
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-mod-freifunk
+Submenu: 2. Modules
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-mod-admin-full +luci-lib-json +PACKAGE_luci-mod-freifunk:freifunk-firewall +freifunk-common
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Freifunk module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Freifunk module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-siitwizard
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-siitwizard:kmod-siit
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: SIIT IPv4-over-IPv6 configuration wizard
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: SIIT IPv4-over-IPv6 configuration wizard
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-freifunk-policyrouting
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-freifunk-policyrouting:freifunk-policyrouting
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Policy routing for mesh traffic
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Policy routing for mesh traffic
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-freifunk-widgets
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-mod-freifunk
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Widgets for the Freifunk index page
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Widgets for the Freifunk index page
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-meshwizard
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-meshwizard:meshwizard
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Shellscript based wizard to setup mesh networks
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Shellscript based wizard to setup mesh networks
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-olsr
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-olsr:olsrd +PACKAGE_luci-app-olsr:olsrd-mod-jsoninfo +luci-lib-luaneightbl
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: OLSR configuration and status module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: OLSR configuration and status module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-olsr-viz
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-olsr +PACKAGE_luci-app-olsr-viz:olsrd +PACKAGE_luci-app-olsr-viz:olsrd-mod-txtinfo
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: OLSR Visualisation
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: OLSR Visualisation
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-freifunk-diagnostics
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Tools for network diagnosis like traceroute and ping
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Tools for network diagnosis like traceroute and ping
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-olsr-services
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-olsr +PACKAGE_luci-app-olsr-services:olsrd +PACKAGE_luci-app-olsr-services:olsrd-mod-nameservice
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Show services announced with the nameservice plugin
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Show services announced with the nameservice plugin
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-splash
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-lib-nixio +PACKAGE_luci-app-splash:tc +PACKAGE_luci-app-splash:kmod-sched +PACKAGE_luci-app-splash:iptables-mod-nat-extra +PACKAGE_luci-app-splash:iptables-mod-ipopt
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Freifunk DHCP-Splash application
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Freifunk DHCP-Splash application
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-statistics
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-statistics:collectd +PACKAGE_luci-app-statistics:rrdtool1 +PACKAGE_luci-app-statistics:collectd-mod-rrdtool +PACKAGE_luci-app-statistics:collectd-mod-iwinfo +PACKAGE_luci-app-statistics:collectd-mod-interface +PACKAGE_luci-app-statistics:collectd-mod-load +PACKAGE_luci-app-statistics:collectd-mod-network
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Statistics Application
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Statistics Application
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-diag-core
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Diagnostics Tools (Core)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Diagnostics Tools (Core)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-diag-devinfo
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-diag-core +PACKAGE_luci-app-diag-devinfo:smap +PACKAGE_luci-app-diag-devinfo:netdiscover +PACKAGE_luci-app-diag-devinfo:mac-to-devinfo +PACKAGE_luci-app-diag-devinfo:httping +PACKAGE_luci-app-diag-devinfo:smap-to-devinfo +PACKAGE_luci-app-diag-devinfo:netdiscover-to-devinfo
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Diagnostics Tools (Device Info)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Diagnostics Tools (Device Info)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-voice-core
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Voice Software (Core)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Voice Software (Core)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-voice-diag
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-diag-devinfo
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Voice Software (Diagnostics)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Voice Software (Diagnostics)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-upnp
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-upnp:miniupnpd
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Universal Plug & Play configuration module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Universal Plug & Play configuration module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-ntpc
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-ntpc:ntpclient
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: NTP time synchronisation configuration module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: NTP time synchronisation configuration module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-ddns
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-ddns:ddns-scripts
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Dynamic DNS configuration module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Dynamic DNS configuration module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-samba
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-samba:samba36-server
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Network Shares - Samba SMB/CIFS module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Network Shares - Samba SMB/CIFS module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-mmc-over-gpio
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-mmc-over-gpio:kmod-mmc-over-gpio
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: MMC-over-GPIO configuration module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: MMC-over-GPIO configuration module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-p910nd
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-p910nd:p910nd
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: p910nd - Printer server module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: p910nd - Printer server module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-ushare
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-ushare:ushare
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: uShare - UPnP A/V & DLNA Media Server
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: uShare - UPnP A/V & DLNA Media Server
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-hd-idle
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-hd-idle:hd-idle
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Hard Disk Idle Spin-Down module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Hard Disk Idle Spin-Down module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-tinyproxy
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-tinyproxy:tinyproxy
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Tinyproxy - HTTP(S)-Proxy configuration
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Tinyproxy - HTTP(S)-Proxy configuration
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-polipo
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-polipo:polipo
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for the Polipo Proxy
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for the Polipo Proxy
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-openvpn
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-openvpn:openvpn @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for OpenVPN
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for OpenVPN
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-p2pblock
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-firewall +PACKAGE_luci-app-p2pblock:freifunk-p2pblock
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for the Freifunk P2P-Block addon
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for the Freifunk P2P-Block addon
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-multiwan
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-firewall +PACKAGE_luci-app-multiwan:multiwan
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for the OpenWrt MultiWAN agent
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for the OpenWrt MultiWAN agent
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-wol
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-wol:etherwake
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for Wake-on-LAN
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for Wake-on-LAN
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-vnstat
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-vnstat:vnstat +PACKAGE_luci-app-vnstat:vnstati
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for VnStat
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for VnStat
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-radvd
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-radvd:radvd
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for Radvd
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for Radvd
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-ahcp
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-ahcp:ahcpd
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for AHCPd
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for AHCPd
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-wshaper
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-wshaper:wshaper
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for wshaper
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for wshaper
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-pbx
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-pbx:asterisk18 +PACKAGE_luci-app-pbx:asterisk18-app-authenticate +PACKAGE_luci-app-pbx:asterisk18-app-disa +PACKAGE_luci-app-pbx:asterisk18-app-setcallerid +PACKAGE_luci-app-pbx:asterisk18-app-system +PACKAGE_luci-app-pbx:asterisk18-chan-gtalk +PACKAGE_luci-app-pbx:asterisk18-codec-a-mu +PACKAGE_luci-app-pbx:asterisk18-codec-alaw +PACKAGE_luci-app-pbx:asterisk18-func-cut +PACKAGE_luci-app-pbx:asterisk18-res-clioriginate +PACKAGE_luci-app-pbx:asterisk18-func-channel +PACKAGE_luci-app-pbx:asterisk18-chan-local +PACKAGE_luci-app-pbx:asterisk18-app-record +PACKAGE_luci-app-pbx:asterisk18-app-senddtmf +PACKAGE_luci-app-pbx:asterisk18-res-crypto
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI PBX Administration
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI PBX Administration
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-pbx-voicemail
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-app-pbx +PACKAGE_luci-app-pbx-voicemail:asterisk18 +PACKAGE_luci-app-pbx-voicemail:msmtp +PACKAGE_luci-app-pbx-voicemail:coreutils-base64
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI PBX Administration Voicemail Support
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI PBX Administration Voicemail Support
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-ltqtapi
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Lantiq voip
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Lantiq voip
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-minidlna
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-minidlna:minidlna
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for miniDLNA
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for miniDLNA
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-transmission
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-transmission:transmission-daemon
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for Transmission
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for Transmission
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-watchcat
+Submenu: 3. Applications
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-watchcat:watchcat
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: LuCI Support for Watchcat
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for Watchcat
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-theme-freifunk-bno
+Submenu: 4. Themes
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Freifunk Berlin Nordost Theme
+Maintainer: Stefan Pirwitz <stefan-at-freifunk-bno-dot-de>
+Source: 
+Type: ipkg
+Description: Freifunk Berlin Nordost Theme
+http://luci.subsignal.org/
+Stefan Pirwitz <stefan-at-freifunk-bno-dot-de>
+@@
+
+Package: luci-theme-freifunk-generic
+Submenu: 4. Themes
+Version: svn-r10457-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host
+Section: luci
+Category: LuCI
+Title: Freifunk Generic Theme
+Maintainer: Manuel Munz <freifunk-at-somakoma-dot-de>
+Source: 
+Type: ipkg
+Description: Freifunk Generic Theme
+http://luci.subsignal.org/
+Manuel Munz <freifunk-at-somakoma-dot-de>
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/luci/Makefile
+Package: luci-base
+Submenu: 8. Libraries
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +libuci-lua +libubus-lua
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI core libraries
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI core libraries
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+Config:
+       choice
+               prompt "Build Target"
+               default PACKAGE_luci-base_source
+
+       config PACKAGE_luci-base_compile
+               bool "Precompiled"
+
+       config PACKAGE_luci-base_stripped
+               bool "Stripped"
+
+       config PACKAGE_luci-base_srcdiet
+               bool "Compressed Source"
+
+       config PACKAGE_luci-base_source
+               bool "Full Source"
+
+       endchoice
+@@
+
+Package: luci-lib-httpclient
+Submenu: 8. Libraries
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base +luci-base +luci-lib-nixio
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: HTTP(S) client library
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: HTTP(S) client library
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-lib-json
+Submenu: 8. Libraries
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI JSON library
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI JSON library
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-lib-nixio
+Submenu: 8. Libraries
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base +PACKAGE_luci-lib-nixio_openssl:libopenssl +PACKAGE_luci-lib-nixio_cyassl:libcyassl
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: NIXIO POSIX library
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: NIXIO POSIX library
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+Config:
+	choice
+		prompt "TLS Provider"
+		default PACKAGE_luci-lib-nixio_notls
+
+		config PACKAGE_luci-lib-nixio_notls
+			bool "Disabled"
+
+		config PACKAGE_luci-lib-nixio_axtls
+			bool "Builtin (axTLS)"
+
+		config PACKAGE_luci-lib-nixio_cyassl
+			bool "CyaSSL"
+			select PACKAGE_libcyassl
+
+		config PACKAGE_luci-lib-nixio_openssl
+			bool "OpenSSL"
+			select PACKAGE_libopenssl
+	endchoice
+@@
+
+Package: luci-lib-px5g
+Submenu: 8. Libraries
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base +luci-lib-nixio
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: RSA/X.509 Key Generator (required for LuCId SSL support)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: RSA/X.509 Key Generator (required for LuCId SSL support)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-lib-luaneightbl
+Submenu: 8. Libraries
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base +luci-base
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: neightbl - Lua lib for IPv6 neighbors
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: neightbl - Lua lib for IPv6 neighbors
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-proto-ppp
+Submenu: 6. Protocols
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Support for PPP/PPPoE/PPPoA/PPtP
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Support for PPP/PPPoE/PPPoA/PPtP
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-proto-ipv6
+Submenu: 6. Protocols
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Support for DHCPv6/6in4/6to4/6rd/DS-Lite
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Support for DHCPv6/6in4/6to4/6rd/DS-Lite
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-proto-3g
+Submenu: 6. Protocols
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-proto-3g:comgt
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Support for 3G
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Support for 3G
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-proto-relay
+Submenu: 6. Protocols
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-proto-relay:relayd
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Support for relayd pseudo bridges
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Support for relayd pseudo bridges
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-mod-admin-mini
+Submenu: 2. Modules
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI Essentials - stripped down and user-friendly
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Essentials - stripped down and user-friendly
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-mod-admin-full
+Submenu: 2. Modules
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI Administration - full-featured for full control
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Administration - full-featured for full control
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-mod-failsafe
+Submenu: 2. Modules
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-base
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI Fail-Safe - Fail-Safe sysupgrade module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Fail-Safe - Fail-Safe sysupgrade module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-mod-rpc
+Submenu: 2. Modules
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci-lib-json
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI RPC - JSON-RPC API
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI RPC - JSON-RPC API
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-firewall
+Submenu: 3. Applications
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-firewall:firewall
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Firewall and Portforwarding application
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Firewall and Portforwarding application
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-qos
+Submenu: 3. Applications
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-qos:qos-scripts
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Quality of Service configuration module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Quality of Service configuration module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-commands
+Submenu: 3. Applications
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI Shell Command Module
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Shell Command Module
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-macvlan
+Submenu: 3. Applications
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-macvlan:kmod-macvlan
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI Support for macvlan
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for macvlan
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-app-shadowsocks
+Submenu: 3. Applications
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_luci-app-shadowsocks:shadowsocks-libev
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: LuCI Support for shadowsocks
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: LuCI Support for shadowsocks
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-theme-openwrt
+Submenu: 4. Themes
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: OpenWrt.org
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: OpenWrt.org
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-theme-bootstrap
+Submenu: 4. Themes
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Bootstrap Theme (default)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Bootstrap Theme (default)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-german
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: German
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: German
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-english
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: English
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: English
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-french
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: French (by Florian Fainelli)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: French (by Florian Fainelli)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-italian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Italian (by Matteo Croce)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Italian (by Matteo Croce)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-russian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Russian (by Skryabin Dmitry)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Russian (by Skryabin Dmitry)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-portuguese-brazilian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Portuguese (Brazilian) (by Carlos Cesario)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Portuguese (Brazilian) (by Carlos Cesario)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-chinese
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Chinese (by Chinese Translators)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Chinese (by Chinese Translators)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-japanese
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Japanese (by Tsukasa Hamano)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Japanese (by Tsukasa Hamano)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-greek
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Greek (by Vasilis Tsiligiannis)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Greek (by Vasilis Tsiligiannis)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-catalan
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Catalan (by Eduard Duran)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Catalan (by Eduard Duran)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-portuguese
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Portuguese (by Jose Monteiro)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Portuguese (by Jose Monteiro)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-spanish
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Spanish (by Guillermo Javier Nardoni)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Spanish (by Guillermo Javier Nardoni)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-vietnamese
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Vietnamese (by Hong Phuc Dang)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Vietnamese (by Hong Phuc Dang)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-malay
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Malay (by Teow Wai Chet)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Malay (by Teow Wai Chet)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-norwegian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Norwegian (by Lars Hardy)
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Norwegian (by Lars Hardy)
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-hebrew
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Hebrew
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Hebrew
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-romanian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Romanian
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Romanian
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-ukrainian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Ukrainian
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Ukrainian
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-hungarian
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Hungarian
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Hungarian
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-i18n-polish
+Submenu: 5. Translations
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Polish
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Polish
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci
+Submenu: 1. Collections
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +uhttpd +uhttpd-mod-ubus +luci-mod-admin-full +luci-theme-bootstrap +luci-app-firewall +luci-proto-ppp +libiwinfo-lua +luci-lib-nixio
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Standard OpenWrt set including full admin with ppp support and the default OpenWrt theme
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Standard OpenWrt set including full admin with ppp support and the default OpenWrt theme
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-ssl
+Submenu: 1. Collections
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +luci +libustream-polarssl +px5g
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Standard OpenWrt set with HTTPS support
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Standard OpenWrt set with HTTPS support
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+Package: luci-light
+Submenu: 1. Collections
+Version: svn-r10459-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +uhttpd +luci-mod-admin-mini +luci-theme-openwrt @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: lua/host iwinfo
+Section: luci
+Category: LuCI
+Title: Minimum package set using only admin mini and the standard theme
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Source: 
+Type: ipkg
+Description: Minimum package set using only admin mini and the standard theme
+http://luci.subsignal.org/
+LuCI Development Team <luci@lists.subsignal.org>
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-gwcheck/Makefile
+Package: freifunk-gwcheck
+Submenu: 9. Freifunk
+Version: 4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread firewall +ip +iptables-mod-ipopt +olsrd-mod-dyn-gw-plain
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk gateway check script
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   This script periodically checks if internet is available via your own gateway. If it detects that it is broken, then the defaultroute is removed from the main table and temporarilly placed in table gw-check until your internet works again. Config file is /etc/config/freifunk-gwcheck.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-p2pblock/Makefile
+Package: freifunk-p2pblock
+Submenu: 9. Freifunk
+Version: 3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables-mod-filter +iptables-mod-ipp2p +l7-protocols +iptables-mod-conntrack-extra
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk p2pblock Addon
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Simple Addon for Freifunk which use iptables layer7-, ipp2p- and recent-modules 
+  to block p2p/filesharing traffic
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-firewall/Makefile
+Package: freifunk-firewall
+Submenu: 9. Freifunk
+Version: 3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +firewall
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk Firewall Addon
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Various firewall extensions for Freifunk. Includes NAT fixes and advanced settings.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-mapupdate/Makefile
+Package: freifunk-mapupdate
+Submenu: 9. Freifunk
+Version: 1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +olsrd-mod-nameservice
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Update script for freifunkmap
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   This script updates the freifunkmap (also known as the global map, see http://map.berlin.freifunk.net) every hour. Config file is /etc/config/freifunk-mapupdate.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-policyrouting/Makefile
+Package: freifunk-policyrouting
+Submenu: 9. Freifunk
+Version: 6
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ip
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk policy routing addon
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Allows you to send your own traffic via your own default gateway while sending traffic received from the mesh to a gateway in the mesh.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/remote-update/Makefile
+Package: remote-update
+Submenu: 9. Freifunk
+Version: 4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @TARGET_atheros||@TARGET_ar71xx||@TARGET_brcm_2_4
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk remote update utility.
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   The freifunk remote-update utility uses sysupgrade to reflash the currently 
+  running firmware while keeping most of the existing configuratio.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/community-profiles/Makefile
+Package: community-profiles
+Submenu: 9. Freifunk
+Version: 2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread freifunk-common
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Community profiles
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   These community profiles set defaults for various free network/freifunk communities and are used by wizards like ffwizard and meshwizard.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-watchdog/Makefile
+Package: freifunk-watchdog
+Submenu: 9. Freifunk
+Version: 8
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libuci
+Menu-Depends: 
+Provides: 
+Build-Depends: uci
+Section: luci
+Category: LuCI
+Title: Freifunk Ad-Hoc watchdog daemon
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   A watchdog daemon that monitors wireless interfaces to ensure the correct bssid and channel.
+  The process will initiate a wireless restart as soon as it detects a bssid or channel mismatch.
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/meshwizard/Makefile
+Package: meshwizard
+Submenu: 9. Freifunk
+Version: 0.1.0
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +firewall
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Shell script based wizard for Mesh networks
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   A shellscript based wizard to simplify the setup of a typical mesh node (e.g. for Freifunk.net)
+
+@@
+
+
+Source-Makefile: feeds/luci/contrib/package/freifunk-common/Makefile
+Package: freifunk-common
+Submenu: 9. Freifunk
+Version: 1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: luci
+Category: LuCI
+Title: Freifunk common files
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Common files and scripts that are needed to run free wireless mesh networks.
+
+@@
+
+

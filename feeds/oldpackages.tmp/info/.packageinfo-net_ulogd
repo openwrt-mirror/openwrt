@@ -1,0 +1,99 @@
+Source-Makefile: feeds/oldpackages/net/ulogd/Makefile
+Package: ulogd
+Menu: 1
+Version: 1.24-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables-mod-ulog
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Netfilter userspace logging daemon
+Maintainer: 
+Source: ulogd-1.24.tar.bz2
+Type: ipkg
+Description: Netfilter userspace logging daemon
+http://www.netfilter.org/projects/ulogd/index.html
+
+@@
+
+Package: ulogd-mod-mysql
+Version: 1.24-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread ulogd +libmysqlclient
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Output plugin for logging to a MySQL database
+Maintainer: 
+Source: ulogd-1.24.tar.bz2
+Type: ipkg
+Description: Output plugin for logging to a MySQL database
+http://www.netfilter.org/projects/ulogd/index.html
+
+@@
+
+Package: ulogd-mod-pcap
+Version: 1.24-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread ulogd +libpcap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Output plugin for logging in pcap format
+Maintainer: 
+Source: ulogd-1.24.tar.bz2
+Type: ipkg
+Description: Output plugin for logging in pcap format
+http://www.netfilter.org/projects/ulogd/index.html
+
+@@
+
+Package: ulogd-mod-pgsql
+Version: 1.24-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread ulogd +libpq
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Output plugin for logging to a PostgreSQL database
+Maintainer: 
+Source: ulogd-1.24.tar.bz2
+Type: ipkg
+Description: Output plugin for logging to a PostgreSQL database
+http://www.netfilter.org/projects/ulogd/index.html
+
+@@
+
+Package: ulogd-mod-sqlite
+Version: 1.24-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread ulogd +libsqlite3
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Output plugin for logging to an SQLite database
+Maintainer: 
+Source: ulogd-1.24.tar.bz2
+Type: ipkg
+Description: Output plugin for logging to an SQLite database
+http://www.netfilter.org/projects/ulogd/index.html
+
+@@
+
+Package: ulogd-mod-extra
+Version: 1.24-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread ulogd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Extra plugins
+Maintainer: 
+Source: ulogd-1.24.tar.bz2
+Type: ipkg
+Description: 	This package contains the LOCAL, LOGEMU, OPRINT, PWSNIFF and SYSLOG plugins.
+http://www.netfilter.org/projects/ulogd/index.html
+
+@@
+
+

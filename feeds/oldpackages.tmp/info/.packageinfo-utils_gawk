@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/gawk/Makefile
+Package: gawk
+Version: 3.1.8-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: GAWK
+Maintainer: 
+Source: gawk-3.1.8.tar.gz
+Type: ipkg
+Description: 	GNU version of AWK.
+http://www.gnu.org/software/gawk/
+
+@@
+
+

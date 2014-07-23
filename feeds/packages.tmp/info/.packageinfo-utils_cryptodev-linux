@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/utils/cryptodev-linux/Makefile
+Package: kmod-cryptodev
+Submenu: Cryptographic API modules
+Default: m if ALL
+Version: <LINUX_VERSION>+1.6--1
+Depends: +kmod-crypto-core +kmod-crypto-authenc +kmod-crypto-hash
+Menu-Depends: 
+Provides: 
+Section: kernel
+Category: Kernel modules
+Title: Driver for cryptographic acceleration
+Maintainer: 
+Source: cryptodev-linux-1.6.tar.gz
+Type: ipkg
+Description:   This is a driver for that allows to use the Linux kernel supported
+  hardware ciphers by user-space applications.
+http://cryptodev-linux.org/
+
+@@
+
+

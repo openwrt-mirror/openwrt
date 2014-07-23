@@ -1,0 +1,20 @@
+Source-Makefile: feeds/routing/ohybridproxy/Makefile
+Package: ohybridproxy
+Submenu: IP Addresses and Names
+Version: 2014-06-19-3a9489615c488afa85a823a40aea89b39bbac391-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libubox +mdnsd
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: mdns/dns hybrid-proxy
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: ohybridproxy-2014-06-19-3a9489615c488afa85a823a40aea89b39bbac391.tar.bz2
+Type: ipkg
+Description:  This package provides a statically configured daemon for translating DNS
+ requests to Multicast DNS and back again.
+https://github.com/sbyx/ohybridproxy
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

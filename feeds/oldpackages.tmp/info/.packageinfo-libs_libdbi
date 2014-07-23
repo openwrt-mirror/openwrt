@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/libdbi/Makefile
+Package: libdbi
+Version: 0.9.0-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title:  (library)
+Maintainer: 
+Source: libdbi-0.9.0.tar.gz
+Type: ipkg
+Description:        libdbi implements a database-independent abstraction layer in C.
+http://libdbi.sourceforge.net/
+
+@@
+
+

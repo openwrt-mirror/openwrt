@@ -1,0 +1,34 @@
+Source-Makefile: feeds/oldpackages/devel/dmalloc/Makefile
+Package: libdmalloc
+Version: 5.5.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USE_EGLIBC
+Menu-Depends: 
+Provides: 
+Section: devel
+Category: Development
+Title: Dmalloc (library)
+Maintainer: 
+Source: dmalloc-5.5.2.tgz
+Type: ipkg
+Description: Dmalloc (library)
+http://www.dmalloc.com/
+
+@@
+
+Package: dmalloc-utils
+Version: 5.5.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libdmalloc
+Menu-Depends: 
+Provides: 
+Section: devel
+Category: Development
+Title: Dmalloc (utilities)
+Maintainer: 
+Source: dmalloc-5.5.2.tgz
+Type: ipkg
+Description: Dmalloc (utilities)
+http://www.dmalloc.com/
+
+@@
+
+

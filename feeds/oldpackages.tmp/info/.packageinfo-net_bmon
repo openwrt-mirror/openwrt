@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/bmon/Makefile
+Package: bmon
+Version: 2.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: bmon is a portable bandwidth monitor
+Maintainer: 
+Source: bmon-2.1.0.tar.gz
+Type: ipkg
+Description: 	bmon is a portable bandwidth monitor
+	and rate estimator running on various
+	operating systems. It supports various
+	input methods for different architectures.
+http://people.suug.ch/~tgr/bmon/
+
+@@
+
+

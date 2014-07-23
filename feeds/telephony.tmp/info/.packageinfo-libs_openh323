@@ -1,0 +1,19 @@
+Source-Makefile: feeds/telephony/libs/openh323/Makefile
+Package: libopenh323
+Version: cvs-20051230-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: pwlib
+Section: libs
+Category: Libraries
+Title: OpenH323 library
+Maintainer: 
+Source: openh323-cvs-20051230.tar.gz
+Type: ipkg
+Description: OpenH323 library
+http://openh323.sourceforge.net/
+
+@@
+
+

@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/freepops/Makefile
+Package: freepops
+Version: 0.2.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +liblua +luafilesystem +luaexpat @BROKEN
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: POP3 interface to several webmails
+Maintainer: 
+Source: freepops-0.2.4.tar.gz
+Type: ipkg
+Description: 	FreePOPs is a POP3 daemon that translates local POP3 commands
+	to remote HTTP requests to the supported webmail sites.
+
+	FreePOPs can also be used as RSS aggregator and POP3 forwarder.
+http://www.freepops.org
+
+@@
+
+

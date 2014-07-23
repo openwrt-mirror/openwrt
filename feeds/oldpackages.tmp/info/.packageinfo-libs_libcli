@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/libs/libcli/Makefile
+Package: libcli
+Version: 1.9.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +EXTERNAL_TOOLCHAIN:libc +EXTERNAL_TOOLCHAIN:libgcc
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: A Cisco-like CLI library
+Maintainer: 
+Source: libcli-1.9.4.tar.gz
+Type: ipkg
+Description: 	Libcli provides a shared library for including a Cisco-like
+	command-line interface into other software. It's a telnet
+	interface which supports command-line editing, history,
+	authentication and callbacks for a user-definable function tree.
+http://code.google.com/p/libcli/
+
+@@
+
+

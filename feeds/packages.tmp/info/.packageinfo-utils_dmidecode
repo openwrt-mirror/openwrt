@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/utils/dmidecode/Makefile
+Package: dmidecode
+Version: 2.12-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @(TARGET_x86||TARGET_x86_64)
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Displays BIOS informations.
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: dmidecode-2.12.tar.bz2
+Type: ipkg
+Description: 	Dmidecode reports information about your system's hardware
+	as described in your system BIOS according to the SMBIOS/DMI
+	standard.
+http://www.nongnu.org/dmidecode/
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/simplejson/Makefile
+Package: simplejson
+Submenu: Python
+Version: 2.2.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +distribute
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: Simple, fast, extensible JSON encoder/decoder for Python
+Maintainer: 
+Source: simplejson-2.2.1.tar.gz
+Type: ipkg
+Description:   Simple, fast, extensible JSON encoder/decoder for Python
+http://simplejson.readthedocs.org/
+
+@@
+
+

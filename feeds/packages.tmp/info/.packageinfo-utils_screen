@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/utils/screen/Makefile
+Package: screen
+Version: 4.2.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Full-screen terminal window manager
+Maintainer: Etienne CHAMPETIER <champetier.etienne@gmail.com>
+Source: screen-4.2.1.tar.gz
+Type: ipkg
+Description: 	Screen is a full-screen window manager that multiplexes a physical
+	terminal between several processes, typically interactive shells.
+http://www.gnu.org/software/screen/
+Etienne CHAMPETIER <champetier.etienne@gmail.com>
+@@
+
+

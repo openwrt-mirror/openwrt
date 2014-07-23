@@ -1,0 +1,43 @@
+Source-Makefile: feeds/oldpackages/libs/gsm/Makefile
+Package: libgsm
+Version: 1.0.13-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GSM transcoding library
+Maintainer: 
+Source: gsm-1.0.13.tar.gz
+Type: ipkg
+Description:  An implementation of the European GSM 06.10 provisional standard
+ for full-rate speech transcoding, prI-ETS 300 036, which uses
+ RPE/LTP (residual pulse excitation/long term prediction) coding
+ at 13 kbit/s.
+ This package contains a shared GSM transcoding library, used by other
+ programs.
+http://user.cs.tu-berlin.de/~jutta/toast.html
+
+@@
+
+Package: gsm-utils
+Version: 1.0.13-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgsm
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: GSM transcoding utilities
+Maintainer: 
+Source: gsm-1.0.13.tar.gz
+Type: ipkg
+Description:  An implementation of the European GSM 06.10 provisional standard
+ for full-rate speech transcoding, prI-ETS 300 036, which uses
+ RPE/LTP (residual pulse excitation/long term prediction) coding
+ at 13 kbit/s.
+ This package contains GSM transcoding utilities.
+http://user.cs.tu-berlin.de/~jutta/toast.html
+
+@@
+
+

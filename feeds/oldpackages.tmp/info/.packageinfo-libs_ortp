@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/ortp/Makefile
+Package: libortp
+Version: 0.16.3-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Real-time Transport Protocol (RTP) library
+Maintainer: 
+Source: ortp-0.16.3.tar.gz
+Type: ipkg
+Description: Real-time Transport Protocol (RTP) library
+http://www.linphone.org/index.php/eng/code_review/ortp
+
+@@
+
+

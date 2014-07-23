@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/nfs-server/Makefile
+Package: nfs-server
+Submenu: Filesystem
+Version: 2.2beta47-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +portmap +librpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: User Space NFS server
+Maintainer: 
+Source: nfs-user-server_2.2beta47.orig.tar.gz
+Type: ipkg
+Description: User Space NFS server
+http://packages.debian.org/nfs-user-server
+
+@@
+
+

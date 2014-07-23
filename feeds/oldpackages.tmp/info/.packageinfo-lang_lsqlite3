@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/lsqlite3/Makefile
+Package: lsqlite3
+Submenu: Lua
+Version: 7-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +libsqlite3
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: LuaSQLite3
+Maintainer: 
+Source: lsqlite3-7.tar.gz
+Type: ipkg
+Description:  LuaSQLite 3 is a thin wrapper around the public domain SQLite3 database engine.
+http://luasqlite.luaforge.net/lsqlite3.html
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/librpcsecgss/Makefile
+Package: librpcsecgss
+Version: 0.14-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libgssapi
+Section: libs
+Category: Libraries
+Title: required libraries for the nfs-utils
+Maintainer: 
+Source: librpcsecgss-0.14.tar.gz
+Type: ipkg
+Description:  Support libraries - for newer nfs mount command (nfs4)
+http://www.citi.umich.edu/projects/nfsv4/linux
+
+@@
+
+

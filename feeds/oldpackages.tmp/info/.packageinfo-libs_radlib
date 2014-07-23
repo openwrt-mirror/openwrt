@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/radlib/Makefile
+Package: radlib
+Version: 2.12.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libsqlite3
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Rapid Application Development Library
+Maintainer: 
+Source: radlib-2.12.0.tar.gz
+Type: ipkg
+Description: 	radlib is a rapid application development library for unix multi-process applications
+http://www.radlib.teel.ws/
+
+@@
+
+

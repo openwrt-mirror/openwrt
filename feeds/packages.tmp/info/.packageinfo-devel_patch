@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/devel/patch/Makefile
+Package: patch
+Version: 2.7.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: devel
+Category: Development
+Title: patch
+Maintainer: Russell Senior <russell@personaltelco.net>
+Source: patch-2.7.1.tar.gz
+Type: ipkg
+Description:   The Patch package contains a program for modifying or creating files
+  by applying a "patch" file typically created by the diff program.
+http://www.gnu.org/
+Russell Senior <russell@personaltelco.net>
+@@
+
+

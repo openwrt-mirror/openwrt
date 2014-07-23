@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libao/Makefile
+Package: libao
+Version: 1.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +alsa-lib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: A cross platform audio library
+Maintainer: 
+Source: libao-1.1.0.tar.gz
+Type: ipkg
+Description: 	Libao is a cross-platform audio library that allows programs to
+	output audio using a simple API on a wide variety of platforms.
+http://www.xiph.org/ao/
+
+@@
+
+

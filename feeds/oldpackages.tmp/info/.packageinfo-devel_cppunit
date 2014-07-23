@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/devel/cppunit/Makefile
+Package: cppunit
+Version: 1.12.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp
+Menu-Depends: 
+Provides: 
+Build-Types: host
+Section: devel
+Category: Development
+Title: Unit Testing Library for C++
+Maintainer: 
+Source: cppunit-1.12.1.tar.gz
+Type: ipkg
+Description:   Unit Testing Library for C++
+http://cppunit.sourceforge.net/
+
+@@
+
+

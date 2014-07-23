@@ -1,0 +1,53 @@
+Source-Makefile: feeds/oldpackages/utils/rrdtool/Makefile
+Package: librrd
+Version: 1.2.30-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libart +libfreetype +libpng +zlib +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: libs
+Category: Libraries
+Title: Round Robin Database (RRD) management library (v1.2.x)
+Maintainer: 
+Source: rrdtool-1.2.30.tar.gz
+Type: ipkg
+Description: Round Robin Database (RRD) management library (v1.2.x)
+http://oss.oetiker.ch/rrdtool/
+
+@@
+
+Package: rrdcgi
+Version: 1.2.30-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librrd +cgilib
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: utils
+Category: Utilities
+Title: Round Robin Database (RRD) CGI graphing tool (v1.2.x)
+Maintainer: 
+Source: rrdtool-1.2.30.tar.gz
+Type: ipkg
+Description: Round Robin Database (RRD) CGI graphing tool (v1.2.x)
+http://oss.oetiker.ch/rrdtool/
+
+@@
+
+Package: rrdtool
+Version: 1.2.30-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librrd
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: utils
+Category: Utilities
+Title: Round Robin Database (RRD) management tools (v1.2.x)
+Maintainer: 
+Source: rrdtool-1.2.30.tar.gz
+Type: ipkg
+Description: Round Robin Database (RRD) management tools (v1.2.x)
+http://oss.oetiker.ch/rrdtool/
+
+@@
+
+

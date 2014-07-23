@@ -1,0 +1,40 @@
+Source-Makefile: feeds/oldpackages/net/ncftp/Makefile
+Package: ncftp
+Submenu: File Transfer
+Version: 3.2.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NcFTP Client (main program)
+Maintainer: 
+Source: ncftp-3.2.5-src.tar.bz2
+Type: ipkg
+Description:  NcFTP Client (also known as just NcFTP) is a set of FREE application
+ programs implementing the File Transfer Protocol (FTP).
+ Main program.
+http://www.ncftpd.com/
+
+@@
+
+Package: ncftp-utils
+Submenu: File Transfer
+Version: 3.2.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: NcFTP Client (utilities)
+Maintainer: 
+Source: ncftp-3.2.5-src.tar.bz2
+Type: ipkg
+Description:  NcFTP Client (also known as just NcFTP) is a set of FREE application
+ programs implementing the File Transfer Protocol (FTP).
+ Utilities.
+http://www.ncftpd.com/
+
+@@
+
+

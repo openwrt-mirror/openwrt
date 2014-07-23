@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libvncserver/Makefile
+Package: libvncserver
+Version: 0.9.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libjpeg +libpthread +BUILD_NLS:libiconv-full
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: VNC Server Library
+Maintainer: 
+Source: LibVNCServer-0.9.7.tar.gz
+Type: ipkg
+Description: VNC Server Library
+http://libvncserver.sourceforge.net/
+
+@@
+
+

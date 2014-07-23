@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/libs/libsndfile/Makefile
+Package: libsndfile
+Version: 1.0.25-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @!avr32
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Library for reading/writing audio files
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: libsndfile-1.0.25.tar.gz
+Type: ipkg
+Description:  libsndfile is a library of C routines for reading and writing files
+ containing sampled audio data.
+http://www.mega-nerd.com/libsndfile/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

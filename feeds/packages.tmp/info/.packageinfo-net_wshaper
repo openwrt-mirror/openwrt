@@ -1,0 +1,22 @@
+Source-Makefile: feeds/packages/net/wshaper/Makefile
+Package: wshaper
+Version: 1.1a-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-sched +tc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: wshaper
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: 
+Type: ipkg
+Description:  A script to do traffing shaping with the HTB algorithm.
+ Wshaper attempts to:
+ * Maintain low latency for interfactive traffic at all times
+ * Allow 'surfing' at reasonable speeds while up or downloading
+ * Make sure uploads don't harm downloads, and the other way around
+http://lartc.org/wondershaper/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

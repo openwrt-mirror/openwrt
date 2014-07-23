@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/bridge-utils/Makefile
+Package: bridge
+Version: 1.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Base system
+Title: Ethernet bridging configuration utility
+Maintainer: 
+Source: bridge-utils-1.5.tar.gz
+Type: ipkg
+Description:  Manage ethernet bridging: a way to connect networks together to
+ form a larger network.
+http://bridge.sourceforge.net/
+
+@@
+
+

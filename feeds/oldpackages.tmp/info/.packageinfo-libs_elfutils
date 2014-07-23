@@ -1,0 +1,36 @@
+Source-Makefile: feeds/oldpackages/libs/elfutils/Makefile
+Package: libdw
+Version: 0.155-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libelf1 +zlib +libbz2
+Menu-Depends: 
+Provides: 
+Build-Depends: USE_UCLIBC:argp-standalone !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: ELF manipulation libraries (libdw)
+Maintainer: 
+Source: elfutils-0.155.tar.bz2
+Type: ipkg
+Description: ELF manipulation libraries (libdw)
+https://fedorahosted.org/elfutils/
+
+@@
+
+Package: libelf1
+Version: 0.155-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +BUILD_NLS:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: USE_UCLIBC:argp-standalone !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: ELF manipulation libraries (libelf)
+Maintainer: 
+Source: elfutils-0.155.tar.bz2
+Type: ipkg
+Description: ELF manipulation libraries (libelf)
+https://fedorahosted.org/elfutils/
+
+@@
+
+

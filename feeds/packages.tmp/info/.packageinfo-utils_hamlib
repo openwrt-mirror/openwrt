@@ -1,0 +1,619 @@
+Source-Makefile: feeds/packages/utils/hamlib/Makefile
+Package: hamlib
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libhamlib
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Ham Radio Control utilities
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description:     Ham Radio Control Libraries is a development effort to provide a consistent
+  interface for programmers wanting to incorporate radio control in their
+  programs.
+
+  This package contains the utilities and daemons.
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: libhamlib
+Menu: 1
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-1.0 +libltdl
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Ham Radio Control shared library
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description:     Ham Radio Control Libraries is a development effort to provide a consistent
+  interface for programmers wanting to incorporate radio control in their
+  programs.
+
+  This package contains the hamlib shared library.
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-adat
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for ADAT
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for ADAT
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-alinco
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Alinco
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Alinco
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-amsat
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for AMSAT
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for AMSAT
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-aor
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for AOR
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for AOR
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-ars
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for ARS
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for ARS
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-celestron
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Celestron
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Celestron
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-drake
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Drake
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Drake
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-dummy
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for dummy
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for dummy
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-easycomm
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for EasyComm
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for EasyComm
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-flexradio
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for FlexRadio
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for FlexRadio
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-fodtrack
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for FodTrack
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for FodTrack
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-gs232a
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for GS-232A
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for GS-232A
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-heathkit
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Heathkit
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Heathkit
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-icom
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for ICOM
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for ICOM
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-jrc
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for JRC
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for JRC
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-kachina
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Kachina
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Kachina
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-kenwood
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Kenwood
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Kenwood
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-kit
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for kits
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for kits
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-lowe
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Lowe
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Lowe
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-m2
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for M2
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for M2
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-pcr
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for PCR
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for PCR
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-prm80
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for PRM80
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for PRM80
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-racal
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Racal
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Racal
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-rft
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for RFT
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for RFT
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-rotorez
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Rotor-EZ
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Rotor-EZ
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-rs
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for R&S
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for R&S
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-sartek
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for SARtek
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for SARtek
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-skanti
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Skanti
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Skanti
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-spid
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for SPID
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for SPID
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-tapr
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for TAPR
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for TAPR
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-tentec
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for TenTec
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for TenTec
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-ts7400
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for TS-7400
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for TS-7400
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-tuner
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Video for Linux tuner
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Video for Linux tuner
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-uniden
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Uniden
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Uniden
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-wj
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Watkins - Johnson
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Watkins - Johnson
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+Package: hamlib-yaesu
+Version: 1.2.15.3-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libhamlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: for Yaesu
+Maintainer: Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+Source: hamlib-1.2.15.3.tar.gz
+Type: ipkg
+Description: for Yaesu
+http://hamlib.sourceforge.net
+Vasilis Tsiligiannis <acinonyx@openwrt.gr>
+@@
+
+

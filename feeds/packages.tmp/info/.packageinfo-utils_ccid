@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/utils/ccid/Makefile
+Package: ccid
+Version: 1.4.17-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-1.0 +libpcsclite
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: Generic USB CCID smart card reader driver
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: ccid-1.4.17.tar.bz2
+Type: ipkg
+Description:   Generic USB CCID (Chip/Smart Card Interface Devices) driver and ICCD
+  (Integrated Circuit(s) Card Devices).
+http://pcsclite.alioth.debian.org/ccid.html
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+

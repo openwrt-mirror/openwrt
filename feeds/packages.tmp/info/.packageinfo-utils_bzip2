@@ -1,0 +1,36 @@
+Source-Makefile: feeds/packages/utils/bzip2/Makefile
+Package: libbz2
+Version: 1.0.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: bzip2 library.
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: bzip2-1.0.6.tar.gz
+Type: ipkg
+Description: 	bzip2 is a freely available, patent free, high-quality
+	data compressor. This packages provides libbz2 library.
+http://www.bzip.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: bzip2
+Version: 1.0.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libbz2
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: bzip2 is a compression utility.
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: bzip2-1.0.6.tar.gz
+Type: ipkg
+Description: 	bzip2 is a freely available, patent free, high-quality
+	data compressor. This package provides the binary.
+http://www.bzip.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

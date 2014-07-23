@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/dir300-flash/Makefile
+Package: dir300-flash
+Version: 0.9.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Flashes a custom firmware on the DIR-300 wireless router
+Maintainer: 
+Source: dir300-flash-0.9.9.tar.gz
+Type: ipkg
+Description: Flashes a custom firmware on the DIR-300 wireless router
+http://x-alina.freifunk-potsdam.de/
+
+@@
+
+

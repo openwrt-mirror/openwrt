@@ -1,0 +1,23 @@
+Source-Makefile: feeds/oldpackages/net/reaver/Makefile
+Package: reaver
+Submenu: wireless
+Version: r113-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libsqlite3
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Efficient brute force attack against Wifi Protected Setup
+Maintainer: 
+Source: reaver-r113.tar.gz
+Type: ipkg
+Description:   Reaver targets the external registrar functionality mandated by the WiFi
+  Protected Setup specification.
+  Access points will provide authenticated registrars with their current
+  wireless configuration (including the WPA PSK), and also accept a new
+  configuration from the registrar.
+https://code.google.com/p/reaver-wps/
+
+@@
+
+

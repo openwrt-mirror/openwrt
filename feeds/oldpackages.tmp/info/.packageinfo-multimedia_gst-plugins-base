@@ -1,0 +1,589 @@
+Source-Makefile: feeds/oldpackages/multimedia/gst-plugins-base/Makefile
+Package: libgstapp
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer app library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer app library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstaudio
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstinterfaces +libgstpbutils
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer audio library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer audio library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstcdda
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgsttag
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer CDDA library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer CDDA library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstfft
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer FFT library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer FFT library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstinterfaces
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer interfaces library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer interfaces library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstnetbuffer
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer network buffer library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer network buffer library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstpbutils
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer utils library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer utils library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstriff
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +libgsttag
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer RIFF media library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer RIFF media library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstrtp
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer RTP library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer RTP library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstrtsp
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer RTSP library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer RTSP library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstsdp
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer SDP library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer SDP library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgsttag
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer tag support library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer tag support library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstvideo
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer video library (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer video library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-alsa
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +alsa-lib
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer ALSA plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer ALSA plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-app
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstapp
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer app plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer app plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-audioconvert
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer audio format conversion plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer audio format conversion plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-audiorate
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer audio rate adjusting plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer audio rate adjusting plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-audioresample
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer audio resampling plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer audio resampling plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-audiotestsrc
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstcontroller
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer audio test plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer audio test plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-decodebin
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstpbutils
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer media decoder plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer media decoder plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-decodebin2
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstpbutils
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer media decoder (v2) plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer media decoder (v2) plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-gio
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer GIO plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer GIO plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-ogg
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstriff +libgsttag +libogg
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer Ogg plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer Ogg plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-playbin
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstvideo +libgstinterfaces +libgstpbutils
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer playback plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer playback plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-tcp
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstdataprotocol
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer TCP plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer TCP plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-theora
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstvideo +libgsttag +gst-mod-ogg +libtheora
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer Theora plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer Theora plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-typefindfunctions
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstpbutils
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer 'typefind' functions plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer 'typefind' functions plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-videotestsrc
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +liboil
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer video test plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer video test plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-volume
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +libgstcontroller +liboil
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer volume plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer volume plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-mod-vorbis
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstaudio +libgsttag +gst-mod-ogg +libvorbis
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer Vorbis plugin (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer Vorbis plugin.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gst-plugins-base
+Version: 0.10.36-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstapp +libgstaudio +libgstcdda +libgstfft +libgstinterfaces +libgstnetbuffer +libgstpbutils +libgstriff +libgstrtp +libgstrtsp +libgstsdp +libgsttag +libgstvideo +gst-mod-alsa +gst-mod-app +gst-mod-audioconvert +gst-mod-audiorate +gst-mod-audioresample +gst-mod-audiotestsrc +gst-mod-decodebin +gst-mod-decodebin2 +gst-mod-gio +gst-mod-ogg +gst-mod-playbin +gst-mod-tcp +gst-mod-theora +gst-mod-typefindfunctions +gst-mod-videotestsrc +gst-mod-volume +gst-mod-vorbis
+Menu-Depends: 
+Provides: 
+Build-Depends: gstreamer liboil !BUILD_NLS:libiconv !BUILD_NLS:libintl !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer plugins collection (base)
+Maintainer: 
+Source: gst-plugins-base-0.10.36.tar.bz2
+Type: ipkg
+Description: GStreamer plugins collection (base)
+http://gstreamer.freedesktop.org/
+
+@@
+
+

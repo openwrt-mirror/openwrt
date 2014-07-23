@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/net/chaosvpn/Makefile
+Package: chaosvpn
+Submenu: VPN
+Version: 2.0-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ip +tinc +kmod-tun +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Config generator for chaos vpn
+Maintainer: Christopher J. Pilkington <cjp@0x1.net>
+Source: chaosvpn-2.0.tar.gz
+Type: ipkg
+Description: 	Configure tincd for the chaosvpn network
+https://wiki.hamburg.ccc.de/index.php/ChaosVPN::DebianHowto
+Christopher J. Pilkington <cjp@0x1.net>
+@@
+
+

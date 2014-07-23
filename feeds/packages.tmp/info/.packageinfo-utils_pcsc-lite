@@ -1,0 +1,42 @@
+Source-Makefile: feeds/packages/utils/pcsc-lite/Makefile
+Package: libpcsclite
+Version: 1.8.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-1.0 +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Middleware to access a smart card using SCard API (PC/SC). (library)
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: pcsc-lite-1.8.11.tar.bz2
+Type: ipkg
+Description:     The purpose of PC/SC Lite is to provide a Windows(R) SCard
+  interface in a very small form factor for communicating to
+  smart cards and smart cards readers.
+  .
+  This package contains the PC/SC shared library.
+http://pcsclite.alioth.debian.org/
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: pcscd
+Version: 1.8.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcsclite
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Middleware to access a smart card using SCard API (PC/SC). (daemon)
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: pcsc-lite-1.8.11.tar.bz2
+Type: ipkg
+Description:     The purpose of PC/SC Lite is to provide a Windows(R) SCard
+  interface in a very small form factor for communicating to
+  smart cards and smart cards readers.
+  .
+  This package contains the PC/SC daemon.
+http://pcsclite.alioth.debian.org/
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+

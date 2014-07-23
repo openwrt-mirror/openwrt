@@ -1,0 +1,90 @@
+Source-Makefile: feeds/packages/net/net-snmp/Makefile
+Package: libnetsnmp
+Version: 5.4.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Open source SNMP implementation (libraries)
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: net-snmp-5.4.4.tar.gz
+Type: ipkg
+Description:  Simple Network Management Protocol (SNMP) is a widely used protocol for
+ monitoring the health and welfare of network equipment (eg. routers),
+ computer equipment and even devices like UPSs. Net-SNMP is a suite of
+ applications used to implement SNMP v1, SNMP v2c and SNMP v3 using both
+ IPv4 and IPv6.
+ .
+ This package contains shared libraries, needed by other programs.
+http://www.net-snmp.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: snmp-utils
+Version: 5.4.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnetsnmp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Open source SNMP implementation (utilities)
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: net-snmp-5.4.4.tar.gz
+Type: ipkg
+Description:  Simple Network Management Protocol (SNMP) is a widely used protocol for
+ monitoring the health and welfare of network equipment (eg. routers),
+ computer equipment and even devices like UPSs. Net-SNMP is a suite of
+ applications used to implement SNMP v1, SNMP v2c and SNMP v3 using both
+ IPv4 and IPv6.
+ .
+ This package contains SNMP client utilities.
+http://www.net-snmp.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: snmpd
+Version: 5.4.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnetsnmp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Open source SNMP implementation (daemon)
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: net-snmp-5.4.4.tar.gz
+Type: ipkg
+Description:  Simple Network Management Protocol (SNMP) is a widely used protocol for
+ monitoring the health and welfare of network equipment (eg. routers),
+ computer equipment and even devices like UPSs. Net-SNMP is a suite of
+ applications used to implement SNMP v1, SNMP v2c and SNMP v3 using both
+ IPv4 and IPv6.
+ .
+ This package contains the SNMP agent, dynamically linked.
+http://www.net-snmp.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: snmpd-static
+Version: 5.4.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Open source SNMP implementation (daemon)
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: net-snmp-5.4.4.tar.gz
+Type: ipkg
+Description:  Simple Network Management Protocol (SNMP) is a widely used protocol for
+ monitoring the health and welfare of network equipment (eg. routers),
+ computer equipment and even devices like UPSs. Net-SNMP is a suite of
+ applications used to implement SNMP v1, SNMP v2c and SNMP v3 using both
+ IPv4 and IPv6.
+ .
+ This package contains the SNMP agent, statically linked.
+http://www.net-snmp.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

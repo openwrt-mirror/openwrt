@@ -1,0 +1,23 @@
+Source-Makefile: feeds/oldpackages/net/htpdate/Makefile
+Package: htpdate
+Submenu: Time Synchronization
+Version: 1.0.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: an HTP (Hypertext Time Protocol) implementation
+Maintainer: 
+Source: htpdate-1.0.4.tar.bz2
+Type: ipkg
+Description: 	The HTTP Time Protocol (HTP) is used to synchronize a computer's time
+	with web servers as reference time source. Htpdate will synchronize your
+	computer's time by extracting timestamps from HTTP headers found
+	in web server responses. Htpdate can be used as a daemon, to keep your
+	computer synchronized.
+http://www.clevervest.com/htp/
+
+@@
+
+

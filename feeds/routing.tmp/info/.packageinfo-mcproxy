@@ -1,0 +1,21 @@
+Source-Makefile: feeds/routing/mcproxy/Makefile
+Package: mcproxy
+Submenu: Routing and Redirection
+Version: 2014-05-02-bbb2e7ee230c172e68766946e4b4e48f7449ee15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libstdcpp @(!GCC_VERSION_4_4&&!GCC_VERSION_4_6)
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Multicast Proxy for IGMP/MLD
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: mcproxy-2014-05-02-bbb2e7ee230c172e68766946e4b4e48f7449ee15.tar.bz2
+Type: ipkg
+Description:  mcproxy is a free & open source implementation of the IGMP/MLD proxy function (see  RFC 4605) for Linux systems.
+ It operates on the kernel tables for multicast routing and allows for multiple instantiations,
+ as well as dynamically changing downstream interfaces.
+http://mcproxy.realmv6.org
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

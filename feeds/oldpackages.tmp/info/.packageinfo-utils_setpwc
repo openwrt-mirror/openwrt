@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/setpwc/Makefile
+Package: setpwc
+Version: 1.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-video-pwc
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Philips (and compatibles) WebCams (PWC) control utility
+Maintainer: 
+Source: setpwc-1.3.tgz
+Type: ipkg
+Description: 	With setpwc you can set and list various settings of Philips (and
+	compatibles) WebCams with the 'PWC chipset'.
+http://www.vanheusden.com/setpwc/
+
+@@
+
+

@@ -1,0 +1,17 @@
+Source-Makefile: feeds/oldpackages/libs/libfreenect/Makefile
+Package: libfreenect
+Version: 2012-01-29
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-1.0
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Xbox Kinect library
+Maintainer: 
+Source: libfreenect-2012-01-29.tar.bz2
+Type: ipkg
+Description:        Drivers and libraries for the Xbox Kinect device
+
+@@
+
+

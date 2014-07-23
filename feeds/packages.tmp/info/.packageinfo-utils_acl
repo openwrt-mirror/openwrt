@@ -1,0 +1,42 @@
+Source-Makefile: feeds/packages/utils/acl/Makefile
+Package: acl
+Submenu: Filesystem
+Version: 20140610-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libacl
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Access control list (ACL) manipulation utils
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Source: acl-20140610.tar.gz
+Type: ipkg
+Description:   Access control list support
+ This package provides ACL manipulation utilities
+ - chacl
+ - getfacl
+ - setfacl
+http://savannah.nongnu.org/projects/acl
+Maxim Storchak <m.storchak@gmail.com>
+@@
+
+Package: libacl
+Submenu: Filesystem
+Version: 20140610-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libattr
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Access control list (ACL) manipulation library
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Source: acl-20140610.tar.gz
+Type: ipkg
+Kernel-Config: CONFIG_EXT4_FS_POSIX_ACL=y CONFIG_FS_POSIX_ACL=y CONFIG_HFSPLUS_FS_POSIX_ACL=y CONFIG_JFFS2_FS_POSIX_ACL=y CONFIG_JFS_POSIX_ACL=y CONFIG_TMPFS_POSIX_ACL=y CONFIG_XFS_POSIX_ACL=y 
+Description:   Access control list support
+ This package provides libacl
+http://savannah.nongnu.org/projects/acl
+Maxim Storchak <m.storchak@gmail.com>
+@@
+
+

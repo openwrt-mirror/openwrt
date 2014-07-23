@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/hdparm/Makefile
+Package: hdparm
+Submenu: disc
+Version: 9.39-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Hard disk drive configuration utilitity
+Maintainer: 
+Source: hdparm-9.39.tar.gz
+Type: ipkg
+Description:  get/set SATA/IDE device parameters
+http://sourceforge.net/projects/hdparm/
+
+@@
+
+

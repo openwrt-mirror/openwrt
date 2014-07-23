@@ -1,0 +1,17 @@
+Source-Makefile: feeds/oldpackages/utils/lcd4linux-tew673gru/Makefile
+Package: lcd4linux-tew673gru
+Version: 1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @TARGET_ar71xx +kmod-spi-gpio +kmod-spi-dev +lcd4linux-custom
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: TRENDnet TEW673GRU LCD support
+Maintainer: 
+Source: 
+Type: ipkg
+Description: TRENDnet TEW673GRU LCD support
+
+@@
+
+

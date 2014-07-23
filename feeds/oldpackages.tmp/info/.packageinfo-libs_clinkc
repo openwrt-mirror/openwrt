@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/clinkc/Makefile
+Package: libclinkc
+Version: 101-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libexpat
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: libs
+Category: Libraries
+Title: Embedded UPnP library
+Maintainer: 
+Source: clinkc101.tar.gz
+Type: ipkg
+Description: CyberLink for C is a UPnP library using C for small and embedded platforms.
+http://sourceforge.net/projects/clinkc
+
+@@
+
+

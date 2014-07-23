@@ -1,0 +1,43 @@
+Source-Makefile: feeds/packages/net/vnstat/Makefile
+Package: vnstat
+Version: 1.11-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libgd
+Section: net
+Category: Network
+Title: Console-based network traffic monitor
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: vnstat-1.11.tar.gz
+Type: ipkg
+Description: 	vnStat is a network traffic monitor for Linux that keeps a log of daily
+	network traffic for the selected interface(s). vnStat isn't a packet
+	sniffer. The traffic information is analyzed from the /proc -filesystem,
+	so vnStat can be used without root permissions.
+http://humdi.net/vnstat/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: vnstati
+Version: 1.11-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread vnstat +libgd
+Menu-Depends: 
+Provides: 
+Build-Depends: libgd
+Section: net
+Category: Network
+Title: PNG image output support for vnStat
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: vnstat-1.11.tar.gz
+Type: ipkg
+Description: 	The purpose of vnstati is to provide image output support for statistics
+	collected using vnstat(1). However, the image file format is limited to
+	png. All basic outputs of vnStat are supported excluding live traffic
+	features. The image can be outputted either to a file or to standard
+	output.
+http://humdi.net/vnstat/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

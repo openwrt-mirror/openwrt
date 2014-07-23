@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/net/ucarp/Makefile
+Package: ucarp
+Version: 1.5.2-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ip +libpcap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Lets several hosts share one IP
+Maintainer: 
+Source: ucarp-1.5.2.tar.bz2
+Type: ipkg
+Description:  ucarp allows a couple of hosts to share common virtual IP addresses in order
+ to provide automatic failover. It is a portable userland implementation of the
+ secure and patent-free Common Address Redundancy Protocol
+http://www.ucarp.org/project/ucarp
+
+@@
+
+

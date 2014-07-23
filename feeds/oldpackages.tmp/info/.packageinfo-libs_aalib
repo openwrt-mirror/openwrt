@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/aalib/Makefile
+Package: libaa
+Version: 1.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Ascii-Art rendering library
+Maintainer: 
+Source: aalib-1.2.tar.gz
+Type: ipkg
+Description: Ascii-Art rendering library
+http://aa-project.sourceforge.net/
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/net/ddns-scripts/Makefile
+Package: ddns-scripts
+Submenu: IP Addresses and Names
+Version: 1.0.0-22
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Dynamic DNS Scripts
+Maintainer: 
+Source: 
+Type: ipkg
+Description: 	A highly configurable set of scripts for doing
+	dynamic dns updates
+
+@@
+
+

@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/libs/libidn/Makefile
+Package: libidn
+Version: 1.28-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Stringprep, Punycode and IDNA implementation
+Maintainer: Marcel Denia <naoir@gmx.net>
+Source: libidn-1.28.tar.gz
+Type: ipkg
+Description:   GNU Libidn is a fully documented implementation of the Stringprep,
+  Punycode and IDNA specifications. Libidn's purpose is to encode and
+  decode internationalized domain names.
+http://www.gnu.org/software/libidn/
+Marcel Denia <naoir@gmx.net>
+@@
+
+

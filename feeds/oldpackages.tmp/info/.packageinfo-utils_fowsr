@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/utils/fowsr/Makefile
+Package: fowsr
+Version: 2.0-131015-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-compat
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Fine Offset Wireless Weather Station Reader
+Maintainer: 
+Source: fowsr-2.0-131015.tar.gz
+Type: ipkg
+Description:   fowsr is a USB Data Collector application for WH1080 compatible
+  weather stations.
+  Output formats include XML, Wunderground.com and pywws.
+http://fowsr.googlecode.com/
+
+@@
+
+

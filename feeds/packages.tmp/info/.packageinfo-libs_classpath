@@ -1,0 +1,34 @@
+Source-Makefile: feeds/packages/libs/classpath/Makefile
+Package: classpath
+Version: 0.98-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +alsa-lib +libgmp +libmagic
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GNU Classpath
+Maintainer: Roberto Riggio <roberto.riggio@create-net.org>
+Source: classpath-0.98.tar.gz
+Type: ipkg
+Description: GNU Classpath
+http://www.gnu.org/software/classpath/
+Roberto Riggio <roberto.riggio@create-net.org>
+@@
+
+Package: classpath-tools
+Version: 0.98-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GNU Classpath tools
+Maintainer: Roberto Riggio <roberto.riggio@create-net.org>
+Source: classpath-0.98.tar.gz
+Type: ipkg
+Description: GNU Classpath tools
+http://www.gnu.org/software/classpath/
+Roberto Riggio <roberto.riggio@create-net.org>
+@@
+
+

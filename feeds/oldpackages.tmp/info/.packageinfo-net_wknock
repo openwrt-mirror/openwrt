@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/wknock/Makefile
+Package: wknock
+Version: 1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread kmod-brcm-wl +libpcap
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A tool to hide your Access Point against opportunistic attackers.
+Maintainer: 
+Source: wknock.tar.gz
+Type: ipkg
+Description: tool to hide your Access Point against opportunistic attackers.
+http://www.rstack.org/oudot/wknock/
+
+@@
+
+

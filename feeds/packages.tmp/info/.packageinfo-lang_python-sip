@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/lang/python-sip/Makefile
+Package: python-sip
+Version: 4.12.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Build-Depends/host: python
+Build-Types: host
+Section: devel
+Category: Development
+Title: Python SIP
+Maintainer: Michael Buesch <mb@bu3sch.de>
+Source: sip-4.12.1.tar.gz
+Type: ipkg
+Description: Python SIP
+http://www.riverbankcomputing.co.uk/software/sip/download
+Michael Buesch <mb@bu3sch.de>
+@@
+
+

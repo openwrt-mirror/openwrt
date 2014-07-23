@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/macchanger/Makefile
+Package: macchanger
+Version: 1.5.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: utility for viewing/manipulating the MAC address
+Maintainer: 
+Source: macchanger-1.5.0.tar.gz
+Type: ipkg
+Description: 	This is a GNU/Linux utility for viewing/manipulating the MAC address
+	of network interfaces.
+http://www.alobbs.com/macchanger
+
+@@
+
+

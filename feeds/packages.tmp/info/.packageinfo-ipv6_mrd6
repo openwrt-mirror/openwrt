@@ -1,0 +1,23 @@
+Source-Makefile: feeds/packages/ipv6/mrd6/Makefile
+Package: mrd6
+Version: 0.9.6-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +libstdcpp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: IPv6 multicast routing daemon
+Maintainer: 
+Source: mrd6_0.9.6.orig.tar.gz
+Type: ipkg
+Description:  Multicast is becoming a major component in next generation networks, used 
+ in several scenarios, from video broadcasting to multimedia conferencing. 
+ In order to be implemented, new technology needs supporting hardware and 
+ software across a set of devices and systems. MRD6 is an implementation of 
+ a modular IPv6 Multicast Routing Framework for the Linux operating system 
+ and provides MLDv2 (as well as MLDv1), PIM-SM and MBGP support.
+http://fivebits.net/proj/mrd6
+
+@@
+
+

@@ -1,0 +1,114 @@
+Source-Makefile: feeds/packages/net/uanytun/Makefile
+Package: uanytun
+Submenu: VPN
+Version: 0.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-tun +libgcrypt
+Menu-Depends: 
+Provides: 
+Build-Variant: gcrypt
+Section: net
+Category: Network
+Title: micro anycast tunneling daemon (gcrypt)
+Maintainer: Christian Pointner <equinox@spreadspace.org>
+Source: uanytun-0.3.5.tar.gz
+Type: ipkg
+Description: uAnytun is a tiny implementation of SATP the secure anycast tunneling protocol.
+  SATP defines a protocol used for communication between any combination of
+  unicast and anycast tunnel endpoints.  It has less protocol overhead than
+  IPSec in Tunnel mode and allows tunneling of every ETHER TYPE protocol (e.g.
+  ethernet, ip, arp ...). SATP directly includes cryptography and message
+  authentication based on the methods used by SRTP.  It is intended to deliver
+  a generic, scaleable and secure solution for tunneling and relaying of packets
+  of any protocol.
+  Unlike Anytun which is a full featured implementation uAnytun has no support
+  for multiple connections or synchronisation. It is a small single threaded
+  implementation intended to act as a client on small platforms.
+http://www.anytun.org/
+Christian Pointner <equinox@spreadspace.org>
+@@
+
+Package: uanytun-nettle
+Submenu: VPN
+Version: 0.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-tun +libnettle
+Menu-Depends: 
+Provides: 
+Build-Variant: nettle
+Section: net
+Category: Network
+Title: micro anycast tunneling daemon (nettle)
+Maintainer: Christian Pointner <equinox@spreadspace.org>
+Source: uanytun-0.3.5.tar.gz
+Type: ipkg
+Description: uAnytun is a tiny implementation of SATP the secure anycast tunneling protocol.
+  SATP defines a protocol used for communication between any combination of
+  unicast and anycast tunnel endpoints.  It has less protocol overhead than
+  IPSec in Tunnel mode and allows tunneling of every ETHER TYPE protocol (e.g.
+  ethernet, ip, arp ...). SATP directly includes cryptography and message
+  authentication based on the methods used by SRTP.  It is intended to deliver
+  a generic, scaleable and secure solution for tunneling and relaying of packets
+  of any protocol.
+  Unlike Anytun which is a full featured implementation uAnytun has no support
+  for multiple connections or synchronisation. It is a small single threaded
+  implementation intended to act as a client on small platforms.
+http://www.anytun.org/
+Christian Pointner <equinox@spreadspace.org>
+@@
+
+Package: uanytun-sslcrypt
+Submenu: VPN
+Version: 0.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-tun +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: sslcrypt
+Section: net
+Category: Network
+Title: micro anycast tunneling daemon (openssl)
+Maintainer: Christian Pointner <equinox@spreadspace.org>
+Source: uanytun-0.3.5.tar.gz
+Type: ipkg
+Description: uAnytun is a tiny implementation of SATP the secure anycast tunneling protocol.
+  SATP defines a protocol used for communication between any combination of
+  unicast and anycast tunnel endpoints.  It has less protocol overhead than
+  IPSec in Tunnel mode and allows tunneling of every ETHER TYPE protocol (e.g.
+  ethernet, ip, arp ...). SATP directly includes cryptography and message
+  authentication based on the methods used by SRTP.  It is intended to deliver
+  a generic, scaleable and secure solution for tunneling and relaying of packets
+  of any protocol.
+  Unlike Anytun which is a full featured implementation uAnytun has no support
+  for multiple connections or synchronisation. It is a small single threaded
+  implementation intended to act as a client on small platforms.
+http://www.anytun.org/
+Christian Pointner <equinox@spreadspace.org>
+@@
+
+Package: uanytun-nocrypt
+Submenu: VPN
+Version: 0.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-tun
+Menu-Depends: 
+Provides: 
+Build-Variant: nocrypt
+Section: net
+Category: Network
+Title: micro anycast tunneling daemon (no crypt)
+Maintainer: Christian Pointner <equinox@spreadspace.org>
+Source: uanytun-0.3.5.tar.gz
+Type: ipkg
+Description: uAnytun is a tiny implementation of SATP the secure anycast tunneling protocol.
+  SATP defines a protocol used for communication between any combination of
+  unicast and anycast tunnel endpoints.  It has less protocol overhead than
+  IPSec in Tunnel mode and allows tunneling of every ETHER TYPE protocol (e.g.
+  ethernet, ip, arp ...). SATP directly includes cryptography and message
+  authentication based on the methods used by SRTP.  It is intended to deliver
+  a generic, scaleable and secure solution for tunneling and relaying of packets
+  of any protocol.
+  Unlike Anytun which is a full featured implementation uAnytun has no support
+  for multiple connections or synchronisation. It is a small single threaded
+  implementation intended to act as a client on small platforms.
+http://www.anytun.org/
+Christian Pointner <equinox@spreadspace.org>
+@@
+
+

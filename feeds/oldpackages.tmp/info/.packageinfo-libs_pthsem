@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/pthsem/Makefile
+Package: pthsem
+Version: 2.0.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USE_EGLIBC @TARGET_x86
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: GNU pth extended with semaphore support
+Maintainer: 
+Source: pthsem_2.0.8.tar.gz
+Type: ipkg
+Description:   GNU pth is a user mode multi threading library.
+  pthsem is an extend version, with support for semaphores added. It can be installed parallel to a normal pth.
+http://www.auto.tuwien.ac.at/~mkoegler/index.php/pth
+
+@@
+
+

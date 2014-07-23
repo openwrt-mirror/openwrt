@@ -1,0 +1,840 @@
+Source-Makefile: feeds/packages/utils/opensc/Makefile
+Package: libopensc
+Menu: 1
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: OpenSC libraries for smart cards
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description:   OpenSC provides a set of libraries and utilities to work with smart cards.
+  Its main focus is on cards that support cryptographic operations, and
+  facilitate their use in security applications such as authentication,
+  mail encryption and digital signatures.
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-pkcs11
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: OpenSC - PKCS11 provider
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description:   OpenSC PKCS#11 provider
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libpkcs11-spy
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: PKCS11 spying wrapper
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: PKCS11 spying wrapper
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils
+Menu: 1
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: OpenSC - tools for smart cards
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description:   OpenSC utilities
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-cardos-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: cardos-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: cardos-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-cryptoflex-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: cryptoflex-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: cryptoflex-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-dnie-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: dnie-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: dnie-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-eidenv
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: eidenv utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: eidenv utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-iasecc-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: iasecc-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: iasecc-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-netkey-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: netkey-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: netkey-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-openpgp-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: openpgp-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: openpgp-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-opensc-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: opensc-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: opensc-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-opensc-explorer
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils +libncurses +libreadline
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: opensc-explorer utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: opensc-explorer utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-piv-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: piv-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: piv-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-pkcs11-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: pkcs11-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: pkcs11-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-pkcs15-crypt
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: pkcs15-crypt utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: pkcs15-crypt utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-pkcs15-init
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: pkcs15-init utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: pkcs15-init utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-pkcs15-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: pkcs15-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: pkcs15-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-sc-hsm-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: sc-hsm-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: sc-hsm-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opensc-utils-westcos-tool
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread opensc-utils
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: westcos-tool utility from opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: westcos-tool utility from opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-asepcos
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: asepcos card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: asepcos card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-authentic
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: authentic card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: authentic card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-cardos
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: cardos card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: cardos card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-cyberflex
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: cyberflex card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: cyberflex card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-entersafe
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: entersafe card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: entersafe card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-epass2003
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: epass2003 card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: epass2003 card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-flex
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: flex card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: flex card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-gpk
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: gpk card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: gpk card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-ias-adele-admin1
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: ias_adele_admin1 card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: ias_adele_admin1 card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-ias-adele-admin2
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: ias_adele_admin2 card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: ias_adele_admin2 card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-ias-adele-common
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: ias_adele_common card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: ias_adele_common card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-iasecc-admin-eid
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: iasecc_admin_eid card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: iasecc_admin_eid card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-iasecc-generic-oberthur
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: iasecc_generic_oberthur card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: iasecc_generic_oberthur card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-iasecc-generic-pki
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: iasecc_generic_pki card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: iasecc_generic_pki card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-iasecc
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: iasecc card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: iasecc card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-incrypto34
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: incrypto34 card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: incrypto34 card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-jcop
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: jcop card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: jcop card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-miocos
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: miocos card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: miocos card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-muscle
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: muscle card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: muscle card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-myeid
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: myeid card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: myeid card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-oberthur
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: oberthur card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: oberthur card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-openpgp
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: openpgp card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: openpgp card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-pkcs15
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: pkcs15 card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: pkcs15 card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-rutoken-ecp
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: rutoken_ecp card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: rutoken_ecp card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-rutoken
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: rutoken card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: rutoken card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-sc-hsm
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: sc-hsm card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: sc-hsm card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-setcos
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: setcos card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: setcos card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-starcos
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: starcos card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: starcos card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: libopensc-profile-westcos
+Version: 20140317-de6d61405b271e22244376e4817e16b49018e1ce
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libopensc
+Menu-Depends: 
+Provides: 
+Build-Depends: +libpcsclite libtool libintl libiconv
+Section: lib
+Category: Libraries
+Title: westcos card profile for opensc
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opensc-20140317.tar.gz
+Type: ipkg
+Description: westcos card profile for opensc
+https://github.com/OpenSC/OpenSC/wiki
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+

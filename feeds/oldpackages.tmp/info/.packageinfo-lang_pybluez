@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/pybluez/Makefile
+Package: python-bluez
+Submenu: Python
+Version: 0.13-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +bluez-libs
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: Python wrapper for the BlueZ Bluetooth stack
+Maintainer: 
+Source: pybluez-src-0.13.tar.gz
+Type: ipkg
+Description: Python wrapper for the BlueZ Bluetooth stack
+http://code.google.com/p/pybluez/
+
+@@
+
+

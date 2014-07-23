@@ -1,0 +1,54 @@
+Source-Makefile: feeds/oldpackages/utils/cwiid/Makefile
+Package: libcwiid
+Version: 0.6.00-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +bluez-libs +libpthread +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: libs
+Category: Libraries
+Title: Linux Nintendo Wiimote interface (library)
+Maintainer: 
+Source: cwiid-0.6.00.tgz
+Type: ipkg
+Description: Linux Nintendo Wiimote interface (library)
+http://abstrakraft.org/cwiid/
+
+@@
+
+Package: wminput
+Version: 0.6.00-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcwiid
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: utils
+Category: Utilities
+Title: Linux Nintendo Wiimote interface (utility)
+Maintainer: 
+Source: cwiid-0.6.00.tgz
+Type: ipkg
+Description: Linux Nintendo Wiimote interface (utility)
+http://abstrakraft.org/cwiid/
+
+@@
+
+Package: python-cwiid
+Submenu: Python
+Version: 0.6.00-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +libcwiid
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: Python bindings for the cwiid libs
+Maintainer: 
+Source: cwiid-0.6.00.tgz
+Type: ipkg
+Description: Python bindings for the cwiid libs
+http://abstrakraft.org/cwiid/
+
+@@
+
+

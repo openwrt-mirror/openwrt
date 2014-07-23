@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/libs/iksemel/Makefile
+Package: libiksemel
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgnutls +libtasn1 +libgcrypt +libgpg-error
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Iksemel Jabber Library
+Maintainer: 
+Source: iksemel-1.4.tar.gz
+Type: ipkg
+Description:   Iksemel is an XML parser library mainly designed for Jabber applications.
+  It provides SAX, DOM, and special Jabber stream APIs. Library is coded
+  in ANSI C except the network code (which is POSIX compatible), thus
+  highly portable.
+http://code.google.com/p/iksemel/
+
+@@
+
+

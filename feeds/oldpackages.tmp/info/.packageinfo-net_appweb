@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/net/appweb/Makefile
+Package: appweb
+Submenu: Web Servers/Proxies
+Version: 3.4.1-0-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @!avr32 +libpthread +libpcre +libsqlite3
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Appweb Web Server
+Maintainer: 
+Source: appweb-3.4.1-0-src.tgz
+Type: ipkg
+Description:  Appweb is a powerful, compact embedded web server designed for dynamic web
+ applications.
+http://www.appwebserver.org/
+
+@@
+
+

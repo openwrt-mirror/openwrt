@@ -1,0 +1,19 @@
+Source-Makefile: feeds/management/libev/Makefile
+Package: libev
+Version: 4.15-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: High-performance event loop
+Maintainer: 
+Source: libev-4.15.tar.gz
+Type: ipkg
+Description:  A full-featured and high-performance event loop that is loosely modelled after
+ libevent, but without its limitations and bugs.
+http://software.schmorp.de/pkg/libev.html
+
+@@
+
+

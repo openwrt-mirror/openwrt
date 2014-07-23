@@ -1,0 +1,821 @@
+Source-Makefile: feeds/oldpackages/lang/php5/Makefile
+Package: php5
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcre +zlib +PHP5_LIBXML:libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PHP5 Hypertext preprocessor
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description:     PHP is a widely-used general-purpose scripting language that is especially
+  suited for Web development and can be embedded into HTML.
+  This package contains only the PHP config file. You must actually choose
+  your PHP flavour (cli, cgi or fastcgi).
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+Config:
+	config PHP5_FILTER
+		bool "PHP5 Filter support"
+		depends on PACKAGE_php5-cli || PACKAGE_php5-cgi
+
+	config PHP5_LIBXML
+		bool "PHP5 LIBXML support"
+		depends on PACKAGE_php5-cli || PACKAGE_php5-cgi
+
+	config PHP5_SYSTEMTZDATA
+		bool "Use system timezone data instead of php's built-in database"
+		depends on PACKAGE_php5-cli || PACKAGE_php5-cgi
+		select PACKAGE_zoneinfo-core
+		default y
+		help
+			Enabling this feature automatically selects the zoneinfo-core package
+			which contains data for UTC timezone. To use other timezones you have
+			to install the corresponding zoneinfo-... package(s).
+@@
+
+Package: php5-cli
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PHP5 Hypertext preprocessor (CLI)
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description:     PHP is a widely-used general-purpose scripting language that is especially
+  suited for Web development and can be embedded into HTML.
+  This package contains the CLI version of the PHP5 interpreter.
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-cgi
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PHP5 Hypertext preprocessor (CGI & FastCGI)
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description:     PHP is a widely-used general-purpose scripting language that is especially
+  suited for Web development and can be embedded into HTML.
+  This package contains the CGI version of the PHP5 interpreter.
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-fastcgi
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +php5-cgi
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: FastCGI startup script
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description:   As FastCGI support is now a core feature the php5-fastcgi package now depends
+  on the php5-cgi package, containing just the startup script.
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-calendar
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Calendar shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Calendar shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-ctype
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Ctype shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Ctype shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-curl
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-curl:libcurl
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: cURL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: cURL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-fileinfo
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-fileinfo:libmagic
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Fileinfo shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Fileinfo shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-dom
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +@PHP5_LIBXML +PACKAGE_php5-mod-dom:libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: DOM shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: DOM shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-exif
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: EXIF shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: EXIF shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-ftp
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-ftp:libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: FTP shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: FTP shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-gettext
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-gettext:libintl-full
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Gettext shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Gettext shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-gd
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-gd:libjpeg +PACKAGE_php5-mod-gd:libpng
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: GD graphics shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: GD graphics shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-gmp
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-gmp:libgmp
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: GMP shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: GMP shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-hash
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Hash shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Hash shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-iconv
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-iconv:libiconv
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: iConv shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: iConv shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-json
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: JSON shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: JSON shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-ldap
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-ldap:libopenldap +PACKAGE_php5-mod-ldap:libsasl2
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: LDAP shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: LDAP shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-mbstring
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: MBString shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: MBString shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-mcrypt
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-mcrypt:libmcrypt +PACKAGE_php5-mod-mcrypt:libltdl
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Mcrypt shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Mcrypt shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-mysql
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-mysql:libmysqlclient
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: MySQL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: MySQL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-mysqli
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-mysqli:libmysqlclient
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: MySQL Improved Extension shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: MySQL Improved Extension shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-openssl
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-openssl:libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: OpenSSL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: OpenSSL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-pcntl
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PCNTL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: PCNTL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-pdo
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PHP Data Objects shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: PHP Data Objects shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-pdo-mysql
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +php5-mod-pdo +PACKAGE_php5-mod-pdo-mysql:libmysqlclient
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PDO driver for MySQL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: PDO driver for MySQL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-pdo-pgsql
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +php5-mod-pdo +PACKAGE_php5-mod-pdo-pgsql:libpq
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PDO driver for PostgreSQL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: PDO driver for PostgreSQL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-pdo-sqlite
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +php5-mod-pdo +PACKAGE_php5-mod-pdo-sqlite:libsqlite3 +PACKAGE_php5-mod-pdo-sqlite:libpthread +PACKAGE_php5-mod-pdo-sqlite:librt
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PDO driver for SQLite 3.x shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: PDO driver for SQLite 3.x shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-pgsql
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-pgsql:libpq
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: PostgreSQL shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: PostgreSQL shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-session
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Session shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Session shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-shmop
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Shared Memory shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Shared Memory shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-simplexml
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +@PHP5_LIBXML +PACKAGE_php5-mod-simplexml:libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: SimpleXML shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: SimpleXML shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-soap
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +@PHP5_LIBXML +PACKAGE_php5-mod-soap:libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: SOAP shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: SOAP shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-sockets
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Sockets shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Sockets shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-sqlite
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-sqlite:libsqlite2
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: SQLite 2.x shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: SQLite 2.x shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-sqlite3
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-sqlite3:libsqlite3 +PACKAGE_php5-mod-sqlite3:libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: SQLite3 shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: SQLite3 shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-sysvmsg
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: System V messages shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: System V messages shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-sysvsem
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: System V shared memory shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: System V shared memory shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-sysvshm
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: System V semaphore shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: System V semaphore shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-tokenizer
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: Tokenizer shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: Tokenizer shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-xml
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PHP5_LIBXML:libxml2 +!PHP5_LIBXML:libexpat
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: XML shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: XML shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-xmlreader
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +@PHP5_LIBXML +PACKAGE_php5-mod-xmlreader:libxml2 +PACKAGE_php5-mod-xmlreader:libiconv
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: XMLReader shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: XMLReader shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-xmlwriter
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +@PHP5_LIBXML +PACKAGE_php5-mod-xmlwriter:libxml2 +PACKAGE_php5-mod-xmlwriter:libiconv
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: XMLWriter shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: XMLWriter shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+Package: php5-mod-zip
+Submenu: PHP
+Version: 5.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread php5 +PACKAGE_php5-mod-zip:zlib
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: ZIP shared module
+Maintainer: Michael Heimpold <mhei@heimpold.de>
+Source: php-5.4.27.tar.bz2
+Type: ipkg
+Description: ZIP shared module
+http://www.php.net/
+Michael Heimpold <mhei@heimpold.de>
+@@
+
+

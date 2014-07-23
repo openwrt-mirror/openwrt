@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/libs/libshout/Makefile
+Package: libshout
+Version: 2.3.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libspeex +libtheora +libvorbis +libvorbisidec +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Library which can be used to write a source client like ices
+Maintainer: 
+Source: libshout-2.3.1.tar.gz
+Type: ipkg
+Description: 	libshout allows applications to easily communicate and broadcast
+	to an Icecast streaming media server. It handles the socket connections,
+	metadata communication, and data streaming for the calling application,
+	and lets developers focus on feature sets instead of implementation
+	details.
+http://www.icecast.org/download.php
+
+@@
+
+

@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/gst-python/Makefile
+Package: gst-python
+Submenu: Python
+Version: 0.10.13-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +gstreamer +gst-plugins-base +python-gobject +python-mini
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: python bindings for gstreamer
+Maintainer: 
+Source: gst-python-0.10.13.tar.gz
+Type: ipkg
+Description:   python bindings for gstreamer
+http://gstreamer.freedesktop.org/
+
+@@
+
+

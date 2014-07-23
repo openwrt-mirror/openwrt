@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/lang/luasec/Makefile
+Package: luasec
+Submenu: Lua
+Version: 0.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +libopenssl +luasocket
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: LuaSec
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: luasec-0.4.tar.gz
+Type: ipkg
+Description:   LuaSec is a binding for OpenSSL library to provide TLS/SSL communication.
+http://luasec.luaforge.net/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+

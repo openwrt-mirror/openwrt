@@ -1,0 +1,35 @@
+Source-Makefile: feeds/packages/net/miniupnpc/Makefile
+Package: miniupnpc
+Submenu: Firewall
+Version: 1.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libminiupnpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Lightweight UPnP client
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: miniupnpc-1.9.tar.gz
+Type: ipkg
+Description: Lightweight UPnP client
+http://miniupnp.tuxfamily.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: libminiupnpc
+Version: 1.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Lightweight UPnP library
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: miniupnpc-1.9.tar.gz
+Type: ipkg
+Description: Lightweight UPnP library
+http://miniupnp.tuxfamily.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

@@ -1,0 +1,17 @@
+Source-Makefile: feeds/oldpackages/utils/devmem2/Makefile
+Package: devmem2
+Version: 1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Simple program to read/write from memory.
+Maintainer: 
+Source: 
+Type: ipkg
+Description:   Simple program to read/write from/to any location in memory.
+
+@@
+
+

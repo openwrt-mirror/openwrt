@@ -1,0 +1,23 @@
+Source-Makefile: feeds/packages/net/fastd/Makefile
+Package: fastd
+Submenu: VPN
+Version: 14-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-tun +librt +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: nacl libuecc
+Section: net
+Category: Network
+Title: Fast and Secure Tunneling Daemon
+Maintainer: Matthias Schiffer <mschiffer@universe-factory.net>
+Source: fastd-14.tar.xz
+Type: ipkg
+Description:  Fast and secure tunneling daemon, which is optimized on small code size and few dependencies
+https://projects.universe-factory.net/projects/fastd
+Matthias Schiffer <mschiffer@universe-factory.net>
+@@
+Config:
+  source "feeds/packages/net/fastd/Config.in"
+@@
+
+

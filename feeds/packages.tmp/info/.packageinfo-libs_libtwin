@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/libtwin/Makefile
+Package: libtwin
+Version: 0.0.3-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libpng +libjpeg +libfreetype
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: The tiny windowing system library
+Maintainer: Geoff Levand <geoffrey.levand@am.sony.com>
+Source: libtwin-0.0.3.tar.gz
+Type: ipkg
+Description: 	Keith Packard's Tiny Windowing System Library
+http://ozlabs.org/~jk/projects/petitboot/
+Geoff Levand <geoffrey.levand@am.sony.com>
+@@
+
+

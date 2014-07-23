@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/libs/alsa-lib/Makefile
+Package: alsa-lib
+Version: 1.0.27.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @AUDIO_SUPPORT +kmod-sound-core +libpthread +librt
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: ALSA (Advanced Linux Sound Architecture) library
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: alsa-lib-1.0.27.2.tar.bz2
+Type: ipkg
+Description:  This is the library package for alsa, needed by some userspace programs.
+ You must have enabled the ALSA support in the kernel.
+http://www.alsa-project.org/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

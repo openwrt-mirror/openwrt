@@ -1,0 +1,66 @@
+Source-Makefile: feeds/oldpackages/libs/libnfc/Makefile
+Package: libnfc
+Version: 1.7.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-compat +pcscd +ccid
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Near Field Communication (NFC) library
+Maintainer: 
+Source: libnfc-1.7.0.tar.bz2
+Type: ipkg
+Description:   libnfc is a free software library used to handle NFC capable devices.
+  It supports the four main NFC modulations:
+   * ISO14443-A (NXP MIFARE),
+   * ISO14443-B,
+   * JIS X 6319-4 (Sony Felica) and
+   * Jewel Topaz (Innovision Research & Development).
+  And depending on hardware, it supports:
+   * Read (RFID @13.56Mhz),
+   * Emulation and
+   * Peer2Peer mode.
+http://www.libnfc.org
+
+@@
+
+Package: libnfc-bin
+Version: 1.7.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnfc
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Near Field Communication (NFC) library (binaries)
+Maintainer: 
+Source: libnfc-1.7.0.tar.bz2
+Type: ipkg
+Description:   libnfc is provided with some useful tools:
+   * nfc-list: target listing;
+   * nfc-mfclassic: Mifare Classic operations;
+   * nfc-mfultralight: Mifare Ultralight operations.
+http://www.libnfc.org
+
+@@
+
+Package: libnfc-examples
+Version: 1.7.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnfc
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Near Field Communication (NFC) library (examples)
+Maintainer: 
+Source: libnfc-1.7.0.tar.bz2
+Type: ipkg
+Description:   libnfc is provided with some examples like:
+   * various targets emulation;
+   * NFC frames relay (ie. over network);
+   * manually done anticollision;
+   * etc.
+http://www.libnfc.org
+
+@@
+
+

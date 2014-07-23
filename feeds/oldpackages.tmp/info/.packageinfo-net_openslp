@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/openslp/Makefile
+Package: openslp
+Version: 1.2.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: openslp
+Maintainer: 
+Source: openslp-1.2.1.tar.gz
+Type: ipkg
+Description: openslp
+http://www.openslp.org/
+
+@@
+
+

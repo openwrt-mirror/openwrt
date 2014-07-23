@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/lang/kid/Makefile
+Package: python-kid
+Submenu: Python
+Version: 0.9.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: XML-based Templating
+Maintainer: 
+Source: kid-0.9.6.tar.gz
+Type: ipkg
+Description:  Kid is a simple template language for XML based vocabularies written in
+ Python.
+http://www.kid-templating.org/
+
+@@
+
+

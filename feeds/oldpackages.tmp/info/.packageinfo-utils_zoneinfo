@@ -1,0 +1,210 @@
+Source-Makefile: feeds/oldpackages/utils/zoneinfo/Makefile
+Package: zoneinfo-simple
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (simple)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (simple)
+
+@@
+
+Package: zoneinfo-core
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (core)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (core)
+
+@@
+
+Package: zoneinfo-africa
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Africa)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Africa)
+
+@@
+
+Package: zoneinfo-northamerica
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (NorthAmerica)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (NorthAmerica)
+
+@@
+
+Package: zoneinfo-southamerica
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (SouthAmerica)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (SouthAmerica)
+
+@@
+
+Package: zoneinfo-poles
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Arctic, Antarctic)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Arctic, Antarctic)
+
+@@
+
+Package: zoneinfo-asia
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Asia)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Asia)
+
+@@
+
+Package: zoneinfo-atlantic
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Atlantic)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Atlantic)
+
+@@
+
+Package: zoneinfo-australia-nz
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Australia-NZ)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Australia-NZ)
+
+@@
+
+Package: zoneinfo-pacific
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Pacific)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Pacific)
+
+@@
+
+Package: zoneinfo-europe
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (Europe)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (Europe)
+
+@@
+
+Package: zoneinfo-india
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (India)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (India)
+
+@@
+
+Package: zoneinfo-middleeast
+Submenu: zoneinfo
+Version: 2011n-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Zone Information (MiddleEast)
+Maintainer: 
+Source: tzdata2011n.tar.gz
+Type: ipkg
+Description: Zone Information (MiddleEast)
+
+@@
+
+

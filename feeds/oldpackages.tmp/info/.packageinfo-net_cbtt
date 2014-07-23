@@ -1,0 +1,36 @@
+Source-Makefile: feeds/oldpackages/net/cbtt/Makefile
+Package: cbtt
+Submenu: BitTorrent
+Version: 20060727-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Bittorrent tracker
+Maintainer: 
+Source: cbtt80-20060727-src.tar.gz
+Type: ipkg
+Description: Bittorrent tracker
+http://bnbtusermods.sourceforge.net/
+
+@@
+
+Package: cbtt-mysql
+Submenu: BitTorrent
+Version: 20060727-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib +libmysqlclient
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Bittorrent tracker (with mysql support)
+Maintainer: 
+Source: cbtt80-20060727-src.tar.gz
+Type: ipkg
+Description: Bittorrent tracker (with mysql support)
+http://bnbtusermods.sourceforge.net/
+
+@@
+
+

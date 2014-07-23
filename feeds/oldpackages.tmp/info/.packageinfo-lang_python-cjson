@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/python-cjson/Makefile
+Package: python-cjson
+Submenu: Python
+Version: 1.0.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: python-cjson
+Maintainer: 
+Source: python-cjson-1.0.5.tar.gz
+Type: ipkg
+Description:   Fast JSON encoder/decoder for Python
+http://pypi.python.org/pypi/python-cjson/
+
+@@
+
+

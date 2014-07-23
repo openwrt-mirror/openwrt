@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libsamplerate/Makefile
+Package: libsamplerate
+Version: 0.1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libsndfile
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Sample Rate Converter
+Maintainer: 
+Source: libsamplerate-0.1.7.tar.gz
+Type: ipkg
+Description:  Secret Rabbit Code (aka libsamplerate) is a Sample Rate
+ Converter for audio.
+http://www.mega-nerd.com/SRC/index.html
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/net/portmap/Makefile
+Package: portmap
+Version: 6.0-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libwrap +librpc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: The RPC Portmapper
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: portmap-6.0.tgz
+Type: ipkg
+Description:  Portmap is a server that converts RPC (Remote Procedure Call) program
+ numbers into DARPA protocol port numbers.
+http://neil.brown.name/portmap/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

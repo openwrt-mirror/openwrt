@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/admin/muninlite/Makefile
+Package: muninlite
+Version: 1.0.4-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xinetd
+Menu-Depends: 
+Provides: 
+Section: admin
+Category: Administration
+Title: Munin node implemented in shell
+Maintainer: 
+Source: muninlite-1.0.4.tar.gz
+Type: ipkg
+Description: Munin node implemented in shell
+http://sourceforge.net/projects/muninlite/
+
+@@
+
+

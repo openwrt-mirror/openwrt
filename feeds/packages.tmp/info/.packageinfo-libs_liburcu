@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/liburcu/Makefile
+Package: liburcu
+Version: 0.7.12-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: User-space Read-Copy-Update library
+Maintainer: daniel.salzman@nic.cz
+Source: userspace-rcu-0.7.12.tar.bz2
+Type: ipkg
+Description: 	Userspace Read-Copy-Update library.
+https://lttng.org/
+daniel.salzman@nic.cz
+@@
+
+

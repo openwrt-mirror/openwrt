@@ -1,0 +1,104 @@
+Source-Makefile: feeds/oldpackages/utils/ntfs-3g/Makefile
+Package: ntfs-3g
+Submenu: Filesystem
+Version: 2014.2.15-1-fuseint
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-fuse +PACKAGE_NTFS-3G_USE_LIBFUSE:libfuse +libpthread
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Stable Read/Write NTFS Driver
+Maintainer: Bud <wrt_buddhay@gmx.net>
+Source: ntfs-3g_ntfsprogs-2014.2.15.tgz
+Type: ipkg
+Description:   Ntfs-3g is a NTFS driver, which can create, remove, rename,
+  move files, directories, hard links, and streams. It can read
+  and write files, including streams and sparse files. It can
+  handle special files like symbolic links, devices, and FIFOs.
+  Moreover it can also read transparently compressed files.
+
+  Contains:
+   - ntfs-3g
+   - ntfs-3g.probe
+   - mount.ntfs-3g (symlink to ntfs-3g)
+
+http://www.tuxera.com
+Bud <wrt_buddhay@gmx.net>
+@@
+Config:
+config PACKAGE_NTFS-3G_USE_LIBFUSE
+	bool "use external FUSE library, selects package libfuse"
+	depends on PACKAGE_ntfs-3g
+	---help---
+	Ntfs-3g by default uses a minimalized lite version of FUSE.
+	If libfuse is part of your filesystem anyway (because of sshfs, owfs
+	etc.) it makes sense to activate this option and save some kilobytes
+	of space.
+
+@@
+
+Package: ntfs-3g-low
+Submenu: Filesystem
+Version: 2014.2.15-1-fuseint
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ntfs-3g
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lowntfs-3g (alternative using the fuse low-level interface)
+Maintainer: Bud <wrt_buddhay@gmx.net>
+Source: ntfs-3g_ntfsprogs-2014.2.15.tgz
+Type: ipkg
+Description:   Contains:
+   - lowntfs-3g
+   - mount.lowntfs-3g (symlink to lowntfs-3g)
+
+  A driver variant using the fuse low-level interface missing some of the
+  enhanced functionality for streams or the like. You might want to check:
+  http://www.tuxera.com/community/ntfs-3g-manual/
+
+http://www.tuxera.com
+Bud <wrt_buddhay@gmx.net>
+@@
+
+Package: ntfs-3g-utils
+Submenu: Filesystem
+Version: 2014.2.15-1-fuseint
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ntfs-3g
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: ntfs-3g utilities (ntfs-3g.secaudit, ntfs-3g.usermap)
+Maintainer: Bud <wrt_buddhay@gmx.net>
+Source: ntfs-3g_ntfsprogs-2014.2.15.tgz
+Type: ipkg
+Description:   Additional ntfs-3g utilities. Not included by default for size
+  considerations. All binaries except ntfs-3g, ntfs-3g.probe.
+
+  Currently:
+   - ntfs-3g.secaudit
+   - ntfs-3g.usermap
+
+http://www.tuxera.com
+Bud <wrt_buddhay@gmx.net>
+@@
+
+Package: ntfsprogs_ntfs-3g
+Submenu: Filesystem
+Version: 2014.2.15-1-fuseint
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ntfs-3g +libgcrypt +libuuid
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: ntfsprogs (ntfs-3g)
+Maintainer: Bud <wrt_buddhay@gmx.net>
+Source: ntfs-3g_ntfsprogs-2014.2.15.tgz
+Type: ipkg
+Description: ntfsprogs (ntfs-3g)
+http://www.tuxera.com
+Bud <wrt_buddhay@gmx.net>
+@@
+
+

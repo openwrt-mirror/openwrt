@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/smcroute/Makefile
+Package: smcroute
+Submenu: Routing and Redirection
+Version: 0.92-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Static multicast routing daemon
+Maintainer: 
+Source: smcroute-0.92.tgz
+Type: ipkg
+Description:  SMCRoute is a command line tool to manipulate the multicast routes of the Linux kernel.
+http://www.cschill.de/smcroute/
+
+@@
+
+

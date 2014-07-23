@@ -1,0 +1,136 @@
+Source-Makefile: feeds/oldpackages/multimedia/gstreamer/Makefile
+Package: libgstcheck
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer check unit testing library (core)
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer check unit testing library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstcontroller
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer dynamic parameter control library (core)
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer dynamic parameter control library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstdataprotocol
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer data protocol library (core)
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer data protocol library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstnet
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer network classes library (core)
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:     GStreamer open source multimedia framework
+   .
+   This package contains the GStreamer network classes library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gstreamer
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +libgstcheck +libgstcontroller +libgstdataprotocol +libgstnet
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer framework
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:  GStreamer open source multimedia framework
+ .
+ This meta package contains only dependencies on the other GStreamer
+ componenents.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: gstreamer-utils
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer utilities
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:  GStreamer open source multimedia framework
+ .
+ This package contains the GStreamer utilities.
+http://gstreamer.freedesktop.org/
+
+@@
+
+Package: libgstreamer
+Version: 0.10.36-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2 +libpthread +libxml2
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer library (core)
+Maintainer: 
+Source: gstreamer-0.10.36.tar.bz2
+Type: ipkg
+Description:  GStreamer open source multimedia framework
+ .
+ This package contains the GStreamer core library.
+http://gstreamer.freedesktop.org/
+
+@@
+
+

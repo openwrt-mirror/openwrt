@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/lang/perl-compress-bzip2/Makefile
+Package: perl-compress-bzip2
+Submenu: Perl
+Version: 2.09-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +libbz2
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: Perl interface to bzip2 compression library
+Maintainer: 
+Source: Compress-Bzip2-2.09.tar.gz
+Type: ipkg
+Description: Perl interface to bzip2 compression library
+http://search.cpan.org/dist/Compress-Bzip2/
+
+@@
+
+

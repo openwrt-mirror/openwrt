@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/lang/vala/Makefile
+Package: vala
+Version: 0.16.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: glib2/host vala/host !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Build-Depends/host: glib2/host
+Build-Types: host
+Section: lang
+Category: Languages
+Title: C-sharp like language for the GObject system
+Maintainer: 
+Source: vala-0.16.0.tar.xz
+Type: ipkg
+Description: Vala is a C-sharp like language for the GObject system. This package contains
+the Vala-to-C compiler.
+http://live.gnome.org/Vala
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/utils/mktorrent/Makefile
+Package: mktorrent
+Submenu: BitTorrent
+Version: 1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: mktorrent
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: mktorrent-1.0.tar.gz
+Type: ipkg
+Description: mktorrent
+http://mktorrent.sourceforge.net/
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+

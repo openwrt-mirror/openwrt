@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/net/horst/Makefile
+Package: horst
+Submenu: wireless
+Version: 3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Highly Optimized 802.11 Radio Scanning Tool
+Maintainer: Bruno Randolf <br1@einfach.org>
+Source: horst-3.0.tar.gz
+Type: ipkg
+Description: 	[horst] is a scanning and analysis tool for 802.11 wireless networks
+	and especially IBSS (ad-hoc) mode and mesh networks (OLSR).
+http://br1.einfach.org/horst/
+Bruno Randolf <br1@einfach.org>
+@@
+
+

@@ -1,0 +1,36 @@
+Source-Makefile: feeds/telephony/net/restund/Makefile
+Package: restund
+Submenu: Telephony
+Version: 0.4.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libre +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Modular STUN/TURN server
+Maintainer: 
+Source: restund-0.4.2.tar.gz
+Type: ipkg
+Description: Modular STUN/TURN server
+http://www.creytiv.com/
+
+@@
+
+Package: restund-mod-mysql
+Submenu: Telephony
+Version: 0.4.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread restund +PACKAGE_restund-mod-mysql:libmysqlclient
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: restund MySQL database backend module
+Maintainer: 
+Source: restund-0.4.2.tar.gz
+Type: ipkg
+Description: restund MySQL database backend module
+http://www.creytiv.com/
+
+@@
+
+

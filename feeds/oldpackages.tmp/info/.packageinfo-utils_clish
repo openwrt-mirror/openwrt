@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/utils/clish/Makefile
+Package: clish
+Version: 0.7.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libstdcpp +libpthread
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Command Line Interface SHell
+Maintainer: 
+Source: clish-0.7.3.tar.gz
+Type: ipkg
+Description:  A modular framework for implementing a CISCO-like CLI on a *NIX system.
+ Arbitary command menus and actions can be defined using XML files.
+ This software handles the user interaction,
+ and forks the appropriate system commands to perform any actions.
+http://clish.sourceforge.net/
+
+@@
+
+

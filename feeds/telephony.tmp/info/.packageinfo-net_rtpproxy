@@ -1,0 +1,19 @@
+Source-Makefile: feeds/telephony/net/rtpproxy/Makefile
+Package: rtpproxy
+Submenu: Telephony
+Version: 1.2.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: RTP (Realtime Transport Protocol) proxy
+Maintainer: 
+Source: rtpproxy-1.2.1.tar.gz
+Type: ipkg
+Description: RTP (Realtime Transport Protocol) proxy
+http://www.rtpproxy.org/
+
+@@
+
+

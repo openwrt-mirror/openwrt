@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/pptpd/Makefile
+Package: pptpd
+Submenu: VPN
+Version: 1.4.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ppp +kmod-gre +kmod-mppe +ppp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: PopTop pptp server
+Maintainer: 
+Source: pptpd-1.4.0.tar.gz
+Type: ipkg
+Description: PopTop pptp server
+http://www.poptop.org/
+
+@@
+
+

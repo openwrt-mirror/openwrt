@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/isakmpd/Makefile
+Package: isakmpd
+Submenu: VPN
+Version: 20041012-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +keynote +libgmp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: IPsec management tools
+Maintainer: 
+Source: isakmpd_20041012.orig.tar.gz
+Type: ipkg
+Description: IPsec management tools
+http://isakmpd.sourceforge.net/
+
+@@
+
+

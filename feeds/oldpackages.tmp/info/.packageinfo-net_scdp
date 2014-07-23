@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/net/scdp/Makefile
+Package: scdp
+Version: 1.0b-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnet0
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: An utility to send CDP (Cisco Discovery Protocol) packets
+Maintainer: 
+Source: scdp-1.0b.tar.gz
+Type: ipkg
+Description: 	This program sends CDP (Cisco Discovery Protocol) packets out on
+	selected interfaces and tells the connected switch (cisco only)
+	where the host is connected.
+http://sourceforge.net/projects/scdp
+
+@@
+
+

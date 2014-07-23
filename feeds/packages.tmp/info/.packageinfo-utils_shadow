@@ -1,0 +1,218 @@
+Source-Makefile: feeds/packages/utils/shadow/Makefile
+Package: shadow-chage
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility chage from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard chage utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-groupadd
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility groupadd from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard groupadd utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-groupdel
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility groupdel from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard groupdel utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-groupmod
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility groupmod from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard groupmod utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-groups
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility groups from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard groups utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-passwd
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility passwd from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard passwd utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-su
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility su from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard su utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-useradd
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility useradd from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard useradd utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-userdel
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility userdel from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard userdel utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-usermod
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-common
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Utility usermod from the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:     Full version of standard usermod utility. Normally, you would not use this
+    package, since the functionality in BusyBox is more than sufficient.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +shadow-chage +shadow-groupadd +shadow-groupdel +shadow-groupmod +shadow-groups +shadow-passwd +shadow-su +shadow-useradd +shadow-userdel +shadow-usermod
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: The PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description:   Full versions of standard shadow utilities. Normally, you would not
+  use this package, since the functionality in BusyBox is more than
+  sufficient and much smaller.
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+Package: shadow-common
+Version: 4.1.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libintl
+Section: utils
+Category: Utilities
+Title: Shared definitions for the PLD Linux shadow utilities
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Source: shadow-4.1.5.1.tar.bz2
+Type: ipkg
+Description: Shared definitions for the PLD Linux shadow utilities
+http://pkg-shadow.alioth.debian.org/
+Steven Barth <cyrus@openwrt.org>
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/lang/luabitop/Makefile
+Package: luabitop
+Submenu: Lua
+Version: 1.0.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: luabitop
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Source: LuaBitOp-1.0.2.tar.gz
+Type: ipkg
+Description: Lua BitOp is a C extension module for Lua 5.1/5.2 which adds bitwise operations on numbers.
+http://bitop.luajit.org/
+Maxim Storchak <m.storchak@gmail.com>
+@@
+
+

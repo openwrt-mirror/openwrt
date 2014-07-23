@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/luasoap/Makefile
+Package: luasoap
+Submenu: Lua
+Version: 2.0.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua +luaexpat +luasec +luasocket
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: LuaSOAP
+Maintainer: 
+Source: luasoap-2.0.2.tar.gz
+Type: ipkg
+Description:   LuaSOAP is a library of functions to deal with SOAP.
+https://github.com/tomasguisasola/luasoap
+
+@@
+
+

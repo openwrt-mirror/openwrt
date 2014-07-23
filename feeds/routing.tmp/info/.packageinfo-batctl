@@ -1,0 +1,21 @@
+Source-Makefile: feeds/routing/batctl/Makefile
+Package: batctl
+Version: 2014.2.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-batman-adv +libnl-tiny
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: B.A.T.M.A.N. Advanced user space configuration tool batctl
+Maintainer: Marek Lindner <mareklindner@neomailbox.ch>
+Source: batctl-2014.2.0.tar.gz
+Type: ipkg
+Description: batctl is a more intuitive managment utility for B.A.T.M.A.N.-Advanced.
+It is an easier method for configuring batman-adv and provides some
+additional tools for debugging as well. This package builds
+version 2014.2.0 of the user space utility.
+http://www.open-mesh.org/
+Marek Lindner <mareklindner@neomailbox.ch>
+@@
+
+

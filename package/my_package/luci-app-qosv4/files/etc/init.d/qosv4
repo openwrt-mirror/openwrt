@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+START=60
+
+start(){
+	/usr/bin/qosv4 start
+}
+
+stop(){
+	/usr/bin/qosv4 stop
+}
+restart(){
+/usr/bin/qosv4 start
+}
+
+
+

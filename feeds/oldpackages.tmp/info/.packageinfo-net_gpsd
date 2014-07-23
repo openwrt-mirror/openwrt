@@ -1,0 +1,99 @@
+Source-Makefile: feeds/oldpackages/net/gpsd/Makefile
+Package: gpsd
+Version: 3.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt +libgps +libgpsd
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libusb-1.0
+Section: net
+Category: Network
+Title: An interface daemon for GPS receivers
+Maintainer: 
+Source: gpsd-3.10.tar.gz
+Type: ipkg
+Description:     gpsd is a userland daemon acting as a translator between GPS and AIS receivers
+  and their clients. gpsd listens on port 2947 for clients requesting
+  position/time/velocity information.  The receivers are expected to generate
+  position information in a well-known format -- as NMEA-0183 sentences, SiRF
+  binary, Rockwell binary, Garmin binary format, or other vendor binary
+  protocols.  gpsd takes this information from the GPS and translates it into
+  something uniform and easier to understand for clients.
+  This package contains the GPS daemon.
+http://catb.org/gpsd/
+
+@@
+
+Package: gpsd-clients
+Version: 3.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt +libgps +libgpsd +libncurses
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libusb-1.0
+Section: net
+Category: Network
+Title: GPS tools and clients
+Maintainer: 
+Source: gpsd-3.10.tar.gz
+Type: ipkg
+Description:     gpsd is a userland daemon acting as a translator between GPS and AIS receivers
+  and their clients. gpsd listens on port 2947 for clients requesting
+  position/time/velocity information.  The receivers are expected to generate
+  position information in a well-known format -- as NMEA-0183 sentences, SiRF
+  binary, Rockwell binary, Garmin binary format, or other vendor binary
+  protocols.  gpsd takes this information from the GPS and translates it into
+  something uniform and easier to understand for clients.
+  This package contains auxiliary tools and example clients for monitoring and
+  testing the GPS daemon.
+http://catb.org/gpsd/
+
+@@
+
+Package: libgps
+Version: 3.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt +libcap
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libusb-1.0
+Section: libs
+Category: Libraries
+Title: C service library for communicating with the GPS daemon
+Maintainer: 
+Source: gpsd-3.10.tar.gz
+Type: ipkg
+Description:     gpsd is a userland daemon acting as a translator between GPS and AIS receivers
+  and their clients. gpsd listens on port 2947 for clients requesting
+  position/time/velocity information.  The receivers are expected to generate
+  position information in a well-known format -- as NMEA-0183 sentences, SiRF
+  binary, Rockwell binary, Garmin binary format, or other vendor binary
+  protocols.  gpsd takes this information from the GPS and translates it into
+  something uniform and easier to understand for clients.
+  This package contains the libgps library.
+http://catb.org/gpsd/
+
+@@
+
+Package: libgpsd
+Version: 3.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +librt +libcap +libusb-1.0
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libusb-1.0
+Section: libs
+Category: Libraries
+Title: C service library for GPS applications
+Maintainer: 
+Source: gpsd-3.10.tar.gz
+Type: ipkg
+Description:     gpsd is a userland daemon acting as a translator between GPS and AIS receivers
+  and their clients. gpsd listens on port 2947 for clients requesting
+  position/time/velocity information.  The receivers are expected to generate
+  position information in a well-known format -- as NMEA-0183 sentences, SiRF
+  binary, Rockwell binary, Garmin binary format, or other vendor binary
+  protocols.  gpsd takes this information from the GPS and translates it into
+  something uniform and easier to understand for clients.
+  This package contains the libgpsd library.
+http://catb.org/gpsd/
+
+@@
+
+

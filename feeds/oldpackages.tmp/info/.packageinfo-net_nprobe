@@ -1,0 +1,24 @@
+Source-Makefile: feeds/oldpackages/net/nprobe/Makefile
+Package: nprobe
+Version: 4.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libpcre +libpthread +NPROBE_MYSQL_SUPPORT:libmysqlclient +zlib
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: nProbe
+Maintainer: 
+Source: nProbe-4.1.tgz
+Type: ipkg
+Description: 		nprobe
+http://invisible-island.net/dialog/
+
+@@
+Config:
+	config NPROBE_MYSQL_SUPPORT
+		depends on PACKAGE_nprobe
+		bool "MySQL support"
+
+@@
+
+

@@ -1,0 +1,54 @@
+Source-Makefile: feeds/oldpackages/libs/mysql/Makefile
+Package: mysql-server
+Submenu: database
+Version: 5.1.73-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libmysqlclient +libpthread +libncursesw +libreadline
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libreadline libtool libintl libiconv
+Section: utils
+Category: Utilities
+Title: MySQL Server
+Maintainer: 
+Source: mysql-5.1.73.tar.gz
+Type: ipkg
+Description: MySQL Server
+http://dev.mysql.com/
+
+@@
+
+Package: libmysqlclient
+Version: 5.1.73-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libreadline libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: MySQL client library
+Maintainer: 
+Source: mysql-5.1.73.tar.gz
+Type: ipkg
+Description: MySQL client library
+http://dev.mysql.com/
+
+@@
+
+Package: libmysqlclient-r
+Version: 5.1.73-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: libncurses libreadline libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: MySQL client library threadsafe
+Maintainer: 
+Source: mysql-5.1.73.tar.gz
+Type: ipkg
+Description: MySQL client library threadsafe
+http://dev.mysql.com/
+
+@@
+
+

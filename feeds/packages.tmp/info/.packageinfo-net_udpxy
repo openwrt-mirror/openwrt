@@ -1,0 +1,24 @@
+Source-Makefile: feeds/packages/net/udpxy/Makefile
+Package: udpxy
+Version: 1.0.23-9-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Convert UDP IPTV streams into HTTP streams
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: udpxy.1.0.23-9-prod.tar.gz
+Type: ipkg
+Description: 	udproxy makes it possible to convert UDP IPTV streams into HTTP
+	streams which can be viewed even over WLANs. HTTP streams do
+	not generate huge amounts of multicast traffic, so a sd stream
+	only takes about 300k. Interesting for peoply who have IPTV at
+	home and do not want to rent multiple decoders from their
+	provider but just use their own streaming client (for example
+	popcornhour/mediatomb/vlc).
+http://www.udpxy.com/index-en.html
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

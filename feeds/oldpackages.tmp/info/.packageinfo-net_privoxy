@@ -1,0 +1,24 @@
+Source-Makefile: feeds/oldpackages/net/privoxy/Makefile
+Package: privoxy
+Submenu: Web Servers/Proxies
+Version: 3.0.21-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcre +libpthread +zlib
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: web proxy with advanced filtering capabilities
+Maintainer: 
+Source: privoxy-3.0.21-stable-src.tar.gz
+Type: ipkg
+Description: 	Privoxy is a web proxy with advanced filtering capabilities for
+	protecting privacy, modifying web page content, managing cookies,
+	controlling access, and removing ads, banners, pop-ups and other
+	obnoxious Internet junk. Privoxy has a very flexible configuration
+	and can be customized to suit individual needs and tastes. Privoxy
+	has application for both stand-alone systems and multi-user networks.
+http://www.privoxy.org/
+
+@@
+
+

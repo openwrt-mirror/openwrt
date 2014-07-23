@@ -1,0 +1,50 @@
+Source-Makefile: feeds/packages/net/krb5/Makefile
+Package: krb5-libs
+Version: 1.12.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Kerberos 5 Shared Libraries
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: krb5-1.12.1-signed.tar
+Type: ipkg
+Description: Kerberos 5 Shared Libraries
+http://web.mit.edu/kerberos/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: krb5-server
+Version: 1.12.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +krb5-libs +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Kerberos 5 Server
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: krb5-1.12.1-signed.tar
+Type: ipkg
+Description: Kerberos 5 Server
+http://web.mit.edu/kerberos/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+Package: krb5-client
+Version: 1.12.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +krb5-libs
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Kerberos 5 Client
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: krb5-1.12.1-signed.tar
+Type: ipkg
+Description: Kerberos 5 Client
+http://web.mit.edu/kerberos/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+

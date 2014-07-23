@@ -1,0 +1,125 @@
+Source-Makefile: feeds/oldpackages/multimedia/ffmpeg/Makefile
+Package: ffmpeg
+Version: 0.11.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libffmpeg-full
+Menu-Depends: 
+Provides: 
+Build-Variant: full
+Section: multimedia
+Category: Multimedia
+Title: FFmpeg program
+Maintainer: 
+Source: ffmpeg-0.11.5.tar.bz2
+Type: ipkg
+Description:  FFmpeg is a a software package that can record, convert and stream digital
+ audio and video in numerous formats.
+ .
+ This package contains the FFmpeg command line tool.
+http://ffmpeg.mplayerhq.hu/
+
+@@
+
+Package: ffprobe
+Version: 0.11.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libffmpeg-full
+Menu-Depends: 
+Provides: 
+Build-Variant: full
+Section: multimedia
+Category: Multimedia
+Title: FFmpeg CLI media identifier
+Maintainer: 
+Source: ffmpeg-0.11.5.tar.bz2
+Type: ipkg
+Description:  FFmpeg is a a software package that can record, convert and stream digital
+ audio and video in numerous formats.
+ .
+ This package contains the FFprobe command line tool.
+http://ffmpeg.mplayerhq.hu/
+
+@@
+
+Package: ffserver
+Version: 0.11.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libffmpeg-full
+Menu-Depends: 
+Provides: 
+Build-Variant: full
+Section: multimedia
+Category: Multimedia
+Title:  streaming server
+Maintainer: 
+Source: ffmpeg-0.11.5.tar.bz2
+Type: ipkg
+Description:  FFmpeg is a a software package that can record, convert and stream digital
+ audio and video in numerous formats.
+ .
+ This package contains the FFmpeg streaming server.
+
+@@
+
+Package: libffmpeg-custom
+Menu: 1
+Version: 0.11.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +zlib +libbz2 @DEVEL
+Menu-Depends: 
+Provides: libffmpeg
+Build-Variant: custom
+Section: libs
+Category: Libraries
+Title: FFmpeg libraries (mini)
+Maintainer: 
+Source: ffmpeg-0.11.5.tar.bz2
+Type: ipkg
+Description:  FFmpeg is a a software package that can record, convert and stream digital
+ audio and video in numerous formats.
+ .
+ This package contains customized FFmpeg shared libraries.
+http://ffmpeg.mplayerhq.hu/
+
+@@
+Config:
+source "feeds/oldpackages/multimedia/ffmpeg/Config.in"
+@@
+
+Package: libffmpeg-full
+Version: 0.11.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +zlib +libbz2 @BUILD_PATENTED +alsa-lib
+Menu-Depends: 
+Provides: libffmpeg
+Build-Variant: full
+Section: libs
+Category: Libraries
+Title: FFmpeg libraries (full)
+Maintainer: 
+Source: ffmpeg-0.11.5.tar.bz2
+Type: ipkg
+Description:  FFmpeg is a a software package that can record, convert and stream digital
+ audio and video in numerous formats.
+ .
+ This package contains full-featured FFmpeg shared libraries.
+http://ffmpeg.mplayerhq.hu/
+
+@@
+
+Package: libffmpeg-mini
+Version: 0.11.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +zlib +libbz2 @BUILD_PATENTED
+Menu-Depends: 
+Provides: libffmpeg
+Build-Variant: mini
+Section: libs
+Category: Libraries
+Title: FFmpeg libraries (mini)
+Maintainer: 
+Source: ffmpeg-0.11.5.tar.bz2
+Type: ipkg
+Description:  FFmpeg is a a software package that can record, convert and stream digital
+ audio and video in numerous formats.
+ .
+ This package contains minimal-featured FFmpeg shared libraries.
+http://ffmpeg.mplayerhq.hu/
+
+@@
+
+

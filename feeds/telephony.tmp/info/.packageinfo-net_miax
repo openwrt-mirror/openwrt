@@ -1,0 +1,21 @@
+Source-Makefile: feeds/telephony/net/miax/Makefile
+Package: miax
+Submenu: Telephony
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +bluez-libs
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A console iax (asterisk) client
+Maintainer: 
+Source: miax_1.4.tar.gz
+Type: ipkg
+Description: 	miax is a console iax (asterisk) client, it can work with 
+	a soundcard as a normal voip phone, taking input/output from 
+	keyboard, analog/gsm/isdn modem or bluetooth phones.
+http://www.eja.it/?l=en&n=miax
+
+@@
+
+

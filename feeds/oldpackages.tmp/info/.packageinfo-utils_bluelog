@@ -1,0 +1,42 @@
+Source-Makefile: feeds/oldpackages/utils/bluelog/Makefile
+Package: bluelog
+Version: 1.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +bluez-utils +kmod-bluetooth
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Bluetooth scanner and logger
+Maintainer: 
+Source: bluelog-1.1.0.tar.gz
+Type: ipkg
+Description:     Bluelog is a simple Bluetooth scanner designed to tell you how many
+  discoverable devices there are in an area as quickly as possible. It is
+  intended to be used as a site survey tool, identifying the number of possible
+  Bluetooth targets there are in the surrounding environment.
+http://www.digifail.com/software/bluelog.shtml
+
+@@
+
+Package: bluelog-live
+Version: 1.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +bluez-utils +kmod-bluetooth bluelog
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Bluetooth scanner and logger (live output)
+Maintainer: 
+Source: bluelog-1.1.0.tar.gz
+Type: ipkg
+Description:     Bluelog is a simple Bluetooth scanner designed to tell you how many
+  discoverable devices there are in an area as quickly as possible. It is
+  intended to be used as a site survey tool, identifying the number of possible
+  Bluetooth targets there are in the surrounding environment.
+  This package contains the files for "Bluelog Live", an optional mode of
+  Bluelog which creates a real-time webpage of discovered Bluetooth devices.
+http://www.digifail.com/software/bluelog.shtml
+
+@@
+
+

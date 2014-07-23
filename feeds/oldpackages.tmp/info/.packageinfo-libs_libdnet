@@ -1,0 +1,39 @@
+Source-Makefile: feeds/oldpackages/libs/libdnet/Makefile
+Package: libdnet
+Version: 1.11-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: PACKAGE_pydnet:python
+Section: libs
+Category: Libraries
+Title: Low-level network library
+Maintainer: 
+Source: libdnet-1.11.tar.gz
+Type: ipkg
+Description:   	libdnet is a library of simplified, portable interface to several
+	low-level networking routines.
+http://sourceforge.net/projects/libdnet/
+
+@@
+
+Package: pydnet
+Version: 1.11-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libdnet +python-mini
+Menu-Depends: 
+Provides: 
+Build-Depends: PACKAGE_pydnet:python
+Section: libs
+Category: Libraries
+Title: Low-level network library
+Maintainer: 
+Source: libdnet-1.11.tar.gz
+Type: ipkg
+Description:   	libdnet is a library of simplified, portable interface to several
+	low-level networking routines.
+  This package contains the python dnet library.
+http://sourceforge.net/projects/libdnet/
+
+@@
+
+

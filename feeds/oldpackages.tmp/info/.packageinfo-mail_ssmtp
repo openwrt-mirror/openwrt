@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/mail/ssmtp/Makefile
+Package: ssmtp
+Version: 2.64-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Section: mail
+Category: Mail
+Title: A minimal and secure mail sender
+Maintainer: 
+Source: ssmtp_2.64.orig.tar.bz2
+Type: ipkg
+Description:  A secure, effective and simple way of getting mail off a system to your
+ mail hub. It contains no suid-binaries or other dangerous things - no
+ mail spool to poke around in, and no daemons running in the background.
+ mail is simply forwarded to the configured mailhost. Extremely easy
+ configuration.
+http://packages.debian.org/ssmtp
+
+@@
+
+

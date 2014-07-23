@@ -1,0 +1,26 @@
+Source-Makefile: feeds/oldpackages/multimedia/tvheadend/Makefile
+Package: tvheadend
+Version: 3.4patch1-0.1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcurl +libopenssl +librt +zlib +TVHEADEND_AVAHI_SUPPORT:libavahi-client
+Menu-Depends: 
+Provides: 
+Section: multimedia
+Category: Multimedia
+Title: Tvheadend is a TV streaming server for Linux
+Maintainer: 
+Source: 3.4patch1.tar.gz
+Type: ipkg
+Description:   Tvheadend is a TV streaming server for Linux supporting DVB, ATSC, IPTV,
+  and Analog video (V4L) as input sources.
+  Can be used as a backend to Showtime, XBMC and various other clients.
+https://tvheadend.org/
+
+@@
+Config:
+  menu "Configuration"
+  depends on PACKAGE_tvheadend
+  source "feeds/oldpackages/multimedia/tvheadend/Config.in"
+  endmenu
+@@
+
+

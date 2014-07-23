@@ -1,0 +1,23 @@
+Source-Makefile: feeds/oldpackages/net/socat/Makefile
+Package: socat
+Version: 1.7.2.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A multipurpose relay (SOcket CAT)
+Maintainer: 
+Source: socat-1.7.2.1.tar.bz2
+Type: ipkg
+Description: 	SoCat (for SOcket CAT) establishes two bidirectional byte streams and
+	transfers data between them.
+	Data channels may be files, pipes, devices (terminal or modem, etc.), or
+	sockets (Unix, IPv4, IPv6, raw, UDP, TCP, SSL). It provides forking,
+	logging and tracing, different modes for interprocess communication and
+	many more options.
+http://www.dest-unreach.org/socat/
+
+@@
+
+

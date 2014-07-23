@@ -1,0 +1,54 @@
+Source-Makefile: feeds/packages/libs/unixodbc/Makefile
+Package: unixodbc
+Submenu: database
+Version: 2.3.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libltdl +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: unixODBC (libraries)
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: unixODBC-2.3.2.tar.gz
+Type: ipkg
+Description:   unixODBC is an Open Source ODBC sub-system and an ODBC SDK for Linux,
+  Mac OSX, and UNIX.
+http://www.unixodbc.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+Package: unixodbc-tools
+Submenu: database
+Version: 2.3.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +unixodbc +libncurses +libreadline
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: unixODBC Tools
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: unixODBC-2.3.2.tar.gz
+Type: ipkg
+Description:   Command Line Tools to help install a driver and work with SQL.
+http://www.unixodbc.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+Package: pgsqlodbc
+Submenu: database
+Version: 2.3.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +unixodbc +libpq
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Postgresql driver for ODBC
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: unixODBC-2.3.2.tar.gz
+Type: ipkg
+Description: 	Postgresql driver for ODBC.
+http://www.unixodbc.org/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+

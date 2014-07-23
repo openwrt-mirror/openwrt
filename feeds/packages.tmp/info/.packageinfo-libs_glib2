@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/libs/glib2/Makefile
+Package: glib2
+Version: 2.41.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +BUILD_NLS:libiconv-full +BUILD_NLS:libintl-full +zlib +libpthread +libffi +libattr
+Menu-Depends: 
+Provides: 
+Build-Depends: glib2/host libpthread zlib libintl libffi !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Build-Depends/host: libintl/host libiconv/host libffi/host
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: glib 2.0
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: glib-2.41.1.tar.xz
+Type: ipkg
+Description:   The GLib library of C routines
+http://www.gtk.org/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

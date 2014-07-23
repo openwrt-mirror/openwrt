@@ -1,0 +1,22 @@
+Source-Makefile: feeds/packages/multimedia/gst-ffmpeg/Makefile
+Package: gst-ffmpeg
+Version: 0.10.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgstreamer +gst-mod-alsa +libbz2 +libgstaudio
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: multimedia
+Category: Multimedia
+Title: GStreamer ffmpeg bindings
+Maintainer: Okkel Klaver <info@vanhetland.nl>
+Source: gst-ffmpeg-0.10.11.tar.bz2
+Type: ipkg
+Description:   GStreamer ffmpeg bindings
+http://www.gstreamer.net/modules/gst-ffmpeg.html
+Okkel Klaver <info@vanhetland.nl>
+@@
+Config:
+source "feeds/packages/multimedia/gst-ffmpeg/Config.in"
+@@
+
+

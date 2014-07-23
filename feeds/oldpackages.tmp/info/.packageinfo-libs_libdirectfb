@@ -1,0 +1,26 @@
+Source-Makefile: feeds/oldpackages/libs/libdirectfb/Makefile
+Feature: drawing-backend_DirectFB
+Target-Name: drawing-backend
+Target-Title: Drawing Backend
+Feature-Name: DirectFB
+Feature-Description:
+
+@@
+
+Package: directfb
+Version: 1.4.2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpng +libjpeg +libpthread +libfreetype +libsysfs
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: DirectFB
+Maintainer: 
+Source: DirectFB-1.4.2.tar.gz
+Type: ipkg
+Description:     DirectFB is a thin library that provides hardware graphics acceleration, input device handling and abstraction, integrated windowing system with support for translucent windows and multiple display layers, not only on top of the Linux Framebuffer Device. It is a complete hardware abstraction layer with software fallbacks for every graphics operation that is not supported by the underlying hardware.
+http://directfb.org
+
+@@
+
+

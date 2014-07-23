@@ -1,0 +1,91 @@
+Source-Makefile: feeds/oldpackages/utils/boxbackup/Makefile
+Package: boxbackup
+Menu: 1
+Submenu: backup
+Version: 0.11.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Secure network backup
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: boxbackup-0.11.1.tgz
+Type: ipkg
+Description: Secure network backup
+http://www.boxbackup.org/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+Package: bbstored
+Submenu: backup
+Version: 0.11.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread boxbackup +libopenssl +zlib +libdb47 +libopenssl +libstdcpp +libreadline +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Server for secure network backup
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: boxbackup-0.11.1.tgz
+Type: ipkg
+Description:   Boxbackup is an open source, completely automatic, on-line backup system.
+  This package is for the server (where the backups are stored).  The
+  server is known as bbstored.
+http://www.boxbackup.org/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+Package: boxbackup-certs
+Submenu: backup
+Version: 0.11.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread boxbackup +openssl-util +microperl
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Manage network backup security certificates
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: boxbackup-0.11.1.tgz
+Type: ipkg
+Description: Manage network backup security certificates
+http://www.boxbackup.org/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+Package: bbstored-config-external
+Submenu: backup
+Version: 0.11.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread boxbackup +openssl-util +microperl
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Configure network backup server
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: boxbackup-0.11.1.tgz
+Type: ipkg
+Description: Configure network backup server
+http://www.boxbackup.org/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+Package: bbackupd
+Submenu: backup
+Version: 0.11.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread boxbackup +libopenssl +zlib +libdb47 +libopenssl +libreadline +libstdcpp +libncurses +openssl-util +microperl
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Client for secure network backup
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: boxbackup-0.11.1.tgz
+Type: ipkg
+Description:   Box Backup is an open source, completely automatic, on-line backup system.
+  This package is for the client (host to be backed up).
+http://www.boxbackup.org/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+

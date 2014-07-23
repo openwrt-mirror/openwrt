@@ -1,0 +1,1822 @@
+Source-Makefile: feeds/packages/utils/coreutils/Makefile
+Package: coreutils
+Menu: 1
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: The GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:  Full versions of standard GNU utilities. Normally, you would not use this
+ package, since the functionality in BusyBox is more than sufficient and
+ smaller.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-base64
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility base64 from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU base64 utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-basename
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility basename from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU basename utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-cat
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility cat from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU cat utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-chcon
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility chcon from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU chcon utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-chgrp
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility chgrp from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU chgrp utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-chmod
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility chmod from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU chmod utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-chown
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility chown from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU chown utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-chroot
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility chroot from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU chroot utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-cksum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility cksum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU cksum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-comm
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility comm from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU comm utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-cp
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility cp from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU cp utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-csplit
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility csplit from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU csplit utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-cut
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility cut from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU cut utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-date
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility date from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU date utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-dd
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility dd from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU dd utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-dir
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility dir from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU dir utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-dircolors
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility dircolors from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU dircolors utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-dirname
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility dirname from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU dirname utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-du
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility du from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU du utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-echo
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility echo from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU echo utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-env
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility env from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU env utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-expand
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility expand from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU expand utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-expr
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils +libgmp
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility expr from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU expr utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-factor
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils +libgmp
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility factor from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU factor utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-false
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility false from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU false utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-fmt
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility fmt from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU fmt utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-fold
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility fold from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU fold utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-groups
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility groups from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU groups utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-head
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility head from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU head utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-hostid
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility hostid from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU hostid utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-id
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility id from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU id utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-install
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility install from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU install utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-join
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility join from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU join utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-kill
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility kill from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU kill utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-link
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility link from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU link utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-ln
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility ln from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU ln utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-logname
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility logname from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU logname utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-ls
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility ls from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU ls utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-md5sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility md5sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU md5sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-mkdir
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility mkdir from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU mkdir utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-mkfifo
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility mkfifo from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU mkfifo utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-mknod
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility mknod from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU mknod utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-mktemp
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility mktemp from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU mktemp utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-mv
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility mv from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU mv utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-nice
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility nice from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU nice utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-nl
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility nl from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU nl utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-nohup
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility nohup from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU nohup utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-nproc
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility nproc from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU nproc utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-od
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility od from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU od utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-paste
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility paste from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU paste utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-pathchk
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility pathchk from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU pathchk utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-pinky
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility pinky from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU pinky utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-pr
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility pr from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU pr utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-printenv
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility printenv from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU printenv utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-printf
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility printf from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU printf utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-ptx
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility ptx from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU ptx utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-pwd
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility pwd from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU pwd utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-readlink
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility readlink from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU readlink utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-realpath
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility realpath from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU realpath utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-rm
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility rm from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU rm utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-rmdir
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility rmdir from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU rmdir utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-runcon
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility runcon from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU runcon utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-seq
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility seq from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU seq utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sha1sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sha1sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sha1sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sha224sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sha224sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sha224sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sha256sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sha256sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sha256sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sha384sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sha384sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sha384sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sha512sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sha512sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sha512sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-shred
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility shred from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU shred utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-shuf
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility shuf from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU shuf utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sleep
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sleep from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sleep utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sort
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sort from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sort utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-split
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility split from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU split utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-stat
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility stat from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU stat utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-stdbuf
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility stdbuf from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU stdbuf utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-stty
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility stty from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU stty utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sum
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sum from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sum utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-sync
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility sync from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU sync utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-tac
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility tac from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU tac utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-tail
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility tail from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU tail utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-tee
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility tee from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU tee utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-test
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility test from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU test utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-timeout
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils +librt
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility timeout from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU timeout utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-touch
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility touch from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU touch utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-tr
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility tr from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU tr utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-true
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility true from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU true utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-truncate
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility truncate from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU truncate utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-tsort
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility tsort from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU tsort utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-tty
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility tty from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU tty utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-uname
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility uname from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU uname utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-unexpand
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility unexpand from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU unexpand utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-uniq
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility uniq from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU uniq utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-unlink
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility unlink from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU unlink utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-uptime
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility uptime from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU uptime utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-users
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility users from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU users utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-vdir
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility vdir from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU vdir utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-wc
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility wc from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU wc utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-who
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility who from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU who utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-whoami
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility whoami from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU whoami utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: coreutils-yes
+Version: 8.16-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread coreutils
+Menu-Depends: 
+Provides: 
+Build-Depends: libpthread
+Section: utils
+Category: Utilities
+Title: Utility yes from the GNU core utilities
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: coreutils-8.16.tar.xz
+Type: ipkg
+Description:   Full version of standard GNU yes utility. Normally, you would not use this
+  package, since the functionality in BusyBox is more than sufficient.
+http://www.gnu.org/software/coreutils/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

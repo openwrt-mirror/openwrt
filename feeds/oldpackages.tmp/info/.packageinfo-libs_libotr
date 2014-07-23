@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libotr/Makefile
+Package: libotr
+Version: 3.2.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgcrypt
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: OTR Messaging Library
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Source: libotr-3.2.1.tar.gz
+Type: ipkg
+Description:   Off-the-Record (OTR) Messaging allows you to have private conversations over
+  instant messaging.
+http://www.cypherpunks.ca/otr/
+Peter Wagner <tripolar@gmx.at>
+@@
+
+

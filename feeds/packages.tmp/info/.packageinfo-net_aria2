@@ -1,0 +1,23 @@
+Source-Makefile: feeds/packages/net/aria2/Makefile
+Package: aria2
+Submenu: File Transfer
+Version: 1.18.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +ARIA2_METALINK:libxml2 +libstdcpp +ARIA2_OPENSSL:libopenssl +ARIA2_GNUTLS:libgnutls
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: lightweight download utility
+Maintainer: Imre Kaloz <kaloz@openwrt.org>
+Source: aria2-1.18.4.tar.bz2
+Type: ipkg
+Description:  aria2 is a lightweight multi-protocol & multi-source command-line download
+ utility
+http://aria2.sourceforge.net/
+Imre Kaloz <kaloz@openwrt.org>
+@@
+Config:
+  source "feeds/packages/net/aria2/Config.in"
+@@
+
+

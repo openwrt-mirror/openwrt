@@ -1,0 +1,22 @@
+Source-Makefile: feeds/telephony/net/sipp/Makefile
+Package: sipp
+Submenu: Telephony
+Version: 3.3.990-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses +libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: test tool / traffic generator for the SIP protocol
+Maintainer: 
+Source: sipp-3.3.990.tar.gz
+Type: ipkg
+Description:  SIPp is a free Open Source test tool / traffic generator for the SIP
+ protocol. It includes a few basic SipStone user agent scenarios (UAC and
+ UAS) and establishes and releases multiple calls with the INVITE and BYE
+ methods.
+http://sipp.sourceforge.net/
+
+@@
+
+

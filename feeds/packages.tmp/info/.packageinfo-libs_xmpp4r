@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/xmpp4r/Makefile
+Package: xmpp4r
+Version: 0.5-0
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ruby
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XMPP/Jabber library for Ruby
+Maintainer: Giovanni Di Stasi <giovanni.distasi@unina.it>
+Source: xmpp4r-0.5.zip
+Type: ipkg
+Description: 	This package contains xmpp4r, an XMPP/Jabber library for Ruby.
+http://home.gna.org/xmpp4r/
+Giovanni Di Stasi <giovanni.distasi@unina.it>
+@@
+
+

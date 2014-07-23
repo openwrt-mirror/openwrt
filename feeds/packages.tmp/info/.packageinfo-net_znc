@@ -1,0 +1,889 @@
+Source-Makefile: feeds/packages/net/znc/Makefile
+Package: znc
+Menu: 1
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description: 	ZNC is an IRC bouncer with many advanced features like detaching,
+	multiple users, per channel playback buffer, SSL, IPv6, transparent DCC
+	bouncing, and c++ module support to name a few.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-adminlog
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (adminlog plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Log user connects and disconnects and failed logins to file or syslog.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-autoattach
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (autoattach plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Reattaches you to channels on activity.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-autocycle
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (autocycle plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Cycles a channel when you are the only one in there and you don't have op.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-autoop
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (autoop plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Auto op the good guys.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-autoreply
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (autoreply plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Gives a automatic reply if someone messages you if you are away.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-autovoice
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (autovoice plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Autovoices everyone who joins some channel.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-awaynick
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (awaynick plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Change your nick while you are away.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-awaystore
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (awaystore plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Stores messages while away, also auto away.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-block-motd
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (block-motd plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module blocks the server's Message of the Day.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-blockuser
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (blockuser plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Blocks certain users from using ZNC saying their account was disabled.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-bouncedcc
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (bouncedcc plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Bounces dcc transfers through the znc server instead of sending them directly to the user.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-buffextras
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (buffextras plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Add nick changes, joins, parts, topic changes etc. to your playback buffer.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-cert
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (cert plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Use a SSL certificate for connecting to a server.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-certauth
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (certauth plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module allows users to log in to ZNC via SSL client keys.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-chansaver
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (chansaver plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Keeping config up to date when user joins and parts.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-clearbufferonmsg
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (clearbufferonmsg plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module keeps the buffer until the next message from the client.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-clientnotify
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (clientnotify plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Notify about new incoming connections to your user.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-controlpanel
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (controlpanel plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Allows you to add/remove/edit users and settings on the fly via IRC messages.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-crypt
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (crypt plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Encryption for channel/private messages.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-ctcpflood
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (ctcpflood plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module tries to block ctcp floods.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-dcc
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (dcc plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Allows you to transfer files to and from ZNC.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-disconkick
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (disconkick plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module will kick your client from all channels where you are, in case if ZNC disconnects from server.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-fail2ban
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (fail2ban plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Block IPs for some time after a failed login.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-flooddetach
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (flooddetach plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module detaches you from channels which are flooded.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-identfile
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (identfile plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Places the ident of a user to a file when they are trying to connect.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-keepnick
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (keepnick plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Tries to get you your primary nick.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-kickrejoin
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (kickrejoin plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Implements auto-rejoin-on-kick.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-lastseen
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (lastseen plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Logs when a user last logged in to ZNC.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-listsockets
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (listsockets plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module displays a list of all open sockets in ZNC.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-log
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (log plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Log conversations to file.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-modules_online
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (modules_online plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module fakes the online status of ZNC-*users.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-nickserv
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (nickserv plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Auths you with NickServ.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-notes
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (notes plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This modules stores and displays short notes using a key/note pairs and shows them to you on connect.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-notify-connect
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (notify-connect plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Sends a notice to all admins when a user logs in or out.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-partyline
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (partyline plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Allows ZNC users to join internal channels and query other ZNC users on the same ZNC.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-perform
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (perform plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Performs commands on connect.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-q
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (q plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Auths you with Q (and a little more).
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-raw
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (raw plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    View all of the raw traffic.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-route-replies
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (route-replies plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Routes back answers to the right client when connected with multiple clients.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-sasl
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (sasl plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    The SASL module allows you to authenticate to an IRC network via SASL.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-savebuff
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (savebuff plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Saves your channel buffers into an encrypted file so they can survive restarts and reboots.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-schat
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (schat plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    SSL (encrypted) DCC chats.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-send-raw
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (send-raw plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Allows you to send raw traffic to IRC from other users.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-simple-away
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (simple-away plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    This module will automatically set you away on IRC while you are disconnected from the bouncer.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-shell
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (shell plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Have your unix shell in a query window right inside of your IRC client.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-stickychan
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (stickychan plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Keeps you sticked to specific channels.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-watch
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (watch plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Monitor activity for specific text patterns from specific users and have the text sent to a special query window.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-mod-webadmin
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (webadmin plugin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:    Allows you to add/remove/edit users and settings on the fly via a web browser.
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-webskin-dark-clouds
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc-mod-webadmin
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (dark-clouds webskin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:     dark-clouds webskin for webadmin
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-webskin-forest
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc-mod-webadmin
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (forest webskin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:     forest webskin for webadmin
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+Package: znc-webskin-ice
+Submenu: Instant Messaging
+Version: 1.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread znc-mod-webadmin
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: ZNC (ice webskin)
+Maintainer: Jonas Gorski <jogo@openwrt.org>
+Source: znc-1.4.tar.gz
+Type: ipkg
+Description:     ice webskin for webadmin
+http://en.znc.in/
+Jonas Gorski <jogo@openwrt.org>
+@@
+
+

@@ -1,0 +1,53 @@
+Source-Makefile: feeds/routing/batmand/Makefile
+Package: batmand
+Submenu: Routing and Redirection
+Version: r1439-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +kmod-tun
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: B.A.T.M.A.N. layer 3 routing daemon
+Maintainer: Marek Lindner <lindner_marek@yahoo.de>
+Source: batmand-r1439.tar.gz
+Type: ipkg
+Description: B.A.T.M.A.N. layer 3 routing daemon
+http://www.open-mesh.org/
+Marek Lindner <lindner_marek@yahoo.de>
+@@
+
+Package: vis
+Submenu: Routing and Redirection
+Version: r1439-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: visualization server for B.A.T.M.A.N. layer 3
+Maintainer: Marek Lindner <lindner_marek@yahoo.de>
+Source: batmand-r1439.tar.gz
+Type: ipkg
+Description: visualization server for B.A.T.M.A.N. layer 3
+http://www.open-mesh.org/
+Marek Lindner <lindner_marek@yahoo.de>
+@@
+
+Package: kmod-batgat
+Submenu: Network Support
+Version: <LINUX_VERSION>+r1439-2
+Depends: +batmand @BROKEN
+Menu-Depends: 
+Provides: 
+Section: kernel
+Category: Kernel modules
+Title: B.A.T.M.A.N. gateway module
+Maintainer: Marek Lindner <lindner_marek@yahoo.de>
+Source: batmand-r1439.tar.gz
+Type: ipkg
+Description: Kernel gateway module for B.A.T.M.A.N. for better tunnel performance
+http://www.open-mesh.org/
+Marek Lindner <lindner_marek@yahoo.de>
+@@
+
+

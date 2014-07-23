@@ -1,0 +1,34 @@
+Source-Makefile: feeds/oldpackages/net/rrs/Makefile
+Package: rrs
+Version: 1.70-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +libopenssl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A reverse (connecting) remote shell (with SSL support)
+Maintainer: 
+Source: rrs-1.70.tar.gz
+Type: ipkg
+Description: A reverse (connecting) remote shell (with SSL support)
+http://www.cycom.se/dl/rrs/
+
+@@
+
+Package: rrs-nossl
+Version: 1.70-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A reverse (connecting) remote shell (without SSL support)
+Maintainer: 
+Source: rrs-1.70.tar.gz
+Type: ipkg
+Description: A reverse (connecting) remote shell (without SSL support)
+http://www.cycom.se/dl/rrs/
+
+@@
+
+

@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/libs/libgee/Makefile
+Package: libgee
+Version: 0.6.4-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +glib2
+Menu-Depends: 
+Provides: 
+Build-Depends: vala/host glib2 !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: GObject based collection library
+Maintainer: 
+Source: libgee-0.6.4.tar.xz
+Type: ipkg
+Description: libgee is a collection library providing GObject-based interfaces and classes
+for commonly used data structures.
+http://live.gnome.org/Libgee
+
+@@
+
+

@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/libmicrohttpd/Makefile
+Package: libmicrohttpd
+Version: 0.9.19-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Microhttpd
+Maintainer: 
+Source: libmicrohttpd-0.9.19.tar.gz
+Type: ipkg
+Description:  GNU libmicrohttpd is a small C library that is supposed to make it easy to run an HTTP server as part of another application.
+http://www.gnu.org/software/libmicrohttpd
+
+@@
+
+

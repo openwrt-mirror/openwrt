@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/dansguardian/Makefile
+Package: dansguardian
+Submenu: Web Servers/Proxies
+Version: 2.10.1.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp +zlib
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: DansGuardian
+Maintainer: 
+Source: dansguardian-2.10.1.1.tar.gz
+Type: ipkg
+Description: DansGuardian
+http://dansguardian.org
+
+@@
+
+

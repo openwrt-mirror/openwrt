@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/wifitoggle/Makefile
+Package: wifitoggle
+Version: 1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Script to toggle Wi-Fi with a button and UCI config
+Maintainer: Nuno Goncalves <nunojpg@gmail.com>
+Source: 
+Type: ipkg
+Description: Very versatile script to toggle Wi-Fi with a button. Allows to set
+timeouts, persist changes after boot, and set LEDs according to the state.
+Nuno Goncalves <nunojpg@gmail.com>
+@@
+
+

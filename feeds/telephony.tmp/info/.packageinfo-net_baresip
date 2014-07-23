@@ -1,0 +1,257 @@
+Source-Makefile: feeds/telephony/net/baresip/Makefile
+Package: baresip
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libre +librem +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Portable and modular SIP User-Agent with A/V support
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: Portable and modular SIP User-Agent with A/V support
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-alsa
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-alsa:alsa-lib
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip ALSA audio driver module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip ALSA audio driver module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-avcodec
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-avcodec:libffmpeg-full
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip FFmpeg video codecs module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip FFmpeg video codecs module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-avformat
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-avformat:libffmpeg-full
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip FFmpeg video source module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip FFmpeg video source module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-cons
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip console UI module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip console UI module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-evdev
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip input event device UI module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip input event device UI module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-g711
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip G.711 audio codec module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip G.711 audio codec module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-g722
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-g722:libspandsp
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip G.722 audio codec module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip G.722 audio codec module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-sdl
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +libsdl
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip SDL video display module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip SDL video display module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-oss
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip OSS audio driver module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip OSS audio driver module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-speex
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-speex:libspeex
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip Speex audio codec module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip Speex audio codec module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-stdio
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip standard I/O UI module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip standard I/O UI module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-uuid
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +libuuid
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip UUID module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip UUID module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-v4l
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-v4l:libv4l
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip Video4Linux video source module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip Video4Linux video source module
+http://www.creytiv.com/
+
+@@
+
+Package: baresip-mod-v4l2
+Submenu: Telephony
+Version: 0.4.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread baresip +PACKAGE_baresip-mod-v4l2:libv4l
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: baresip Video4Linux2 video source module
+Maintainer: 
+Source: baresip-0.4.11.tar.gz
+Type: ipkg
+Description: baresip Video4Linux2 video source module
+http://www.creytiv.com/
+
+@@
+
+

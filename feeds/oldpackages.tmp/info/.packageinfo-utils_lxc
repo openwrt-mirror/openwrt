@@ -1,0 +1,514 @@
+Source-Makefile: feeds/oldpackages/utils/lxc/Makefile
+Package: lxc
+Menu: 1
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description:  LXC is the userspace control package for Linux Containers, a lightweight
+ virtual system mechanism sometimes described as "chroot on steroids".
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-common
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: LXC common files
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: LXC common files
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-hooks
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: LXC virtual machine hooks
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: LXC virtual machine hooks
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-templates
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: LXC virtual machine templates
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: LXC virtual machine templates
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: liblxc
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +libcap +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: libs
+Category: Libraries
+Title: LXC userspace library
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: LXC userspace library
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-lua
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +liblua +liblxc +luafilesystem
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: LXC Lua bindings
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: LXC Lua bindings
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-attach
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-attach from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-attach from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-autostart
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-autostart from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-autostart from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-cgroup
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-cgroup from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-cgroup from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-clone
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-clone from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-clone from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-config
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-config from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-config from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-console
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-console from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-console from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-create
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-create from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-create from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-destroy
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-destroy from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-destroy from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-execute
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-execute from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-execute from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-freeze
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-freeze from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-freeze from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-info
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-info from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-info from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-monitor
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-monitor from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-monitor from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-snapshot
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-snapshot from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-snapshot from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-start
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-start from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-start from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-stop
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-stop from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-stop from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-unfreeze
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-unfreeze from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-unfreeze from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-unshare
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-unshare from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-unshare from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-usernsexec
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-usernsexec from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-usernsexec from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-wait
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-wait from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-wait from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-monitord
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-monitord from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-monitord from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-user-nic
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +libpthread +libcap +liblxc
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-user-nic from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-user-nic from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-checkconfig
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-checkconfig from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-checkconfig from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-ls
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-ls from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-ls from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+Package: lxc-top
+Version: 1.0.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread lxc +lxc-common +lxc-lua +luafilesystem @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: Utilities
+Title: Utility lxc-top from the LXC userspace tools
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: lxc-1.0.3.tar.gz
+Type: ipkg
+Description: Utility lxc-top from the LXC userspace tools
+http://lxc.sourceforge.net/
+Luka Perkov <luka@openwrt.org>
+@@
+
+

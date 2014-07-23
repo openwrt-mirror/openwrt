@@ -1,0 +1,52 @@
+Source-Makefile: feeds/oldpackages/libs/libplist/Makefile
+Package: libplist
+Version: 1.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libxml2
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Apple property list library
+Maintainer: 
+Source: libplist-1.11.tar.bz2
+Type: ipkg
+Description:     A library to handle Apple Property List format whereas it's binary or XML
+http://www.libimobiledevice.org/
+
+@@
+
+Package: libplistcxx
+Version: 1.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libplist +libstdcpp
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Apple property list C++ library
+Maintainer: 
+Source: libplist-1.11.tar.bz2
+Type: ipkg
+Description:     A library to handle Apple Property List format whereas it's binary or XML
+  This package contains the libplist C++ shared library.
+http://www.libimobiledevice.org/
+
+@@
+
+Package: libplist-utils
+Version: 1.11-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libplist
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Apple property list converter
+Maintainer: 
+Source: libplist-1.11.tar.bz2
+Type: ipkg
+Description:     A library to handle Apple Property List format whereas it's binary or XML
+  This package contains the libplist utilities.
+http://www.libimobiledevice.org/
+
+@@
+
+

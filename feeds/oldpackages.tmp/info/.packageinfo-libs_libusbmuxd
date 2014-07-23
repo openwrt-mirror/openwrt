@@ -1,0 +1,44 @@
+Source-Makefile: feeds/oldpackages/libs/libusbmuxd/Makefile
+Package: libusbmuxd
+Version: 1.0.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libplist +libpthread +libxml2 +zlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: USB multiplexing daemon library
+Maintainer: 
+Source: libusbmuxd-1.0.9.tar.bz2
+Type: ipkg
+Description:     This daemon is in charge of multiplexing connections over USB to an iPhone or
+  iPod touch. To users, it means you can sync your music, contacts, photos, etc.
+  over USB. To developers, it means you can connect to any listening localhost
+  socket on the device. usbmuxd is not used for tethering data transfer, which
+  uses a dedicated USB interface as a virtual network device.
+  This package contains the libusbmuxd shared library.
+http://www.libimobiledevice.org/
+
+@@
+
+Package: libusbmuxd-utils
+Version: 1.0.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusbmuxd
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: USB multiplexing daemon utilies
+Maintainer: 
+Source: libusbmuxd-1.0.9.tar.bz2
+Type: ipkg
+Description:     This daemon is in charge of multiplexing connections over USB to an iPhone or
+  iPod touch. To users, it means you can sync your music, contacts, photos, etc.
+  over USB. To developers, it means you can connect to any listening localhost
+  socket on the device. usbmuxd is not used for tethering data transfer, which
+  uses a dedicated USB interface as a virtual network device.
+  This package contains the libusbmuxd utilities.
+http://www.libimobiledevice.org/
+
+@@
+
+

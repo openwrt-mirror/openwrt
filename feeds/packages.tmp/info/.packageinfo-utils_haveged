@@ -1,0 +1,34 @@
+Source-Makefile: feeds/packages/utils/haveged/Makefile
+Package: haveged
+Version: 1.9.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libhavege
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Feeds the kernel entropy pool by timing CPU loops.
+Maintainer: Hannu Nyman <hannu.nyman@iki.fi>
+Source: haveged-1.9.1.tar.gz
+Type: ipkg
+Description: Feeds the kernel entropy pool by timing CPU loops.
+http://www.issihosts.com/haveged/
+Hannu Nyman <hannu.nyman@iki.fi>
+@@
+
+Package: libhavege
+Version: 1.9.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Library for haveged
+Maintainer: Hannu Nyman <hannu.nyman@iki.fi>
+Source: haveged-1.9.1.tar.gz
+Type: ipkg
+Description: Library for haveged
+http://www.issihosts.com/haveged/
+Hannu Nyman <hannu.nyman@iki.fi>
+@@
+
+

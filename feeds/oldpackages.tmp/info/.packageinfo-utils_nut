@@ -1,0 +1,823 @@
+Source-Makefile: feeds/oldpackages/utils/nut/Makefile
+Package: nut
+Menu: 1
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:   Network UPS Tools (NUT) is a client/server monitoring system that
+  allows computers to share uninterruptible power supply (UPS) and
+  power distribution unit (PDU) hardware. Clients access the hardware
+  through the server, and are notified whenever the power status
+  changes.
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-client
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (client)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description: Network UPS Tools (client)
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-server
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (server)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description: Network UPS Tools (server)
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-monitor
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (monitor)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description: Network UPS Tools (monitor)
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-logger
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (logger)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description: Network UPS Tools (logger)
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-bcmxcp
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (bcmxcp driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for UPSes supporting the serial BCM/XCP protocol
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-belkin
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (belkin driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Belkin serial UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-belkinunv
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (belkinunv driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Belkin "Universal UPS" and compatible
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-bestfcom
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (bestfcom driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Best Power Fortress/Ferrups
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-bestfortress
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (bestfortress driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for old Best Fortress UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-bestuferrups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (bestuferrups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Best Power Micro-Ferrups
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-bestups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (bestups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Best Power / SOLA (Phoenixtec protocol) UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-dummy-ups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (dummy-ups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for multi-purpose UPS emulation
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-etapro
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (etapro driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for ETA UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-everups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (everups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Ever UPS models
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-gamatronic
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (gamatronic driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Gamatronic UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-genericups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (genericups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for contact-closure UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-isbmex
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (isbmex driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for ISBMEX UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-liebert
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (liebert driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Liebert contact-closure UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-liebert-esp2
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (liebert-esp2 driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Liebert UPS using the ESP-II protocol
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-masterguard
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (masterguard driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Masterguard UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-metasys
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (metasys driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Meta System UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-oldmge-shut
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (oldmge-shut driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for SHUT Protocol UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-mge-utalk
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (mge-utalk driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for MGE UPS SYSTEMS UTalk protocol equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-microdowell
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (microdowell driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Microdowell Enterprise UPS series
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-mge-shut
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (mge-shut driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for SHUT Protocol UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-oneac
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (oneac driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Oneac UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-optiups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (optiups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Opti-UPS (Viewsonice) UPS and Zinto D (ONLINE-USV) equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-powercom
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (powercom driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      UPS driver for Powercom/Trust/Advice UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-rhino
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (rhino driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Brazilian Microsol RHINO UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-safenet
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (safenet driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for SafeNet compatible UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-solis
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (solis driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Brazilian Microsol SOLIS UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-tripplite
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (tripplite driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Tripp-Lite SmartPro UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-tripplitesu
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (tripplitesu driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Tripp-Lite SmartOnline (SU) UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-upscode2
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (upscode2 driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for UPScode II compatible UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-victronups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (victronups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for IMV/Victron UPS unit Match
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-powerpanel
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (powerpanel driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for PowerPanel Plus compatible UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-blazer_ser
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (blazer_ser driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Megatec/Q1 protocol serial
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-clone
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (clone driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      UPS driver clone
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-ivtscd
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (ivtscd driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      driver for the IVT Solar Controller Device
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-apcsmart
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (apcsmart driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for American Power Conversion Smart Protocol UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-apcsmart-old
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (apcsmart-old driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for American Power Conversion Smart Protocol UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-usbhid-ups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server libusb-compat
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (usbhid-ups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for USB/HID UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-bcmxcp_usb
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server libusb-compat
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (bcmxcp_usb driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Experimental driver for UPSes supporting the BCM/XCP protocol over USB
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-tripplite_usb
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server libusb-compat
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (tripplite_usb driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for older Tripp Lite USB UPSes (not PDC HID)
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-blazer_usb
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server libusb-compat
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (blazer_usb driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver for Megatec/Q1 protocol USB
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-richcomm_usb
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server libusb-compat
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (richcomm_usb driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Driver UPS equipment using Richcomm dry-contact to USB solution
+http://www.networkupstools.org/
+
+@@
+
+Package: nut-driver-snmp-ups
+Version: 2.6.5-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +libnetsnmp +libpthread nut nut-server libnetsnmp
+Menu-Depends: 
+Provides: 
+Build-Depends: libusb-compat libnetsnmp
+Section: utils
+Category: Utilities
+Title: Network UPS Tools (snmp-ups driver)
+Maintainer: 
+Source: nut-2.6.5.tar.gz
+Type: ipkg
+Description:      Multi-MIB Driver for SNMP UPS equipment
+http://www.networkupstools.org/
+
+@@
+
+

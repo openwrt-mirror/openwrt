@@ -1,0 +1,58 @@
+Source-Makefile: feeds/packages/net/opentracker/Makefile
+Package: opentracker
+Submenu: BitTorrent
+Version: 20130804-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libpthread
+Menu-Depends: 
+Provides: 
+Build-Variant: ipv4
+Build-Depends: libowfat
+Section: net
+Category: Network
+Title: opentracker
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opentracker-20130804.tar.bz2
+Type: ipkg
+Description:   opentracker - An open and free bittorrent tracker
+
+ opentracker is an open and free bittorrent tracker project.
+ It aims for minimal resource usage and is intended to run at your wlan router.
+ Currently it is deployed as an open and free tracker instance.
+ Read our free and open tracker blog and announce your torrents there
+ (but do not hesitate to setup your own free trackers!).
+
+ This package contains the IPv4-build of opentracker.
+
+http://erdgeist.org/arts/software/opentracker/
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+Package: opentracker6
+Submenu: BitTorrent
+Version: 20130804-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libpthread
+Menu-Depends: 
+Provides: 
+Build-Variant: ipv6
+Build-Depends: libowfat
+Section: net
+Category: Network
+Title: opentracker (IPv6 build)
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: opentracker-20130804.tar.bz2
+Type: ipkg
+Description:   opentracker - An open and free bittorrent tracker
+
+ opentracker is an open and free bittorrent tracker project.
+ It aims for minimal resource usage and is intended to run at your wlan router.
+ Currently it is deployed as an open and free tracker instance.
+ Read our free and open tracker blog and announce your torrents there
+ (but do not hesitate to setup your own free trackers!).
+
+ This package contains the IPv6-build of opentracker.
+
+http://erdgeist.org/arts/software/opentracker/
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+

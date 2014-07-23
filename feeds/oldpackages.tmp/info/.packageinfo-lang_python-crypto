@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/python-crypto/Makefile
+Package: python-crypto
+Submenu: Python
+Version: 2.6-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python +libgmp
+Menu-Depends: 
+Provides: 
+Section: lang-python
+Category: Languages
+Title: python-crypto
+Maintainer: 
+Source: pycrypto-2.6.tar.gz
+Type: ipkg
+Description: A collection of both secure hash functions (such as MD5 and SHA),
+and various encryption algorithms (AES, DES, IDEA, RSA, ElGamal, etc.).
+http://www.pycrypto.org/
+
+@@
+
+

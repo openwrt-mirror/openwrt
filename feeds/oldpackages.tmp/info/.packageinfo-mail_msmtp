@@ -1,0 +1,67 @@
+Source-Makefile: feeds/oldpackages/mail/msmtp/Makefile
+Package: msmtp
+Version: 1.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: ssl
+Section: mail
+Category: Mail
+Title: Simple sendmail SMTP forwarding (with SSL support)
+Maintainer: 
+Source: msmtp-1.4.27.tar.bz2
+Type: ipkg
+Description:  msmtp is an SMTP client. In the default mode, it transmits a mail to
+ an SMTP server (for example at a free mail provider) which does the
+ delivery. To use this program with your mail user agent (MUA), create
+ a configuration file with your mail account(s) and tell your MUA to
+ call msmtp instead of /usr/sbin/sendmail.
+ This package is built with SSL support.
+http://msmtp.sourceforge.net/
+
+@@
+
+Package: msmtp-nossl
+Version: 1.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Variant: nossl
+Section: mail
+Category: Mail
+Title: Simple sendmail SMTP forwarding (without SSL support)
+Maintainer: 
+Source: msmtp-1.4.27.tar.bz2
+Type: ipkg
+Description:  msmtp is an SMTP client. In the default mode, it transmits a mail to
+ an SMTP server (for example at a free mail provider) which does the
+ delivery. To use this program with your mail user agent (MUA), create
+ a configuration file with your mail account(s) and tell your MUA to
+ call msmtp instead of /usr/sbin/sendmail.
+ This package is built without SSL support.
+http://msmtp.sourceforge.net/
+
+@@
+
+Package: msmtp-queue
+Version: 1.4.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +bash
+Menu-Depends: 
+Provides: 
+Section: mail
+Category: Mail
+Title: Simple sendmail SMTP forwarding (queue scripts)
+Maintainer: 
+Source: msmtp-1.4.27.tar.bz2
+Type: ipkg
+Description:  msmtp is an SMTP client. In the default mode, it transmits a mail to
+ an SMTP server (for example at a free mail provider) which does the
+ delivery. To use this program with your mail user agent (MUA), create
+ a configuration file with your mail account(s) and tell your MUA to
+ call msmtp instead of /usr/sbin/sendmail.
+ This package contains the msmtp queue scripts.
+http://msmtp.sourceforge.net/
+
+@@
+
+

@@ -1,0 +1,35 @@
+Source-Makefile: feeds/oldpackages/utils/squashfs-tools/Makefile
+Package: squashfs-tools-mksquashfs
+Version: 4.2-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +zlib +SQUASHFS_TOOLS_LZO_SUPPORT:liblzo +SQUASHFS_TOOLS_XZ_SUPPORT:liblzma
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: squashfs-tools mksquashfs
+Maintainer: 
+Source: squashfs4.2.tar.gz
+Type: ipkg
+Description: squashfs-tools mksquashfs
+
+@@
+
+Package: squashfs-tools-unsquashfs
+Version: 4.2-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +zlib +SQUASHFS_TOOLS_LZO_SUPPORT:liblzo +SQUASHFS_TOOLS_XZ_SUPPORT:liblzma
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: squashfs-tools unsquashfs
+Maintainer: 
+Source: squashfs4.2.tar.gz
+Type: ipkg
+Description: squashfs-tools unsquashfs
+
+@@
+Config:
+	source "feeds/oldpackages/utils/squashfs-tools/Config.in"
+@@
+
+

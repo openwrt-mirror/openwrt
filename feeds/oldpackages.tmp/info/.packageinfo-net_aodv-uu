@@ -1,0 +1,39 @@
+Source-Makefile: feeds/oldpackages/net/aodv-uu/Makefile
+Package: aodv-uu
+Version: 0.9.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @BROKEN
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Ad-hoc On-demand Distance Vector Routing (daemon)
+Maintainer: 
+Source: aodv-uu-0.9.3.tar.gz
+Type: ipkg
+Description:  AODV is the Ad-hoc On-demand Distance Vector routing protocol
+ implementation created at Uppsala University.
+ This package contains the AODV userland daemon.
+http://core.it.uu.se/core/index.php/AODV-UU
+
+@@
+
+Package: kmod-aodv-uu
+Submenu: Network Support
+Version: <LINUX_VERSION>+0.9.3-1
+Depends: @BROKEN
+Menu-Depends: 
+Provides: 
+Section: kernel
+Category: Kernel modules
+Title: Ad-hoc On-demand Distance Vector Routing (kernel module)
+Maintainer: 
+Source: aodv-uu-0.9.3.tar.gz
+Type: ipkg
+Description:  AODV is the Ad-hoc On-demand Distance Vector routing protocol
+ implementation created at Uppsala University.
+ This package contains the AODV kernel module.
+http://core.it.uu.se/core/index.php/AODV-UU
+
+@@
+
+

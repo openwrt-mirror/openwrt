@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/libamsel/Makefile
+Package: libamsel
+Version: 20040621-cvs-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: The amwall library
+Maintainer: 
+Source: libamsel-20040621-cvs.tar.bz2
+Type: ipkg
+Description: 	A library for amwall configuration files.
+http://amselinux.de/
+
+@@
+
+

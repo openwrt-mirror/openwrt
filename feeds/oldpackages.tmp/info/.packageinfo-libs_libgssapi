@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/libs/libgssapi/Makefile
+Package: libgssapi
+Version: 0.11-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: required libraries for the nfs-utils
+Maintainer: 
+Source: libgssapi-0.11.tar.gz
+Type: ipkg
+Description:  Support libraries - for newer nfs mount command (nfs4)
+http://www.citi.umich.edu/projects/nfsv4/linux
+
+@@
+
+

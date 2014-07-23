@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/spawn-fcgi/Makefile
+Package: spawn-fcgi
+Submenu: Web Servers/Proxies
+Version: 1.6.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Tool to spawn fastcgi applications
+Maintainer: 
+Source: spawn-fcgi-1.6.3.tar.bz2
+Type: ipkg
+Description: 	spawn-fcgi is used to spawn fastcgi applications
+http://redmine.lighttpd.net/projects/spawn-fcgi
+
+@@
+
+

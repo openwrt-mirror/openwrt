@@ -1,0 +1,74 @@
+Source-Makefile: feeds/packages/net/transmission/Makefile
+Package: transmission-daemon
+Menu: 1
+Submenu: BitTorrent
+Version: 2.84-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcurl +libopenssl +libpthread +libevent2 +librt
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A free, lightweight BitTorrent client
+Maintainer: Cezary Jackiewicz <cezary@eko.one.pl>
+Source: transmission-2.84.tar.xz
+Type: ipkg
+Description:  Transmission is a simple BitTorrent client.
+ It features a very simple, intuitive interface
+ on top on an efficient, cross-platform back-end.
+ This package contains the daemon itself.
+http://www.transmissionbt.com
+Cezary Jackiewicz <cezary@eko.one.pl>
+@@
+
+Package: transmission-cli
+Submenu: BitTorrent
+Version: 2.84-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread transmission-daemon
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A free, lightweight BitTorrent client
+Maintainer: Cezary Jackiewicz <cezary@eko.one.pl>
+Source: transmission-2.84.tar.xz
+Type: ipkg
+Description:  CLI utilities for transmission.
+http://www.transmissionbt.com
+Cezary Jackiewicz <cezary@eko.one.pl>
+@@
+
+Package: transmission-remote
+Submenu: BitTorrent
+Version: 2.84-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libcurl +libopenssl +libpthread +libevent2 +librt
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A free, lightweight BitTorrent client
+Maintainer: Cezary Jackiewicz <cezary@eko.one.pl>
+Source: transmission-2.84.tar.xz
+Type: ipkg
+Description:  CLI remote interface for transmission.
+http://www.transmissionbt.com
+Cezary Jackiewicz <cezary@eko.one.pl>
+@@
+
+Package: transmission-web
+Submenu: BitTorrent
+Version: 2.84-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread transmission-daemon
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: A free, lightweight BitTorrent client
+Maintainer: Cezary Jackiewicz <cezary@eko.one.pl>
+Source: transmission-2.84.tar.xz
+Type: ipkg
+Description:  Webinterface resources for transmission.
+http://www.transmissionbt.com
+Cezary Jackiewicz <cezary@eko.one.pl>
+@@
+
+

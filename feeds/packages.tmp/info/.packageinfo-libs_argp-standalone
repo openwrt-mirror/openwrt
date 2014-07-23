@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/argp-standalone/Makefile
+Package: argp-standalone
+Version: 1.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Hierarchial argument parsing broken out from glibc
+Maintainer: 
+Source: argp-standalone-1.3.tar.gz
+Type: ipkg
+Description:   GNU libc hierarchial argument parsing library broken out from glibc.
+http://www.lysator.liu.se/~nisse/misc/
+
+@@
+
+

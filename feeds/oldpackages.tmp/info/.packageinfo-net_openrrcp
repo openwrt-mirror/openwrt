@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/openrrcp/Makefile
+Package: openrrcp
+Version: 0.2.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: OpenRRCP toolset for managing RRCP-capable Ethernet switches
+Maintainer: 
+Source: openrrcp-0.2.1.tar.gz
+Type: ipkg
+Description: 	OpenRRCP toolset for managing RRCP-capable Ethernet switches
+http://openrrcp.org.ru/
+
+@@
+
+

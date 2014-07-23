@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/libs/ucl/Makefile
+Package: libucl
+Version: 1.03-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Portable lossless data compression library
+Maintainer: 
+Source: ucl-1.03.tar.gz
+Type: ipkg
+Description: UCL is a portable lossless data compression library written in ANSI C. UCL
+implements a number of compression algorithms that achieve an excellent
+compression ratio while allowing *very* fast decompression. Decompression
+requires no additional memory.
+http://www.oberhumer.com/opensource/ucl/
+
+@@
+
+

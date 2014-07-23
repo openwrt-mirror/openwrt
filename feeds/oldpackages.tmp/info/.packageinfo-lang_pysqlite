@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/lang/pysqlite/Makefile
+Package: python-sqlite
+Submenu: Python
+Version: 2.3.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +libsqlite3
+Menu-Depends: 
+Provides: 
+Build-Depends: python
+Section: lang
+Category: Languages
+Title: SQLite database adapter for Python
+Maintainer: 
+Source: pysqlite-2.3.5.tar.gz
+Type: ipkg
+Description:  This package contains an SQLite database adapter for the Python
+ programming language.
+http://www.initd.org/tracker/pysqlite/wiki/pysqlite
+
+@@
+
+

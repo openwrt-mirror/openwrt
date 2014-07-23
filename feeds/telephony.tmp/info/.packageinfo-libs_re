@@ -1,0 +1,18 @@
+Source-Makefile: feeds/telephony/libs/re/Makefile
+Package: libre
+Version: 0.4.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Generic library for real-time communications with async IO support
+Maintainer: 
+Source: re-0.4.9.tar.gz
+Type: ipkg
+Description: Generic library for real-time communications with async IO support
+http://www.creytiv.com/
+
+@@
+
+

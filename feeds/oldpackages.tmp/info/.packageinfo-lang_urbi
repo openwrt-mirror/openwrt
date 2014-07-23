@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/lang/urbi/Makefile
+Package: urbi
+Version: 1.0RC2-l455-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +uclibcxx +libpthread @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv
+Section: lang
+Category: Languages
+Title: URBI SDK
+Maintainer: 
+Source: urbi-sdk-1.0RC2-l455-src.zip
+Type: ipkg
+Description:   Universal Real-Time Behavior Interface for robots.
+http://www.urbiforge.com
+
+@@
+
+

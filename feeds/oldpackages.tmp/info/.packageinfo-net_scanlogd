@@ -1,0 +1,22 @@
+Source-Makefile: feeds/oldpackages/net/scanlogd/Makefile
+Package: scanlogd
+Submenu: Firewall
+Version: 2.2.6-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap +libnet0 +libnids
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Port scan detection tool
+Maintainer: 
+Source: scanlogd-2.2.6.tar.gz
+Type: ipkg
+Description: 	Scanlogd is a TCP port scan detection tool, originally designed
+	to illustrate various attacks an IDS developer has to deal with.
+	Thus, unlike some of the other port scan detection tools out there,
+	scanlogd is designed to be totally safe to use.
+http://www.openwall.com/scanlogd
+
+@@
+
+

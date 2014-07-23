@@ -1,0 +1,21 @@
+Source-Makefile: feeds/packages/multimedia/xupnpd/Makefile
+Package: xupnpd
+Version: 399-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +liblua
+Menu-Depends: 
+Provides: 
+Section: multimedia
+Category: Multimedia
+Title: eXtensible UPnP agent
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: xupnpd-399.tar.gz
+Type: ipkg
+Description: xupnpd - eXtensible UPnP agent
+This program is a light DLNA Media Server which provides ContentDirectory:1 service for sharing IPTV unicast streams over local area network (with udpxy for multicast to HTTP unicast conversion).
+The program shares UTF8-encoded M3U playlists with links over local area network as content of the directory.
+You can watch HDTV broadcasts (multicast or unicast) and listen Internet Radio in IP network without transcoding and PC.
+http://xupnpd.org/
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

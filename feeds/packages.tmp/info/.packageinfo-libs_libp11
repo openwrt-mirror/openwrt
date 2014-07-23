@@ -1,0 +1,20 @@
+Source-Makefile: feeds/packages/libs/libp11/Makefile
+Package: libp11
+Version: 20131021-ab6306ee7ede9b2fb9c1fa2c3694c6e7ff044a9e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv
+Section: libs
+Category: Libraries
+Title: PKCS
+Maintainer: Daniel Golle <daniel@makrotopia.org>
+Source: libp11-20131021.tar.gz
+Type: ipkg
+Description:   Libp11 is a library implementing a small layer on top of PKCS#11 API
+  to make using PKCS#11 implementations easier.
+https://www.opensc-project.org/opensc/wiki/libp11
+Daniel Golle <daniel@makrotopia.org>
+@@
+
+

@@ -1,0 +1,53 @@
+Source-Makefile: feeds/packages/libs/postgresql/Makefile
+Package: libpq
+Submenu: database
+Version: 9.0.17-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libreadline +libpthread +libncurses +shadow-su
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: PostgreSQL client library
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: postgresql-9.0.17.tar.bz2
+Type: ipkg
+Description: PostgreSQL client library.
+http://www.postgresql.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: pgsql-cli
+Submenu: database
+Version: 9.0.17-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpq
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Command Line Interface (CLI) to PostgreSQL databases
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: postgresql-9.0.17.tar.bz2
+Type: ipkg
+Description: Command Line Interface (CLI) to PostgreSQL databases.
+http://www.postgresql.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+Package: pgsql-server
+Submenu: database
+Version: 9.0.17-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpq
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: PostgreSQL databases Server
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: postgresql-9.0.17.tar.bz2
+Type: ipkg
+Description: PostgreSQL databases Server.
+http://www.postgresql.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

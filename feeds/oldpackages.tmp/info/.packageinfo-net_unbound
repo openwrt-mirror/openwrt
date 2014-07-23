@@ -1,0 +1,109 @@
+Source-Makefile: feeds/oldpackages/net/unbound/Makefile
+Package: unbound
+Submenu: IP Addresses and Names
+Version: 1.4.22-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libunbound
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: net
+Category: Network
+Title: A validating, recursive & caching DNS resolver (daemon)
+Maintainer: 
+Source: unbound-1.4.22.tar.gz
+Type: ipkg
+Description:   This package contains the Unbound daemon.
+http://www.unbound.net/
+
+@@
+
+Package: unbound-anchor
+Submenu: IP Addresses and Names
+Version: 1.4.22-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +unbound +libexpat
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: net
+Category: Network
+Title: A validating, recursive & caching DNS resolver (anchor utility)
+Maintainer: 
+Source: unbound-1.4.22.tar.gz
+Type: ipkg
+Description:   This package contains the Unbound anchor utility.
+http://www.unbound.net/
+
+@@
+
+Package: unbound-control
+Submenu: IP Addresses and Names
+Version: 1.4.22-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +unbound
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: net
+Category: Network
+Title: A validating, recursive & caching DNS resolver (control utility)
+Maintainer: 
+Source: unbound-1.4.22.tar.gz
+Type: ipkg
+Description:   This package contains the Unbound control utility.
+http://www.unbound.net/
+
+@@
+
+Package: unbound-control-setup
+Submenu: IP Addresses and Names
+Version: 1.4.22-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +unbound-control +openssl-util
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: net
+Category: Network
+Title: A validating, recursive & caching DNS resolver (control setup utility)
+Maintainer: 
+Source: unbound-1.4.22.tar.gz
+Type: ipkg
+Description:   This package contains the Unbound control setup utility.
+http://www.unbound.net/
+
+@@
+
+Package: unbound-host
+Submenu: IP Addresses and Names
+Version: 1.4.22-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libunbound
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: net
+Category: Network
+Title: A validating, recursive & caching DNS resolver (DNS lookup utility)
+Maintainer: 
+Source: unbound-1.4.22.tar.gz
+Type: ipkg
+Description:   This package contains the Unbound DNS lookup utility.
+http://www.unbound.net/
+
+@@
+
+Package: libunbound
+Version: 1.4.22-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: libexpat
+Section: libs
+Category: Libraries
+Title: A validating, recursive & caching DNS resolver (library)
+Maintainer: 
+Source: unbound-1.4.22.tar.gz
+Type: ipkg
+Description:   This package contains the Unbound shared library.
+http://www.unbound.net/
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/utils/minicom/Makefile
+Package: minicom
+Submenu: Terminal
+Version: 2.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Terminal emulation program
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: minicom-2.7.tar.gz
+Type: ipkg
+Description: Terminal emulation program
+http://alioth.debian.org/projects/minicom/
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

@@ -1,0 +1,22 @@
+Source-Makefile: feeds/packages/utils/zip/Makefile
+Package: zip
+Submenu: Compression
+Version: 3.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Archiver for .zip files
+Maintainer: Álvaro Fernández Rojas <noltari@gmail.com>
+Source: zip30.tar.gz
+Type: ipkg
+Description: 	This is InfoZIP's zip program. It produces files that are fully
+	compatible with the popular PKZIP program; however, the command line
+	options are not identical. In other words, the end result is the same,
+	but the methods differ.
+http://infozip.sourceforge.net/Zip.html
+Álvaro Fernández Rojas <noltari@gmail.com>
+@@
+
+

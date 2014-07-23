@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/fribidi/Makefile
+Package: fribidi
+Version: 0.10.9-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Types: host
+Section: libs
+Category: Libraries
+Title: GNU FriBidi is an implementation of the Unicode Bidirectional Algorithm (bidi)
+Maintainer: 
+Source: fribidi-0.10.9.tar.gz
+Type: ipkg
+Description: GNU FriBidi is an implementation of the Unicode Bidirectional Algorithm (bidi)
+http://fribidi.org
+
+@@
+
+

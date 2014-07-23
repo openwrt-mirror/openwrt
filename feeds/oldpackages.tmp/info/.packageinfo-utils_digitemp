@@ -1,0 +1,40 @@
+Source-Makefile: feeds/oldpackages/utils/digitemp/Makefile
+Package: digitemp
+Version: 3.6.0-5
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: DigiTemp is a simple to use program for reading values from 1-wire devices. (serial version)
+Maintainer: 
+Source: digitemp-3.6.0.tar.gz
+Type: ipkg
+Description: 	DigiTemp is a simple to use program for reading values from 1-wire devices.
+	Its main use is for reading temperature sensors, but it also reads counters,
+	and understands the 1-wire hubs with devices on different branches of the network.
+	This package is build without USB support.
+http://www.digitemp.com
+
+@@
+
+Package: digitemp-usb
+Version: 3.6.0-5
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-compat
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: DigiTemp is a simple to use program for reading values from 1-wire devices. (USB version)
+Maintainer: 
+Source: digitemp-3.6.0.tar.gz
+Type: ipkg
+Description: 	DigiTemp is a simple to use program for reading values from 1-wire devices.
+	Its main use is for reading temperature sensors, but it also reads counters,
+	and understands the 1-wire hubs with devices on different branches of the network.
+	This package is build with USB support.
+http://www.digitemp.com
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libnids/Makefile
+Package: libnids
+Version: 1.24-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnet0
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: A network intrusion detection library
+Maintainer: 
+Source: libnids-1.24.tar.gz
+Type: ipkg
+Description: 	An implementation of an E-component of Network Intrusion Detection
+	System.
+http://libnids.sourceforge.net/
+
+@@
+
+

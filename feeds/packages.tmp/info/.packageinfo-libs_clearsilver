@@ -1,0 +1,27 @@
+Source-Makefile: feeds/packages/libs/clearsilver/Makefile
+Package: clearsilver
+Version: 0.10.5-5
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +CLEARSILVER_ENABLE_COMPRESSION:zlib +CLEARSILVER_ENABLE_GETTEXT:libintl
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: ClearSilver template system
+Maintainer: Raphaël HUCK <rhk@cksum.org>
+Source: clearsilver-0.10.5.tar.gz
+Type: ipkg
+Description: Clearsilver is a fast, powerful, and language-neutral HTML template system. In
+both static content sites and dynamic HTML applications, it provides a separation
+between presentation code and application logic which makes working with your
+project easier.
+http://www.clearsilver.net/
+Raphaël HUCK <rhk@cksum.org>
+@@
+Config:
+  menu "Configuration"
+  depends on PACKAGE_clearsilver
+  source "feeds/packages/libs/clearsilver/Config.in"
+  endmenu
+@@
+
+

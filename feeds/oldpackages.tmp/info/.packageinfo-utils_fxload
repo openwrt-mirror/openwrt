@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/fxload/Makefile
+Package: fxload
+Version: 2008_10_13-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @USB_SUPPORT +udev
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Downloading firmware into EZ-USB microcontrollers
+Maintainer: 
+Source: fxload-2008_10_13.tar.gz
+Type: ipkg
+Description: Downloading firmware into EZ-USB microcontrollers
+http://linux-hotplug.sourceforge.net/
+
+@@
+
+

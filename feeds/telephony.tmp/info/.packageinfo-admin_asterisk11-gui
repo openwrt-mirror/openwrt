@@ -1,0 +1,18 @@
+Source-Makefile: feeds/telephony/admin/asterisk11-gui/Makefile
+Package: asterisk11-gui
+Version: 2.1.0-rc1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +@PACKAGE_asterisk11 +asterisk11-app-exec +asterisk11-app-system
+Menu-Depends: 
+Provides: 
+Section: admin
+Category: Administration
+Title: Asterisk GUI for Asterisk 11.x
+Maintainer: 
+Source: asterisk-gui-2.1.0-rc1.tar.gz
+Type: ipkg
+Description:  Asterisk11 GUI is a framework for the creation of graphical interfaces 
+ for configuring Asterisk-11.x package.
+
+@@
+
+

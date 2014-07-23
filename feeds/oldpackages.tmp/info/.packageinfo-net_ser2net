@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/ser2net/Makefile
+Package: ser2net
+Version: 2.9.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Serial port TCP/IP redirector
+Maintainer: 
+Source: ser2net-2.9.1.tar.gz
+Type: ipkg
+Description:   This is ser2net, a program for allowing network connections to serial ports.
+  See the man page for information about using the program. Note that ser2net
+  supports RFC 2217 (remote control of serial port parameters), but you must
+  have a complient client.
+http://sourceforge.net/projects/ser2net/
+
+@@
+
+

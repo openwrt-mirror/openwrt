@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/ekg/Makefile
+Package: ekg
+Submenu: Instant Messaging
+Version: 1.7-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libncurses
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Eksperymentalny Klient Gadu-Gadu (Polish IM)
+Maintainer: 
+Source: ekg-1.7.tar.gz
+Type: ipkg
+Description: Eksperymentalny Klient Gadu-Gadu (Polish IM)
+http://ekg.chmurka.net
+
+@@
+
+

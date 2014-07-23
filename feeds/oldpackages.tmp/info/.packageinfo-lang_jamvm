@@ -1,0 +1,24 @@
+Source-Makefile: feeds/oldpackages/lang/jamvm/Makefile
+Package: jamvm
+Submenu: Java
+Version: 1.6.0-git-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +libpthread +librt +classpath @!avr32
+Menu-Depends: 
+Provides: 
+Section: lang
+Category: Languages
+Title: A compact Java Virtual Machine
+Maintainer: 
+Source: jamvm-1.6.0-git-4617da717ecb05654ea5bb9572338061106a414d.tar.gz
+Type: ipkg
+Description:  JamVM is a new Java Virtual Machine which conforms to the JVM
+ specification version (blue book). In comparison to most other VM's (free
+ and commercial) it is extremely small.However, unlike other small VMs
+ (e.g. KVM) it is designed to support the full specification, and includes
+ support for object finalisation, Soft/Weak/Phantom References, the Java
+ Native Interface (JNI) and the Reflection API.
+http://sourceforge.net/projects/jamvm
+
+@@
+
+

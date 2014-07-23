@@ -1,0 +1,294 @@
+Source-Makefile: feeds/oldpackages/lang/erlang/Makefile
+Package: erlang
+Submenu: Erlang
+Version: R16B02-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses +librt +zlib
+Menu-Depends: 
+Provides: erlang-erts=5.10.3 erlang-kernel=2.16.3 erlang-sasl=2.3.3 erlang-stdlib=1.19.3
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Erlang/OTP programming language
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This package contains the runtime implementation and a minimal set of
+ modules (erts, kernel, sasl & stdlib).
+http://www.erlang.org/
+
+@@
+
+Package: erlang-asn1
+Submenu: Erlang
+Version: 2.0.3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang +erlang-syntax-tools
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Abstract Syntax Notation One (ASN.1) support
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides Abstract Syntax Notation One (ASN.1)
+ support.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-compiler
+Submenu: Erlang
+Version: 4.9.3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang +erlang-hipe
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Byte code compiler
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides a byte code compiler for Erlang which
+ produces highly compact code.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-crypto
+Submenu: Erlang
+Version: 3.1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Cryptography support
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides functions for computation of message
+ digests, and encryption and decryption functions.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-hipe
+Submenu: Erlang
+Version: 3.10.2.1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: High Performance Erlang
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides HiPE (High Performance Erlang)
+ support.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-inets
+Submenu: Erlang
+Version: 5.9.6
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Internet clients and servers
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides a container for Internet clients and
+ servers. Currently a FTP client, a HTTP client and server, and a tftp
+ client and server have been incorporated in Inets.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-mnesia
+Submenu: Erlang
+Version: 4.10
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Distributed database
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides a distributed DataBase Management
+ System (DBMS), appropriate for telecommunications applications and
+ other Erlang applications which require continuous operation and
+ exhibit soft real-time properties.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-runtime-tools
+Submenu: Erlang
+Version: 1.8.12
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Low-profile debugging/tracing tools
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides low footprint tracing/debugging tools
+ suitable for inclusion in a production system.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-snmp
+Submenu: Erlang
+Version: 4.24.2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang +erlang-asn1
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Simple Network Management Protocol (SNMP) support
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides Simple Network Management Protocol
+ (SNMP) support including a MIB compiler and tools for creating SNMP
+ agents.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-ssh
+Submenu: Erlang
+Version: 2.1.8
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang +erlang-crypto
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Secure Shell (SSH) support
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides an implementation of the Secure Shell
+ protocol, with SSH & SFTP support.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-ssl
+Submenu: Erlang
+Version: 5.3.1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang +erlang-crypto
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Secure Sockets Layer (SSL) support
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides support for secure communication over
+ sockets.
+http://www.erlang.org/
+
+@@
+
+Package: erlang-syntax-tools
+Submenu: Erlang
+Version: 1.6.11
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +erlang
+Menu-Depends: 
+Provides: 
+Build-Depends: erlang/host openssl
+Build-Types: host
+Section: lang
+Category: Languages
+Title: Abstract Erlang syntax trees handling support
+Maintainer: 
+Source: otp_src_R16B02.tar.gz
+Type: ipkg
+Description:  Erlang/OTP is a general-purpose programming language and runtime
+ environment. Erlang has built-in support for concurrency, distribution
+ and fault tolerance.
+ .
+ This Erlang/OTP package provides support for handling abstract Erlang
+ syntax trees.
+http://www.erlang.org/
+
+@@
+
+

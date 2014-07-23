@@ -1,0 +1,31 @@
+Source-Makefile: feeds/oldpackages/utils/mksh/Makefile
+Package: mksh
+Version: 47-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: shells
+Category: Base system
+Title: MirBSD Korn Shell
+Maintainer: 
+Source: mksh-R47.tgz
+Type: ipkg
+Description: mksh is the MirBSD enhanced version of the Public Domain Korn
+shell (pdksh), a Bourne-compatible shell which is largely si-
+milar to the original AT&T Korn shell; mksh is the only pdksh
+derivate currently being actively developed.  It includes bug
+fixes and feature improvements, in order to produce a modern,
+robust shell good for interactive and especially script use.
+mksh has UTF-8 support (in substring operations and the Emacs
+editing mode) and - while R47 corresponds to OpenBSD 5.1-cur-
+rent ksh (without GNU bash-like PS1 and fancy character clas-
+ses) - adheres to SUSv4 and is much more robust. The code has
+been cleaned up and simplified, bugs fixed, standards compli-
+ance added, and several enhancements (for extended compatibi-
+lity to other modern shells - as well as a couple of its own)
+are available. It has sensible defaults as usual with BSD.
+http://mirbsd.de/mksh
+
+@@
+
+

@@ -1,0 +1,378 @@
+Source-Makefile: feeds/oldpackages/utils/xz/Makefile
+Package: xz
+Menu: 1
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: XZ Utils
+
+@@
+
+Package: liblzma
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: liblzma library from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: liblzma library from XZ Utils
+
+@@
+
+Package: xz-lzcat
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xz
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzcat utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzcat utility from XZ Utils
+
+@@
+
+Package: xz-lzcmp
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzdiff
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzcmp utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzcmp utility from XZ Utils
+
+@@
+
+Package: xz-lzdiff
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzdiff
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzdiff utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzdiff utility from XZ Utils
+
+@@
+
+Package: xz-lzegrep
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzgrep
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzegrep utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzegrep utility from XZ Utils
+
+@@
+
+Package: xz-lzfgrep
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzgrep
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzfgrep utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzfgrep utility from XZ Utils
+
+@@
+
+Package: xz-lzgrep
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzgrep
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzgrep utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzgrep utility from XZ Utils
+
+@@
+
+Package: xz-lzless
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzless
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzless utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzless utility from XZ Utils
+
+@@
+
+Package: xz-lzma
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xz
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzma utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzma utility from XZ Utils
+
+@@
+
+Package: xz-lzmadec
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz ++libpthread +liblzma
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzmadec utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzmadec utility from XZ Utils
+
+@@
+
+Package: xz-lzmainfo
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz ++libpthread +liblzma
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzmainfo utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzmainfo utility from XZ Utils
+
+@@
+
+Package: xz-lzmore
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzmore
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: lzmore utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: lzmore utility from XZ Utils
+
+@@
+
+Package: xz-unlzma
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xz
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: unlzma utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: unlzma utility from XZ Utils
+
+@@
+
+Package: xz-unxz
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xz
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: unxz utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: unxz utility from XZ Utils
+
+@@
+
+Package: xz-xz
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz ++libpthread +liblzma
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xz utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xz utility from XZ Utils
+
+@@
+
+Package: xz-xzcat
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xz
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzcat utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzcat utility from XZ Utils
+
+@@
+
+Package: xz-xzcmp
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzdiff
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzcmp utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzcmp utility from XZ Utils
+
+@@
+
+Package: xz-xzdec
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz ++libpthread +liblzma
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzdec utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzdec utility from XZ Utils
+
+@@
+
+Package: xz-xzdiff
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz +
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzdiff utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzdiff utility from XZ Utils
+
+@@
+
+Package: xz-xzegrep
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzgrep
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzegrep utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzegrep utility from XZ Utils
+
+@@
+
+Package: xz-xzfgrep
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz + +xz-xzgrep
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzfgrep utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzfgrep utility from XZ Utils
+
+@@
+
+Package: xz-xzgrep
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz +
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzgrep utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzgrep utility from XZ Utils
+
+@@
+
+Package: xz-xzless
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz +
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzless utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzless utility from XZ Utils
+
+@@
+
+Package: xz-xzmore
+Version: 5.0.4-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread xz +
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: xzmore utility from XZ Utils
+Maintainer: 
+Source: xz-5.0.4.tar.bz2
+Type: ipkg
+Description: xzmore utility from XZ Utils
+
+@@
+
+

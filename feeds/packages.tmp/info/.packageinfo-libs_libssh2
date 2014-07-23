@@ -1,0 +1,18 @@
+Source-Makefile: feeds/packages/libs/libssh2/Makefile
+Package: libssh2
+Version: 1.4.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +zlib
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: SSH2 library
+Maintainer: Jiri Slachta <slachta@cesnet.cz>
+Source: libssh2-1.4.3.tar.gz
+Type: ipkg
+Description:  libssh2 is a client-side C library implementing the SSH2 protocol.
+http://www.libssh2.org/
+Jiri Slachta <slachta@cesnet.cz>
+@@
+
+

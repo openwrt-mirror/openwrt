@@ -1,0 +1,39 @@
+Source-Makefile: feeds/oldpackages/sound/pianobar/Makefile
+Package: pianobar
+Version: 2012.01.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgnutls +libao +libfaad2 +libmad +libpiano +libpthread
+Menu-Depends: 
+Provides: 
+Build-Depends: libao libfaad2 libmad
+Section: sound
+Category: Sound
+Title: Pandora radio console client
+Maintainer: 
+Source: pianobar-2012.01.10.tar.bz2
+Type: ipkg
+Description:     Pianobar is a free/open-source, console-based replacement for Pandora’s flash
+  player.
+http://6xq.net/projects/pianobar/
+
+@@
+
+Package: libpiano
+Version: 2012.01.10-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libgnutls
+Menu-Depends: 
+Provides: 
+Build-Depends: libao libfaad2 libmad
+Section: libs
+Category: Libraries
+Title: Pandora radio library
+Maintainer: 
+Source: pianobar-2012.01.10.tar.bz2
+Type: ipkg
+Description:     Pianobar is a free/open-source, console-based replacement for Pandora’s flash
+  player.
+  This package contains the libpiano shared library.
+http://6xq.net/projects/pianobar/
+
+@@
+
+

@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/net/amwall/Makefile
+Package: amwall
+Submenu: Firewall
+Version: 0.1.0-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libamsel
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: PF to iptables
+Maintainer: 
+Source: amwall-0.1.0.tar.bz2
+Type: ipkg
+Description: PF to iptables
+http://www.amselinux.net/
+
+@@
+
+

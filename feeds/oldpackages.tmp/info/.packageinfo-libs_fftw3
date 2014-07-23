@@ -1,0 +1,66 @@
+Source-Makefile: feeds/oldpackages/libs/fftw3/Makefile
+Package: fftw3
+Version: 3.2.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @!avr32 +libpthread
+Menu-Depends: 
+Provides: 
+Build-Variant: double
+Section: libs
+Category: Libraries
+Title: Fast Fourier transform library
+Maintainer: 
+Source: fftw-3.2.2.tar.gz
+Type: ipkg
+Description: 	FFTW is a collection of fast C routines for computing the
+	Discrete Fourier Transform in one or more dimensions. It
+	includes complex, real, and parallel transforms, and can
+	handle arbitrary array sizes efficiently.
+http://www.fftw.org/
+
+@@
+
+Package: fftw3f
+Version: 3.2.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @!avr32 +libpthread
+Menu-Depends: 
+Provides: 
+Build-Variant: single
+Section: libs
+Category: Libraries
+Title: Fast Fourier transform library (single precision)
+Maintainer: 
+Source: fftw-3.2.2.tar.gz
+Type: ipkg
+Description:   	FFTW is a collection of fast C routines for computing the
+	Discrete Fourier Transform in one or more dimensions. It
+	includes complex, real, and parallel transforms, and can
+	handle arbitrary array sizes efficiently.
+
+  This package contains the single precision library.
+http://www.fftw.org/
+
+@@
+
+Package: fftw3l
+Version: 3.2.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Variant: long-double
+Section: libs
+Category: Libraries
+Title: Fast Fourier transform library (long-double precision)
+Maintainer: 
+Source: fftw-3.2.2.tar.gz
+Type: ipkg
+Description:   	FFTW is a collection of fast C routines for computing the
+	Discrete Fourier Transform in one or more dimensions. It
+	includes complex, real, and parallel transforms, and can
+	handle arbitrary array sizes efficiently.
+
+  This package contains the long-double precision library.
+http://www.fftw.org/
+
+@@
+
+

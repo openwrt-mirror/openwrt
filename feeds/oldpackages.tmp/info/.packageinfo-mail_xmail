@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/mail/xmail/Makefile
+Package: xmail
+Version: 1.27-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl +libpthread +USE_UCLIBCXX:uclibcxx +USE_LIBSTDCXX:libstdcpp
+Menu-Depends: 
+Provides: 
+Section: mail
+Category: Mail
+Title: advanced, fast and reliable ESMTP/POP3 mail server
+Maintainer: 
+Source: xmail-1.27.tar.gz
+Type: ipkg
+Description:  XMail is an Internet mail server featuring an SMTP, POP3 and finger server.
+ It's incredibly easy to set up and has lots of features including :
+ multiple domains, virtual users and spam protection.
+http://www.xmailserver.org/
+
+@@
+
+

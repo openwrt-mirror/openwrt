@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/net/apcupsd/Makefile
+Package: apcupsd
+Version: 3.14.7-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +libusb-compat
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: UPS control software
+Maintainer: 
+Source: apcupsd-3.14.7.tar.gz
+Type: ipkg
+Description: UPS control software
+http://www.apcupsd.org/
+
+@@
+
+

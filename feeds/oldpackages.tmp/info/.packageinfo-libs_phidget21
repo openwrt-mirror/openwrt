@@ -1,0 +1,34 @@
+Source-Makefile: feeds/oldpackages/libs/phidget21/Makefile
+Package: phidget21
+Version: 2.1.6.20091105-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Phidget API
+Maintainer: 
+Source: Phidgetlinux_2.1.6.20091105.tar.gz
+Type: ipkg
+Description:  The Phidget API library.
+http://www.phidgets.com/
+
+@@
+
+Package: phidget-service
+Version: 2.1.6.20091105-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread phidget21
+Menu-Depends: 
+Provides: 
+Section: misc
+Category: Network
+Title: Phidget Web Service
+Maintainer: 
+Source: Phidgetlinux_2.1.6.20091105.tar.gz
+Type: ipkg
+Description:  The Phidget Web Service.
+http://www.phidgets.com/
+
+@@
+
+

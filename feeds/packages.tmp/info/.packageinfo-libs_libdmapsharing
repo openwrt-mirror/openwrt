@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/libs/libdmapsharing/Makefile
+Package: libdmapsharing
+Version: 2.9.15-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libsoup +mdnsresponder +gstreamer +gst-plugins-base +libgstapp
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: libs
+Category: Libraries
+Title: libdmapsharing
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Source: libdmapsharing-2.9.15.tar.gz
+Type: ipkg
+Description: libdmapsharing
+http://www.flyn.org/projects/libdmapsharing/
+W. Michael Petullo <mike@flyn.org>
+@@
+
+

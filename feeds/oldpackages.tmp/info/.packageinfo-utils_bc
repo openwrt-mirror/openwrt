@@ -1,0 +1,36 @@
+Source-Makefile: feeds/oldpackages/utils/bc/Makefile
+Package: bc
+Version: 1.06.95-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libreadline +libncurses
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Arbitrary precision calculator language
+Maintainer: 
+Source: bc_1.06.95.orig.tar.gz
+Type: ipkg
+Description:  bc is a language that supports arbitrary precision numbers with
+ interactive execution of statements.
+http://packages.debian.org/bc
+
+@@
+
+Package: dc
+Version: 1.06.95-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread bc
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Arbitrary precision reverse-polish calculator
+Maintainer: 
+Source: bc_1.06.95.orig.tar.gz
+Type: ipkg
+Description:  dc is a reverse-polish desk calculator which supports unlimited
+ precision arithmetic.
+http://packages.debian.org/bc
+
+@@
+
+

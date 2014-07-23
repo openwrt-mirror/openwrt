@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/lang/pygobject/Makefile
+Package: python-gobject
+Submenu: Python
+Version: 2.21.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +python-mini +glib2 +libffi
+Menu-Depends: 
+Provides: 
+Build-Depends: !BUILD_NLS:libiconv !BUILD_NLS:libintl
+Section: lang
+Category: Languages
+Title: GLib bindings for python
+Maintainer: 
+Source: pygobject-2.21.5.tar.bz2
+Type: ipkg
+Description:   GLib bindings for python
+http://www.pygtk.org/
+
+@@
+
+

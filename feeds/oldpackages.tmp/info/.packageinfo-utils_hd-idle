@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/hd-idle/Makefile
+Package: hd-idle
+Submenu: disc
+Version: 1.04-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Another idle-daemon for attached hard drives
+Maintainer: 
+Source: hd-idle-1.04.tgz
+Type: ipkg
+Description: Another idle-daemon for attached hard drives
+http://hd-idle.sourceforge.net/
+
+@@
+
+

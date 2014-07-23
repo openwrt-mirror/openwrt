@@ -1,0 +1,138 @@
+Source-Makefile: feeds/oldpackages/libs/xmlrpc-c/Makefile
+Package: xmlrpc-c
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c-internal
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML-RPC library
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description: XML-RPC library
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-common
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML-RPC library - common
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description:     Programming library for writing an XML-RPC server or client in C or C++.
+    XML-RPC is a standard network protocol to allow a client program to make
+    a simple remote procedure call (RPC) type request of a server.
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-libxml2
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c-common +libxml2 @BROKEN
+Menu-Depends: 
+Provides: 
+Build-Variant: libxml2
+Section: libs
+Category: Libraries
+Title: XML-RPC library - (uses libxml2)
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description:     Programming library for writing an XML-RPC server or client in C or C++.
+    XML-RPC is a standard network protocol to allow a client program to make
+    a simple remote procedure call (RPC) type request of a server. Uses external libxml2 library (quite big)
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-internal
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c-common
+Menu-Depends: 
+Provides: 
+Build-Variant: internal
+Section: libs
+Category: Libraries
+Title: XML-RPC library - (uses internal expat variant)
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description:     Programming library for writing an XML-RPC server or client in C or C++.
+    XML-RPC is a standard network protocol to allow a client program to make
+    a simple remote procedure call (RPC) type request of a server. Uses internal expat variant (stripped down)
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-server
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML-RPC library - server
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description: XML-RPC library - server
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-abyss
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c-common
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML-RPC library - abyss
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description: XML-RPC library - abyss
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-server-abyss
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c-server +xmlrpc-c-abyss
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML-RPC library - abyss server
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description: XML-RPC library - abyss server
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+Package: xmlrpc-c-client
+Version: advanced_r2233-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +xmlrpc-c +libcurl
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: XML-RPC library - client
+Maintainer: 
+Source: xmlrpc-c-advanced_r2233.tar.gz
+Type: ipkg
+Description: XML-RPC library - client
+http://xmlrpc-c.sourceforge.net/
+
+@@
+
+

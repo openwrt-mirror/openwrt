@@ -1,0 +1,37 @@
+Source-Makefile: feeds/packages/net/haproxy/Makefile
+Package: haproxy
+Submenu: Web Servers/Proxies
+Version: 1.5.2-06
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcre +libltdl +libopenssl +zlib +libpthread
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: The Reliable, High Performance TCP/HTTP Load Balancer
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: haproxy-1.5.2.tar.gz
+Type: ipkg
+Description:   Open source High Performance TCP/HTTP Load Balancer
+http://haproxy.1wt.eu/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+Package: halog
+Menu: 1
+Submenu: Web Servers/Proxies
+Version: 1.5.2-06
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread haproxy
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: The Reliable, High Performance TCP/HTTP Load Balancer halog
+Maintainer: Thomas Heil <heil@terminal-consulting.de>
+Source: haproxy-1.5.2.tar.gz
+Type: ipkg
+Description: 	HAProxy Log Analyzer
+http://haproxy.1wt.eu/
+Thomas Heil <heil@terminal-consulting.de>
+@@
+
+

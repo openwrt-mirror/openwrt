@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/daemontools/Makefile
+Package: daemontools
+Version: 0.76-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Tools for managing UNIX services
+Maintainer: 
+Source: daemontools-0.76.tar.gz
+Type: ipkg
+Description: 	Daemontools is a collection of tools for managing UNIX services by DJ Bernstein.
+http://cr.yp.to/daemontools.html
+
+@@
+
+

@@ -1,0 +1,66 @@
+Source-Makefile: feeds/oldpackages/libs/libdbi-drivers/Makefile
+Package: libdbi-drivers-mysql
+Version: 0.9.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libdbi +PACKAGE_libdbi-drivers-mysql:libmysqlclient
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libdbi-drivers-mysql
+Maintainer: 
+Source: libdbi-drivers-0.9.0.tar.gz
+Type: ipkg
+Description: libdbi-drivers-mysql
+http://libdbi-drivers.sourceforge.net/
+
+@@
+
+Package: libdbi-drivers-pgsql
+Version: 0.9.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libdbi +PACKAGE_libdbi-drivers-pgsql:libpq
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libdbi-drivers-pgsql
+Maintainer: 
+Source: libdbi-drivers-0.9.0.tar.gz
+Type: ipkg
+Description:        libdbi-driver for pgsql
+http://libdbi-drivers.sourceforge.net/
+
+@@
+
+Package: libdbi-drivers-sqlite2
+Version: 0.9.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libdbi +PACKAGE_libdbi-drivers-sqlite2:libsqlite2
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libdbi-drivers-sqlite2
+Maintainer: 
+Source: libdbi-drivers-0.9.0.tar.gz
+Type: ipkg
+Description:        libdbi-driver for sqlite2
+http://libdbi-drivers.sourceforge.net/
+
+@@
+
+Package: libdbi-drivers-sqlite3
+Version: 0.9.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread libdbi +PACKAGE_libdbi-drivers-sqlite3:libsqlite3
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: libdbi-drivers-sqlite3
+Maintainer: 
+Source: libdbi-drivers-0.9.0.tar.gz
+Type: ipkg
+Description:        libdbi-driver for sqlite3
+http://libdbi-drivers.sourceforge.net/
+
+@@
+
+

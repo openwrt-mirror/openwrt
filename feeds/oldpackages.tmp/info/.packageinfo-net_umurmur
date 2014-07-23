@@ -1,0 +1,40 @@
+Source-Makefile: feeds/oldpackages/net/umurmur/Makefile
+Package: umurmur-openssl
+Submenu: Instant Messaging
+Version: 0.2.14-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libconfig +libprotobuf-c +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Variant: openssl
+Section: net
+Category: Network
+Title: uMurmur (with OpenSSL support)
+Maintainer: Martin Johansson <martin@fatbob.nu>
+Source: umurmur-0.2.14.tar.gz
+Type: ipkg
+Description:     Minimalistic Mumble server daemon.
+  Uses OpenSSL library for SSL and crypto.
+http://code.google.com/p/umurmur
+Martin Johansson <martin@fatbob.nu>
+@@
+
+Package: umurmur-polarssl
+Submenu: Instant Messaging
+Version: 0.2.14-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libconfig +libprotobuf-c +libpolarssl
+Menu-Depends: 
+Provides: 
+Build-Variant: polarssl
+Section: net
+Category: Network
+Title: uMurmur (with PolarSSL support)
+Maintainer: Martin Johansson <martin@fatbob.nu>
+Source: umurmur-0.2.14.tar.gz
+Type: ipkg
+Description:     Minimalistic Mumble server daemon.
+  Uses the PolarSSL library for SSL and crypto.
+http://code.google.com/p/umurmur
+Martin Johansson <martin@fatbob.nu>
+@@
+
+

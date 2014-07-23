@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/utils/lilo/Makefile
+Package: lilo
+Prereq-Check: 1
+Version: 22.8-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @TARGET_x86
+Menu-Depends: 
+Provides: 
+Section: base
+Category: Boot Loaders
+Title: lilo
+Maintainer: 
+Source: lilo-22.8.src.tar.gz
+Type: ipkg
+Description: lilo
+ftp://metalab.unc.edu/pub/Linux/system/boot/lilo/
+
+@@
+
+

@@ -1,0 +1,8 @@
+
+config xunlei 'config'
+	option enable '0'
+	option device '/dev/sda1'
+	option up '0'
+	option xware 'Xware_mipseb_32_uclibc.tar.gz'
+	option zversion '0'
+	option ver '1.0.14'

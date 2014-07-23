@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/ipv6/ptrtd/Makefile
+Package: ptrtd
+Version: 0.5.2-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +kmod-tun +ip
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: Portable Transport Relay Translator Daemon
+Maintainer: 
+Source: ptrtd-0.5.2.tar.gz
+Type: ipkg
+Description: 	The Portable Transport Relay Translator Daemon (pTRTd)
+	is a method of allowing IPv6 hosts to communicate with IPv4 hosts.
+http://v6web.litech.org/ptrtd/
+
+@@
+
+

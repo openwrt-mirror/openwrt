@@ -1,0 +1,34 @@
+Source-Makefile: feeds/oldpackages/libs/libugpio/Makefile
+Package: libugpio
+Version: 0.0.1-8235d04096bfa9db594d5df75c5cd634a3bbc39a-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @GPIO_SUPPORT
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Library for using sysfs gpio interface from C programs
+Maintainer: 
+Source: libugpio-0.0.1-8235d04096bfa9db594d5df75c5cd634a3bbc39a.tar.gz
+Type: ipkg
+Description:   libugpio is a library to ease the use of linux kernel's sysfs
+  gpio interface from C programs and/or other libraries.
+https://github.com/mhei/libugpio
+
+@@
+
+Package: gpioctl-sysfs
+Version: 0.0.1-8235d04096bfa9db594d5df75c5cd634a3bbc39a-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libugpio
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Tool for controlling gpio pins
+Maintainer: 
+Source: libugpio-0.0.1-8235d04096bfa9db594d5df75c5cd634a3bbc39a.tar.gz
+Type: ipkg
+Description:   Tool for controlling gpio pins using the sysfs api provided by the kernel.
+
+@@
+
+

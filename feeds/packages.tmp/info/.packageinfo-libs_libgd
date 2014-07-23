@@ -1,0 +1,19 @@
+Source-Makefile: feeds/packages/libs/libgd/Makefile
+Package: libgd
+Version: 2.1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libjpeg +libpng
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: The GD graphics library
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Source: libgd-2.1.0.tar.xz
+Type: ipkg
+Description:   GD is an open source code library for the dynamic creation of images by
+  programmers. GD creates PNG, JPEG and GIF images, among other formats.
+http://www.libgd.org/
+Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+

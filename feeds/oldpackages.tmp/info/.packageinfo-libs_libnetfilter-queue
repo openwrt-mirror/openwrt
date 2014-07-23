@@ -1,0 +1,19 @@
+Source-Makefile: feeds/oldpackages/libs/libnetfilter-queue/Makefile
+Package: libnetfilter-queue
+Version: 1.0.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnfnetlink +kmod-nfnetlink-queue
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: API to packets queued by the kernel packet filter
+Maintainer: 
+Source: libnetfilter_queue-1.0.0.tar.bz2
+Type: ipkg
+Description:  libnetfilter_queue is a userspace library providing an API to packets
+ that have been queued by the kernel packet filter.
+http://www.netfilter.org/projects/libnetfilter_queue/
+
+@@
+
+

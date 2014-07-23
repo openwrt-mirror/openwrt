@@ -1,0 +1,20 @@
+Source-Makefile: feeds/oldpackages/sound/empcd/Makefile
+Package: empcd
+Version: 2008.02.16-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: sound
+Category: Sound
+Title: EMPCd can control the MPD
+Maintainer: 
+Source: empcd_2008.02.16.tar.bz2
+Type: ipkg
+Description: 	This is EMPCd which can use /dev/input/event0 or other event devices
+	to control MPD (Music Player Daemon), directly using libmpdclient
+	and other programs, currently using system(2).
+http://unfix.org/projects/empcd
+
+@@
+
+

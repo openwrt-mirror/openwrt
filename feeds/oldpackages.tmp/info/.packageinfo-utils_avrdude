@@ -1,0 +1,18 @@
+Source-Makefile: feeds/oldpackages/utils/avrdude/Makefile
+Package: avrdude
+Version: 6.0.1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses +libreadline +libusb-compat +libftdi
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: AVR Downloader/UploaDEr
+Maintainer: 
+Source: avrdude-6.0.1.tar.gz
+Type: ipkg
+Description:  AVRDUDE is a full featured program for programming Atmel's AVR CPU's.
+http://www.bsdhome.com/avrdude/
+
+@@
+
+

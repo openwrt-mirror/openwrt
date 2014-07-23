@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/net/wing/Makefile
+Package: wing
+Submenu: Routing and Redirection
+Version: 20121218-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-tun +libpcap +libstdcpp
+Menu-Depends: 
+Provides: 
+Build-Depends: wing/host
+Build-Types: host
+Section: net
+Category: Network
+Title: Wireless mesh networking toolkit
+Maintainer: Roberto Riggio <roberto.riggio@create-net.org>
+Source: wing-20121218.tar.bz2
+Type: ipkg
+Description: Wireless mesh networking toolkit
+http://www.wing-project.org/
+Roberto Riggio <roberto.riggio@create-net.org>
+@@
+
+

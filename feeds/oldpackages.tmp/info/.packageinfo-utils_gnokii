@@ -1,0 +1,21 @@
+Source-Makefile: feeds/oldpackages/utils/gnokii/Makefile
+Package: gnokii
+Version: 0.6.21-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libusb-compat
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Gnokii - Datasuite for the mobile phones
+Maintainer: 
+Source: gnokii-0.6.21.tar.gz
+Type: ipkg
+Description: 	Gnokii is a suite of programs linked against a backend
+	library that allows communication with the phones. It
+	currently supports the most mobile phones, all AT
+	capable mobiles as well as Symbian phones.
+http://www.gnokii.org/
+
+@@
+
+

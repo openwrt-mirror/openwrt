@@ -1,0 +1,36 @@
+Source-Makefile: feeds/oldpackages/libs/newt/Makefile
+Package: libnewt
+Version: 0.52.12-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libslang2 +libpopt
+Menu-Depends: 
+Provides: 
+Section: libs
+Category: Libraries
+Title: Not Erik's Windowing Toolkit
+Maintainer: 
+Source: newt-0.52.12.tar.gz
+Type: ipkg
+Description:   Programming library for colour text mode widget-based user interfaces,
+  based on S-Lang.
+http://fedorahosted.org/newt/
+
+@@
+
+Package: whiptail
+Version: 0.52.12-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libnewt
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: Utilities
+Title: Dialog boxes from shell scripts
+Maintainer: 
+Source: newt-0.52.12.tar.gz
+Type: ipkg
+Description:   A lightweight replacement for the dialog command (dialog boxes from shell
+  scripts), based on libnewt.
+http://fedorahosted.org/newt/
+
+@@
+
+
