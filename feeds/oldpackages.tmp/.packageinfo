@@ -15797,25 +15797,6 @@ http://www.dmh2000.com/nmea/nmeap.shtml
 @@
 
 
-Source-Makefile: feeds/oldpackages/lang/perl-net-telnet/Makefile
-Package: perl-net-telnet
-Submenu: Perl
-Version: 3.03-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Telnet client
-Maintainer: 
-Source: Net-Telnet-3.03.tar.gz
-Type: ipkg
-Description: Telnet client
-http://search.cpan.org/~jrogers/Net-Telnet-3.03/
-
-@@
-
-
 Source-Makefile: feeds/oldpackages/lang/pybluez/Makefile
 Package: python-bluez
 Submenu: Python
@@ -16003,25 +15984,6 @@ Hamish Guthrie <hcg@openwrt.org>
 @@
 
 
-Source-Makefile: feeds/oldpackages/lang/perl-html-tree/Makefile
-Package: perl-html-tree
-Submenu: Perl
-Version: 3.23-2
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perl-html-parser +perl-html-tagset
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: represent and create HTML syntax trees
-Maintainer: 
-Source: HTML-Tree-3.23.tar.gz
-Type: ipkg
-Description: represent and create HTML syntax trees
-http://search.cpan.org/dist/HTML-Tree/
-
-@@
-
-
 Source-Makefile: feeds/oldpackages/lang/php5-pecl-apc/Makefile
 Package: php5-pecl-apc
 Submenu: PHP
@@ -16039,25 +16001,6 @@ Type: ipkg
 Description: Alternative PHP Cache
 http://pecl.php.net/
 Michael Heimpold <mhei@heimpold.de>
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-test-harness/Makefile
-Package: perl-test-harness
-Submenu: Perl
-Version: 3.25-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +perl
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Perl Test Harness
-Maintainer: 
-Source: Test-Harness-3.25.tar.gz
-Type: ipkg
-Description: Perl Test Harness
-http://search.cpan.org/~ovid/Test-Harness-3.25/bin/prove
-
 @@
 
 
@@ -16250,25 +16193,6 @@ Description:  The Python Imaging Library adds image processing capabilities to y
  few basic pixel formats. It should provide a solid foundation for a
  general image processing tool.
 http://www.pythonware.com/products/pil/
-
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-html-parser/Makefile
-Package: perl-html-parser
-Submenu: Perl
-Version: 3.56-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perl-html-tagset +perl-uri
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: A collection of modules that parse HTML text documents
-Maintainer: 
-Source: HTML-Parser-3.56.tar.gz
-Type: ipkg
-Description: A collection of modules that parse HTML text documents
-http://search.cpan.org/dist/HTML-Parser/
 
 @@
 
@@ -16576,25 +16500,6 @@ Description:  LuaSQL is a simple interface from Lua to a DBMS.
  .
  This package contains the SQLite 3 binding.
 http://www.keplerproject.org/luasql/
-
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-www-mechanize/Makefile
-Package: perl-www-mechanize
-Submenu: Perl
-Version: 1.58-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perl-www
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Perl WWW Mechanize
-Maintainer: 
-Source: WWW-Mechanize-1.58.tar.gz
-Type: ipkg
-Description: Perl WWW Mechanize
-http://search.cpan.org/dist/WWW-Mechanize/
 
 @@
 
@@ -17084,25 +16989,6 @@ http://twistedmatrix.com/
 @@
 
 
-Source-Makefile: feeds/oldpackages/lang/perl-www-curl/Makefile
-Package: perl-www-curl
-Submenu: Perl
-Version: 4.00-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +libcurl
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Perl bindings to libcurl
-Maintainer: 
-Source: WWW-Curl-4.00.tar.gz
-Type: ipkg
-Description: Perl bindings to libcurl
-http://search.cpan.org/dist/WWW-Curl/
-
-@@
-
-
 Source-Makefile: feeds/oldpackages/lang/php5-pecl-dio/Makefile
 Package: php5-pecl-dio
 Submenu: PHP
@@ -17218,25 +17104,6 @@ Source: pyevent-0.3.tar.gz
 Type: ipkg
 Description: Python interface to libevent
 http://code.google.com/p/pyevent/
-
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-uri/Makefile
-Package: perl-uri
-Submenu: Perl
-Version: 1.36-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Manipulates and accesses URI strings
-Maintainer: 
-Source: URI-1.36.tar.gz
-Type: ipkg
-Description: Manipulates and accesses URI strings
-http://search.cpan.org/dist/URI/
 
 @@
 
@@ -17903,25 +17770,6 @@ http://code.google.com/p/pypcap/
 @@
 
 
-Source-Makefile: feeds/oldpackages/lang/perl-lockfile-simple/Makefile
-Package: perl-lockfile-simple
-Submenu: Perl
-Version: 0.206-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Simple advisory file locking
-Maintainer: 
-Source: LockFile-Simple-0.206.tar.gz
-Type: ipkg
-Description: Simple advisory file locking
-http://search.cpan.org/dist/LockFile-Simple/
-
-@@
-
-
 Source-Makefile: feeds/oldpackages/lang/python-flup/Makefile
 Package: python-flup
 Submenu: Python
@@ -18000,25 +17848,6 @@ Source: pygobject-2.21.5.tar.bz2
 Type: ipkg
 Description:   GLib bindings for python
 http://www.pygtk.org/
-
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-www/Makefile
-Package: perl-www
-Submenu: Perl
-Version: 5.837-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perl-html-parser +perl-html-tagset +perl-uri
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: WWW client/server library for Perl (aka LWP)
-Maintainer: 
-Source: libwww-perl-5.837.tar.gz
-Type: ipkg
-Description: WWW client/server library for Perl (aka LWP)
-http://search.cpan.org/dist/libwww-perl/
 
 @@
 
@@ -18454,25 +18283,6 @@ http://www.urbiforge.com
 @@
 
 
-Source-Makefile: feeds/oldpackages/lang/perl-dbi/Makefile
-Package: perl-dbi
-Submenu: Perl
-Version: 1.604-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +perlbase-essential
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Database independent interface for Perl
-Maintainer: 
-Source: DBI-1.604.tar.gz
-Type: ipkg
-Description: Database independent interface for Perl
-http://search.cpan.org/dist/DBI/
-
-@@
-
-
 Source-Makefile: feeds/oldpackages/lang/jsonpath/Makefile
 Package: jsonpath
 Submenu: Python
@@ -18489,44 +18299,6 @@ Source: jsonpath-0.52.1.tar.gz
 Type: ipkg
 Description:   An XPath implementation for JSON
 http://goessner.net/articles/JsonPath/
-
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-html-tagset/Makefile
-Package: perl-html-tagset
-Submenu: Perl
-Version: 3.20-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Data tables pertaining to HTML
-Maintainer: 
-Source: HTML-Tagset-3.20.tar.gz
-Type: ipkg
-Description: Data tables pertaining to HTML
-http://search.cpan.org/dist/HTML-Tagset/
-
-@@
-
-
-Source-Makefile: feeds/oldpackages/lang/perl-compress-bzip2/Makefile
-Package: perl-compress-bzip2
-Submenu: Perl
-Version: 2.09-3
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread perl +libbz2
-Menu-Depends: 
-Provides: 
-Section: lang
-Category: Languages
-Title: Perl interface to bzip2 compression library
-Maintainer: 
-Source: Compress-Bzip2-2.09.tar.gz
-Type: ipkg
-Description: Perl interface to bzip2 compression library
-http://search.cpan.org/dist/Compress-Bzip2/
 
 @@
 
@@ -21312,29 +21084,6 @@ Description:   lftp is sophisticated file transfer program with command line int
   `torrent' command.
 http://lftp.yar.ru/
 
-@@
-
-
-Source-Makefile: feeds/oldpackages/net/aria2/Makefile
-Package: aria2
-Submenu: File Transfer
-Version: 1.18.4-1
-Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +ARIA2_METALINK:libxml2 +libstdcpp +ARIA2_OPENSSL:libopenssl +ARIA2_GNUTLS:libgnutls
-Menu-Depends: 
-Provides: 
-Section: net
-Category: Network
-Title: lightweight download utility
-Maintainer: Imre Kaloz <kaloz@openwrt.org>
-Source: aria2-1.18.4.tar.bz2
-Type: ipkg
-Description:  aria2 is a lightweight multi-protocol & multi-source command-line download
- utility
-http://aria2.sourceforge.net/
-Imre Kaloz <kaloz@openwrt.org>
-@@
-Config:
-  source "feeds/oldpackages/net/aria2/Config.in"
 @@
 
 

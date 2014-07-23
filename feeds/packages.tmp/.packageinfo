@@ -4317,7 +4317,7 @@ Steven Barth <cyrus@openwrt.org>
 Source-Makefile: feeds/packages/utils/nano/Makefile
 Package: nano
 Submenu: Editors
-Version: 2.3.5-1
+Version: 2.3.6-1
 Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libncurses
 Menu-Depends: 
 Provides: 
@@ -4325,7 +4325,7 @@ Section: utils
 Category: Utilities
 Title: An enhanced clone of the Pico text editor
 Maintainer: Jonathan Bennett <JBennett@incomsystems.biz>
-Source: nano-2.3.5.tar.gz
+Source: nano-2.3.6.tar.gz
 Type: ipkg
 Description:   GNU nano (Nano's ANOther editor, or Not ANOther editor) is an enhanced clone
   of the Pico text editor.
@@ -11021,6 +11021,29 @@ Description:  A script to do traffing shaping with the HTB algorithm.
  * Make sure uploads don't harm downloads, and the other way around
 http://lartc.org/wondershaper/
 Jo-Philipp Wich <jow@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/packages/net/aria2/Makefile
+Package: aria2
+Submenu: File Transfer
+Version: 1.18.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib +ARIA2_METALINK:libxml2 +libstdcpp +ARIA2_OPENSSL:libopenssl +ARIA2_GNUTLS:libgnutls
+Menu-Depends: 
+Provides: 
+Section: net
+Category: Network
+Title: lightweight download utility
+Maintainer: Imre Kaloz <kaloz@openwrt.org>
+Source: aria2-1.18.7.tar.bz2
+Type: ipkg
+Description:  aria2 is a lightweight multi-protocol & multi-source command-line download
+ utility
+http://aria2.sourceforge.net/
+Imre Kaloz <kaloz@openwrt.org>
+@@
+Config:
+  source "feeds/packages/net/aria2/Config.in"
 @@
 
 
