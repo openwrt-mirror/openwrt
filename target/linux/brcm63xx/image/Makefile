@@ -111,6 +111,20 @@ define Image/Build/SPW303V
 	rm -f $(BIN_DIR)/openwrt-$(4)-$(1)-cfe.bin.tmp
 endef
 
+define Image/Build/ZyXEL
+	# Generate the tagged image
+	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
+		--output $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
+		--boardid $(2) --chipid $(4) --entry $(KERNEL_ENTRY) \
+		--load-addr $(LOADADDR) --rsa-signature "$(6)" \
+		--info1 "+$(call Image/LimitName16,$(3))" --info2 $(1) \
+		$(7) $(8) $(9) $(10)
+	# Fix up header
+	$(STAGING_DIR_HOST)/bin/zyxbcm -i $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
+		-o $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin
+	rm -f $(BIN_DIR)/openwrt-$(5)-$(1).tmp
+endef
+
 define Image/Build/CFEOLD
 	$(TOPDIR)/scripts/brcmImage.pl -t -p	\
 		-b $(2) -c $(3)			\
@@ -187,6 +201,8 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),96368MVNgr,6368,96368MVNgr-generic)
 	$(call Image/Build/CFE,$(1),96368MVWG,6368,96368MVWG-generic)
 
+	# ADB P.DG A4001N
+	$(call Image/Build/CFE,$(1),96328dg2x2,6328,A4001N,,--pad 4)
 	# ADB P.DG A4001N1
 	$(call Image/Build/CFE,$(1),963281T_TEF,6328,A4001N1,,--pad 8)
 	# Asmax AR 1004g
@@ -215,6 +231,8 @@ define Image/Build
 	$(call Image/Build/CFEFIXUP,$(1),96348GW,GW6200,6348,GW6200,$(shell printf '\x99'))
 	# Neufbox4
 	$(call Image/Build/CFE,$(1),96358VW,6358,NEUFBOX4,OpenWRT-$(REVISION))
+	# Zyxel P870HW-51a v2
+	$(call Image/Build/ZyXEL,$(1),96368VVW,P870HW-51a_v2,6368,P870HW-51a_v2,ZyXEL,--signature "ZyXEL_0001")
 
 	# Neufbox6
 	$(call Image/Build/CFE,$(1),NB6-SER-r0,6362,NEUFBOX6,OpenWRT-$(REVISION))
@@ -230,6 +248,10 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),96328A-1241N,6328,AR-5381u,,--pad 8)
 	# Comtrend AR-5387un
 	$(call Image/Build/CFE,$(1),96328A-1441N1,6328,AR-5387un,,--pad 8)
+	# Comtrend VR-3025u
+	$(call Image/Build/CFE,$(1),96368M-1541N,6368,VR-3025u,,--pad 16)
+	# Comtrend VR-3025un
+	$(call Image/Build/CFE,$(1),96368M-1341N,6368,VR-3025un,,--pad 4)
 	# Comtrend WAP-5813n
 	$(call Image/Build/CFE,$(1),96369R-1231N,6368,WAP-5813n,,--pad 4)
 	# Davolink DV201AMR
@@ -289,6 +311,9 @@ define Image/Build
 
 	# T-Com Speedport W 500V
 	$(call Image/Build/CFEFIXUP,$(1),96348GW,SPW500V,6348,SPW500V)
+
+	# Huawei HW520
+	$(call Image/Build/CFE,$(1),HW6358GW_B,6358,HW520,EchoLife_HG520v)
 
 	#HW553
 	$(call Image/Build/CFEHW553,$(1),HW553,6358,0x20000,HW553)

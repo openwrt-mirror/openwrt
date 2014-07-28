@@ -26,6 +26,7 @@ platform_check_image() {
 	ar725w | \
 	asl26555 | \
 	awm002-evb | \
+	awm003-evb | \
 	awapn2403 | \
 	bc2 | \
 	broadway | \
@@ -54,6 +55,7 @@ platform_check_image() {
 	ip2202 | \
 	m3 | \
 	m4 | \
+	mlw221 | \
 	mofi3500-3gn | \
 	mpr-a1 | \
 	mpr-a2 | \
