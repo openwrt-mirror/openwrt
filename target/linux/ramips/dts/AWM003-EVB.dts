@@ -20,6 +20,10 @@
 		};
 	};
 
+	ethernet@10100000 {
+		mtd-mac-address = <&factory 0x28>;
+	};
+
 	wmac@10180000 {
 		ralink,mtd-eeprom = <&factory 0>;
 	};
@@ -52,7 +56,7 @@
 		};
 		mode {
 			label = "mode";
-			gpios = <&gpio0 21 1>;
+			gpios = <&gpio0 20 1>;
 			linux,code = <0x32>;
 		};
 	};
