@@ -1,9 +1,0 @@
-HOST_OS:=Linux
-HOST_ARCH:=x86_64
-GNU_HOST_NAME:=x86_64-redhat-linux
-TAR:=/usr/bin/gtar
-FIND:=/usr/bin/find
-BASH:=/usr/bin/bash
-FIND_L=/usr/bin/find -L $(1)
-PATCH:=/usr/bin/patch
-PYTHON:=/usr/bin/python2.7
