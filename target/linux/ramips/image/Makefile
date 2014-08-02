@@ -473,6 +473,8 @@ Image/Build/Profile/SL-R7205=$(call BuildFirmware/Default4M/$(1),$(1),sl-r7205,S
 
 Image/Build/Profile/V22RW-2X2=$(call BuildFirmware/Default4M/$(1),$(1),v22rw-2x2,V22RW-2X2)
 
+Image/Build/Profile/VOCORE=$(call BuildFirmware/Default8M/$(1),$(1),vocore,VOCORE)
+
 Image/Build/Profile/W150M=$(call BuildFirmware/CustomFlashFactory/$(1),$(1),w150m,W150M,$(ralink_default_fw_size_4M),W150M Kernel Image,factory)
 
 Image/Build/Profile/W306R_V20=$(call BuildFirmware/CustomFlashFactory/$(1),$(1),w306r-v20,W306R_V20,$(ralink_default_fw_size_4M),linkn Kernel Image,factory)
@@ -498,6 +500,8 @@ define BuildFirmware/WHRG300N/squashfs
 endef
 BuildFirmware/WHRG300N/initramfs=$(call BuildFirmware/OF/initramfs,$(1),whr-g300n,WHR-G300N)
 Image/Build/Profile/WHRG300N=$(call BuildFirmware/WHRG300N/$(1),$(1))
+
+Image/Build/Profile/WIZARD8800=$(call BuildFirmware/Default8M/$(1),$(1),wizard-8800,WIZARD8800,Linux Kernel Image)
 
 Image/Build/Profile/WL_330N=$(call BuildFirmware/Default4M/$(1),$(1),wl-330n,WL_330N)
 
@@ -612,11 +616,13 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/SL-R7205,$(1))
 	$(call Image/Build/Profile/UR-326N4G,$(1))
 	$(call Image/Build/Profile/V22RW-2X2,$(1))
+	$(call Image/Build/Profile/VOCORE,$(1))
 	$(call Image/Build/Profile/W150M,$(1))
 	$(call Image/Build/Profile/W306R_V20,$(1))
 	$(call Image/Build/Profile/W502U,$(1))
 	$(call Image/Build/Profile/WCR150GN,$(1))
 	$(call Image/Build/Profile/WHRG300N,$(1))
+	$(call Image/Build/Profile/WIZARD8800,$(1))
 	$(call Image/Build/Profile/WL_330N,$(1))
 	$(call Image/Build/Profile/WL_330N3G,$(1))
 	$(call Image/Build/Profile/WL341V3,$(1))

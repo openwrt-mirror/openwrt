@@ -74,7 +74,7 @@ get_status_led() {
 		status_led="m4:blue:status"
 		;;
 	mlw221)
-		status_led="kingston:green:status"
+		status_led="kingston:blue:status"
 		;;
 	mofi3500-3gn)
 		status_led="mofi3500-3gn:green:status"
@@ -128,6 +128,9 @@ get_status_led() {
 		;;
 	v22rw-2x2)
 		status_led="v22rw-2x2:green:security"
+		;;
+	vocore)
+		status_led="vocore:green:status"
 		;;
 	w306r-v20)
 		status_led="w306r-v20:green:sys"
