@@ -1,0 +1,18 @@
+--- a/squashfs-tools/squashfs_fs.h	2014-08-02 19:35:42.909762168 +0800
++++ b/squashfs-tools/squashfs_fs.h	2014-08-02 19:31:30.049716000 +0800
+@@ -284,12 +284,12 @@
+ 
+ struct squashfs_super_block {
+ 	unsigned int		s_magic;
++	unsigned int		mkfs_time /* time of filesystem creation */;
+ 	unsigned int		inodes;
++	unsigned int		fragments;
+-	unsigned int		mkfs_time /* time of filesystem creation */;
+ 	unsigned int		block_size;
++	unsigned short		block_log;
+-	unsigned int		fragments;
+ 	unsigned short		compression;
+-	unsigned short		block_log;
+ 	unsigned short		flags;
+ 	unsigned short		no_ids;
+ 	unsigned short		s_major;
