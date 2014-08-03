@@ -134,7 +134,7 @@ static void __init tl_ap121_setup(void)
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
 	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
 
-	ath79_setup_ar933x_phy4_switch(true, true);
+	ath79_setup_ar933x_phy4_switch(false, false);
 
 	ath79_gpio_function_disable(AR933X_GPIO_FUNC_ETH_SWITCH_LED0_EN |
 				    AR933X_GPIO_FUNC_ETH_SWITCH_LED1_EN |
