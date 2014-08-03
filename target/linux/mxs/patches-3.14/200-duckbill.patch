@@ -1,18 +1,16 @@
-diff -ruN orig/arch/arm/boot/dts/Makefile new/arch/arm/boot/dts/Makefile
---- orig/arch/arm/boot/dts/Makefile	2013-11-04 00:41:51.000000000 +0100
-+++ new/arch/arm/boot/dts/Makefile	2013-11-11 14:38:07.108808212 +0100
-@@ -159,6 +159,7 @@
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -164,6 +164,7 @@ dtb-$(CONFIG_ARCH_MXS) += imx23-evk.dtb
  	imx28-cfa10057.dtb \
  	imx28-cfa10058.dtb \
  	imx28-evk.dtb \
 +	imx28-duckbill.dtb \
+ 	imx28-m28cu3.dtb \
  	imx28-m28evk.dtb \
  	imx28-sps1.dtb \
- 	imx28-tx28.dtb
-diff -ruN orig/arch/arm/mach-mxs/mach-mxs.c new/arch/arm/mach-mxs/mach-mxs.c
---- orig/arch/arm/mach-mxs/mach-mxs.c	2013-11-04 00:41:51.000000000 +0100
-+++ new/arch/arm/mach-mxs/mach-mxs.c	2013-11-11 14:40:07.555397389 +0100
-@@ -159,6 +159,7 @@
+--- a/arch/arm/mach-mxs/mach-mxs.c
++++ b/arch/arm/mach-mxs/mach-mxs.c
+@@ -157,6 +157,7 @@ enum mac_oui {
  	OUI_FSL,
  	OUI_DENX,
  	OUI_CRYSTALFONTZ,
@@ -20,7 +18,7 @@ diff -ruN orig/arch/arm/mach-mxs/mach-mxs.c new/arch/arm/mach-mxs/mach-mxs.c
  };
  
  static void __init update_fec_mac_prop(enum mac_oui oui)
-@@ -213,6 +214,11 @@
+@@ -211,6 +212,11 @@ static void __init update_fec_mac_prop(e
  			macaddr[1] = 0xb9;
  			macaddr[2] = 0xe1;
  			break;
@@ -32,7 +30,7 @@ diff -ruN orig/arch/arm/mach-mxs/mach-mxs.c new/arch/arm/mach-mxs/mach-mxs.c
  		}
  		val = ocotp[i];
  		macaddr[3] = (val >> 16) & 0xff;
-@@ -423,6 +429,11 @@
+@@ -426,6 +432,11 @@ static int __init mxs_restart_init(void)
  	return 0;
  }
  
@@ -44,10 +42,10 @@ diff -ruN orig/arch/arm/mach-mxs/mach-mxs.c new/arch/arm/mach-mxs/mach-mxs.c
  static void __init mxs_machine_init(void)
  {
  	struct device_node *root;
-@@ -459,6 +470,8 @@
- 		apx4devkit_init();
- 	else if (of_machine_is_compatible("crystalfontz,cfa10036"))
+@@ -464,6 +475,8 @@ static void __init mxs_machine_init(void
  		crystalfontz_init();
+ 	else if (of_machine_is_compatible("msr,m28cu3"))
+ 		m28cu3_init();
 +	else if (of_machine_is_compatible("i2se,duckbill"))
 +		duckbill_init();
  
