@@ -97,7 +97,9 @@ platform_check_image() {
 	ai-br100 |\
 	x5 |\
 	x8 |\
-	zbt-wa05)
+	zbt-wa05 |\
+	y1 |\
+	y1s)
 		[ "$magic" != "27051956" ] && {
 			echo "Invalid image type."
 			return 1

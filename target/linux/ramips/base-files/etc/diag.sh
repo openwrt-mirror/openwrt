@@ -190,6 +190,9 @@ get_status_led() {
 		;;
 	ai-br100)
 		status_led="aigale:blue:wlan"
+	y1 | \
+	y1s)
+		status_led="lenovo:blue:power"
 		;;
 	esac
 }
