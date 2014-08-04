@@ -149,7 +149,7 @@ static int tplink_parse_partitions(struct mtd_info *master,
 	parts[0].name = "u-boot";
 	parts[0].offset = 0;
 	parts[0].size = offset;
-	parts[0].mask_flags = MTD_WRITEABLE;
+//	parts[0].mask_flags = MTD_WRITEABLE;
 
 	parts[1].name = "kernel";
 	parts[1].offset = offset;
