@@ -9,7 +9,7 @@ local detailInfo = "<br />启动后会看到类似如下信息：<br /><br />[ 0
 
 if running then
 	xunleiinfo = luci.sys.exec("wget http://localhost:9000/getsysinfo -O - 2>/dev/null")
-	upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/thunder/xware/latest 2>/dev/null")
+	upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
         button = "&nbsp;&nbsp;&nbsp;&nbsp;" .. translate("运行状态：") .. xunleiinfo	
 	m = Map("xunlei", translate("Xware"), translate("迅雷远程下载 正在运行...") .. button)
 	string.gsub(string.sub(xunleiinfo, 2, -2),'[^,]+',function(w) table.insert(tblXLInfo, w) end)
@@ -55,14 +55,23 @@ enable = s:taboption("basic", Flag, "enable", translate("启用 迅雷远程下�
 enable.rmempty = false
 
 local devices = {}
-util.consume((fs.glob("/dev/sd??*")), devices)
+util.consume((fs.glob("/mnt/sd??*")), devices)
 
-device = s:taboption("basic", Value, "device", translate("Device"), translate("<br />迅雷的程序请放在 “挂载点”/xunlei 目录下。"))
+device = s:taboption("basic", Value, "device", translate("挂载点"), translate("<br />迅雷程序下载目录所在的“挂载点”。"))
 for i, dev in ipairs(devices) do
 	device:value(dev)
 end
+if nixio.fs.access("/etc/config/xunlei") then
+        device.titleref = luci.dispatcher.build_url("admin", "system", "fstab")
+end
 
-upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/thunder/xware/latest 2>/dev/null")
+file = s:taboption("basic", Value, "file", translate("迅雷程序安装路径"), translate("<br />迅雷程序安装路径，例如：/mnt/sda1，将会安装在/mnt/sda1/xunlei 下。"))
+for i, dev in ipairs(devices) do
+	file:value(dev)
+end
+
+
+upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
 up = s:taboption("basic", Flag, "up", translate("升级迅雷远程下载"), translate("第一次运行请先联网升级最新版迅雷远程下载程序！<br /><br />最新版本： ") .. upinfo)
 up.rmempty = false
 
@@ -70,19 +79,13 @@ zversion = s:taboption("basic", Flag, "zversion", translate("自定义版本"), 
 zversion.rmempty = false
 zversion:depends("up",1)
 
-ver = s:taboption("basic", Value, "ver", translate("版本号"), translate("自定义迅雷远程下载版本。"))
+ver = s:taboption("basic", Value, "ver", translate("版本号"), translate("自定义迅雷远程下载版本号。"))
 ver:depends("zversion",1)
-ver:value("1.0.5", translate("1.0.5"))
-ver:value("1.0.6", translate("1.0.6"))
-ver:value("1.0.7", translate("1.0.7"))
-ver:value("1.0.8", translate("1.0.8"))
-ver:value("1.0.9", translate("1.0.9"))
-ver:value("1.0.10", translate("1.0.10"))
 ver:value("1.0.11", translate("1.0.11"))
-ver:value("1.0.12", translate("1.0.12"))
-ver:value("1.0.13", translate("1.0.13"))
-ver:value("1.0.14", translate("1.0.14"))
-ver:value("1.0.15", translate("1.0.15"))
+ver:value("1.0.20", translate("1.0.20"))
+
+vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
+vod.rmempty = false
 
 xwareup = s:taboption("basic", Value, "xware", translate("Xware 程序版本："),translate("<br />ar71xx系列的选择默认版本，其他型号的路由根据CPU选择。"))
 xwareup.rmempty = false
