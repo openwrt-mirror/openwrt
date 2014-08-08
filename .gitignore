@@ -18,3 +18,4 @@
 .emacs.desktop*
 TAGS*~
 git-src
+/feeds
