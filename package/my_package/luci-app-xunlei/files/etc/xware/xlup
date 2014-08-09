@@ -26,6 +26,7 @@ chmod +x $DIR/* && chmod +x $DIR/lib/*
 rm -rf ${FILES}
 rm -rf $file/xunlei/cfg/thunder_mounts.cfg>> /dev/null 2>&1
 uci set xunlei.config.up=0>> /dev/null 2>&1
+uci commit 2>&1 > /dev/null
 vod=$(uci get xunlei.config.vod)   
 [ "$vod" -eq 1 ] && rm -f "$file"/xunlei/vod_httpserver
 [ "$vod" -eq 1 ] && rm -f "$file"/xunlei/lib/vod_httpserver
