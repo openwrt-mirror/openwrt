@@ -57,7 +57,7 @@ ppp_generic_setup() {
 		ip-down-script /lib/netifd/ppp-down \
 		ipv6-down-script /lib/netifd/ppp-down \
 		${mtu:+mtu $mtu mru $mtu} \
-		$([ "$(uci get macvlan.config.enabled)" == "1" ] && echo syncppp $(uci get macvlan.config.pppnum)) \
+		$([ "$(uci get macvlan.config.enabled)" == "1" ] && echo syncppp $(cat /etc/config/network | grep -c "proto 'pppoe'")) \
 		"$@" $pppd_options
 }
 
