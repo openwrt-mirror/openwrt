@@ -1,6 +1,6 @@
 --- a/arch/mips/bcm63xx/boards/board_bcm963xx.c
 +++ b/arch/mips/bcm63xx/boards/board_bcm963xx.c
-@@ -1530,6 +1530,73 @@ static struct board_info __initdata boar
+@@ -2308,6 +2308,74 @@ static struct board_info __initdata boar
  		},
  	}
  };
@@ -8,6 +8,7 @@
 +/* D-Link DVA-G3810BN/TL */
 +static struct board_info __initdata board_DVAG3810BN = {
 +	.name			= "DVAG3810BN",
++	.of_board_id		= "d-link,dva-g3810bn/tl",
 +	.expected_cpu_id	= 0x6358,
 +
 +	.has_uart0		= 1,
@@ -71,10 +72,10 @@
 +		},
 +	},
 +};
- #endif
+ #endif /* CONFIG_BCM63XX_CPU_6358 */
  
  /*
-@@ -2832,6 +2899,7 @@ static const struct board_info __initcon
+@@ -2510,6 +2578,7 @@ static const struct board_info __initcon
  	&board_ct6373_1,
  	&board_HW553,
  	&board_spw303v,

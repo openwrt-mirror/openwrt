@@ -1205,6 +1205,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW4530RV1,mw4530r-v1,TL-WDR4300,t
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW305RV38M,mw305r-v3-8m,TL-WR841N-v9,ttyS0,115200,0x83050803,1,8Mlzma))
 
 
+$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,SMART-300,smart-300,SMART-300,ttyS0,115200,0x93410001,1,8Mlzma))
+
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,OOLITE,oolite,GS-OOLITE,ttyATH0,115200,0x3C000101,1,16Mlzma))
 
 $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))

@@ -38,10 +38,10 @@
 +		},
 +	},
 +};
- #endif
+ #endif /* CONFIG_BCM63XX_CPU_6338 */
  
  /*
-@@ -1377,6 +1411,7 @@ static const struct board_info __initcon
+@@ -1055,6 +1089,7 @@ static const struct board_info __initcon
  #ifdef CONFIG_BCM63XX_CPU_6338
  	&board_96338gw,
  	&board_96338w,

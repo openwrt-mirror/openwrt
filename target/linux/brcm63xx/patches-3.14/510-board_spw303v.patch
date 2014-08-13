@@ -1,7 +1,7 @@
 --- a/arch/mips/bcm63xx/boards/board_bcm963xx.c
 +++ b/arch/mips/bcm63xx/boards/board_bcm963xx.c
-@@ -922,6 +922,72 @@ static struct board_info __initdata boar
- 		},
+@@ -1580,6 +1580,72 @@ static struct board_info __initdata boar
+ 		.pci_dev			= 1,
  	},
  };
 +
@@ -70,12 +70,12 @@
 +		},
 +	}
 +};
- #endif
+ #endif /* CONFIG_BCM63XX_CPU_6358 */
  
  /*
-@@ -1948,6 +2014,7 @@ static const struct board_info __initcon
+@@ -1627,6 +1693,7 @@ static const struct board_info __initcon
+ 	&board_nb4_ser_r0,
  	&board_nb4_fxc_r1,
- 	&board_nb4_fxc_r2,
  	&board_HW553,
 +	&board_spw303v,
  #endif
