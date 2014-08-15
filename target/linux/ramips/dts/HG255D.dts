@@ -6,6 +6,10 @@
 	compatible = "HG255D", "ralink,rt3052-soc";
 	model = "HuaWei HG255D";
 
+	chosen {
+		bootargs = "console=ttyS0,115200";
+	};
+
 	pinctrl {
 		state_default: pinctrl0 {
 			gpio {
