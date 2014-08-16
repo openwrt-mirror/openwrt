@@ -102,6 +102,7 @@ ramips_setup_interfaces()
 	dir-300-b7 | \
 	dir-320-b1 | \
 	dir-615-h1 | \
+	ai-br100 | \
 	hlk-rm04 | \
 	mzk-w300nh2 | \
 	mzk-750dhp)
@@ -117,7 +118,6 @@ ramips_setup_interfaces()
 	dir-645 | \
 	f5d8235-v1 | \
 	f5d8235-v2 | \
-	hg255d | \
 	rt-n14u | \
 	wrtnode | \
 	ur-326n4g | \
@@ -127,11 +127,11 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 6t"
 		ucidef_add_switch_vlan "switch0" "2" "0 6t"
 		;;
-	ai-br100)
+	hg255d)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
-		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 6t"
-		ucidef_add_switch_vlan "switch0" "2" "4 6t"
+		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 6t"
+		ucidef_add_switch_vlan "switch0" "2" "0 5 6t"
 		;;
 
 	ur-336un)
