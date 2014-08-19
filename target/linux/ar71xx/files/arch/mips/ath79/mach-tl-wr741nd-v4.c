@@ -157,6 +157,11 @@ static void __init tl_wr741ndv4_setup(void)
 {
 	tl_ap121_setup();
 
+	gpio_request_one(TL_MR3220V2_GPIO_USB_POWER,
+			 GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED,
+			 "USB power");
+	ath79_register_usb();
+
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr741ndv4_leds_gpio) - 1,
 				 tl_wr741ndv4_leds_gpio);
 	ath79_register_gpio_keys_polled(1, TL_WR741NDV4_KEYS_POLL_INTERVAL,

@@ -91,7 +91,7 @@ static struct gpio_keys_button wndr3700_gpio_keys[] __initdata = {
 	}, {
 		.desc		= "wifi",
 		.type		= EV_KEY,
-		.code		= BTN_2,
+		.code		= KEY_RFKILL,
 		.debounce_interval = WNDR3700_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= WNDR3700_GPIO_BTN_WIFI,
 		.active_low	= 1,
