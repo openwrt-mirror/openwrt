@@ -265,7 +265,7 @@ eap300v2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),320k(custom),1
 db120_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1408k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
 cameo_ap94_mtdlayout=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,6208k(firmware),64k(caldata)ro,1600k(unknown)ro,64k@0x7f0000(caldata_copy)
 cameo_ap94_mtdlayout_fat=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,7808k(firmware),64k(caldata)ro,64k@0x660000(caldata_orig),6208k@0x50000(firmware_orig)
-esr900_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,14656k(firmware),1024k(manufacture)ro,64k(backup)ro,320k(storage)ro,64k(caldata)ro
+esr900_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),13248k(rootfs),1024k(manufacture)ro,64k(backup)ro,320k(storage)ro,64k(caldata)ro,14656k@0x40000(firmware)
 esr1750_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),13248k(rootfs),1024k(manufacture)ro,64k(backup)ro,320k(storage)ro,64k(caldata)ro,14656k@0x40000(firmware)
 ew-dorin_mtdlayout_4M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),3712k(firmware),64k(art)
 ew-dorin_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),16000k(firmware),64k(art)
@@ -482,6 +482,27 @@ Image/Build/AthGzip/initramfs=$(call MkuImageGzip/initramfs,$(2),$(3) $(4))
 Image/Build/AthLzma/buildkernel=$(call MkuImageLzma,$(2),$(3) $(4))
 Image/Build/AthLzma=$(call Image/Build/Ath,$(1),$(2),$(3),$(4),$(5),$(6),$(7))
 Image/Build/AthLzma/initramfs=$(call MkuImageLzma/initramfs,$(2),$(3) $(4))
+
+
+define Image/Build/EnGenius
+	$(eval fwsize=$(call mtdpartsize,firmware,$(4)))
+	$(eval rootsize=$(call mtdpartsize,rootfs,$(4)))
+	$(eval kernsize=$(call mtdpartsize,kernel,$(4)))
+	$(call Sysupgrade/$(5),$(1),$(2),$(if $(6),$(6),$(kernsize)),$(if $(rootsize),$(rootsize),$(fwsize)))
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+		dd if=$(KDIR_TMP)/vmlinux-$(2).uImage \
+			of=$(call imgname,kernel,$(2)).bin bs=64k conv=sync; \
+		dd if=$(KDIR)/root.$(1) \
+			of=$(call imgname,$(1),$(2)-rootfs).bin bs=128k conv=sync; \
+		mksenaofw -e $(call sysupname,$(1),$(2)) \
+			-o $(call imgname,$(1),$(2))-factory.dlf \
+			-r 0x101 -p $(7) -t 2; \
+	fi
+endef
+
+Image/Build/EnGenius/buildkernel=$(call MkuImageLzma,$(2),$(3) $(4))
+Image/Build/EnGenius/initramfs=$(call MkuImageLzma/initramfs,$(2),$(3) $(4))
+
 
 define MkuImageHiWiFi
 	# Field ih_name needs to start with "tw150v1"
@@ -1055,7 +1076,6 @@ $(eval $(call SingleProfile,AthLzma,64k,BXU2000N2,bxu2000n-2-a1,BXU2000n-2-A1,tt
 $(eval $(call SingleProfile,AthLzma,64k,CAP4200AG,cap4200ag,CAP4200AG,ttyS0,115200,$$(cap4200ag_mtdlayout),KRuImage))
 $(eval $(call SingleProfile,AthLzma,64k,DB120,db120,DB120,ttyS0,115200,$$(db120_mtdlayout),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,DRAGINO2,dragino2,DRAGINO2,ttyATH0,115200,$$(dragino2_mtdlayout),KRuImage,65536))
-$(eval $(call SingleProfile,AthLzma,64k,ESR1750,esr1750,ESR1750,ttyS0,115200,$$(esr1750_mtdlayout),KRuImage))
 $(eval $(call SingleProfile,AthLzma,64k,EWDORINAP,ew-dorin,EW-DORIN,ttyATH0,115200,$$(ew-dorin_mtdlayout_4M),KRuImage,65536))
 $(eval $(call SingleProfile,AthLzma,64k,EWDORINRT,ew-dorin-router,EW-DORIN-ROUTER,ttyATH0,115200,$$(ew-dorin_mtdlayout_4M),KRuImage,65536))
 $(eval $(call SingleProfile,AthLzma,64k,EWDORIN16M,ew-dorin-16M,EW-DORIN,ttyATH0,115200,$$(ew-dorin_mtdlayout_16M),KRuImage,65536))
@@ -1093,6 +1113,9 @@ $(eval $(call SingleProfile,CyberTANLZMA,64k,MYNETREXT,mynet-rext,MYNET-REXT,tty
 $(eval $(call SingleProfile,CameoAP94,64kraw,DIR825B1,dir-825-b1,DIR-825-B1,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
 $(eval $(call SingleProfile,CameoAP94,64kraw,TEW673GRU,tew-673gru,TEW-673GRU,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-01,00AP94-AR7161-RT-080619-01))
 $(eval $(call SingleProfile,CameoAP94,64kraw,DLRTDEV01,dlrtdev01,DIR-825-B1,ttyS0,115200,$$(dlrtdev_mtdlayout),$$(dlrtdev_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
+
+$(eval $(call SingleProfile,EnGenius,64k,ESR900,esr900,ESR900,ttyS0,115200,$$(esr900_mtdlayout),KRuImage,,0x4e))
+$(eval $(call SingleProfile,EnGenius,64k,ESR1750,esr1750,ESR1750,ttyS0,115200,$$(esr1750_mtdlayout),KRuImage,,0x61))
 
 $(eval $(call SingleProfile,HiWiFi,64k,HIWIFI_HC6361,hiwifi-hc6361,HiWiFi-HC6361,ttyATH0,115200,$$(hiwifi_hc6361_mtdlayout),KRuImage))
 
