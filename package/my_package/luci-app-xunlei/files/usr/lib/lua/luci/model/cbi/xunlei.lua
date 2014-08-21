@@ -9,7 +9,7 @@ local detailInfo = "<br />启动后会看到类似如下信息：<br /><br />[ 0
 
 if running then
 	xunleiinfo = luci.sys.exec("wget http://localhost:9000/getsysinfo -O - 2>/dev/null")
-	upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
+	--upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
         button = "&nbsp;&nbsp;&nbsp;&nbsp;" .. translate("运行状态：") .. xunleiinfo	
 	m = Map("xunlei", translate("Xware"), translate("迅雷远程下载 正在运行...") .. button)
 	string.gsub(string.sub(xunleiinfo, 2, -2),'[^,]+',function(w) table.insert(tblXLInfo, w) end)
@@ -70,10 +70,25 @@ for i, dev in ipairs(devices) do
 	file:value(dev)
 end
 
+upinfo = luci.sys.exec("cat /tmp/etc/xlver")
 
-upinfo = luci.sys.exec("wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest 2>/dev/null")
-up = s:taboption("basic", Flag, "up", translate("升级迅雷远程下载"), translate("第一次运行请先联网升级最新版迅雷远程下载程序！<br /><br />最新版本： ") .. upinfo)
+op = s:taboption("basic", Button, "upxlast", translate("查看更新."),translate("<strong><font color=\"red\">当前最新版：</font></strong>") .. upinfo)
+op.inputstyle = "apply"
+
+op.write = function(self, section)
+	opstatus = (luci.sys.exec("/etc/xware/xlatest" %{ self.option }) == 0)
+	if  opstatus then
+	self.inputstyle = "apply"
+	end
+luci.model.uci.cursor()
+end
+
+up = s:taboption("basic", Flag, "up", translate("升级迅雷远程下载"), translate("<script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"查看更新.\" onclick=\"window.open('http://dl.lazyzhu.com/file/Thunder/Xware/latest')\" />"))
 up.rmempty = false
+
+zurl = s:taboption("basic", Value, "url", translate("地址"), translate("自定义迅雷远程下载地址。默认：http://dl.lazyzhu.com/file/Thunder/Xware"))
+zurl.rmempty = false
+zurl:value("http://dl.lazyzhu.com/file/Thunder/Xware")
 
 zversion = s:taboption("basic", Flag, "zversion", translate("自定义版本"), translate("自定义迅雷远程下载版本。"))
 zversion.rmempty = false
@@ -81,8 +96,11 @@ zversion:depends("up",1)
 
 ver = s:taboption("basic", Value, "ver", translate("版本号"), translate("自定义迅雷远程下载版本号。"))
 ver:depends("zversion",1)
-ver:value("1.0.11", translate("1.0.11"))
-ver:value("1.0.20", translate("1.0.20"))
+ver:value("1.0.11")
+ver:value("1.0.27")
+ver:value("1.0.28")
+ver:value("1.0.29")
+ver:value("1.0.30")
 
 vod = s:taboption("basic", Flag, "vod", translate("删除迅雷VOD服务器"), translate("删除迅雷VOD服务器。"))
 vod.rmempty = false
@@ -112,7 +130,7 @@ s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"jus
 
 s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"justify\"><script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"迅雷远程下载页面\" onclick=\"window.open('http://yuancheng.xunlei.com')\" /></p>"), translate("将激活码填进网页即可绑定。"))
 
-s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"justify\"><script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"迅雷论坛\" onclick=\"window.open('http://luyou.xunlei.com/bbs')\" /></p>"))
+s:taboption("basic", DummyValue,"opennewwindow" ,translate("<br /><p align=\"justify\"><script type=\"text/javascript\"></script><input type=\"button\" class=\"cbi-button cbi-button-apply\" value=\"迅雷论坛\" onclick=\"window.open('http://luyou.xunlei.com/forum-51-1.html')\" /></p>"))
 
 s:tab("editconf_mounts", translate("挂载点配置"))
 editconf_mounts = s:taboption("editconf_mounts", Value, "_editconf_mounts", 
@@ -181,5 +199,3 @@ function editconf_download.write(self, section, value3)
 	end
 end
 return m
-
-
