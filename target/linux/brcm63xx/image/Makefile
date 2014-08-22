@@ -57,13 +57,18 @@ define Image/Build/CFEDTB
 		$(7) $(8) $(9) $(10)
 endef
 
-define Image/Build/CFEHW553
+define Image/Build/ZYXCFEDTB
 	# Generate the tagged image
-	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin \
-		--boardid $(2) --chipid $(3) --entry $(LOADADDR) \
-		--load-addr $(LOADADDR) --tag-version 7 \
-		--block-size 0x20000 --image-offset $(4)
+	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(2).lzma.cfe -f $(KDIR)/root.$(1) \
+		--output $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
+		--boardid $(3) --chipid $(4) --entry $(KERNEL_ENTRY) \
+		--load-addr $(LOADADDR) --rsa-signature "$(6)" \
+		--info1 "-$(call Image/LimitName16,$(5))" --info2 $(1) \
+		$(7) $(8) $(9) $(10)
+	# Fix up header
+	$(STAGING_DIR_HOST)/bin/zyxbcm -i $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
+		-o $(BIN_DIR)/openwrt-$(5)-$(1)-zyxcfe.bin
+	rm -f $(BIN_DIR)/openwrt-$(5)-$(1).tmp
 endef
 
 define Image/Build/CFEAGPF
@@ -106,20 +111,6 @@ define Image/Build/SPW303V
 	$(STAGING_DIR_HOST)/bin/xorimage -i $(BIN_DIR)/openwrt-$(4)-$(1)-cfe-sysupgrade.bin \
 		-o $(BIN_DIR)/openwrt-$(4)-$(1)-cfe-factory.bin
 	rm -f $(BIN_DIR)/openwrt-$(4)-$(1)-cfe.bin.tmp
-endef
-
-define Image/Build/ZyXEL
-	# Generate the tagged image
-	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
-		--boardid $(2) --chipid $(4) --entry $(KERNEL_ENTRY) \
-		--load-addr $(LOADADDR) --rsa-signature "$(6)" \
-		--info1 "+$(call Image/LimitName16,$(3))" --info2 $(1) \
-		$(7) $(8) $(9) $(10)
-	# Fix up header
-	$(STAGING_DIR_HOST)/bin/zyxbcm -i $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
-		-o $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin
-	rm -f $(BIN_DIR)/openwrt-$(5)-$(1).tmp
 endef
 
 define Image/Build/CFEOLD
@@ -221,6 +212,24 @@ define CfeImageDTB
   TARGET_$(1)_IMAGES += $(5)
 endef
 
+# $(1) = Profile
+# $(2) = dtb
+# $(3) = boardname
+# $(4) = chipid
+# $(5) = imagename
+# $(6) = rsa signature
+# $(7) = additional options
+define ZyxCfeImageDTB
+  define Image/Build/$(5)
+    $$(call Image/Build/ZYXCFEDTB,$$(1),$(2),$(3),$(4),$(5),$(6),$(7))
+  endef
+
+  TARGET_Default_DTBS += $(2)
+  TARGET_Default_IMAGES += $(5)
+  TARGET_$(1)_DTBS += $(2)
+  TARGET_$(1)_IMAGES += $(5)
+endef
+
 
 define Image/Build
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
@@ -238,16 +247,11 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),6338W,6338,6338W-generic,,)
 	$(call Image/Build/CFE,$(1),96348GW-11,6348,96348GW-11-generic)
 	$(call Image/Build/CFE,$(1),96348GW-10,6348,96348GW-10-generic)
-	$(call Image/Build/CFE,$(1),96348A-122,6348,96348A-122-generic)
 	$(call Image/Build/CFE,$(1),96358VW,6358,96358VW-generic)
 	$(call Image/Build/CFE,$(1),96358VW2,6358,96358VW2-generic)
 	$(call Image/Build/CFE,$(1),96368MVNgr,6368,96368MVNgr-generic)
 	$(call Image/Build/CFE,$(1),96368MVWG,6368,96368MVWG-generic)
 
-	# ADB P.DG A4001N
-	$(call Image/Build/CFE,$(1),96328dg2x2,6328,A4001N,,--pad 4)
-	# ADB P.DG A4001N1
-	$(call Image/Build/CFE,$(1),963281T_TEF,6328,A4001N1,,--pad 8)
 	# BT Voyager V210_BTR
 	$(call Image/Build/CFE,$(1),V210_BB,6348,BTV210_BTR,,--layoutver 5)
 	# BT Voyager V210_ROI, V210_WB
@@ -266,24 +270,10 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),RTA1025W_16,6348,RTA1025W_16,,--layoutver 5)
 	# RTA1320_16M (numerous routers)
 	$(call Image/Build/CFE,$(1),RTA1320_16M,6338,RTA1320_16M,,--layoutver 5)
-	# Zyxel P870HW-51a v2
-	$(call Image/Build/ZyXEL,$(1),96368VVW,P870HW-51a_v2,6368,P870HW-51a_v2,ZyXEL,--signature "ZyXEL_0001")
 
 	# Sagem F@ST2504n
 	$(call Image/Build/CFE,$(1),F@ST2504n,6362,F@ST2504n,OpenWRT-$(REVISION))
 
-	# Comtrend 6373
-	$(call Image/Build/CFE,$(1),CT6373-1,6358,CT6373)
-	# Comtrend AR-5381u
-	$(call Image/Build/CFE,$(1),96328A-1241N,6328,AR-5381u,,--pad 8)
-	# Comtrend AR-5387un
-	$(call Image/Build/CFE,$(1),96328A-1441N1,6328,AR-5387un,,--pad 8)
-	# Comtrend VR-3025u
-	$(call Image/Build/CFE,$(1),96368M-1541N,6368,VR-3025u,,--pad 16)
-	# Comtrend VR-3025un
-	$(call Image/Build/CFE,$(1),96368M-1341N,6368,VR-3025un,,--pad 4)
-	# Comtrend WAP-5813n
-	$(call Image/Build/CFE,$(1),96369R-1231N,6368,WAP-5813n,,--pad 4)
 	# Davolink DV201AMR
 	$(call Image/Build/CFEOLD,$(1),DV201AMR,6348)
 	# USR 9108
@@ -333,12 +323,6 @@ define Image/Build
 	# Telsey CPVA642-type (e.g. CPA-ZNTE60T)
 	$(call Image/Build/CFE,$(1),CPVA642,6358,CPA-ZNTE60T,,--signature "Telsey Tlc",--signature2 "99.99.999",--second-image-flag "0")
 
-	# Huawei HW520
-	$(call Image/Build/CFE,$(1),HW6358GW_B,6358,HW520,EchoLife_HG520v)
-
-	#HW553
-	$(call Image/Build/CFEHW553,$(1),HW553,6358,0x20000,HW553)
-
 	# T-Com Speedport W 303V Typ B
 	$(call Image/Build/SPW303V,$(1),96358-502V,6358,SPW303V)
 
@@ -358,16 +342,38 @@ $(eval $(call CfeImageDTB,96328avng,bcm96328avng,96328avng,6328,96328avng-4M-fla
 $(eval $(call CfeImageDTB,96328avng,bcm96328avng,96328avng,6328,96328avng-8M-flash-generic,,--pad 4))
 $(eval $(call CfeImageDTB,96328avng,bcm96328avng,96328avng,6328,96328avng-16M-flash-generic,,--pad 8))
 
+# ADB P.DG A4001N
+$(eval $(call CfeImageDTB,A4001N,a4001n,96328dg2x2,6328,A4001N,,--pad 8))
+# ADB P.DG A4001N1
+$(eval $(call CfeImageDTB,A4001N1,a4001n1,963281T_TEF,6328,A4001N1,,--pad 8))
 # Asmax AR 1004g
 $(eval $(call CfeImageDTB,AR1004G,ar1004g,96348GW-10,6348,AR1004G))
+# Comtrend AR-5381u
+$(eval $(call CfeImageDTB,AR5381u,ar-5381u,96328A-1241N,6328,AR-5381u,,--pad 8))
+# Comtrend AR-5387un
+$(eval $(call CfeImageDTB,AR5387un,ar-5387un,96328A-1441N1,6328,AR-5387un,,--pad 8))
 # Comtrend 536, 5621
 $(eval $(call CfeImageDTB,CT536_CT5621,ct536plus,96348GW-11,6348,CT536_CT5621))
+# Comtrend CT-5365
+$(eval $(call CfeImageDTB,CT5365,ct-5365,96348A-122,6348,CT-5365))
+# Comtrend CT-6373
+$(eval $(call CfeImageDTB,CT6373,ct-6373,CT6373-1,6358,CT-6373))
+# Comtrend VR-3025u
+$(eval $(call CfeImageDTB,VR3025u,vr-3025u,96368M-1541N,6368,VR-3025u,,--pad 16 --image-offset 0x20000 --block-size 0x20000))
+# Comtrend VR-3025un
+$(eval $(call CfeImageDTB,VR3025un,vr-3025un,96368M-1341N,6368,VR-3025un,,--pad 4))
+# Comtrend WAP-5813n
+$(eval $(call CfeImageDTB,WAP5813n,wap-5813n,96369R-1231N,6368,WAP-5813n,,--pad 4))
 # D-Link DSL-2740B/DSL-2741B, rev C2
 $(eval $(call CfeImageDTB,DSL274XB_C,dsl-274xb-c,96358GW,6358,DSL274XB-C2))
 # D-Link DSL-2740B/DSL-2741B, rev C3
 $(eval $(call CfeImageDTB,DSL274XB_C,dsl-274xb-c,AW4139,6358,DSL274XB-C3))
 # D-Link DVA-G3810BN/TL
 $(eval $(call CfeImageDTB,DVAG3810BN,dva-g3810bn_tl,96358VW,6358,DVAG3810BN))
+# Huawei HG520v
+$(eval $(call CfeImageDTB,HG520v,hg520v,HW6358GW_B,6358,HG520v,EchoLife_HG520v))
+# Huawei HG553
+$(eval $(call CfeImageDTB,HG553,hg553,HW553,6358,HG553,EchoLife_HG553,--image-offset 0x20000 --block-size 0x20000 --tag-version 7))
 # Huawei HG556a
 $(eval $(call CfeImageDTB,HG556a_AB,hg556a-a,HW556,6358,HG556a_A,EchoLife_HG556a,--image-offset 0x20000 --block-size 0x10000 --tag-version 8))
 $(eval $(call CfeImageDTB,HG556a_AB,hg556a-b,HW556,6358,HG556a_B,EchoLife_HG556a,--image-offset 0x20000 --block-size 0x20000 --tag-version 8))
@@ -383,5 +389,7 @@ $(eval $(call CfeImageDTB,Neufbox4,nb4-ser-r0,96358VW,6358,NEUFBOX4-SER,OpenWRT-
 $(eval $(call CfeImageDTB,Neufbox4,nb4-fxc-r1,96358VW,6358,NEUFBOX4-FXC,OpenWRT-$(REVISION)))
 # SFR neufbox 6
 $(eval $(call CfeImageDTB,Neufbox6,nb6-ser-r0,NB6-SER-r0,6362,NEUFBOX6,OpenWRT-$(REVISION)))
+# ZyXEL P870HW-51a v2
+$(eval $(call ZyxCfeImageDTB,P870HW_51a_v2,p870hw-51a-v2,96368VVW,6368,P870HW-51a_v2,ZyXEL,--signature "ZyXEL_0001"))
 
 $(eval $(call BuildImage))
