@@ -696,6 +696,36 @@ LUA_WRAP_STRUCT_OP(nl80211,mbssid_support)
 LUA_WRAP_STRUCT_OP(nl80211,hardware_id)
 #endif
 
+#ifdef USE_RT2860V2
+/* Ralink RT2860V2 */
+LUA_WRAP_INT_OP(rt2860v2,channel)
+LUA_WRAP_INT_OP(rt2860v2,frequency)
+LUA_WRAP_INT_OP(rt2860v2,frequency_offset)
+LUA_WRAP_INT_OP(rt2860v2,txpower)
+LUA_WRAP_INT_OP(rt2860v2,txpower_offset)
+LUA_WRAP_INT_OP(rt2860v2,bitrate)
+LUA_WRAP_INT_OP(rt2860v2,signal)
+LUA_WRAP_INT_OP(rt2860v2,noise)
+LUA_WRAP_INT_OP(rt2860v2,quality)
+LUA_WRAP_INT_OP(rt2860v2,quality_max)
+LUA_WRAP_STRING_OP(rt2860v2,ssid)
+LUA_WRAP_STRING_OP(rt2860v2,bssid)
+LUA_WRAP_STRING_OP(rt2860v2,country)
+LUA_WRAP_STRING_OP(rt2860v2,hardware_name)
+LUA_WRAP_STRING_OP(rt2860v2,phyname)
+LUA_WRAP_STRUCT_OP(rt2860v2,mode)
+LUA_WRAP_STRUCT_OP(rt2860v2,assoclist)
+LUA_WRAP_STRUCT_OP(rt2860v2,txpwrlist)
+LUA_WRAP_STRUCT_OP(rt2860v2,scanlist)
+LUA_WRAP_STRUCT_OP(rt2860v2,freqlist)
+LUA_WRAP_STRUCT_OP(rt2860v2,countrylist)
+LUA_WRAP_STRUCT_OP(rt2860v2,hwmodelist)
+LUA_WRAP_STRUCT_OP(rt2860v2,encryption)
+LUA_WRAP_STRUCT_OP(rt2860v2,mbssid_support)
+LUA_WRAP_STRUCT_OP(rt2860v2,hardware_id)
+#endif
+
+
 /* Wext */
 LUA_WRAP_INT_OP(wext,channel)
 LUA_WRAP_INT_OP(wext,frequency)
@@ -819,6 +849,38 @@ static const luaL_reg R_nl80211[] = {
 };
 #endif
 
+#ifdef USE_RT2860V2
+/* Ralink RT2860V2 table */
+static const luaL_reg R_rt2860v2[] = {
+	LUA_REG(rt2860v2,channel),
+	LUA_REG(rt2860v2,frequency),
+	LUA_REG(rt2860v2,frequency_offset),
+	LUA_REG(rt2860v2,txpower),
+	LUA_REG(rt2860v2,txpower_offset),
+	LUA_REG(rt2860v2,bitrate),
+	LUA_REG(rt2860v2,signal),
+	LUA_REG(rt2860v2,noise),
+	LUA_REG(rt2860v2,quality),
+	LUA_REG(rt2860v2,quality_max),
+	LUA_REG(rt2860v2,mode),
+	LUA_REG(rt2860v2,ssid),
+	LUA_REG(rt2860v2,bssid),
+	LUA_REG(rt2860v2,country),
+	LUA_REG(rt2860v2,assoclist),
+	LUA_REG(rt2860v2,txpwrlist),
+	LUA_REG(rt2860v2,scanlist),
+	LUA_REG(rt2860v2,freqlist),
+	LUA_REG(rt2860v2,countrylist),
+	LUA_REG(rt2860v2,hwmodelist),
+	LUA_REG(rt2860v2,encryption),
+	LUA_REG(rt2860v2,mbssid_support),
+	LUA_REG(rt2860v2,hardware_id),
+	LUA_REG(rt2860v2,hardware_name),
+	LUA_REG(rt2860v2,phyname),
+	{ NULL, NULL }
+};
+#endif
+
 /* Wext table */
 static const luaL_reg R_wext[] = {
 	LUA_REG(wext,channel),
@@ -885,6 +947,15 @@ LUALIB_API int luaopen_iwinfo(lua_State *L) {
 	lua_pushvalue(L, -1);
 	lua_setfield(L, -2, "__index");
 	lua_setfield(L, -2, "nl80211");
+#endif
+
+#ifdef USE_RT2860V2
+	luaL_newmetatable(L, IWINFO_RT2860V2_META);
+	luaL_register(L, NULL, R_common);
+	luaL_register(L, NULL, R_rt2860v2);
+	lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
+	lua_setfield(L, -2, "rt2860v2");
 #endif
 
 	luaL_newmetatable(L, IWINFO_WEXT_META);

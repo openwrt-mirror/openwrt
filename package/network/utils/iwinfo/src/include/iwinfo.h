@@ -188,6 +188,7 @@ extern const struct iwinfo_ops wext_ops;
 extern const struct iwinfo_ops madwifi_ops;
 extern const struct iwinfo_ops nl80211_ops;
 extern const struct iwinfo_ops wl_ops;
+extern const struct iwinfo_ops rt2860v2_ops;
 
 #include "iwinfo/utils.h"
 

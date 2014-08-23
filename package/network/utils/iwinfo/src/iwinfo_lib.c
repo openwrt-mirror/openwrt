@@ -327,6 +327,9 @@ static const struct iwinfo_ops *backends[] = {
 #ifdef USE_WL
 	&wl_ops,
 #endif
+#ifdef USE_RT2860V2
+	&rt2860v2_ops,
+#endif
 	&wext_ops,
 };
 

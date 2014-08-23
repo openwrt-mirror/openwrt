@@ -41,6 +41,9 @@
 #define IWINFO_NL80211_META	"iwinfo.nl80211"
 #endif
 
+#ifdef USE_RT2860V2
+#define IWINFO_RT2860V2_META		"iwinfo.rt2860v2"
+#endif
 
 #define LUA_REG(type,op) \
 	{ #op, iwinfo_L_##type##_##op }
