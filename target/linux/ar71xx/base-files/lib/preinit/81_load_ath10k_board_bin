@@ -26,7 +26,7 @@ do_load_ath10k_board_bin() {
 		;;
 		qihoo-c301)
 			local mac
-			mac=$(macaddr_add $(cat /sys/class/net/eth0/address))
+			mac=$(macaddr_add $(cat /sys/class/net/eth1/address) -2)
 
 			dd if=/dev/mtdblock8 \
 				bs=1 skip=20480 count=6 \
