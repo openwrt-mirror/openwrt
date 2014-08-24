@@ -28,6 +28,7 @@
 #include "dev-wmac.h"
 #include "machtypes.h"
 #include "nvram.h"
+#include "pci.h"
 
 #define QIHOO_C301_GPIO_LED_STATUS	0
 
@@ -91,13 +92,12 @@ static void __init qihoo_c301_setup(void)
 	u8 tmpmac[ETH_ALEN];
 
 	ath79_gpio_output_select(QIHOO_C301_GPIO_SPI_CS1, 7);
-//	ath79_register_m25p80(NULL);
 	ath79_register_m25p80_multi(NULL);
 
 	ath79_gpio_output_select(QIHOO_C301_GPIO_LED_LAN1,
-				 AR934X_GPIO_OUT_LED_LINK2);
+				 AR934X_GPIO_OUT_LED_LINK1);
 	ath79_gpio_output_select(QIHOO_C301_GPIO_LED_LAN2,
-				 AR934X_GPIO_OUT_LED_LINK3);
+				 AR934X_GPIO_OUT_LED_LINK2);
 	ath79_gpio_output_select(QIHOO_C301_GPIO_LED_INTERNET,
 				 AR934X_GPIO_OUT_LED_LINK4);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(qihoo_c301_leds_gpio),
