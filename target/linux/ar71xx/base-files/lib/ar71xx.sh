@@ -388,6 +388,9 @@ ar71xx_board_detect() {
 	*"My Net N600")
 		name="mynet-n600"
 		;;
+	*"360 C301")
+		name="qihoo-c301"
+		;;
 	*"My Net N750")
 		name="mynet-n750"
 		;;
