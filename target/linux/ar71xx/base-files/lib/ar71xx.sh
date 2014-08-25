@@ -208,6 +208,9 @@ tplink_board_detect() {
 	"49000002")
 		model="TP-Link TL-WDR4900"
 		;;
+	"630000"*)
+		model="TP-Link TL-WDR6300"
+		;;
 	"83050803")
 		model="MERCURY MW305R 8M"
 		;;
@@ -600,6 +603,9 @@ ar71xx_board_detect() {
 		;;
 	*"TL-WDR3500")
 		name="tl-wdr3500"
+		;;
+	*"TL-WDR6300")
+		name="tl-wdr6300"
 		;;
 	*"TL-WDR3600/4300/4310")
 		name="tl-wdr4300"
