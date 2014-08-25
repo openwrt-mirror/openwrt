@@ -696,6 +696,40 @@ define Image/Build/Seama/initramfs
 	cat $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma.seama > $(call imgname,initramfs,$(2))-seama.bin
 endef
 
+#Qihoo 360 Image builder(Based on Seama builder)
+
+Image/Build/Qihoo/loader=$(call Image/BuildLoader,$(1),bin,$(2) $(3),0x80060000)
+
+define Image/Build/Qihoo
+	[ -e "$(KDIR)/loader-$(2).bin" ]
+	$(call CompressLzma,$(KDIR)/loader-$(2).bin,$(KDIR_TMP)/loader-$(2).bin.lzma)
+	-rm -f $(KDIR_TMP)/image-$(2).tmp
+	$(call CatFiles,$(KDIR_TMP)/loader-$(2).bin.lzma,$$$$(($(6) - 64)),$(KDIR)/root.$(1),$(7),$(KDIR_TMP)/image-$(2).tmp)
+	[ -e "$(KDIR_TMP)/image-$(2).tmp" ] && { \
+		$(STAGING_DIR_HOST)/bin/seama \
+		-i $(KDIR_TMP)/image-$(2).tmp \
+		-m "dev=/dev/mtdblock/1" -m "type=firmware"; \
+		$(STAGING_DIR_HOST)/bin/seama \
+			-s $(call imgname,$(1),$(2))-recovery.bin \
+			-i $(KDIR_TMP)/image-$(2).tmp.seama; \
+	}
+	cat $(KDIR_TMP)/loader-$(2).bin.lzma > $(KDIR_TMP)/image-$(2)-sysupgrade.tmp
+	$(STAGING_DIR_HOST)/bin/seama \
+		-i $(KDIR_TMP)/image-$(2)-sysupgrade.tmp \
+		-m "dev=/dev/mtdblock/1" -m "type=firmware"
+	$(call CatFiles,$(KDIR_TMP)/image-$(2)-sysupgrade.tmp.seama,$(6),$(KDIR)/root.$(1),$(7),$(call sysupname,$(1),$(2)))
+endef
+
+define Image/Build/Qihoo/initramfs
+	$(call PatchKernelLzma,$(2),$(3) $(4),,-initramfs)
+	$(STAGING_DIR_HOST)/bin/seama \
+		-i $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma \
+		-m "dev=/dev/mtdblock/1" -m "type=firmware"
+	cat $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma.seama > $(call imgname,initramfs,$(2))-seama.bin
+endef
+
+#Qihoo 360 image builder end
+
 Image/Build/Senao/buildkernel=$(call MkuImageLzma,$(2),$(3) $(4))
 Image/Build/Senao/initramfs=$(call MkuImageLzma/initramfs,$(2),$(3) $(4))
 
@@ -1157,7 +1191,7 @@ $(eval $(call SingleProfile,Planex,64kraw,MZKW300NH,mzk-w300nh,MZK-W300NH,ttyS0,
 $(eval $(call SingleProfile,Seama,64k,MYNETN600,mynet-n600,MYNET-N600,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd16_wd_db600,1310720,16187392))
 $(eval $(call SingleProfile,Seama,64k,MYNETN750,mynet-n750,MYNET-N750,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd13_wd_av,1310720,16187392))
 
-$(eval $(call SingleProfile,Seama,64k,QIHOOC301,qihoo-c301,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),"",1310720,16187392))
+$(eval $(call SingleProfile,Qihoo,64k,QIHOOC301,qihoo-c301,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),"",1310720,16187392))
 
 
 $(eval $(call SingleProfile,Senao,squashfs-only,EAP300V2,eap300v2,EAP300V2,ttyS0,115200,$$(eap300v2_mtdlayout)))
