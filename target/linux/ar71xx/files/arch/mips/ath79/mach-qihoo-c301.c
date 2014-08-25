@@ -1,5 +1,6 @@
 /*
- *  WD My Net N600 board support
+ *  Qihoo 360 C301 board support by 981213
+ *  Based on WD My Net N600 board support
  *
  *  Copyright (C) 2013 Gabor Juhos <juhosg@openwrt.org>
  *
