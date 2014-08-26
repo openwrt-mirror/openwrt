@@ -657,8 +657,8 @@ Subject: [PATCH 1/3] foo
 +/*
 +     FE_INT_STATUS
 +*/
-+#if defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+    defined (CONFIG_SOC_MT7620) || defined (CONFIG_SOC_MT7621) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++    defined (CONFIG_RALINK_MT7620) || defined (CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_MT7628)
 +
 +#define RX_COHERENT      BIT(31)
 +#define RX_DLY_INT       BIT(30)
@@ -673,7 +673,7 @@ Subject: [PATCH 1/3] foo
 +#define TX_DONE_INT1     BIT(1)
 +#define TX_DONE_INT0     BIT(0)
 +
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +#define RLS_COHERENT     BIT(29)
 +#define RLS_DLY_INT      BIT(28)
 +#define RLS_DONE_INT     BIT(0)
@@ -707,7 +707,7 @@ Subject: [PATCH 1/3] foo
 +			         TX_DONE_INT1 | TX_DONE_INT0 | \
 +	                         RX_DONE_INT0 )
 +
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +#define QFE_INT_ALL		(RLS_DONE_INT | RX_DONE_INT0 | RX_DONE_INT1)
 +#define QFE_INT_DLY_INIT	(RLS_DLY_INT | RX_DLY_INT)
 +
@@ -717,7 +717,7 @@ Subject: [PATCH 1/3] foo
 +/*
 + * SW_INT_STATUS
 + */
-+#if defined (CONFIG_SOC_RT3052) || defined (CONFIG_SOC_RT3352) || defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_RT3052) || defined (CONFIG_RALINK_RT3352) || defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_MT7628)
 +#define PORT0_QUEUE_FULL        BIT(14) //port0 queue full
 +#define PORT1_QUEUE_FULL        BIT(15) //port1 queue full
 +#define PORT2_QUEUE_FULL        BIT(16) //port2 queue full
@@ -736,8 +736,8 @@ Subject: [PATCH 1/3] foo
 +#define ESW_IMR			(RALINK_ETH_SW_BASE + 0x04)
 +#define ESW_INT_ALL		(PORT_ST_CHG)
 +
-+#elif defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+      defined (CONFIG_SOC_MT7620)
++#elif defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++      defined (CONFIG_RALINK_MT7620)
 +#define MIB_INT                 BIT(25)
 +#define ACL_INT			BIT(24)
 +#define P5_LINK_CH		BIT(5)
@@ -779,7 +779,7 @@ Subject: [PATCH 1/3] foo
 +#define ESW_P5_IntMn		(RALINK_ETH_SW_BASE + 0x4508)
 +#define ESW_P6_IntMn		(RALINK_ETH_SW_BASE + 0x4608)
 +
-+#if defined (CONFIG_SOC_MT7620) 
++#if defined (CONFIG_RALINK_MT7620) 
 +#define ESW_P7_IntSn		(RALINK_ETH_SW_BASE + 0x4704)
 +#define ESW_P7_IntMn		(RALINK_ETH_SW_BASE + 0x4708)
 +#endif
@@ -787,7 +787,7 @@ Subject: [PATCH 1/3] foo
 +
 +#define ESW_PHY_POLLING		(RALINK_ETH_SW_BASE + 0x7000)
 +
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +
 +#define ESW_PHY_POLLING		(RALINK_ETH_SW_BASE + 0x0000)
 +
@@ -799,7 +799,7 @@ Subject: [PATCH 1/3] foo
 +#define P0_LINK_CH		BIT(0)
 +
 +
-+#endif // CONFIG_SOC_RT3052 || CONFIG_SOC_RT3352 || CONFIG_SOC_RT5350 || defined (CONFIG_SOC_MT7628)//
++#endif // CONFIG_RALINK_RT3052 || CONFIG_RALINK_RT3352 || CONFIG_RALINK_RT5350 || defined (CONFIG_RALINK_MT7628)//
 +
 +#define RX_BUF_ALLOC_SIZE	2000
 +#define FASTPATH_HEADROOM   	64
@@ -832,8 +832,8 @@ Subject: [PATCH 1/3] foo
 +#define RAPSE_OFFSET		0x0040
 +#define RAGDMA2_OFFSET		0x0060
 +#define RACDMA_OFFSET		0x0080
-+#if defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+    defined (CONFIG_SOC_MT7620) || defined (CONFIG_SOC_MT7621) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++    defined (CONFIG_RALINK_MT7620) || defined (CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_MT7628)
 +
 +#define RAPDMA_OFFSET		0x0800
 +#define SDM_OFFSET		0x0C00
@@ -849,7 +849,7 @@ Subject: [PATCH 1/3] foo
 +/* RT3883 */
 +#define SYSCFG1			(RALINK_SYSCTL_BASE + 0x14)
 +
-+#if defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_MT7628)
 +
 +/* 1. PDMA */
 +#define TX_BASE_PTR0		(RALINK_FRAME_ENGINE_BASE+RAPDMA_OFFSET+0x000)
@@ -906,8 +906,8 @@ Subject: [PATCH 1/3] foo
 +#define SDM_RBCNT		(RALINK_FRAME_ENGINE_BASE+SDM_OFFSET+0x10C) //Switch DMA rx byte count
 +#define SDM_CS_ERR		(RALINK_FRAME_ENGINE_BASE+SDM_OFFSET+0x110) //Switch DMA rx checksum error count
 +
-+#elif defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+      defined (CONFIG_SOC_MT7620) || defined (CONFIG_SOC_MT7621) 
++#elif defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++      defined (CONFIG_RALINK_MT7620) || defined (CONFIG_RALINK_MT7621) 
 +
 +/* Old FE with New PDMA */
 +#define PDMA_RELATED            0x0800
@@ -962,13 +962,13 @@ Subject: [PATCH 1/3] foo
 +//#define FC_DROP_STA         RALINK_FRAME_ENGINE_BASE + 0x18
 +#define FOE_TS_T            RALINK_FRAME_ENGINE_BASE + 0x10
 +
-+#if defined (CONFIG_SOC_MT7620)
++#if defined (CONFIG_RALINK_MT7620)
 +#define GDMA1_RELATED       0x0600
 +#define GDMA1_FWD_CFG       (RALINK_FRAME_ENGINE_BASE + GDMA1_RELATED + 0x00)
 +#define GDMA1_SHPR_CFG      (RALINK_FRAME_ENGINE_BASE + GDMA1_RELATED + 0x04)
 +#define GDMA1_MAC_ADRL      (RALINK_FRAME_ENGINE_BASE + GDMA1_RELATED + 0x08)
 +#define GDMA1_MAC_ADRH      (RALINK_FRAME_ENGINE_BASE + GDMA1_RELATED + 0x0C)
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +#define GDMA1_RELATED       0x0500
 +#define GDMA1_FWD_CFG       (RALINK_FRAME_ENGINE_BASE + GDMA1_RELATED + 0x00)
 +#define GDMA1_SHPR_CFG      (RALINK_FRAME_ENGINE_BASE + GDMA1_RELATED + 0x04)
@@ -996,7 +996,7 @@ Subject: [PATCH 1/3] foo
 +#define GDMA2_MAC_ADRH      (RALINK_FRAME_ENGINE_BASE + GDMA2_RELATED + 0x10)
 +#endif
 +
-+#if defined (CONFIG_SOC_MT7620)
++#if defined (CONFIG_RALINK_MT7620)
 +#define PSE_RELATED         0x0500
 +#define PSE_FQFC_CFG        (RALINK_FRAME_ENGINE_BASE + PSE_RELATED + 0x00)
 +#define PSE_IQ_CFG          (RALINK_FRAME_ENGINE_BASE + PSE_RELATED + 0x04)
@@ -1014,13 +1014,13 @@ Subject: [PATCH 1/3] foo
 +#endif
 +
 +
-+#if defined (CONFIG_SOC_MT7620)
++#if defined (CONFIG_RALINK_MT7620)
 +#define CDMA_RELATED        0x0400
 +#define CDMA_CSG_CFG        (RALINK_FRAME_ENGINE_BASE + CDMA_RELATED + 0x00)
 +#define SMACCR0		    (RALINK_ETH_SW_BASE + 0x3FE4)
 +#define SMACCR1		    (RALINK_ETH_SW_BASE + 0x3FE8)
 +#define CKGCR               (RALINK_ETH_SW_BASE + 0x3FF0)
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +#define CDMA_RELATED        0x0400
 +#define CDMA_CSG_CFG        (RALINK_FRAME_ENGINE_BASE + CDMA_RELATED + 0x00) //fake definition
 +#define CDMP_IG_CTRL        (RALINK_FRAME_ENGINE_BASE + CDMA_RELATED + 0x00)
@@ -1037,7 +1037,7 @@ Subject: [PATCH 1/3] foo
 +#define PDMA_FC_CFG	    (RALINK_FRAME_ENGINE_BASE+0x100)
 +
 +
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +/*kurtis: add QDMA define*/
 +
 +#define CLK_CFG_0		(RALINK_SYSCTL_BASE + 0x2C)
@@ -1242,7 +1242,7 @@ Subject: [PATCH 1/3] foo
 +#define FE_INT_DLY_INIT		(TX_DLY_INT | RX_DLY_INT)
 +
 +
-+#if !defined (CONFIG_SOC_RT5350) && !defined (CONFIG_SOC_MT7628)
++#if !defined (CONFIG_RALINK_RT5350) && !defined (CONFIG_RALINK_MT7628)
 +
 +/* 6. Counter and Meter Table */
 +#define PPE_AC_BCNT0		(RALINK_FRAME_ENGINE_BASE+RACMTABLE_OFFSET+0x000) /* PPE Accounting Group 0 Byte Cnt */
@@ -1306,7 +1306,7 @@ Subject: [PATCH 1/3] foo
 +#define GDM1_JMB_EN   	   (0x1 << 19)
 +#define GDM1_STRPCRC   	   (0x1 << 16)
 +#define GDM1_UFRC_P_CPU     (0 << 12)
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +#define GDM1_UFRC_P_PPE     (4 << 12)
 +#else
 +#define GDM1_UFRC_P_PPE     (6 << 12)
@@ -1314,7 +1314,7 @@ Subject: [PATCH 1/3] foo
 +
 +//GDMA1 broad-cast MAC address frames
 +#define GDM1_BFRC_P_CPU     (0 << 8)
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +#define GDM1_BFRC_P_PPE     (4 << 8)
 +#else
 +#define GDM1_BFRC_P_PPE     (6 << 8)
@@ -1322,7 +1322,7 @@ Subject: [PATCH 1/3] foo
 +
 +//GDMA1 multi-cast MAC address frames
 +#define GDM1_MFRC_P_CPU     (0 << 4)
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +#define GDM1_MFRC_P_PPE     (4 << 4)
 +#else
 +#define GDM1_MFRC_P_PPE     (6 << 4)
@@ -1330,13 +1330,13 @@ Subject: [PATCH 1/3] foo
 +
 +//GDMA1 other MAC address frames destination port
 +#define GDM1_OFRC_P_CPU     (0 << 0)
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +#define GDM1_OFRC_P_PPE     (4 << 0)
 +#else
 +#define GDM1_OFRC_P_PPE     (6 << 0)
 +#endif
 +
-+#if defined (CONFIG_SOC_RT6856) || defined (CONFIG_SOC_MT7620) || defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_RT6856) || defined (CONFIG_RALINK_MT7620) || defined (CONFIG_RALINK_MT7621)
 +/* checksum generator registers are removed */
 +#define ICS_GEN_EN          (0 << 2)
 +#define UCS_GEN_EN          (0 << 1)
@@ -1476,7 +1476,7 @@ Subject: [PATCH 1/3] foo
 +
 +struct _PDMA_RXD_INFO4_
 +{
-+#if defined (CONFIG_SOC_MT7620)
++#if defined (CONFIG_RALINK_MT7620)
 +    unsigned int    FOE_Entry           : 14;
 +    unsigned int    CRSN		: 5;
 +    unsigned int    SPORT		: 3;
@@ -1487,7 +1487,7 @@ Subject: [PATCH 1/3] foo
 +    unsigned int    IP4			: 1;
 +    unsigned int    IP6			: 1;
 +    unsigned int    UN_USE1		: 4;
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +    unsigned int    FOE_Entry           : 14;
 +    unsigned int    CRSN		: 5;
 +    unsigned int    SP			: 4;
@@ -1560,7 +1560,7 @@ Subject: [PATCH 1/3] foo
 +
 +struct _PDMA_TXD_INFO4_
 +{
-+#if defined (CONFIG_SOC_MT7620)
++#if defined (CONFIG_RALINK_MT7620)
 +    unsigned int    VPRI_VIDX           : 8;
 +    unsigned int    SIDX                : 4;
 +    unsigned int    INSP                : 1;
@@ -1569,7 +1569,7 @@ Subject: [PATCH 1/3] foo
 +    unsigned int    FP_BMAP            	: 8;
 +    unsigned int    TSO			: 1;
 +    unsigned int    TUI_CO		: 3;
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +    unsigned int    VLAN_TAG		:17; // INSV(1)+VPRI(3)+CFI(1)+VID(12)
 +    unsigned int    RESV                : 2;
 +    unsigned int    UDF                 : 6;
@@ -1607,7 +1607,7 @@ Subject: [PATCH 1/3] foo
 +};
 +
 +
-+#if defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_MT7621)
 +/*=========================================
 +      QDMA TX Descriptor Format define
 +=========================================*/
@@ -1683,8 +1683,8 @@ Subject: [PATCH 1/3] foo
 +
 +/* proc definition */
 +
-+#if !defined (CONFIG_SOC_RT6855) && !defined(CONFIG_SOC_RT6855A) && \
-+    !defined (CONFIG_SOC_MT7620) && !defined (CONFIG_SOC_MT7621) 
++#if !defined (CONFIG_RALINK_RT6855) && !defined(CONFIG_RALINK_RT6855A) && \
++    !defined (CONFIG_RALINK_MT7620) && !defined (CONFIG_RALINK_MT7621) 
 +#define CDMA_OQ_STA	(RALINK_FRAME_ENGINE_BASE+RAPSE_OFFSET+0x4c)
 +#define GDMA1_OQ_STA	(RALINK_FRAME_ENGINE_BASE+RAPSE_OFFSET+0x50)
 +#define PPE_OQ_STA	(RALINK_FRAME_ENGINE_BASE+RAPSE_OFFSET+0x54)
@@ -1692,27 +1692,27 @@ Subject: [PATCH 1/3] foo
 +#endif
 +
 +#define PROCREG_CONTROL_FILE      "/var/run/procreg_control"
-+#if defined (CONFIG_SOC_RT2880)
++#if defined (CONFIG_RALINK_RT2880)
 +#define PROCREG_DIR             "rt2880"
-+#elif defined (CONFIG_SOC_RT3052)
++#elif defined (CONFIG_RALINK_RT3052)
 +#define PROCREG_DIR             "rt3052"
-+#elif defined (CONFIG_SOC_RT3352)
++#elif defined (CONFIG_RALINK_RT3352)
 +#define PROCREG_DIR             "rt3352"
-+#elif defined (CONFIG_SOC_RT5350)
++#elif defined (CONFIG_RALINK_RT5350)
 +#define PROCREG_DIR             "rt5350"
-+#elif defined (CONFIG_SOC_RT2883)
++#elif defined (CONFIG_RALINK_RT2883)
 +#define PROCREG_DIR             "rt2883"
-+#elif defined (CONFIG_SOC_RT3883)
++#elif defined (CONFIG_RALINK_RT3883)
 +#define PROCREG_DIR             "rt3883"
-+#elif defined (CONFIG_SOC_RT6855)
++#elif defined (CONFIG_RALINK_RT6855)
 +#define PROCREG_DIR             "rt6855"
-+#elif defined (CONFIG_SOC_MT7620)
++#elif defined (CONFIG_RALINK_MT7620)
 +#define PROCREG_DIR             "mt7620"
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +#define PROCREG_DIR             "mt7621"
-+#elif defined (CONFIG_SOC_MT7628)
++#elif defined (CONFIG_RALINK_MT7628)
 +#define PROCREG_DIR             "mt7628"
-+#elif defined (CONFIG_SOC_RT6855A)
++#elif defined (CONFIG_RALINK_RT6855A)
 +#define PROCREG_DIR             "rt6855a"
 +#else
 +#define PROCREG_DIR             "rt2880"
@@ -1789,10 +1789,10 @@ Subject: [PATCH 1/3] foo
 +
 +    unsigned int	phy_rx_ring0, phy_rx_ring1;
 +
-+#if defined (CONFIG_SOC_RT3052) || defined (CONFIG_SOC_RT3352) || \
-+    defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_RT6855) || \
-+    defined(CONFIG_SOC_RT6855A) || defined (CONFIG_SOC_MT7620) || \
-+    defined(CONFIG_SOC_MT7621) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_RT3052) || defined (CONFIG_RALINK_RT3352) || \
++    defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_RT6855) || \
++    defined(CONFIG_RALINK_RT6855A) || defined (CONFIG_RALINK_MT7620) || \
++    defined(CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_MT7628)
 +    //send signal to user application to notify link status changed
 +    struct work_struct  kill_sig_wq;
 +#endif
@@ -1904,8 +1904,8 @@ Subject: [PATCH 1/3] foo
 +#define RAETH_QDMA_QUEUE_MAPPING        0x89FA
 +#define RAETH_QDMA_READ_CPU_CLK         0x89FB
 +
-+#if defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+    defined (CONFIG_SOC_MT7620) || defined(CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++    defined (CONFIG_RALINK_MT7620) || defined(CONFIG_RALINK_MT7621)
 +
 +#define REG_ESW_WT_MAC_MFC              0x10
 +#define REG_ESW_WT_MAC_ATA1             0x74
@@ -1949,10 +1949,10 @@ Subject: [PATCH 1/3] foo
 +#endif
 +
 +
-+#if defined(CONFIG_SOC_RT3352) || defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_MT7628)
++#if defined(CONFIG_RALINK_RT3352) || defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_MT7628)
 +#define REG_ESW_MAX			0x16C
-+#elif defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+      defined (CONFIG_SOC_MT7620)
++#elif defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++      defined (CONFIG_RALINK_MT7620)
 +#define REG_ESW_MAX			0x7FFFF
 +#else //RT305x, RT3350
 +#define REG_ESW_MAX			0xFC
@@ -2101,8 +2101,8 @@ Subject: [PATCH 1/3] foo
 +int debug_proc_init(void);
 +void debug_proc_exit(void);
 +
-+#if defined (CONFIG_SOC_RT6855) || defined(CONFIG_SOC_RT6855A) || \
-+           defined (CONFIG_SOC_MT7620) || defined(CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_RT6855) || defined(CONFIG_RALINK_RT6855A) || \
++           defined (CONFIG_RALINK_MT7620) || defined(CONFIG_RALINK_MT7621)
 +void enable_auto_negotiate(int unused);
 +#else
 +void enable_auto_negotiate(int ge);
@@ -2830,7 +2830,7 @@ Subject: [PATCH 1/3] foo
 +#define RX_RING_BASE	((int)(ESRAM_BASE + 0x7000))
 +#define TX_RING_BASE	((int)(ESRAM_BASE + 0x7800))
 +
-+#if defined(CONFIG_SOC_RT2880)
++#if defined(CONFIG_RALINK_RT2880)
 +#define NUM_TX_RINGS 	1
 +#else
 +#define NUM_TX_RINGS 	4
@@ -2859,7 +2859,7 @@ Subject: [PATCH 1/3] foo
 +#define NUM_RX_DESC     256
 +#define NUM_TX_DESC     256
 +#endif
-+#if defined(CONFIG_SOC_RT3883) || defined(CONFIG_SOC_MT7620) 
++#if defined(CONFIG_RALINK_RT3883) || defined(CONFIG_RALINK_MT7620) 
 +#define NUM_RX_MAX_PROCESS 2
 +#else
 +#define NUM_RX_MAX_PROCESS 16
@@ -2869,7 +2869,7 @@ Subject: [PATCH 1/3] foo
 +#define DEV_NAME        "eth0"
 +#define DEV2_NAME       "eth3"
 +
-+#if defined (CONFIG_SOC_RT6855A) || defined (CONFIG_SOC_MT7621)
++#if defined (CONFIG_RALINK_RT6855A) || defined (CONFIG_RALINK_MT7621)
 +#define GMAC0_OFFSET    0xE000
 +#define GMAC2_OFFSET    0xE006
 +#else
@@ -2877,7 +2877,7 @@ Subject: [PATCH 1/3] foo
 +#define GMAC2_OFFSET    0x22
 +#endif
 +
-+#if defined(CONFIG_SOC_RT6855A)
++#if defined(CONFIG_RALINK_RT6855A)
 +#define IRQ_ENET0	22
 +#else
 +#define IRQ_ENET0	11 	/* hardware interrupt #3, defined in RT2880 Soc Design Spec Rev 0.03, pp43 */
@@ -3198,7 +3198,7 @@ Subject: [PATCH 1/3] foo
 +extern int (*ra_classifier_hook_rx)(struct sk_buff *skb, unsigned long cur_cycle);
 +#endif /* CONFIG_RA_CLASSIFIER */
 +
-+#if defined (CONFIG_SOC_RT3052_MP2)
++#if defined (CONFIG_RALINK_RT3052_MP2)
 +int32_t mcast_rx(struct sk_buff * skb);
 +int32_t mcast_tx(struct sk_buff * skb);
 +#endif
@@ -3247,7 +3247,7 @@ Subject: [PATCH 1/3] foo
 +#endif // CONFIG_PSEUDO_SUPPORT //
 +#endif // (CONFIG_ETHTOOL //
 +
-+#ifdef CONFIG_SOC_VISTA_BASIC
++#ifdef CONFIG_RALINK_VISTA_BASIC
 +int is_switch_175c = 1;
 +#endif
 +
@@ -3611,7 +3611,7 @@ Subject: [PATCH 1/3] foo
 +		cpu_ptr->txd_info3.QID = 0;
 +#endif
 +
-+#if defined (CONFIG_RAETH_CHECKSUM_OFFLOAD) && ! defined(CONFIG_SOC_RT5350) && !defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RAETH_CHECKSUM_OFFLOAD) && ! defined(CONFIG_RALINK_RT5350) && !defined (CONFIG_RALINK_MT7628)
 +	if (skb->ip_summed == CHECKSUM_PARTIAL){
 +	    cpu_ptr->txd_info4.TUI_CO = 7;
 +	}else {
@@ -3679,7 +3679,7 @@ Subject: [PATCH 1/3] foo
 +	
 +	cpu_ptr->txd_info4.TSO = 0;
 +        cpu_ptr->txd_info3.QID = M2Q_table[skb->mark]; 	
-+#if defined (CONFIG_RAETH_CHECKSUM_OFFLOAD) && ! defined(CONFIG_SOC_RT5350) && !defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RAETH_CHECKSUM_OFFLOAD) && ! defined(CONFIG_RALINK_RT5350) && !defined (CONFIG_RALINK_MT7628)
 +	if (skb->ip_summed == CHECKSUM_PARTIAL){
 +	    cpu_ptr->txd_info4.TUI_CO = 7;
 +	}else {
@@ -3834,7 +3834,7 @@ Subject: [PATCH 1/3] foo
 +	num_of_txd = 1;
 +#endif
 +   
-+#if defined(CONFIG_SOC_MT7621)
++#if defined(CONFIG_RALINK_MT7621)
 +    if(sysRegRead(0xbe00000c)==0x00030101) {
 +	    ei_xmit_housekeeping(0);
 +    }
@@ -4177,7 +4177,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCI_CONFIG_ADDR 		    	0x20
 +#define RALINK_PCI_CONFIG_DATA_VIRTUAL_REG   	0x24
 +
-+#if defined(CONFIG_SOC_RT2880) || defined(CONFIG_SOC_RT2883)
++#if defined(CONFIG_RALINK_RT2880) || defined(CONFIG_RALINK_RT2883)
 +#define RALINK_PCI_PCICFG_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0000)
 +#define RALINK_PCI_PCIRAW_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0004)
 +#define RALINK_PCI_PCIINT_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0008)
@@ -4193,7 +4193,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCI_ARBCTL 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0080)
 +#define RALINK_PCI_STATUS		*(volatile u32 *)(RALINK_PCI_BASE + 0x0050)
 +
-+#elif defined(CONFIG_SOC_RT3883)
++#elif defined(CONFIG_RALINK_RT3883)
 +
 +#define RALINK_PCI_PCICFG_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0000)
 +#define RALINK_PCI_PCIRAW_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0004)
@@ -4224,7 +4224,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCI1_SUBID 		*(volatile u32 *)(RALINK_PCI_BASE + RT3883_PCIE_OFFSET + 0x0038)
 +#define RALINK_PCI1_STATUS		*(volatile u32 *)(RALINK_PCI_BASE + RT3883_PCIE_OFFSET + 0x0050)
 +
-+#elif defined(CONFIG_SOC_RT6855) || defined (CONFIG_SOC_MT7620) || defined(CONFIG_SOC_MT7628)
++#elif defined(CONFIG_RALINK_RT6855) || defined (CONFIG_RALINK_MT7620) || defined(CONFIG_RALINK_MT7628)
 +
 +#define RALINK_PCI_PCICFG_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0000)
 +#define RALINK_PCI_PCIRAW_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0004)
@@ -4260,7 +4260,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCI1_DERR		*(volatile u32 *)(RALINK_PCI_BASE + RT6855_PCIE1_OFFSET + 0x0060)
 +#define RALINK_PCI1_ECRC		*(volatile u32 *)(RALINK_PCI_BASE + RT6855_PCIE1_OFFSET + 0x0064)
 +
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +
 +#define RALINK_PCI_PCICFG_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0000)
 +#define RALINK_PCI_PCIRAW_ADDR 		*(volatile u32 *)(RALINK_PCI_BASE + 0x0004)
@@ -4310,7 +4310,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCIEPHY_P0P1_CTL_OFFSET	(RALINK_PCI_BASE + 0x9000)
 +#define RALINK_PCIEPHY_P2_CTL_OFFSET	(RALINK_PCI_BASE + 0xA000)
 +
-+#elif defined(CONFIG_SOC_RT3052) || defined(CONFIG_SOC_RT3352) || defined(CONFIG_SOC_RT5350) 
++#elif defined(CONFIG_RALINK_RT3052) || defined(CONFIG_RALINK_RT3352) || defined(CONFIG_RALINK_RT5350) 
 +#else
 +#error "undefined in PCI"
 +#endif
@@ -4486,7 +4486,7 @@ Subject: [PATCH 1/3] foo
 +#ifndef __RALINK_MMAP__
 +#define __RALINK_MMAP__
 +
-+#if defined (CONFIG_SOC_RT2880_SHUTTLE)
++#if defined (CONFIG_RALINK_RT2880_SHUTTLE)
 +
 +#define RALINK_SYSCTL_BASE 		0xA0300000
 +#define RALINK_TIMER_BASE		0xA0300100
@@ -4527,7 +4527,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCM_RST			(1<<19)
 +
 +
-+#elif defined (CONFIG_SOC_RT2880_MP)
++#elif defined (CONFIG_RALINK_RT2880_MP)
 +
 +#define RALINK_SYSCTL_BASE 		0xA0300000
 +#define RALINK_TIMER_BASE		0xA0300100
@@ -4567,7 +4567,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_FE_RST			(1<<18)
 +#define RALINK_PCM_RST			(1<<19)
 +
-+#elif defined (CONFIG_SOC_RT3052) 
++#elif defined (CONFIG_RALINK_RT3052) 
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -4625,7 +4625,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_SW_RST			(1<<23)
 +#define RALINK_EPHY_RST			(1<<24)
 +
-+#elif defined (CONFIG_SOC_RT3352)
++#elif defined (CONFIG_RALINK_RT3352)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -4693,7 +4693,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_GE1_CLK_EN		(1<<16)
 +
 +
-+#elif defined (CONFIG_SOC_RT5350)
++#elif defined (CONFIG_RALINK_RT5350)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -4759,7 +4759,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_UPHY0_CLK_EN		(1<<18)
 +#define RALINK_GE1_CLK_EN		(1<<16)
 +
-+#elif defined (CONFIG_SOC_RT2883)
++#elif defined (CONFIG_RALINK_RT2883)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -4815,7 +4815,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_OTG_RST			(1<<22)
 +#define RALINK_PCIE_RST			(1<<23)
 +
-+#elif defined (CONFIG_SOC_RT3883)
++#elif defined (CONFIG_RALINK_RT3883)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -4883,7 +4883,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_UPHY0_CLK_EN		(1<<18)
 +#define RALINK_GE1_CLK_EN		(1<<16)
 +
-+#elif defined (CONFIG_SOC_RT6855)
++#elif defined (CONFIG_RALINK_RT6855)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -4952,7 +4952,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_PCIE1_CLK_EN		(1<<27)
 +
 +
-+#elif defined (CONFIG_SOC_MT7620)
++#elif defined (CONFIG_RALINK_MT7620)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -5039,7 +5039,7 @@ Subject: [PATCH 1/3] foo
 +#define CPLL_DIV_RATIO                  (0x3UL << CPLL_DIV_RATIO_SHIFT)
 +#define BASE_CLOCK                      40      /* Mhz */
 +
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +
 +#define RALINK_SYSCTL_BASE		0xBE000000
 +#define RALINK_TIMER_BASE		0xBE000100
@@ -5154,7 +5154,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_TESTSTAT			0xBE000018
 +#define RALINK_TESTSTAT2		0xBE00001C
 +
-+#elif defined (CONFIG_SOC_MT7628)
++#elif defined (CONFIG_RALINK_MT7628)
 +
 +#define RALINK_SYSCTL_BASE		0xB0000000
 +#define RALINK_TIMER_BASE		0xB0000100
@@ -5289,7 +5289,7 @@ Subject: [PATCH 1/3] foo
 + **************************************************************************
 + */
 +
-+#if defined (CONFIG_SOC_MT7621) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_MT7628)
 +#define RT2880_UART_RBR_OFFSET  0x00
 +#define RT2880_UART_TBR_OFFSET  0x00
 +#define RT2880_UART_IER_OFFSET  0x04
@@ -5325,14 +5325,14 @@ Subject: [PATCH 1/3] foo
 +#define DLM(x)          *(volatile u32 *)((x)+RT2880_UART_DLM_OFFSET)
 +
 +
-+#if defined (CONFIG_SOC_RT2880) || \
-+    defined (CONFIG_SOC_RT2883) || \
-+    defined (CONFIG_SOC_RT3883) || \
-+    defined (CONFIG_SOC_RT3352) || \
-+    defined (CONFIG_SOC_RT5350) || \
-+    defined (CONFIG_SOC_RT6855) || \
-+    defined (CONFIG_SOC_MT7620) || \
-+    defined (CONFIG_SOC_RT3052)
++#if defined (CONFIG_RALINK_RT2880) || \
++    defined (CONFIG_RALINK_RT2883) || \
++    defined (CONFIG_RALINK_RT3883) || \
++    defined (CONFIG_RALINK_RT3352) || \
++    defined (CONFIG_RALINK_RT5350) || \
++    defined (CONFIG_RALINK_RT6855) || \
++    defined (CONFIG_RALINK_MT7620) || \
++    defined (CONFIG_RALINK_RT3052)
 +
 +#define UART_RX		0	/* In:  Receive buffer (DLAB=0) */
 +
@@ -5852,13 +5852,13 @@ Subject: [PATCH 1/3] foo
 +#define _SURFBOARDINT_H
 +
 +/* Number of IRQ supported on hw interrupt 0. */
-+#if defined (CONFIG_SOC_RT2880)
++#if defined (CONFIG_RALINK_RT2880)
 +#define RALINK_CPU_TIMER_IRQ 	 6	/* mips timer */
 +#define SURFBOARDINT_GPIO	 7	/* GPIO */
 +#define SURFBOARDINT_UART1	 8	/* UART Lite */
 +#define SURFBOARDINT_UART	 9	/* UART */
 +#define SURFBOARDINT_TIMER0	 10	/* timer0 */
-+#elif defined (CONFIG_SOC_RT3052) || defined (CONFIG_SOC_RT3352) || defined (CONFIG_SOC_RT2883) || defined (CONFIG_SOC_RT5350) || defined (CONFIG_SOC_RT6855) || defined (CONFIG_SOC_MT7620) 
++#elif defined (CONFIG_RALINK_RT3052) || defined (CONFIG_RALINK_RT3352) || defined (CONFIG_RALINK_RT2883) || defined (CONFIG_RALINK_RT5350) || defined (CONFIG_RALINK_RT6855) || defined (CONFIG_RALINK_MT7620) 
 +#define RALINK_CPU_TIMER_IRQ 	 5	/* mips timer */
 +#define SURFBOARDINT_GPIO	 6	/* GPIO */
 +#define SURFBOARDINT_DMA	 7	/* DMA */
@@ -5879,7 +5879,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_INT_PCIE1	 14	/* PCIE1 */
 +
 +
-+#elif defined (CONFIG_SOC_MT7628)
++#elif defined (CONFIG_RALINK_MT7628)
 +#define SURFBOARDINT_SYSCTL      0      /* SYSCTL */
 +#define SURFBOARDINT_PCM         4      /* PCM */
 +#define SURFBOARDINT_GPIO        6      /* GPIO */
@@ -5904,7 +5904,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_INT_PCIE0         2     /* PCIE0 */
 +
 +
-+#elif defined (CONFIG_SOC_MT7621)
++#elif defined (CONFIG_RALINK_MT7621)
 +
 +#define SURFBOARDINT_FE	 	 3	/* FE */
 +#define SURFBOARDINT_PCIE0 	 4	/* PCIE0 */
@@ -5941,7 +5941,7 @@ Subject: [PATCH 1/3] foo
 +#define RALINK_INT_PCIE1	 SURFBOARDINT_PCIE1
 +#define RALINK_INT_PCIE2	 SURFBOARDINT_PCIE2
 +
-+#elif defined (CONFIG_SOC_RT3883)
++#elif defined (CONFIG_RALINK_RT3883)
 +#define RALINK_CPU_TIMER_IRQ     5      /* mips timer */
 +#define SURFBOARDINT_GPIO        6      /* GPIO */
 +#define SURFBOARDINT_DMA         7      /* DMA */
@@ -5975,7 +5975,7 @@ Subject: [PATCH 1/3] foo
 + * Surfboard registers are memory mapped on 32-bit aligned boundaries and
 + * only word access are allowed.
 + */
-+#if defined (CONFIG_SOC_MT7621) || defined (CONFIG_SOC_MT7628)
++#if defined (CONFIG_RALINK_MT7621) || defined (CONFIG_RALINK_MT7628)
 +#define RALINK_IRQ0STAT		(RALINK_INTCL_BASE + 0x9C) //IRQ_STAT
 +#define RALINK_IRQ1STAT		(RALINK_INTCL_BASE + 0xA0) //FIQ_STAT
 +#define RALINK_INTTYPE		(RALINK_INTCL_BASE + 0x6C) //FIQ_SEL
