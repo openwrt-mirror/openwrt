@@ -83,7 +83,7 @@
 +			param = mount_flags_to_string(m->flags);
 +
 +			if (strcmp(pr->id->name, "exfat"))
-+				snprintf(cmd, sizeof (cmd), "ntfs-3g -o \"%s,%s\" %s %s >/dev/null",
++				snprintf(cmd, sizeof (cmd), "mount -t ufsd -o force -o iocharset=utf8 -o \"%s,%s\" %s %s >/dev/null",
 +					param, (m->options) ? (m->options) : (""), pr->dev, target);
 +
 +			else
@@ -109,7 +109,7 @@
 +			char cmd[1024];
 +
 +			if (strcmp(pr->id->name, "exfat"))
-+				snprintf(cmd, sizeof (cmd), "ntfs-3g %s %s >/dev/null", pr->dev, target);
++				snprintf(cmd, sizeof (cmd), "mount -t ufsd -o force -o iocharset=utf8 %s %s >/dev/null", pr->dev, target);
 +			else
 +				snprintf(cmd, sizeof (cmd), "mount -t exfat %s %s >/dev/null", pr->dev, target);
 +
