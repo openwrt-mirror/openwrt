@@ -37,7 +37,7 @@ static const char s_FileVer[] = "$Id: ufsdvfs.c,v 1.385.2.19 2012/04/05 11:08:23
 
 #ifndef CONFIG_UFSD_USE_NLS
 // NOTE: Kernel's utf8 does not support U+10000 (see utf8_mbtowc for details and note that 'typedef _u16 wchar_t;' )
-//#define UFSD_BUILTINT_UTF8          "Use builtin utf8 code page"
+#define UFSD_BUILTINT_UTF8          "Use builtin utf8 code page"
 #endif
 
 #ifdef UFSD_DEBUG
@@ -69,7 +69,6 @@ static const char s_FileVer[] = "$Id: ufsdvfs.c,v 1.385.2.19 2012/04/05 11:08:23
 #include <linux/seq_file.h>
 #include <linux/mount.h>
 #include <linux/xattr.h>
-#include <linux/writeback.h>
 
 #include "config.h"
 
@@ -135,13 +134,6 @@ static const char s_FileVer[] = "$Id: ufsdvfs.c,v 1.385.2.19 2012/04/05 11:08:23
   #include <linux/fs_struct.h>
 #endif
 
-#if defined HAVE_LINUX_PROC_NS_H && HAVE_LINUX_PROC_NS_H
-  #include <linux/proc_ns.h>
-#endif
-
-  #include <linux/aio.h>
-
-
 #if defined CONFIG_FS_POSIX_ACL \
   && (defined HAVE_DECL_POSIX_ACL_FROM_XATTR && HAVE_DECL_POSIX_ACL_FROM_XATTR)
   #include <linux/posix_acl_xattr.h>
@@ -154,6 +146,16 @@ static const char s_FileVer[] = "$Id: ufsdvfs.c,v 1.385.2.19 2012/04/05 11:08:23
   #define posix_acl_mode umode_t
 #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
+	#define HAVE_PROC_CREATE
+	#include <linux/aio.h>
+#endif 
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 11, 0)
+	#define physmem totalram_pages 
+#else
+	#define physmem num_physpages 
+#endif
 //
 // Default trace level for many functions in this module
 //
@@ -314,43 +316,6 @@ static const char s_DriverVer[] = PACKAGE_VERSION
 #define UFSD_VOLUME(sb) UFSD_SB(sb)->Ufsd
 
 #define UFSD_STATE_DA_ALLOC_CLOSE 0x00000010 // Alloc DA blks on close
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,4)
-//for vmtruncate.
-int vmtruncate(struct inode *inode, loff_t newsize)
-{
-    int error;
-    error = inode_newsize_ok(inode, newsize);
-
-    if (error)
-         return error;
-    truncate_setsize(inode, newsize);
-    truncate_pagecache(inode, newsize, inode->i_size);
-    return 0;
-}
-
-//end
-//for writeback
-/**
- * writeback_inodes_sb_if_idle	-	start writeback if none underway
- * @sb: the superblock
- * @reason: reason why some writeback work was initiated
- *
- * Invoke writeback_inodes_sb if no writeback is currently underway.
- * Returns 1 if writeback was started, 0 if not.
- */
-int writeback_inodes_sb_if_idle(struct super_block *sb, enum wb_reason reason)
-{
-	if (!writeback_in_progress(sb->s_bdi)) {
-		down_read(&sb->s_umount);
-		writeback_inodes_sb(sb, reason);
-		up_read(&sb->s_umount);
-		return 1;
-	} else
-		return 0;
-}
-//end
-#endif
 
 //
 // In memory ufsd inode
@@ -524,7 +489,7 @@ typedef struct {
 #endif
 
 #ifndef is_owner_or_cap
-  #define is_owner_or_cap(i) ( (uid_eq(current_fsuid() == (i)->i_uid)) || capable(CAP_FOWNER) )
+  #define is_owner_or_cap(i) ( (uid_eq(current_fsuid(), (i)->i_uid)) || capable(CAP_FOWNER) )
 #endif
 
 #if !(defined HAVE_DECL_TIMESPEC_COMPARE  && HAVE_DECL_TIMESPEC_COMPARE)
@@ -798,7 +763,7 @@ UFSD_HeapAlloc(
     head = (MEMBLOCK_HEAD*)kmalloc( AllocatedSize + TheOverhead, GFP_NOFS );
   } else {
     AllocatedSize = PAGE_ALIGN(Size + TheOverhead) - TheOverhead;
-    head = (AllocatedSize + TheOverhead) >> PAGE_SHIFT >= num_physpages
+    head = (AllocatedSize + TheOverhead) >> PAGE_SHIFT >= physmem;
         ? NULL
         : (MEMBLOCK_HEAD*)vmalloc( AllocatedSize + TheOverhead );
     ASSERT( (size_t)head >= VMALLOC_START && (size_t)head < VMALLOC_END );
@@ -953,7 +918,7 @@ UFSD_HeapAlloc(
   if ( Size <= PAGE_SIZE ) {
     ptr = kmalloc(Size, GFP_NOFS);
   } else {
-    ptr = Size >> PAGE_SHIFT >= num_physpages? NULL : vmalloc( Size );
+    ptr = Size >> PAGE_SHIFT >= physmem? NULL : vmalloc( Size );
     ASSERT( (size_t)ptr >= VMALLOC_START && (size_t)ptr < VMALLOC_END );
   }
 
@@ -2129,13 +2094,12 @@ typedef struct ufsd_iget4_param {
 //    'filldir()' helper
 ///////////////////////////////////////////////////////////
 static int
-ufsd_readdir(
+ufsd_iterate(
     IN struct file* file,
-    IN void*        dirent,
-    IN filldir_t    filldir
+	IN struct dir_context *ctx
     )
 {
-  UINT64 pos = file->f_pos;
+  UINT64 pos = ctx->pos;
   struct inode* i = file->f_dentry->d_inode;
   unode* u     = UFSD_U( i );
   usuper* sbi  = UFSD_SB( i->i_sb );
@@ -2172,7 +2136,7 @@ ufsd_readdir(
       // Unfortunately nfsd callback function opens file which in turn calls 'LockUfsd'
       // Linux's mutex does not allow recursive locks
       //
-      fd = filldir( dirent, Name, NameLen, pos, (ino_t)ino, is_dir? DT_DIR : DT_REG );
+	  fd = !dir_emit(ctx, Name, NameLen, (ino_t)ino, is_dir? DT_DIR : DT_REG);
 
       if ( nfsd )
         LockUfsd( sbi );
@@ -2189,7 +2153,7 @@ ufsd_readdir(
   //
   // Save position and return
   //
-  file->f_pos = pos;
+  ctx->pos = pos;
   file->f_version = i->i_version;
 #if defined HAVE_DECL_UPDATE_ATIME && HAVE_DECL_UPDATE_ATIME
   update_atime( i );
@@ -2701,7 +2665,7 @@ out:
 STATIC_CONST struct file_operations ufsd_dir_operations = {
   .llseek   = generic_file_llseek,
   .read     = generic_read_dir,
-  .readdir  = ufsd_readdir,
+  .iterate  = ufsd_iterate,
   .fsync    = generic_file_fsync,
   .open     = ufsd_file_open,
   .release  = ufsd_file_release,
@@ -2841,9 +2805,7 @@ ufsd_name_hash(
 static int
 ufsd_compare(
     IN const struct dentry* parent,
-    IN const struct inode * iparent,
     IN const struct dentry* de,
-    IN const struct inode * i,
     IN unsigned int         len,
     IN const char*          str,
     IN const struct qstr*   name
@@ -2877,7 +2839,6 @@ ufsd_compare(
 static int
 ufsd_name_hash(
     IN const struct dentry* de,
-    IN const struct inode*  i,
     IN struct qstr*         name
     )
 {
@@ -3841,11 +3802,19 @@ ufsd_setattr(
     }
     else if ( attr->ia_size < isize ) {
       DebugTrace(0, Dbg, ("vmtruncate: %llx -> %llx\n", isize, attr->ia_size ));
-      err = vmtruncate( i, attr->ia_size );
-      if ( err ) {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0) 
+    	err = vmtruncate( i, attr->ia_size );
+#else
+	err = inode_newsize_ok(i, attr->ia_size);
+#endif
+
+	if ( err ) {
         DebugTrace(0, Dbg, ("vmtruncate failed %d\n", err ));
         goto out;
       }
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
+	truncate_setsize(i, attr->ia_size);
+#endif
       ASSERT( attr->ia_size == i->i_size );
       dirty = 1;
     }
@@ -3859,7 +3828,7 @@ ufsd_setattr(
     i->i_uid = attr->ia_uid;
     u->set_mode = 1;
   }
-   if ( (ia_valid & ATTR_GID) && !gid_eq(i->i_gid, attr->ia_gid) ) {
+  if ( (ia_valid & ATTR_GID) && !gid_eq(i->i_gid, attr->ia_gid) ) {
     dirty = 1;
     i->i_gid = attr->ia_gid;
     u->set_mode = 1;
@@ -3903,7 +3872,7 @@ out:
     mark_inode_dirty( i );
 
   DebugTrace(-1, Dbg, ("setattr -> %d, uid=%d,gid=%d,m=%o,sz=%llx,%llx%s\n", err,
-                       __kuid_val(i->i_uid), __kgid_val(i->i_gid), i->i_mode,
+                        __kuid_val(i->i_uid), __kgid_val(i->i_gid), i->i_mode,
                         u->mmu, (UINT64)i_size_read(i), FlagOn(i->i_state, I_DIRTY)?",d":"" ));
   return err;
 }
@@ -4446,7 +4415,7 @@ ufsd_acl_chmod(
     err = PTR_ERR(acl);
   else {
 #if defined HAVE_DECL_POSIX_ACL_CHMOD && HAVE_DECL_POSIX_ACL_CHMOD
-    err = posix_acl_chmod( &acl, GFP_KERNEL, i->i_mode );
+    err = __posix_acl_chmod( &acl, GFP_KERNEL, i->i_mode );
     if ( err )
        return err;
     err = ufsd_set_acl( i, ACL_TYPE_ACCESS, acl );
@@ -5555,8 +5524,6 @@ out:
 }
 
 
-
-
 #if defined HAVE_DECL_FO_AIO_WRITE_V1 && HAVE_DECL_FO_AIO_WRITE_V1
 
 ///////////////////////////////////////////////////////////
@@ -5672,7 +5639,7 @@ ufsd_file_aio_read(
   ssize_t ret;
   unsigned long seg;
   loff_t len      = iov_length( iov, nr_segs );
-  struct inode* i = iocb->ki_filp->f_mapping->host;
+  struct inode* i = iocb->ki_filp->f_path.dentry->d_inode;
   unode* u        = UFSD_U( i );
 
   DebugTrace(+1, Dbg, ("file_aio_read: r=%lx, %llx, %llx\n", i->i_ino, (UINT64)pos, (UINT64)len ));
@@ -5720,14 +5687,16 @@ out:
 // file_operations::aio_write
 ///////////////////////////////////////////////////////////
 static ssize_t
-ufsd_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
-		    unsigned long nr_segs, loff_t pos)
+ufsd_file_aio_write(
+    IN struct kiocb*        iocb,
+    IN const struct iovec*  iov,
+    IN unsigned long        nr_segs,
+    IN loff_t               pos
+    )
 {
-
   ssize_t ret;
   loff_t len      = iov_length( iov, nr_segs );
-  struct file *file = iocb->ki_filp;
-  struct inode *i = file->f_mapping->host;
+  struct inode* i = iocb->ki_filp->f_path.dentry->d_inode;
   unode* u        = UFSD_U( i );
 
   DebugTrace(+1, Dbg, ("file_aio_write: r=%lx, %llx, %llx\n", i->i_ino, (UINT64)pos, (UINT64)len ));
@@ -5737,7 +5706,7 @@ ufsd_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
   // Preallocate space for normal files
   //
   if ( !u->sparse && !u->compr ) {
-    ret = ufsd_file_extend( i, pos, len, FlagOn( iocb->ki_filp->f_flags, O_APPEND ) );
+    ret = ufsd_file_extend( i, pos, len, iocb->ki_filp->f_flags & O_APPEND );
     if ( 0 != ret )
       goto out;
 
@@ -6086,7 +6055,7 @@ STATIC_CONST struct file_operations ufsd_file_operations = {
 };
 
 STATIC_CONST struct inode_operations ufsd_file_inode_operations = {
-#if !(defined HAVE_DECL_TRUNCATE_SETSIZE && HAVE_DECL_TRUNCATE_SETSIZE)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
   .truncate     = ufsd_truncate,
 #endif
   .setattr      = ufsd_setattr,
@@ -7562,7 +7531,7 @@ ufsd_da_block_invalidatepages(
         break;
       BUG_ON(!PageLocked( page ) );
       BUG_ON(PageWriteback( page ) );
-      block_invalidatepage( page, 0 );
+      block_invalidatepage( page, 0, PAGE_CACHE_SIZE );
       ClearPageUptodate( page );
       unlock_page( page );
     }
@@ -8466,7 +8435,7 @@ ufsd_da_invalidatepage(
   if ( 0 == offset )
     ClearPageChecked( page );
 
-  block_invalidatepage( page, offset );
+  block_invalidatepage( page, offset, PAGE_CACHE_SIZE );
 }
 
 #endif // #ifdef UFSD_DELAY_ALLOC
@@ -8847,7 +8816,8 @@ ufsd_read_inode2(
   //
   i->i_uid  = KUIDT_INIT(unlikely(sbi->options.uid)? sbi->options.fs_uid : cr? cr->uid : p->Info.is_ugm? p->Info.uid : sbi->options.fs_uid);
   i->i_gid  = KGIDT_INIT(unlikely(sbi->options.gid)? sbi->options.fs_gid : cr? cr->gid : p->Info.is_ugm? p->Info.gid : sbi->options.fs_gid);
-   //
+
+  //
   // Setup 'mode'
   //
   if ( p->Info.is_dir ) {
@@ -9121,7 +9091,7 @@ ufsd_create_or_open(
           posix_acl_mode mode;
           if ( !S_ISDIR( i->i_mode ) || 0 == ( err = ufsd_set_acl( i, ACL_TYPE_DEFAULT, acl ) ) ) {
 #if defined HAVE_DECL_POSIX_ACL_CREATE && HAVE_DECL_POSIX_ACL_CREATE
-            err = posix_acl_create( &acl, GFP_KERNEL, &mode );
+            err = __posix_acl_create( &acl, GFP_KERNEL, &mode );
             if ( err >= 0 ) {
               i->i_mode = mode;
               if ( err > 0 )
@@ -9178,6 +9148,43 @@ Exit1:
 static struct proc_dir_entry* proc_info_root = NULL;
 static const char proc_info_root_name[] = "fs/ufsd";
 
+
+#ifdef HAVE_PROC_CREATE
+///////////////////////////////////////////////////////////
+// volinfo read proc callback
+//
+//
+///////////////////////////////////////////////////////////
+static ssize_t ufsd_proc_volinfo_read( struct file *filp, char __user *buff,
+    size_t count, loff_t *off ) 
+{
+  int len;
+  int ret;
+  char *kbuffer;
+  usuper* sbi = (usuper*)PDE_DATA(file_inode(filp));
+
+  kbuffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+  //
+  // Call UFSD library
+  //
+  LockUfsd( sbi );
+
+  len = UFSDAPI_TraceVolumeInfo( sbi->Ufsd, kbuffer, count, &snprintf );
+  
+  UnlockUfsd( sbi );
+
+  ret = simple_read_from_buffer(buff, count, off, kbuffer, len + 1);
+
+  kfree(kbuffer);
+
+  return ret;
+}
+static struct file_operations proc_volinfo_operations = {
+  .owner    = THIS_MODULE,
+  .read     = ufsd_proc_volinfo_read,
+  .write    = NULL
+}; 
+#else
 ///////////////////////////////////////////////////////////
 // ufsd_proc_volinfo
 //
@@ -9208,8 +9215,120 @@ ufsd_proc_volinfo(
   *eof = 1;
   return len;
 }
+#endif
 
 
+#ifdef HAVE_PROC_CREATE
+///////////////////////////////////////////////////////////
+// ufsd_read_label
+//
+//
+///////////////////////////////////////////////////////////
+static int ufsd_proc_label_show(struct seq_file *m, void *v) {
+  usuper* sbi = (usuper*) m->private;
+  int i;
+  char *kbuffer;
+
+  //
+  // Call UFSD library
+  //
+  kbuffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+  if(NULL == kbuffer)
+    return -ENOMEM;
+
+  LockUfsd( sbi );
+
+  UFSDAPI_QueryVolumeInfo( sbi->Ufsd, NULL, kbuffer, PAGE_SIZE );
+
+  UnlockUfsd( sbi );
+
+  DebugTrace(0, Dbg, ("read_label: %s\n", kbuffer ) );
+
+  //
+  // Add last '\n'
+  //
+  for ( i = 0; i < PAGE_SIZE - 1; i++ ) {
+    if ( 0 == kbuffer[i] ) {
+      kbuffer[i++] = '\n';
+      memset( kbuffer + i, 0, PAGE_SIZE - i );
+      break;
+    }
+  }
+  seq_printf(m, kbuffer);
+  kfree(kbuffer);
+
+  return 0;
+}
+
+static int ufsd_proc_label_open(struct inode *inode, struct file *file)
+{
+  return single_open(file, ufsd_proc_label_show, PDE_DATA(inode));
+}
+
+static ssize_t
+ufsd_proc_label_write(struct file *filp, const char __user *buffer, size_t count, loff_t * off)
+{
+  int ret;
+  usuper* sbi = (usuper*)PDE_DATA(file_inode(filp));
+  char* Label;
+
+  //
+  // Maximum label length on NTFS is 128 UTF16 symbols (256 bytes). See $AttrDef
+  //
+  if ( count > 128 )
+    count = 128;
+
+  //
+  // Get label into kernel memory
+  //
+  Label = kmalloc( count + 1, GFP_NOFS );
+  if ( NULL == Label )
+    return -ENOMEM;
+
+  if ( 0 != copy_from_user( Label, buffer, count ) ) {
+    ret = -EINVAL;
+  } else {
+
+    if ( count > 0 && '\n' == Label[count-1] ) {
+      // Remove last '\n'
+      Label[count-1] = 0;
+    } else {
+      // Set last zero
+      Label[count] = 0;
+    }
+
+    DebugTrace(0, Dbg, ("write_label: %s\n", Label ) );
+
+    //
+    // Call UFSD library
+    //
+    LockUfsd( sbi );
+
+    ret = UFSDAPI_SetVolumeInfo( sbi->Ufsd, NULL, Label, 0 );
+
+    UnlockUfsd( sbi );
+
+    if ( 0 == ret ){
+      ret = count; // Ok
+    } else {
+      DebugTrace(0, DEBUG_TRACE_ERROR, ("write_label failed: %x\n", ret ) );
+      ret = -EINVAL;
+    }
+  }
+
+  kfree( Label );
+  return ret;
+}
+
+static struct file_operations proc_label_operations = {
+  .owner    = THIS_MODULE,
+  .open     = ufsd_proc_label_open,
+  .read     = seq_read,
+  .llseek   = seq_lseek,
+  .release  = single_release,
+  .write    = ufsd_proc_label_write,
+}; 
+#else
 ///////////////////////////////////////////////////////////
 // ufsd_read_label
 //
@@ -9318,8 +9437,100 @@ ufsd_write_label(
   kfree( Label );
   return ret;
 }
+#endif
 
 
+#ifdef HAVE_PROC_CREATE
+///////////////////////////////////////////////////////////
+// ufsd_read_tune
+//
+//
+///////////////////////////////////////////////////////////
+static int ufsd_proc_tune_show(struct seq_file *m, void *v)
+{
+  usuper* sbi = (usuper*)m->private;
+
+  UfsdVolumeTune vt;
+
+  //
+  // Call UFSD library
+  //
+  LockUfsd( sbi );
+
+  UFSDAPI_QueryVolumeTune( sbi->Ufsd, &vt );
+
+  UnlockUfsd( sbi );
+
+  seq_printf( m, "Ra=%u DirAge=%u JnlRam=%u\n", sbi->ReadAheadPages, vt.DirAge, vt.JnlRam );
+
+  return 0;
+}
+
+static int ufsd_proc_tune_open(struct inode *inode, struct file *file)
+{
+  return single_open(file, ufsd_proc_tune_show, PDE_DATA(inode));
+}
+
+
+static ssize_t
+ufsd_proc_tune_write(struct file *filp, const char __user *buffer, size_t count, loff_t * off)
+{
+  int ret;
+  usuper* sbi = (usuper*)PDE_DATA(file_inode(filp));
+  //
+  // Copy buffer into kernel memory
+  //
+  char* kbuffer = kmalloc( count + 1, GFP_NOFS );
+  if ( NULL == kbuffer )
+    return -ENOMEM;
+
+  if ( 0 != copy_from_user( kbuffer, buffer, count ) ) {
+    ret = -EINVAL;
+  } else {
+    unsigned int NewReadAhead;
+    UfsdVolumeTune vt;
+    int Parsed = sscanf( kbuffer, "Ra=%u DirAge=%u JnlRam=%u", &NewReadAhead, &vt.DirAge, &vt.JnlRam );
+    if ( Parsed < 1 ) {
+      DebugTrace(0, DEBUG_TRACE_ERROR, ("failed to parse tune buffer \"%s\"\n", kbuffer) );
+      ret = -EINVAL;
+    } else {
+      sbi->ReadAheadPages = NewReadAhead;
+
+      if ( Parsed >= 3 ) {
+        //
+        // Call UFSD library
+        //
+        LockUfsd( sbi );
+
+        ret = UFSDAPI_SetVolumeTune( sbi->Ufsd, &vt );
+
+        UnlockUfsd( sbi );
+      } else {
+        ret = 0;
+      }
+    }
+
+    if ( 0 == ret ){
+      ret = count; // Ok
+    } else {
+      DebugTrace(0, DEBUG_TRACE_ERROR, ("write_tune failed: %x\n", ret ) );
+      ret = -EINVAL;
+    }
+  }
+
+  kfree( kbuffer );
+  return ret;
+}
+
+static struct file_operations proc_tune_operations = {
+  .owner    = THIS_MODULE,
+  .open     = ufsd_proc_tune_open,
+  .read     = seq_read,
+  .llseek   = seq_lseek,
+  .release  = single_release,
+  .write    = ufsd_proc_tune_write,
+}; 
+#else
 ///////////////////////////////////////////////////////////
 // ufsd_read_tune
 //
@@ -9413,6 +9624,7 @@ ufsd_write_tune(
   kfree( kbuffer );
   return ret;
 }
+#endif
 
 
 ///////////////////////////////////////////////////////////
@@ -9420,6 +9632,38 @@ ufsd_write_tune(
 //
 //
 ///////////////////////////////////////////////////////////
+#ifdef HAVE_PROC_CREATE
+static ssize_t ufsd_proc_version_read( struct file *filp, char __user *buff,
+    size_t count, loff_t *off ) 
+{
+  int len;
+  int ret;
+  char *kbuffer;
+
+  kbuffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+  if(NULL == kbuffer)
+    return -ENOMEM;
+
+  //
+  // Call UFSD library
+  //
+
+  len = sprintf( kbuffer, "%s%s\ndriver %s loaded at %p, sizeof(inode)=%u\n",
+                 UFSDAPI_LibraryVersion( NULL ), s_FileVer, s_DriverVer, MODULE_BASE_ADDRESS, (unsigned)sizeof(struct inode) );
+
+  ret = simple_read_from_buffer(buff, count, off, kbuffer, len + 1);
+
+  kfree(kbuffer);
+  
+  return ret;
+}
+
+static struct file_operations ufsd_proc_version_operation = {
+  .owner    = THIS_MODULE,
+  .read     = ufsd_proc_version_read,
+  .write    = NULL
+}; 
+#else
 static int
 ufsd_proc_version(
     IN  char *page,
@@ -9459,6 +9703,7 @@ ufsd_proc_version(
 
   return len;
 }
+#endif
 
 
 ///////////////////////////////////////////////////////////
@@ -9481,6 +9726,27 @@ ufsd_proc_info(
     if ( NULL == sbi->procdir ) {
       printk( KERN_NOTICE QUOTED_UFSD_DEVICE": cannot create /proc/%s/%s", proc_info_root_name, dev );
     } else {
+#ifdef HAVE_PROC_CREATE
+      struct proc_dir_entry *de;
+      de = proc_create_data("volinfo",
+			  0444,
+			  sbi->procdir,
+			  &proc_volinfo_operations,
+			  (void*)sbi); 
+
+	  de = proc_create_data("label",
+			  0664,
+			  sbi->procdir,
+			  &proc_label_operations,
+			  (void*)sbi);
+
+	  de = proc_create_data("tune",
+			  0664,
+			  sbi->procdir,
+			  &proc_tune_operations,
+			  (void*)sbi);
+		
+#else /* kernel < 3.10.0 */
       struct proc_dir_entry* de;
 #if defined HAVE_STRUCT_PROC_DIR_ENTRY_OWNER && HAVE_STRUCT_PROC_DIR_ENTRY_OWNER
       sbi->procdir->owner = THIS_MODULE;
@@ -9510,6 +9776,7 @@ ufsd_proc_info(
         de->owner      = THIS_MODULE;
 #endif
       }
+#endif /* HAVE_PROC_CREATE */
     }
 
   } else {
@@ -9951,8 +10218,15 @@ ufsd_evict_inode(
 #if defined HAVE_STRUCT_SUPER_OPERATIONS_EVICT_INODE && HAVE_STRUCT_SUPER_OPERATIONS_EVICT_INODE
   if ( i->i_data.nrpages )
     truncate_inode_pages( &i->i_data, 0 );
-  end_writeback( i );
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0) 
+	end_writeback( i );
 #else
+	clear_inode( i );
+#endif
+
+
+ #else
   #define evict_inode clear_inode
 #endif
 
@@ -11375,7 +11649,7 @@ ufsd_read_super(
   // Done.
   //
   DebugTrace(-1, Dbg, ("read_super(%s) -> sb=%p,i=%p,r=%lx,uid=%d,gid=%d,m=%o\n", DevName, sb, i,
-                         i->i_ino, __kuid_val(i->i_uid), __kgid_val(i->i_gid), i->i_mode ));
+                        i->i_ino, __kuid_val(i->i_uid), __kgid_val(i->i_gid), i->i_mode ));
   return 0;
 
 Exit:
@@ -11544,7 +11818,11 @@ __init ufsd_init(void)
 #if defined HAVE_STRUCT_PROC_DIR_ENTRY_OWNER && HAVE_STRUCT_PROC_DIR_ENTRY_OWNER
       proc_info_root->owner = THIS_MODULE;
 #endif
+#ifdef HAVE_PROC_CREATE
+      proc_create("version", 0444, proc_info_root, &ufsd_proc_version_operation);
+#else
       create_proc_read_entry("version", 0, proc_info_root, &ufsd_proc_version, NULL );
+#endif
     } else {
       printk( KERN_NOTICE QUOTED_UFSD_DEVICE": cannot create /proc/%s", proc_info_root_name );
     }

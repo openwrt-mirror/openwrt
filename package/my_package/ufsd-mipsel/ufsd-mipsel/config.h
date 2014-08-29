@@ -399,7 +399,7 @@
 
 /* int writeback_inodes_sb_if_idle(struct super_block *, enum wb_reason
    reason); */
-#define HAVE_DECL_WRITEBACK_INODES_SB_IF_IDLE_V2 1
+#define HAVE_DECL_WRITEBACK_INODES_SB_IF_IDLE_V2 0
 
 /* int (*get) (struct dentry*,const char*,void*,size_t,int); */
 #define HAVE_DECL_XATTR_HANDLER_V2 1
