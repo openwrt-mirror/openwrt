@@ -31,14 +31,16 @@
 #include "nvram.h"
 #include "pci.h"
 
-#define QIHOO_C301_GPIO_LED_STATUS	0
+#define QIHOO_C301_GPIO_LED_GREEN_STATUS	0
+#define QIHOO_C301_GPIO_LED_RED_STATUS		11
+#define QIHOO_C301_GPIO_LED_ETH_LIGHT		18
 
 #define QIHOO_C301_GPIO_LED_INTERNET	1
 
 #define QIHOO_C301_GPIO_LED_LAN1	2
 #define QIHOO_C301_GPIO_LED_LAN2	3
 
-#define QIHOO_C301_GPIO_BTN_RESET	8
+#define QIHOO_C301_GPIO_BTN_RESET	16
 
 #define QIHOO_C301_GPIO_SPI_CS1		12
 
@@ -51,15 +53,22 @@
 #define QIHOO_C301_MAC0_OFFSET		0
 #define QIHOO_C301_MAC1_OFFSET		6
 #define QIHOO_C301_WMAC_CALDATA_OFFSET	0x1000
-//#define QIHOO_C301_PCIE_CALDATA_OFFSET	0x5000
 
 #define QIHOO_C301_NVRAM_ADDR		0x1f058010
 #define QIHOO_C301_NVRAM_SIZE		0x7ff0
 static struct gpio_led qihoo_c301_leds_gpio[] __initdata = {
 		{
-		.name		= "360:orange:status",
-		.gpio		= QIHOO_C301_GPIO_LED_STATUS,
-		.active_low	= 0,
+		.name		= "360:green:status",
+		.gpio		= QIHOO_C301_GPIO_LED_GREEN_STATUS,
+		.active_low	= 1,
+	},{
+		.name		= "360:red:status",
+		.gpio		= QIHOO_C301_GPIO_LED_RED_STATUS,
+		.active_low	= 1,
+	},{
+		.name		= "360:green:ethsw",   //这个是所有接口LED指示灯的总开关
+		.gpio		= QIHOO_C301_GPIO_LED_ETH_LIGHT,
+		.active_low	= 1,
 	},
 };
 
@@ -119,8 +128,6 @@ static void __init qihoo_c301_setup(void)
 	qihoo_c301_get_mac("wlan24mac=", tmpmac);
 	ath79_register_wmac(art + QIHOO_C301_WMAC_CALDATA_OFFSET, tmpmac);
 
-//	qihoo_c301_get_mac("wlan5mac=", tmpmac);
-//	ap91_pci_init(art + QIHOO_C301_PCIE_CALDATA_OFFSET, tmpmac);
 	ath79_register_pci();
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE |

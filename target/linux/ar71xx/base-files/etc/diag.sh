@@ -105,7 +105,7 @@ get_status_led() {
 		status_led="wd:blue:power"
 		;;
 	qihoo-c301)
-		status_led="360:orange:status"
+		status_led="360:green:status"
 		;;
 	mynet-rext)
 		status_led="wd:blue:power"
