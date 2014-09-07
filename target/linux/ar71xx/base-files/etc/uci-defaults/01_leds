@@ -142,8 +142,8 @@ mr600)
 
 qihoo-c301)
 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "360:green:status" "phy1tpt"
-	ucidef_set_led_wlan "wlan5g" "WLAN5G" "360:red:status" "phy0tpt"
-	ucidef_set_led_power "ethled" "ENABLE_ETH_LIGHT" "360:green:ethsw" "1"
+	ucidef_set_led_netdev "wlan" "WLAN5G" "360:red:status" "wlan0"
+	ucidef_set_led_default "ethled" "ENABLE_ETH_LIGHT" "360:green:ethsw" "1"
 	;;
 
 
