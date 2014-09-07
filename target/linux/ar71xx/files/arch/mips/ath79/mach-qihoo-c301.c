@@ -34,6 +34,7 @@
 #define QIHOO_C301_GPIO_LED_GREEN_STATUS	0
 #define QIHOO_C301_GPIO_LED_RED_STATUS		11
 #define QIHOO_C301_GPIO_LED_ETH_LIGHT		18
+#define QIHOO_C301_GPIO_USB_POWER		19
 
 #define QIHOO_C301_GPIO_LED_INTERNET	1
 
@@ -155,7 +156,10 @@ static void __init qihoo_c301_setup(void)
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio1_device.dev;
 
 	ath79_register_eth(0);
-
+	/* enable power for the USB port */
+	gpio_request_one(QIHOO_C301_GPIO_USB_POWER,
+			 GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED,
+			 "USB power");
 	ath79_register_usb();
 }
 
