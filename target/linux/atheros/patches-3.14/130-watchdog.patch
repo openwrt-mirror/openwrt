@@ -13,8 +13,7 @@
 + * GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software
-+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
 + *
 + * Copyright (C) 2008 John Crispin <blogic@openwrt.org>
 + * Based on EP93xx and ifxmips wdt driver
@@ -78,7 +77,8 @@
 +	if (in_use)
 +		return -EBUSY;
 +	ar2315_wdt_enable();
-+	in_use = started = 1;
++	in_use = 1;
++	started = 1;
 +	return nonseekable_open(inode, file);
 +}
 +

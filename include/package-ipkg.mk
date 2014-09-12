@@ -16,7 +16,7 @@ IPKG_STATE_DIR:=$(TARGET_DIR)/usr/lib/opkg
 define BuildIPKGVariable
 ifdef Package/$(1)/$(2)
   $(call shexport,Package/$(1)/$(2))
-  $(1)_COMMANDS += var2file "$(call shvar,Package/$(1)/$(2))" $(2);
+  $(1)_COMMANDS += var2file "$(call shvar,Package/$(1)/$(2))" $(2)$(3);
 endif
 endef
 
@@ -117,8 +117,8 @@ ifeq ($(DUMP),)
 
     $(eval $(call BuildIPKGVariable,$(1),conffiles))
     $(eval $(call BuildIPKGVariable,$(1),preinst))
-    $(eval $(call BuildIPKGVariable,$(1),postinst))
-    $(eval $(call BuildIPKGVariable,$(1),prerm))
+    $(eval $(call BuildIPKGVariable,$(1),postinst,-pkg))
+    $(eval $(call BuildIPKGVariable,$(1),prerm,-pkg))
     $(eval $(call BuildIPKGVariable,$(1),postrm))
 
     $(STAGING_DIR_ROOT)/stamp/.$(1)_installed: $(STAMP_BUILT)
@@ -165,6 +165,7 @@ ifeq ($(DUMP),)
 		$(if $(PKG_LICENSE), echo "License: $(PKG_LICENSE)"; ) \
 		$(if $(PKG_LICENSE_FILES), echo "LicenseFiles: $(PKG_LICENSE_FILES)"; ) \
 		echo "Section: $(SECTION)"; \
+		$(if $(USERID),echo "Require-User: $(USERID)"; ) \
 		$(if $(filter hold,$(PKG_FLAGS)),echo "Status: unknown hold not-installed"; ) \
 		$(if $(filter essential,$(PKG_FLAGS)), echo "Essential: yes"; ) \
 		$(if $(MAINTAINER),echo "Maintainer: $(MAINTAINER)"; ) \
@@ -173,6 +174,17 @@ ifeq ($(DUMP),)
 		echo -n "Description: "; $(SH_FUNC) getvar $(call shvar,Package/$(1)/description) | sed -e 's,^[[:space:]]*, ,g'; \
  	) > $$(IDIR_$(1))/CONTROL/control
 	chmod 644 $$(IDIR_$(1))/CONTROL/control
+	( \
+		echo "#!/bin/sh"; \
+		echo ". \$$$${IPKG_INSTROOT}/lib/functions.sh"; \
+		echo "default_postinst \$$$$0 \$$$$@"; \
+	) > $$(IDIR_$(1))/CONTROL/postinst
+	( \
+		echo "#!/bin/sh"; \
+		echo ". \$$$${IPKG_INSTROOT}/lib/functions.sh"; \
+		echo "default_prerm \$$$$0 \$$$$@"; \
+	) > $$(IDIR_$(1))/CONTROL/prerm
+	chmod 0755 $$(IDIR_$(1))/CONTROL/prerm
 	$(SH_FUNC) (cd $$(IDIR_$(1))/CONTROL; \
 		$($(1)_COMMANDS) \
 	)

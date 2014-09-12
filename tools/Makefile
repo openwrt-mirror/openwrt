@@ -33,7 +33,7 @@ tools-$(CONFIG_TARGET_orion_generic) += wrt350nv2-builder upslug2
 tools-$(CONFIG_powerpc) += upx
 tools-$(CONFIG_TARGET_x86) += qemu
 tools-$(CONFIG_TARGET_mxs) += elftosb
-tools-$(CONFIG_TARGET_brcm2708) += mtools dosfstools
+tools-$(CONFIG_TARGET_brcm2708)$(CONFIG_TARGET_sunxi) += mtools dosfstools
 tools-$(CONFIG_TARGET_ar71xx) += lzma-old squashfs
 tools-y += lzma squashfs4
 tools-$(BUILD_B43_TOOLS) += b43-tools
@@ -133,6 +133,10 @@ $(STAGING_DIR_HOST)/bin/stat: $(STAGING_DIR)/.prepared
 		false; \
 	fi
 
+$(STAGING_DIR_HOST)/bin/ldconfig:
+	touch $@
+	chmod +x $@
+
 $(eval $(call PrepareCommand,md5sum,gmd5sum md5sum $(SCRIPT_DIR)/md5sum))
 $(eval $(call PrepareCommand,cp,gcp cp))
 $(eval $(call PrepareCommand,seq,gseq seq))
@@ -143,7 +147,7 @@ $(eval $(call PrepareCommand,grep,ggrep grep))
 $(eval $(call PrepareCommand,tar,gtar tar))
 $(eval $(call PrepareCommand,diff,gdiff diff))
 
-$(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,md5sum cp stat seq python awk getopt grep tar diff)
+$(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,md5sum cp stat seq python awk getopt grep tar diff ldconfig)
 $(curdir)//prepare = $(STAGING_DIR)/.prepared $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
 $(curdir)//compile = $(STAGING_DIR)/.prepared $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
 

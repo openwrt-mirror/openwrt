@@ -49,22 +49,15 @@
 +load-$(CONFIG_ATHEROS_AR231X)          += 0xffffffff80041000
 --- /dev/null
 +++ b/arch/mips/ar231x/Kconfig
-@@ -0,0 +1,16 @@
-+config ATHEROS_AR5312
+@@ -0,0 +1,9 @@
++config SOC_AR5312
 +	bool "Atheros 5312/2312+ support"
 +	depends on ATHEROS_AR231X
 +	default y
 +
-+config ATHEROS_AR2315
++config SOC_AR2315
 +	bool "Atheros 2315+ support"
 +	depends on ATHEROS_AR231X
-+	select DMA_NONCOHERENT
-+	select CEVT_R4K
-+	select CSRC_R4K
-+	select IRQ_CPU
-+	select SYS_HAS_CPU_MIPS32_R1
-+	select SYS_SUPPORTS_32BIT_KERNEL
-+	select SYS_SUPPORTS_BIG_ENDIAN
 +	default y
 --- /dev/null
 +++ b/arch/mips/ar231x/Makefile
@@ -80,11 +73,11 @@
 +#
 +
 +obj-y += board.o prom.o devices.o
-+obj-$(CONFIG_ATHEROS_AR5312) += ar5312.o
-+obj-$(CONFIG_ATHEROS_AR2315) += ar2315.o
++obj-$(CONFIG_SOC_AR5312) += ar5312.o
++obj-$(CONFIG_SOC_AR2315) += ar2315.o
 --- /dev/null
 +++ b/arch/mips/ar231x/board.c
-@@ -0,0 +1,261 @@
+@@ -0,0 +1,229 @@
 +/*
 + * This file is subject to the terms and conditions of the GNU General Public
 + * License.  See the file "COPYING" in the main directory of this archive
@@ -109,6 +102,8 @@
 +#include <linux/io.h>
 +#include <asm/irq_cpu.h>
 +#include <asm/reboot.h>
++#include <asm/bootinfo.h>
++#include <asm/time.h>
 +
 +#include <ar231x_platform.h>
 +#include "devices.h"
@@ -117,107 +112,82 @@
 +
 +void (*ar231x_irq_dispatch)(void);
 +
-+static inline bool
-+check_radio_magic(u8 *addr)
++static inline bool check_radio_magic(u8 *addr)
 +{
 +	addr += 0x7a; /* offset for flash magic */
-+	if ((addr[0] == 0x5a) && (addr[1] == 0xa5))
-+		return 1;
-+
-+	return 0;
++	return (addr[0] == 0x5a) && (addr[1] == 0xa5);
 +}
 +
-+static inline bool
-+check_board_data(u8 *flash_limit, u8 *addr, bool broken)
++static inline bool check_notempty(u8 *addr)
++{
++	return *(u32 *)addr != 0xffffffff;
++}
++
++static inline bool check_board_data(u8 *flash_limit, u8 *addr, bool broken)
 +{
 +	/* config magic found */
 +	if (*((u32 *)addr) == AR231X_BD_MAGIC)
-+		return 1;
++		return true;
 +
 +	if (!broken)
-+		return 0;
++		return false;
 +
 +	if (check_radio_magic(addr + 0xf8))
 +		ar231x_board.radio = addr + 0xf8;
 +	if ((addr < flash_limit + 0x10000) &&
-+	     check_radio_magic(addr + 0x10000))
++	    check_radio_magic(addr + 0x10000))
 +		ar231x_board.radio = addr + 0x10000;
 +
 +	if (ar231x_board.radio) {
 +		/* broken board data detected, use radio data to find the
 +		 * offset, user will fix this */
-+		return 1;
++		return true;
 +	}
-+	return 0;
++
++	return false;
 +}
 +
-+static u8 *
-+find_board_config(u8 *flash_limit, bool broken)
++static u8 * __init find_board_config(u8 *flash_limit, bool broken)
 +{
 +	u8 *addr;
-+	int found = 0;
++	u8 *begin = flash_limit - 0x1000;
++	u8 *end = flash_limit - 0x30000;
 +
-+	for (addr = flash_limit - 0x1000;
-+		addr >= flash_limit - 0x30000;
-+		addr -= 0x1000) {
++	for (addr = begin; addr >= end; addr -= 0x1000)
++		if (check_board_data(flash_limit, addr, broken))
++			return addr;
 +
-+		if (check_board_data(flash_limit, addr, broken)) {
-+			found = 1;
-+			break;
-+		}
-+	}
-+
-+	if (!found)
-+		addr = NULL;
-+
-+	return addr;
++	return NULL;
 +}
 +
-+static u8 *
-+find_radio_config(u8 *flash_limit, u8 *board_config)
++static u8 * __init find_radio_config(u8 *flash_limit, u8 *bcfg)
 +{
-+	int found;
-+	u8 *radio_config;
++	u8 *rcfg, *begin, *end;
 +
 +	/*
 +	 * Now find the start of Radio Configuration data, using heuristics:
 +	 * Search forward from Board Configuration data by 0x1000 bytes
 +	 * at a time until we find non-0xffffffff.
 +	 */
-+	found = 0;
-+	for (radio_config = board_config + 0x1000;
-+	     (radio_config < flash_limit);
-+	     radio_config += 0x1000) {
-+		if ((*(u32 *)radio_config != 0xffffffff) &&
-+		    check_radio_magic(radio_config)) {
-+			found = 1;
-+			break;
-+		}
-+	}
++	begin = bcfg + 0x1000;
++	end = flash_limit;
++	for (rcfg = begin; rcfg < end; rcfg += 0x1000)
++		if (check_notempty(rcfg) && check_radio_magic(rcfg))
++			return rcfg;
 +
 +	/* AR2316 relocates radio config to new location */
-+	if (!found) {
-+		for (radio_config = board_config + 0xf8;
-+		     (radio_config < flash_limit - 0x1000 + 0xf8);
-+		     radio_config += 0x1000) {
-+			if ((*(u32 *)radio_config != 0xffffffff) &&
-+			    check_radio_magic(radio_config)) {
-+				found = 1;
-+				break;
-+			}
-+		}
-+	}
++	begin = bcfg + 0xf8;
++	end = flash_limit - 0x1000 + 0xf8;
++	for (rcfg = begin; rcfg < end; rcfg += 0x1000)
++		if (check_notempty(rcfg) && check_radio_magic(rcfg))
++			return rcfg;
 +
-+	if (!found) {
-+		pr_warn("WARNING: Could not find Radio Configuration data\n");
-+		radio_config = 0;
-+	}
++	pr_warn("WARNING: Could not find Radio Configuration data\n");
 +
-+	return radio_config;
++	return NULL;
 +}
 +
-+int __init
-+ar231x_find_config(u8 *flash_limit)
++int __init ar231x_find_config(u8 *flash_limit)
 +{
 +	struct ar231x_boarddata *config;
 +	unsigned int rcfg_size;
@@ -253,7 +223,7 @@
 +	if (broken_boarddata) {
 +		pr_warn("WARNING: broken board data detected\n");
 +		config = ar231x_board.config;
-+		if (!memcmp(config->enet0_mac, "\x00\x00\x00\x00\x00\x00", 6)) {
++		if (is_zero_ether_addr(config->enet0_mac)) {
 +			pr_info("Fixing up empty mac addresses\n");
 +			config->reset_config_gpio = 0xffff;
 +			config->sys_led_gpio = 0xffff;
@@ -263,7 +233,6 @@
 +			random_ether_addr(config->enet1_mac);
 +		}
 +	}
-+
 +
 +	/* Radio config starts 0x100 bytes after board config, regardless
 +	 * of what the physical layout on the flash chip looks like */
@@ -287,22 +256,20 @@
 +	mac_addr = &radio_data[0x1d * 2];
 +	if (is_broadcast_ether_addr(mac_addr)) {
 +		pr_info("Radio MAC is blank; using board-data\n");
-+		memcpy(mac_addr, ar231x_board.config->wlan0_mac, ETH_ALEN);
++		ether_addr_copy(mac_addr, ar231x_board.config->wlan0_mac);
 +	}
 +
 +	return 0;
 +}
 +
-+static void
-+ar231x_halt(void)
++static void ar231x_halt(void)
 +{
 +	local_irq_disable();
 +	while (1)
 +		;
 +}
 +
-+void __init
-+plat_mem_setup(void)
++void __init plat_mem_setup(void)
 +{
 +	_machine_halt = ar231x_halt;
 +	pm_power_off = ar231x_halt;
@@ -314,28 +281,23 @@
 +	write_c0_watchlo0(0);
 +}
 +
-+
-+asmlinkage void
-+plat_irq_dispatch(void)
++asmlinkage void plat_irq_dispatch(void)
 +{
 +	ar231x_irq_dispatch();
 +}
 +
-+void __init
-+plat_time_init(void)
++void __init plat_time_init(void)
 +{
 +	ar5312_time_init();
 +	ar2315_time_init();
 +}
 +
-+unsigned int __cpuinit
-+get_c0_compare_int(void)
++unsigned int __cpuinit get_c0_compare_int(void)
 +{
 +	return CP0_LEGACY_COMPARE_IRQ;
 +}
 +
-+void __init
-+arch_init_irq(void)
++void __init arch_init_irq(void)
 +{
 +	clear_c0_status(ST0_IM);
 +	mips_cpu_irq_init();
@@ -344,7 +306,6 @@
 +	ar5312_irq_init();
 +	ar2315_irq_init();
 +}
-+
 +
 --- /dev/null
 +++ b/arch/mips/ar231x/prom.c
@@ -388,9 +349,11 @@
 +}
 --- /dev/null
 +++ b/arch/mips/include/asm/mach-ar231x/ar231x_platform.h
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,85 @@
 +#ifndef __ASM_MACH_AR231X_PLATFORM_H
 +#define __ASM_MACH_AR231X_PLATFORM_H
++
++#include <linux/etherdevice.h>
 +
 +/*
 + * This is board-specific data that is stored in a "fixed" location in flash.
@@ -433,15 +396,15 @@
 +	u32 sys_freq;                /* System frequency in Hz */
 +	u32 cnt_freq;                /* Calculated C0_COUNT frequency */
 +
-+	u8  wlan0_mac[6];
-+	u8  enet0_mac[6];
-+	u8  enet1_mac[6];
++	u8  wlan0_mac[ETH_ALEN];
++	u8  enet0_mac[ETH_ALEN];
++	u8  enet1_mac[ETH_ALEN];
 +
 +	u16 pci_id;                  /* Pseudo PCIID for common code */
 +	u16 mem_cap;                 /* cap bank1 in MB */
 +
 +	/* version 3 */
-+	u8  wlan1_mac[6];            /* (ar5212) */
++	u8  wlan1_mac[ETH_ALEN];     /* (ar5212) */
 +};
 +
 +#define BOARD_CONFIG_BUFSZ		0x1000
@@ -513,7 +476,7 @@
 +/* #define cpu_has_mcheck		? */
 +#define cpu_has_ejtag			1
 +
-+#if !defined(CONFIG_ATHEROS_AR5312)
++#if !defined(CONFIG_SOC_AR5312)
 +#  define cpu_has_llsc			1
 +#else
 +/*
@@ -537,7 +500,7 @@
 +
 +#define cpu_has_mips32r1		1
 +
-+#if !defined(CONFIG_ATHEROS_AR5312)
++#if !defined(CONFIG_SOC_AR5312)
 +#  define cpu_has_mips32r2		1
 +#endif
 +
@@ -561,7 +524,7 @@
 +#endif /* __ASM_MACH_AR231X_CPU_FEATURE_OVERRIDES_H */
 --- /dev/null
 +++ b/arch/mips/include/asm/mach-ar231x/dma-coherence.h
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,76 @@
 +/*
 + * This file is subject to the terms and conditions of the GNU General Public
 + * License.  See the file "COPYING" in the main directory of this archive
@@ -574,9 +537,8 @@
 +#ifndef __ASM_MACH_AR231X_DMA_COHERENCE_H
 +#define __ASM_MACH_AR231X_DMA_COHERENCE_H
 +
-+#define PCI_DMA_OFFSET	0x20000000
-+
 +#include <linux/device.h>
++#include <ar2315_regs.h>
 +
 +static inline dma_addr_t ar231x_dev_offset(struct device *dev)
 +{
@@ -584,10 +546,9 @@
 +	extern struct bus_type pci_bus_type;
 +
 +	if (dev && dev->bus == &pci_bus_type)
-+		return PCI_DMA_OFFSET;
-+	else
++		return AR2315_PCI_HOST_SDRAM_BASEADDR;
 +#endif
-+		return 0;
++	return 0;
 +}
 +
 +static inline dma_addr_t
@@ -621,7 +582,6 @@
 +
 +static inline void plat_extra_sync_for_device(struct device *dev)
 +{
-+	return;
 +}
 +
 +static inline int plat_dma_mapping_error(struct device *dev,
@@ -643,35 +603,21 @@
 +#endif /* __ASM_MACH_AR231X_DMA_COHERENCE_H */
 --- /dev/null
 +++ b/arch/mips/include/asm/mach-ar231x/gpio.h
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,16 @@
 +#ifndef __ASM_MACH_AR231X_GPIO_H
 +#define __ASM_MACH_AR231X_GPIO_H
 +
-+#include <ar231x.h>
++#include <asm-generic/gpio.h>
 +
 +#define gpio_get_value __gpio_get_value
 +#define gpio_set_value __gpio_set_value
 +#define gpio_cansleep __gpio_cansleep
++#define gpio_to_irq __gpio_to_irq
 +
-+/*
-+ * Wrappers for the generic GPIO layer
-+ */
-+
-+/* not sure if these are used? */
-+
-+/* Returns IRQ to attach for gpio.  Unchecked function */
-+static inline int gpio_to_irq(unsigned gpio)
-+{
-+	return AR231X_GPIO_IRQ(gpio);
-+}
-+
-+/* Returns gpio for IRQ attached.  Unchecked function */
 +static inline int irq_to_gpio(unsigned irq)
 +{
-+	return irq - AR231X_GPIO_IRQ(0);
++	return -EINVAL;
 +}
-+
-+#include <asm-generic/gpio.h> /* cansleep wrappers */
 +
 +#endif	/* __ASM_MACH_AR231X_GPIO_H */
 --- /dev/null
@@ -713,7 +659,7 @@
 +#endif /* __ASM_MACH_AR231X_WAR_H */
 --- /dev/null
 +++ b/arch/mips/include/asm/mach-ar231x/ar2315_regs.h
-@@ -0,0 +1,617 @@
+@@ -0,0 +1,608 @@
 +/*
 + * Register definitions for AR2315+
 + *
@@ -739,22 +685,29 @@
 +#define AR2315_IRQ_LCBUS_PCI    (MIPS_CPU_IRQ_BASE+5) /* C0_CAUSE: 0x2000 */
 +#define AR2315_IRQ_WLAN0_POLL   (MIPS_CPU_IRQ_BASE+6) /* C0_CAUSE: 0x4000 */
 +
-+
 +/*
 + * Miscellaneous interrupts, which share IP2.
 + */
-+#define AR2315_MISC_IRQ_NONE		(AR231X_MISC_IRQ_BASE+0)
-+#define AR2315_MISC_IRQ_UART0		(AR231X_MISC_IRQ_BASE+1)
-+#define AR2315_MISC_IRQ_I2C_RSVD	(AR231X_MISC_IRQ_BASE+2)
-+#define AR2315_MISC_IRQ_SPI		(AR231X_MISC_IRQ_BASE+3)
-+#define AR2315_MISC_IRQ_AHB		(AR231X_MISC_IRQ_BASE+4)
-+#define AR2315_MISC_IRQ_APB		(AR231X_MISC_IRQ_BASE+5)
-+#define AR2315_MISC_IRQ_TIMER		(AR231X_MISC_IRQ_BASE+6)
-+#define AR2315_MISC_IRQ_GPIO		(AR231X_MISC_IRQ_BASE+7)
-+#define AR2315_MISC_IRQ_WATCHDOG	(AR231X_MISC_IRQ_BASE+8)
-+#define AR2315_MISC_IRQ_IR_RSVD		(AR231X_MISC_IRQ_BASE+9)
-+#define AR2315_MISC_IRQ_COUNT		10
++#define AR2315_MISC_IRQ_UART0		(AR231X_MISC_IRQ_BASE+0)
++#define AR2315_MISC_IRQ_I2C_RSVD	(AR231X_MISC_IRQ_BASE+1)
++#define AR2315_MISC_IRQ_SPI		(AR231X_MISC_IRQ_BASE+2)
++#define AR2315_MISC_IRQ_AHB		(AR231X_MISC_IRQ_BASE+3)
++#define AR2315_MISC_IRQ_APB		(AR231X_MISC_IRQ_BASE+4)
++#define AR2315_MISC_IRQ_TIMER		(AR231X_MISC_IRQ_BASE+5)
++#define AR2315_MISC_IRQ_GPIO		(AR231X_MISC_IRQ_BASE+6)
++#define AR2315_MISC_IRQ_WATCHDOG	(AR231X_MISC_IRQ_BASE+7)
++#define AR2315_MISC_IRQ_IR_RSVD		(AR231X_MISC_IRQ_BASE+8)
++#define AR2315_MISC_IRQ_COUNT		9
 +
++/*
++ * PCI interrupts, which share IP5
++ * Keep ordered according to AR2315_PCI_INT_XXX bits
++ */
++#define AR2315_PCI_IRQ_BASE		0x50
++#define AR2315_PCI_IRQ_EXT		(AR2315_PCI_IRQ_BASE+0)
++#define AR2315_PCI_IRQ_ABORT		(AR2315_PCI_IRQ_BASE+1)
++#define AR2315_PCI_IRQ_COUNT		2
++#define AR2315_PCI_IRQ_SHIFT		25	/* in AR2315_PCI_INT_STATUS */
 +
 +/*
 + * Address map
@@ -769,12 +722,13 @@
 +#define AR2315_UART0            0x11100000      /* UART MMR */
 +#define AR2315_SPI_MMR          0x11300000      /* SPI FLASH MMR */
 +#define AR2315_PCIEXT           0x80000000      /* pci external */
++#define AR2315_PCIEXT_SZ	0x40000000
 +
 +/* MII registers offset inside Ethernet MMR region */
 +#define AR2315_ENET0_MII	(AR2315_ENET0 + 0x14)
 +
 +/*
-+ * Reset Register
++ * Cold reset register
 + */
 +#define AR2315_COLD_RESET       (AR2315_DSLBASE + 0x0000)
 +
@@ -788,7 +742,9 @@
 +	 RESET_COLD_AHB)                                   /* full system */
 +#define AR2317_RESET_SYSTEM                0x00000010
 +
-+
++/*
++ * Reset register
++ */
 +#define AR2315_RESET            (AR2315_DSLBASE + 0x0004)
 +
 +/* warm reset WLAN0 MAC */
@@ -868,7 +824,6 @@
 +#define AR2315_CONFIG_CPU_PCI              0x00020000
 +#define AR2315_CONFIG_CPU_MMR              0x00040000
 +#define AR2315_CONFIG_BIG                  0x00000400
-+
 +
 +/*
 + * NMI control
@@ -1047,32 +1002,10 @@
 +#define AMBACLK_CLK_DIV_M           0x0000000c
 +#define AMBACLK_CLK_DIV_S           2
 +
-+/*
-+ * GPIO
-+ */
-+#define AR2315_GPIO_DI          (AR2315_DSLBASE + 0x0088)
-+#define AR2315_GPIO_DO          (AR2315_DSLBASE + 0x0090)
-+#define AR2315_GPIO_DIR         (AR2315_DSLBASE + 0x0098)
-+#define AR2315_GPIO_INT         (AR2315_DSLBASE + 0x00a0)
-+
-+#define AR2315_GPIO_DIR_M(x)               (1 << (x))       /* mask for i/o */
-+#define AR2315_GPIO_DIR_O(x)               (1 << (x))       /* output */
-+#define AR2315_GPIO_DIR_I(x)               (0)              /* input */
-+
-+#define AR2315_GPIO_INT_S(x)	(x)             /* interrupt enable */
-+#define AR2315_GPIO_INT_M	(0x3F)          /* mask for int */
-+#define AR2315_GPIO_INT_LVL(x)	((x) << 6)      /* interrupt level */
-+#define AR2315_GPIO_INT_LVL_M	((0x3) << 6)    /* mask for int level */
-+
-+#define AR2315_GPIO_INT_MAX_Y		1   /* Maximum value of Y for
-+					     * AR2315_GPIO_INT_* macros */
-+#define AR2315_GPIO_INT_LVL_OFF		0   /* Triggerring off */
-+#define AR2315_GPIO_INT_LVL_LOW		1   /* Low Level Triggered */
-+#define AR2315_GPIO_INT_LVL_HIGH	2   /* High Level Triggered */
-+#define AR2315_GPIO_INT_LVL_EDGE	3   /* Edge Triggered */
++/* GPIO MMR base address */
++#define AR2315_GPIO			(AR2315_DSLBASE + 0x0088)
 +
 +#define AR2315_RESET_GPIO       5
-+#define AR2315_NUM_GPIO         22
 +
 +/*
 + *  PCI Clock Control
@@ -1178,25 +1111,25 @@
 +
 +#define AR2315_PCI_OUT_PTR      (AR2315_PCI + 0x0408)
 +
-+#define AR2315_PCI_INT_STATUS   (AR2315_PCI + 0x0500)   /* write one to clr */
-+#define AR2315_PCI_TXINT        0x00000001      /* Desc In Completed */
-+#define AR2315_PCI_TXOK         0x00000002      /* Desc In OK */
-+#define AR2315_PCI_TXERR        0x00000004      /* Desc In ERR */
-+#define AR2315_PCI_TXEOL        0x00000008      /* Desc In End-of-List */
-+#define AR2315_PCI_RXINT        0x00000010      /* Desc Out Completed */
-+#define AR2315_PCI_RXOK         0x00000020      /* Desc Out OK */
-+#define AR2315_PCI_RXERR        0x00000040      /* Desc Out ERR */
-+#define AR2315_PCI_RXEOL        0x00000080      /* Desc Out EOL */
-+#define AR2315_PCI_TXOOD        0x00000200      /* Desc In Out-of-Desc */
-+#define AR2315_PCI_MASK         0x0000FFFF      /* Desc Mask */
-+#define AR2315_PCI_EXT_INT      0x02000000
-+#define AR2315_PCI_ABORT_INT    0x04000000
++#define AR2315_PCI_ISR          (AR2315_PCI + 0x0500)   /* write one to clr */
++#define AR2315_PCI_INT_TX       0x00000001      /* Desc In Completed */
++#define AR2315_PCI_INT_TXOK     0x00000002      /* Desc In OK */
++#define AR2315_PCI_INT_TXERR    0x00000004      /* Desc In ERR */
++#define AR2315_PCI_INT_TXEOL    0x00000008      /* Desc In End-of-List */
++#define AR2315_PCI_INT_RX       0x00000010      /* Desc Out Completed */
++#define AR2315_PCI_INT_RXOK     0x00000020      /* Desc Out OK */
++#define AR2315_PCI_INT_RXERR    0x00000040      /* Desc Out ERR */
++#define AR2315_PCI_INT_RXEOL    0x00000080      /* Desc Out EOL */
++#define AR2315_PCI_INT_TXOOD    0x00000200      /* Desc In Out-of-Desc */
++#define AR2315_PCI_INT_DESCMASK 0x0000FFFF      /* Desc Mask */
++#define AR2315_PCI_INT_EXT      0x02000000      /* Extern PCI INTA */
++#define AR2315_PCI_INT_ABORT    0x04000000      /* PCI bus abort event */
 +
-+#define AR2315_PCI_INT_MASK     (AR2315_PCI + 0x0504)  /* same as INT_STATUS */
++#define AR2315_PCI_IMR          (AR2315_PCI + 0x0504)  /* mask _PCI_ISR bits */
 +
-+#define AR2315_PCI_INTEN_REG    (AR2315_PCI + 0x0508)
-+#define AR2315_PCI_INT_DISABLE  0x00            /* disable pci interrupts */
-+#define AR2315_PCI_INT_ENABLE   0x01            /* enable pci interrupts */
++#define AR2315_PCI_IER          (AR2315_PCI + 0x0508)  /* global PCI int en */
++#define AR2315_PCI_IER_DISABLE  0x00            /* disable pci interrupts */
++#define AR2315_PCI_IER_ENABLE   0x01            /* enable pci interrupts */
 +
 +#define AR2315_PCI_HOST_IN_EN   (AR2315_PCI + 0x0800)
 +#define AR2315_PCI_HOST_IN_DIS  (AR2315_PCI + 0x0804)
@@ -1204,7 +1137,6 @@
 +#define AR2315_PCI_HOST_OUT_EN  (AR2315_PCI + 0x0900)
 +#define AR2315_PCI_HOST_OUT_DIS (AR2315_PCI + 0x0904)
 +#define AR2315_PCI_HOST_OUT_PTR (AR2315_PCI + 0x0908)
-+
 +
 +/*
 + * Local Bus Interface Registers
@@ -1251,7 +1183,6 @@
 +#define AR2315_LBM_TIMEOUT_MASK 0x00FFFF80
 +#define AR2315_LBM_TIMEOUT_SHFT 7
 +#define AR2315_LBM_PORTMUX      0x07000000
-+
 +
 +#define AR2315_LB_RXTSOFF       (AR2315_LOCAL + 0x0010)
 +
@@ -1322,18 +1253,24 @@
 +#define AR2315_IRCFG_SEQ_END_WIN_THRESH	0x001f0000
 +#define AR2315_IRCFG_NUM_BACKOFF_WORDS	0x01e00000
 +
-+#define HOST_PCI_DEV_ID         3
-+#define HOST_PCI_MBAR0          0x10000000
-+#define HOST_PCI_MBAR1          0x20000000
-+#define HOST_PCI_MBAR2          0x30000000
++/*
++ * We need some arbitrary non-zero value to be programmed to the BAR1 register
++ * of PCI host controller to enable DMA. The same value should be used as the
++ * offset to calculate the physical address of DMA buffer for PCI devices.
++ */
++#define AR2315_PCI_HOST_SDRAM_BASEADDR	0x20000000
 +
-+#define HOST_PCI_SDRAM_BASEADDR HOST_PCI_MBAR1
-+#define PCI_DEVICE_MEM_SPACE    0x800000
++/* ??? access BAR */
++#define AR2315_PCI_HOST_MBAR0		0x10000000
++/* RAM access BAR */
++#define AR2315_PCI_HOST_MBAR1		AR2315_PCI_HOST_SDRAM_BASEADDR
++/* ??? access BAR */
++#define AR2315_PCI_HOST_MBAR2		0x30000000
 +
 +#endif /* __ASM_MACH_AR231X_AR2315_REGS_H */
 --- /dev/null
 +++ b/arch/mips/include/asm/mach-ar231x/ar5312_regs.h
-@@ -0,0 +1,253 @@
+@@ -0,0 +1,235 @@
 +/*
 + * This file is subject to the terms and conditions of the GNU General Public
 + * License.  See the file "COPYING" in the main directory of this archive
@@ -1352,31 +1289,29 @@
 +/*
 + * IRQs
 + */
-+
 +#define AR5312_IRQ_WLAN0_INTRS  (MIPS_CPU_IRQ_BASE+2) /* C0_CAUSE: 0x0400 */
 +#define AR5312_IRQ_ENET0_INTRS  (MIPS_CPU_IRQ_BASE+3) /* C0_CAUSE: 0x0800 */
 +#define AR5312_IRQ_ENET1_INTRS  (MIPS_CPU_IRQ_BASE+4) /* C0_CAUSE: 0x1000 */
 +#define AR5312_IRQ_WLAN1_INTRS  (MIPS_CPU_IRQ_BASE+5) /* C0_CAUSE: 0x2000 */
 +#define AR5312_IRQ_MISC_INTRS   (MIPS_CPU_IRQ_BASE+6) /* C0_CAUSE: 0x4000 */
 +
-+
 +/*
 + * Miscellaneous interrupts, which share IP6.
 + */
-+#define AR5312_MISC_IRQ_NONE		(AR231X_MISC_IRQ_BASE+0)
-+#define AR5312_MISC_IRQ_TIMER		(AR231X_MISC_IRQ_BASE+1)
-+#define AR5312_MISC_IRQ_AHB_PROC	(AR231X_MISC_IRQ_BASE+2)
-+#define AR5312_MISC_IRQ_AHB_DMA		(AR231X_MISC_IRQ_BASE+3)
-+#define AR5312_MISC_IRQ_GPIO		(AR231X_MISC_IRQ_BASE+4)
-+#define AR5312_MISC_IRQ_UART0		(AR231X_MISC_IRQ_BASE+5)
-+#define AR5312_MISC_IRQ_UART0_DMA	(AR231X_MISC_IRQ_BASE+6)
-+#define AR5312_MISC_IRQ_WATCHDOG	(AR231X_MISC_IRQ_BASE+7)
-+#define AR5312_MISC_IRQ_LOCAL		(AR231X_MISC_IRQ_BASE+8)
-+#define AR5312_MISC_IRQ_SPI		(AR231X_MISC_IRQ_BASE+9)
-+#define AR5312_MISC_IRQ_COUNT		10
++#define AR5312_MISC_IRQ_TIMER		(AR231X_MISC_IRQ_BASE+0)
++#define AR5312_MISC_IRQ_AHB_PROC	(AR231X_MISC_IRQ_BASE+1)
++#define AR5312_MISC_IRQ_AHB_DMA		(AR231X_MISC_IRQ_BASE+2)
++#define AR5312_MISC_IRQ_GPIO		(AR231X_MISC_IRQ_BASE+3)
++#define AR5312_MISC_IRQ_UART0		(AR231X_MISC_IRQ_BASE+4)
++#define AR5312_MISC_IRQ_UART0_DMA	(AR231X_MISC_IRQ_BASE+5)
++#define AR5312_MISC_IRQ_WATCHDOG	(AR231X_MISC_IRQ_BASE+6)
++#define AR5312_MISC_IRQ_LOCAL		(AR231X_MISC_IRQ_BASE+7)
++#define AR5312_MISC_IRQ_SPI		(AR231X_MISC_IRQ_BASE+8)
++#define AR5312_MISC_IRQ_COUNT		9
 +
-+
-+/* Address Map */
++/*
++ * Address Map
++ */
 +#define AR5312_WLAN0            0x18000000
 +#define AR5312_WLAN1            0x18500000
 +#define AR5312_ENET0            0x18100000
@@ -1436,7 +1371,6 @@
 +#define AR5312_WD_CTRL_RESET             0x0002
 +
 +/* AR5312_ISR register bit field definitions */
-+#define AR5312_ISR_NONE		0x0000
 +#define AR5312_ISR_TIMER	0x0001
 +#define AR5312_ISR_AHBPROC	0x0002
 +#define AR5312_ISR_AHBDMA	0x0004
@@ -1497,7 +1431,6 @@
 +#define AR2313_CLOCKCTL1_MULTIPLIER_SHIFT          16
 +#define AR2313_CLOCKCTL1_DOUBLER_MASK      0x00000000
 +
-+
 +/* AR5312_ENABLE register bit field definitions */
 +#define AR5312_ENABLE_WLAN0              0x0001
 +#define AR5312_ENABLE_ENET0              0x0002
@@ -1551,9 +1484,9 @@
 +#define FLASHCTL_WP     0x04000000      /* Write protect */
 +#define FLASHCTL_BM     0x08000000      /* Burst mode */
 +#define FLASHCTL_MW     0x30000000      /* Memory width */
-+#define FLASHCTL_MWx8   0x00000000      /* Memory width x8 */
-+#define FLASHCTL_MWx16  0x10000000      /* Memory width x16 */
-+#define FLASHCTL_MWx32  0x20000000      /* Memory width x32 (not supported) */
++#define FLASHCTL_MW8    0x00000000      /* Memory width x8 */
++#define FLASHCTL_MW16   0x10000000      /* Memory width x16 */
++#define FLASHCTL_MW32   0x20000000      /* Memory width x32 (not supported) */
 +#define FLASHCTL_ATNR   0x00000000      /* Access type == no retry */
 +#define FLASHCTL_ATR    0x80000000      /* Access type == retry every */
 +#define FLASHCTL_ATR4   0xc0000000      /* Access type == retry every 4 */
@@ -1570,26 +1503,12 @@
 +#define MEM_CFG1_AC1    0x00007000      /* bank 1: SDRAM addr check (added) */
 +#define MEM_CFG1_AC1_S  12
 +
-+/* GPIO Address Map */
 +#define AR5312_GPIO         (AR5312_APBBASE  + 0x2000)
-+#define AR5312_GPIO_DO      (AR5312_GPIO + 0x00)        /* output register */
-+#define AR5312_GPIO_DI      (AR5312_GPIO + 0x04)        /* intput register */
-+#define AR5312_GPIO_CR      (AR5312_GPIO + 0x08)        /* control register */
-+
-+/* GPIO Control Register bit field definitions */
-+#define AR5312_GPIO_CR_M(x)    (1 << (x))               /* mask for i/o */
-+#define AR5312_GPIO_CR_O(x)    (0 << (x))               /* mask for output */
-+#define AR5312_GPIO_CR_I(x)    (1 << (x))               /* mask for input */
-+#define AR5312_GPIO_CR_INT(x)  (1 << ((x)+8))           /* mask for interrupt*/
-+#define AR5312_GPIO_CR_UART(x) (1 << ((x)+16))          /* uart multiplex */
-+#define AR5312_NUM_GPIO		8
-+
 +
 +#endif	/* __ASM_MACH_AR231X_AR5312_REGS_H */
-+
 --- /dev/null
 +++ b/arch/mips/ar231x/ar5312.c
-@@ -0,0 +1,540 @@
+@@ -0,0 +1,476 @@
 +/*
 + * This file is subject to the terms and conditions of the GNU General Public
 + * License.  See the file "COPYING" in the main directory of this archive
@@ -1635,16 +1554,16 @@
 +					 ar231x_read_reg(AR5312_IMR);
 +
 +	if (ar231x_misc_intrs & AR5312_ISR_TIMER) {
-+		do_IRQ(AR5312_MISC_IRQ_TIMER);
++		generic_handle_irq(AR5312_MISC_IRQ_TIMER);
 +		(void)ar231x_read_reg(AR5312_TIMER);
 +	} else if (ar231x_misc_intrs & AR5312_ISR_AHBPROC)
-+		do_IRQ(AR5312_MISC_IRQ_AHB_PROC);
++		generic_handle_irq(AR5312_MISC_IRQ_AHB_PROC);
 +	else if ((ar231x_misc_intrs & AR5312_ISR_UART0))
-+		do_IRQ(AR5312_MISC_IRQ_UART0);
++		generic_handle_irq(AR5312_MISC_IRQ_UART0);
 +	else if (ar231x_misc_intrs & AR5312_ISR_WD)
-+		do_IRQ(AR5312_MISC_IRQ_WATCHDOG);
++		generic_handle_irq(AR5312_MISC_IRQ_WATCHDOG);
 +	else
-+		do_IRQ(AR5312_MISC_IRQ_NONE);
++		spurious_interrupt();
 +}
 +
 +static asmlinkage void
@@ -1664,8 +1583,9 @@
 +		do_IRQ(AR5312_IRQ_MISC_INTRS);
 +	else if (pending & CAUSEF_IP7)
 +		do_IRQ(AR231X_IRQ_CPU_CLOCK);
++	else
++		spurious_interrupt();
 +}
-+
 +
 +/* Enable the specified AR5312_MISC_IRQ interrupt */
 +static void
@@ -1674,7 +1594,7 @@
 +	unsigned int imr;
 +
 +	imr = ar231x_read_reg(AR5312_IMR);
-+	imr |= (1 << (d->irq - AR231X_MISC_IRQ_BASE - 1));
++	imr |= 1 << (d->irq - AR231X_MISC_IRQ_BASE);
 +	ar231x_write_reg(AR5312_IMR, imr);
 +}
 +
@@ -1685,7 +1605,7 @@
 +	unsigned int imr;
 +
 +	imr = ar231x_read_reg(AR5312_IMR);
-+	imr &= ~(1 << (d->irq - AR231X_MISC_IRQ_BASE - 1));
++	imr &= ~(1 << (d->irq - AR231X_MISC_IRQ_BASE));
 +	ar231x_write_reg(AR5312_IMR, imr);
 +	ar231x_read_reg(AR5312_IMR); /* flush write buffer */
 +}
@@ -1696,7 +1616,6 @@
 +	.irq_mask	= ar5312_misc_irq_mask,
 +};
 +
-+
 +static irqreturn_t ar5312_ahb_proc_handler(int cpl, void *dev_id)
 +{
 +	u32 proc1 = ar231x_read_reg(AR5312_PROC1);
@@ -1704,20 +1623,17 @@
 +	u32 dma1 = ar231x_read_reg(AR5312_DMA1);
 +	u32 dma_addr = ar231x_read_reg(AR5312_DMAADDR);   /* clears error */
 +
-+	pr_emerg("AHB interrupt: PROCADDR=0x%8.8x  PROC1=0x%8.8x  "
-+		 "DMAADDR=0x%8.8x  DMA1=0x%8.8x\n", proc_addr, proc1, dma_addr,
-+		 dma1);
++	pr_emerg("AHB interrupt: PROCADDR=0x%8.8x PROC1=0x%8.8x DMAADDR=0x%8.8x DMA1=0x%8.8x\n",
++		 proc_addr, proc1, dma_addr, dma1);
 +
 +	machine_restart("AHB error"); /* Catastrophic failure */
 +	return IRQ_HANDLED;
 +}
 +
-+
 +static struct irqaction ar5312_ahb_proc_interrupt  = {
 +	.handler = ar5312_ahb_proc_handler,
 +	.name    = "ar5312_ahb_proc_interrupt",
 +};
-+
 +
 +void __init ar5312_irq_init(void)
 +{
@@ -1729,56 +1645,13 @@
 +	ar231x_irq_dispatch = ar5312_irq_dispatch;
 +	for (i = 0; i < AR5312_MISC_IRQ_COUNT; i++) {
 +		int irq = AR231X_MISC_IRQ_BASE + i;
++
 +		irq_set_chip_and_handler(irq, &ar5312_misc_irq_chip,
 +					 handle_level_irq);
 +	}
 +	setup_irq(AR5312_MISC_IRQ_AHB_PROC, &ar5312_ahb_proc_interrupt);
 +	irq_set_chained_handler(AR5312_IRQ_MISC_INTRS, ar5312_misc_irq_handler);
 +}
-+
-+/*
-+ * gpiolib implementations
-+ */
-+static int
-+ar5312_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
-+{
-+	return (ar231x_read_reg(AR5312_GPIO_DI) >> gpio) & 1;
-+}
-+
-+static void
-+ar5312_gpio_set_value(struct gpio_chip *chip, unsigned gpio, int value)
-+{
-+	u32 reg = ar231x_read_reg(AR5312_GPIO_DO);
-+	reg = value ? reg | (1 << gpio) : reg & ~(1 << gpio);
-+	ar231x_write_reg(AR5312_GPIO_DO, reg);
-+}
-+
-+static int
-+ar5312_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
-+{
-+	ar231x_mask_reg(AR5312_GPIO_CR, 0, 1 << gpio);
-+	return 0;
-+}
-+
-+static int
-+ar5312_gpio_direction_output(struct gpio_chip *chip, unsigned gpio, int value)
-+{
-+	ar231x_mask_reg(AR5312_GPIO_CR, 1 << gpio, 0);
-+	ar5312_gpio_set_value(chip, gpio, value);
-+	return 0;
-+}
-+
-+static struct gpio_chip ar5312_gpio_chip = {
-+	.label                  = "ar5312-gpio",
-+	.direction_input        = ar5312_gpio_direction_input,
-+	.direction_output       = ar5312_gpio_direction_output,
-+	.set                    = ar5312_gpio_set_value,
-+	.get                    = ar5312_gpio_get_value,
-+	.base                   = 0,
-+	.ngpio                  = AR5312_NUM_GPIO, /* 8 */
-+};
-+
-+/* end of gpiolib */
 +
 +static void ar5312_device_reset_set(u32 mask)
 +{
@@ -1909,10 +1782,10 @@
 +	/* fixup flash width */
 +	fctl = ar231x_read_reg(AR5312_FLASHCTL) & FLASHCTL_MW;
 +	switch (fctl) {
-+	case FLASHCTL_MWx16:
++	case FLASHCTL_MW16:
 +		ar5312_flash_data.width = 2;
 +		break;
-+	case FLASHCTL_MWx8:
++	case FLASHCTL_MW8:
 +	default:
 +		ar5312_flash_data.width = 1;
 +		break;
@@ -1926,12 +1799,12 @@
 +#endif
 +
 +	/* Fix up MAC addresses if necessary */
-+	if (!memcmp(config->enet0_mac, "\xff\xff\xff\xff\xff\xff", 6))
-+		memcpy(config->enet0_mac, config->enet1_mac, 6);
++	if (is_broadcast_ether_addr(config->enet0_mac))
++		ether_addr_copy(config->enet0_mac, config->enet1_mac);
 +
 +	/* If ENET0 and ENET1 have the same mac address,
 +	 * increment the one from ENET1 */
-+	if (memcmp(config->enet0_mac, config->enet1_mac, 6) == 0) {
++	if (ether_addr_equal(config->enet0_mac, config->enet1_mac)) {
 +		c = config->enet1_mac + 5;
 +		while ((c >= config->enet1_mac) && !(++(*c)))
 +			c--;
@@ -1982,7 +1855,6 @@
 +	return 0;
 +}
 +
-+
 +static void ar5312_restart(char *command)
 +{
 +	/* reset the system */
@@ -1991,13 +1863,11 @@
 +		ar231x_write_reg(AR5312_RESET, AR5312_RESET_SYSTEM);
 +}
 +
-+
 +/*
 + * This table is indexed by bits 5..4 of the CLOCKCTL1 register
 + * to determine the predevisor value.
 + */
 +static int clockctl1_predivide_table[4] __initdata = { 1, 2, 4, 5 };
-+
 +
 +static int __init
 +ar5312_cpu_frequency(void)
@@ -2075,20 +1945,6 @@
 +	mips_hpt_frequency = ar5312_cpu_frequency() / 2;
 +}
 +
-+static int __init
-+ar5312_gpio_init(void)
-+{
-+	int ret;
-+	ret = gpiochip_add(&ar5312_gpio_chip);
-+	if (ret) {
-+		pr_err("%s: failed to add gpiochip\n", ar5312_gpio_chip.label);
-+		return ret;
-+	}
-+	pr_info("%s: registered %d GPIOs\n", ar5312_gpio_chip.label,
-+		ar5312_gpio_chip.ngpio);
-+	return ret;
-+}
-+
 +void __init
 +ar5312_prom_init(void)
 +{
@@ -2110,8 +1966,7 @@
 +	devid = ar231x_read_reg(AR5312_REV);
 +	devid >>= AR5312_REV_WMAC_MIN_S;
 +	devid &= AR5312_REV_CHIP;
-+	ar231x_board.devid = (u16) devid;
-+	ar5312_gpio_init();
++	ar231x_board.devid = (u16)devid;
 +}
 +
 +void __init
@@ -2132,7 +1987,7 @@
 +
 --- /dev/null
 +++ b/arch/mips/ar231x/ar2315.c
-@@ -0,0 +1,556 @@
+@@ -0,0 +1,431 @@
 +/*
 + * This file is subject to the terms and conditions of the GNU General Public
 + * License.  See the file "COPYING" in the main directory of this archive
@@ -2172,54 +2027,27 @@
 +#include "devices.h"
 +#include "ar2315.h"
 +
-+static u32 gpiointmask, gpiointval;
-+
-+static void ar2315_gpio_irq_handler(unsigned irq, struct irq_desc *desc)
-+{
-+	u32 pend;
-+	int bit = -1;
-+
-+	/* only do one gpio interrupt at a time */
-+	pend = (ar231x_read_reg(AR2315_GPIO_DI) ^ gpiointval) & gpiointmask;
-+
-+	if (pend) {
-+		bit = fls(pend) - 1;
-+		pend &= ~(1 << bit);
-+		gpiointval ^= (1 << bit);
-+	}
-+
-+	if (!pend)
-+		ar231x_write_reg(AR2315_ISR, AR2315_ISR_GPIO);
-+
-+	/* Enable interrupt with edge detection */
-+	if ((ar231x_read_reg(AR2315_GPIO_DIR) & AR2315_GPIO_DIR_M(bit)) !=
-+	    AR2315_GPIO_DIR_I(bit))
-+		return;
-+
-+	if (bit >= 0)
-+		do_IRQ(AR231X_GPIO_IRQ_BASE + bit);
-+}
-+
 +static void ar2315_misc_irq_handler(unsigned irq, struct irq_desc *desc)
 +{
 +	unsigned int misc_intr = ar231x_read_reg(AR2315_ISR) &
 +				 ar231x_read_reg(AR2315_IMR);
 +
 +	if (misc_intr & AR2315_ISR_SPI)
-+		do_IRQ(AR2315_MISC_IRQ_SPI);
++		generic_handle_irq(AR2315_MISC_IRQ_SPI);
 +	else if (misc_intr & AR2315_ISR_TIMER)
-+		do_IRQ(AR2315_MISC_IRQ_TIMER);
++		generic_handle_irq(AR2315_MISC_IRQ_TIMER);
 +	else if (misc_intr & AR2315_ISR_AHB)
-+		do_IRQ(AR2315_MISC_IRQ_AHB);
-+	else if (misc_intr & AR2315_ISR_GPIO)
-+		do_IRQ(AR2315_MISC_IRQ_GPIO);
-+	else if (misc_intr & AR2315_ISR_UART0)
-+		do_IRQ(AR2315_MISC_IRQ_UART0);
++		generic_handle_irq(AR2315_MISC_IRQ_AHB);
++	else if (misc_intr & AR2315_ISR_GPIO) {
++		ar231x_write_reg(AR2315_ISR, AR2315_ISR_GPIO);
++		generic_handle_irq(AR2315_MISC_IRQ_GPIO);
++	} else if (misc_intr & AR2315_ISR_UART0)
++		generic_handle_irq(AR2315_MISC_IRQ_UART0);
 +	else if (misc_intr & AR2315_ISR_WD) {
 +		ar231x_write_reg(AR2315_ISR, AR2315_ISR_WD);
-+		do_IRQ(AR2315_MISC_IRQ_WATCHDOG);
++		generic_handle_irq(AR2315_MISC_IRQ_WATCHDOG);
 +	} else
-+		do_IRQ(AR2315_MISC_IRQ_NONE);
++		spurious_interrupt();
 +}
 +
 +/*
@@ -2243,45 +2071,9 @@
 +		do_IRQ(AR2315_IRQ_MISC_INTRS);
 +	else if (pending & CAUSEF_IP7)
 +		do_IRQ(AR231X_IRQ_CPU_CLOCK);
++	else
++		spurious_interrupt();
 +}
-+
-+static void ar2315_set_gpiointmask(int gpio, int level)
-+{
-+	u32 reg;
-+
-+	reg = ar231x_read_reg(AR2315_GPIO_INT);
-+	reg &= ~(AR2315_GPIO_INT_M | AR2315_GPIO_INT_LVL_M);
-+	reg |= gpio | AR2315_GPIO_INT_LVL(level);
-+	ar231x_write_reg(AR2315_GPIO_INT, reg);
-+}
-+
-+static void ar2315_gpio_irq_unmask(struct irq_data *d)
-+{
-+	unsigned int gpio = d->irq - AR231X_GPIO_IRQ_BASE;
-+
-+	/* Enable interrupt with edge detection */
-+	if ((ar231x_read_reg(AR2315_GPIO_DIR) & AR2315_GPIO_DIR_M(gpio)) !=
-+	    AR2315_GPIO_DIR_I(gpio))
-+		return;
-+
-+	gpiointmask |= (1 << gpio);
-+	ar2315_set_gpiointmask(gpio, 3);
-+}
-+
-+static void ar2315_gpio_irq_mask(struct irq_data *d)
-+{
-+	unsigned int gpio = d->irq - AR231X_GPIO_IRQ_BASE;
-+
-+	/* Disable interrupt */
-+	gpiointmask &= ~(1 << gpio);
-+	ar2315_set_gpiointmask(gpio, 0);
-+}
-+
-+static struct irq_chip ar2315_gpio_irq_chip = {
-+	.name		= "AR2315-GPIO",
-+	.irq_unmask	= ar2315_gpio_irq_unmask,
-+	.irq_mask	= ar2315_gpio_irq_mask,
-+};
 +
 +static void
 +ar2315_misc_irq_unmask(struct irq_data *d)
@@ -2289,7 +2081,7 @@
 +	unsigned int imr;
 +
 +	imr = ar231x_read_reg(AR2315_IMR);
-+	imr |= 1 << (d->irq - AR231X_MISC_IRQ_BASE - 1);
++	imr |= 1 << (d->irq - AR231X_MISC_IRQ_BASE);
 +	ar231x_write_reg(AR2315_IMR, imr);
 +}
 +
@@ -2299,7 +2091,7 @@
 +	unsigned int imr;
 +
 +	imr = ar231x_read_reg(AR2315_IMR);
-+	imr &= ~(1 << (d->irq - AR231X_MISC_IRQ_BASE - 1));
++	imr &= ~(1 << (d->irq - AR231X_MISC_IRQ_BASE));
 +	ar231x_write_reg(AR2315_IMR, imr);
 +}
 +
@@ -2334,65 +2126,15 @@
 +		return;
 +
 +	ar231x_irq_dispatch = ar2315_irq_dispatch;
-+	gpiointval = ar231x_read_reg(AR2315_GPIO_DI);
 +	for (i = 0; i < AR2315_MISC_IRQ_COUNT; i++) {
 +		int irq = AR231X_MISC_IRQ_BASE + i;
++
 +		irq_set_chip_and_handler(irq, &ar2315_misc_irq_chip,
-+			handle_level_irq);
++					 handle_level_irq);
 +	}
-+	for (i = 0; i < AR2315_NUM_GPIO; i++) {
-+		int irq = AR231X_GPIO_IRQ_BASE + i;
-+		irq_set_chip_and_handler(irq, &ar2315_gpio_irq_chip,
-+			handle_level_irq);
-+	}
-+	irq_set_chained_handler(AR2315_MISC_IRQ_GPIO, ar2315_gpio_irq_handler);
 +	setup_irq(AR2315_MISC_IRQ_AHB, &ar2315_ahb_proc_interrupt);
 +	irq_set_chained_handler(AR2315_IRQ_MISC_INTRS, ar2315_misc_irq_handler);
 +}
-+
-+/*
-+ * gpiolib implementation
-+ */
-+static int
-+ar2315_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
-+{
-+	return (ar231x_read_reg(AR2315_GPIO_DI) >> gpio) & 1;
-+}
-+
-+static void
-+ar2315_gpio_set_value(struct gpio_chip *chip, unsigned gpio, int value)
-+{
-+	u32 reg = ar231x_read_reg(AR2315_GPIO_DO);
-+	reg = value ? reg | (1 << gpio) : reg & ~(1 << gpio);
-+	ar231x_write_reg(AR2315_GPIO_DO, reg);
-+}
-+
-+static int
-+ar2315_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
-+{
-+	ar231x_mask_reg(AR2315_GPIO_DIR, 1 << gpio, 0);
-+	return 0;
-+}
-+
-+static int
-+ar2315_gpio_direction_output(struct gpio_chip *chip, unsigned gpio, int value)
-+{
-+	ar231x_mask_reg(AR2315_GPIO_DIR, 0, 1 << gpio);
-+	ar2315_gpio_set_value(chip, gpio, value);
-+	return 0;
-+}
-+
-+static struct gpio_chip ar2315_gpio_chip = {
-+	.label                  = "ar2315-gpio",
-+	.direction_input        = ar2315_gpio_direction_input,
-+	.direction_output       = ar2315_gpio_direction_output,
-+	.set                    = ar2315_gpio_set_value,
-+	.get                    = ar2315_gpio_get_value,
-+	.base                   = 0,
-+	.ngpio                  = AR2315_NUM_GPIO, /* 22 */
-+};
-+
-+/* end of gpiolib */
 +
 +static void ar2315_device_reset_set(u32 mask)
 +{
@@ -2557,7 +2299,6 @@
 +	mips_reset_vec();
 +}
 +
-+
 +/*
 + * This table is indexed by bits 5..4 of the CLOCKCTL1 register
 + * to determine the predevisor value.
@@ -2624,22 +2365,6 @@
 +	mips_hpt_frequency = ar2315_cpu_frequency() / 2;
 +}
 +
-+static int __init
-+ar2315_gpio_init(void)
-+{
-+	int ret;
-+	ret = gpiochip_add(&ar2315_gpio_chip);
-+	if (ret) {
-+		pr_err("%s: failed to add gpiochip\n", ar2315_gpio_chip.label);
-+		return ret;
-+	}
-+	pr_info("%s: registered %d GPIOs\n", ar2315_gpio_chip.label,
-+		ar2315_gpio_chip.ngpio);
-+	return ret;
-+}
-+
-+
-+
 +void __init
 +ar2315_prom_init(void)
 +{
@@ -2658,15 +2383,20 @@
 +	/* Detect the hardware based on the device ID */
 +	devid = ar231x_read_reg(AR2315_SREV) & AR2315_REV_CHIP;
 +	switch (devid) {
++	case 0x91:	/* Need to check */
++		ar231x_devtype = DEV_TYPE_AR2318;
++		break;
 +	case 0x90:
-+	case 0x91:
 +		ar231x_devtype = DEV_TYPE_AR2317;
 +		break;
++	case 0x87:
++		ar231x_devtype = DEV_TYPE_AR2316;
++		break;
++	case 0x86:
 +	default:
 +		ar231x_devtype = DEV_TYPE_AR2315;
 +		break;
 +	}
-+	ar2315_gpio_init();
 +	ar231x_board.devid = devid;
 +}
 +
@@ -2695,13 +2425,13 @@
 +#ifndef __AR2315_H
 +#define __AR2315_H
 +
-+#ifdef CONFIG_ATHEROS_AR2315
++#ifdef CONFIG_SOC_AR2315
 +
-+extern void ar2315_irq_init(void);
-+extern int ar2315_init_devices(void);
-+extern void ar2315_prom_init(void);
-+extern void ar2315_plat_setup(void);
-+extern void ar2315_time_init(void);
++void ar2315_irq_init(void);
++int ar2315_init_devices(void);
++void ar2315_prom_init(void);
++void ar2315_plat_setup(void);
++void ar2315_time_init(void);
 +
 +#else
 +
@@ -2731,18 +2461,17 @@
 +#endif
 --- /dev/null
 +++ b/arch/mips/ar231x/ar5312.h
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,37 @@
 +#ifndef __AR5312_H
 +#define __AR5312_H
 +
-+#ifdef CONFIG_ATHEROS_AR5312
++#ifdef CONFIG_SOC_AR5312
 +
-+extern void ar5312_irq_init(void);
-+extern int ar5312_init_devices(void);
-+extern void ar5312_prom_init(void);
-+extern void ar5312_plat_setup(void);
-+extern void ar5312_time_init(void);
-+extern void ar5312_time_init(void);
++void ar5312_irq_init(void);
++int ar5312_init_devices(void);
++void ar5312_prom_init(void);
++void ar5312_plat_setup(void);
++void ar5312_time_init(void);
 +
 +#else
 +
@@ -2772,7 +2501,7 @@
 +#endif
 --- /dev/null
 +++ b/arch/mips/include/asm/mach-ar231x/ar231x.h
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,38 @@
 +#ifndef __ASM_MACH_AR231X_H
 +#define __ASM_MACH_AR231X_H
 +
@@ -2783,12 +2512,7 @@
 +#define AR231X_GPIO_IRQ_BASE		0x30
 +
 +/* Software's idea of interrupts handled by "CPU Interrupt Controller" */
-+#define AR231X_IRQ_NONE		(MIPS_CPU_IRQ_BASE+0)
 +#define AR231X_IRQ_CPU_CLOCK	(MIPS_CPU_IRQ_BASE+7) /* C0_CAUSE: 0x8000 */
-+
-+/* GPIO Interrupts, share ARXXXX_MISC_IRQ_GPIO */
-+#define AR231X_GPIO_IRQ_NONE            (AR231X_GPIO_IRQ_BASE+0)
-+#define AR231X_GPIO_IRQ(n)              (AR231X_GPIO_IRQ_BASE+n)
 +
 +static inline u32
 +ar231x_read_reg(u32 reg)
@@ -2818,7 +2542,7 @@
 +#endif	/* __ASM_MACH_AR231X_H */
 --- /dev/null
 +++ b/arch/mips/ar231x/devices.h
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,39 @@
 +#ifndef __AR231X_DEVICES_H
 +#define __AR231X_DEVICES_H
 +
@@ -2832,6 +2556,7 @@
 +	DEV_TYPE_AR2315,
 +	DEV_TYPE_AR2316,
 +	DEV_TYPE_AR2317,
++	DEV_TYPE_AR2318,
 +
 +	DEV_TYPE_UNKNOWN
 +};
@@ -2840,11 +2565,11 @@
 +extern struct ar231x_board_config ar231x_board;
 +extern asmlinkage void (*ar231x_irq_dispatch)(void);
 +
-+extern int ar231x_find_config(u8 *flash_limit);
-+extern void ar231x_serial_setup(u32 mapbase, int irq, unsigned int uartclk);
-+extern int ar231x_add_wmac(int nr, u32 base, int irq);
-+extern int ar231x_add_ethernet(int nr, u32 base, const char *mii_name,
-+			       u32 mii_base, int irq, void *pdata);
++int ar231x_find_config(u8 *flash_limit);
++void ar231x_serial_setup(u32 mapbase, int irq, unsigned int uartclk);
++int ar231x_add_wmac(int nr, u32 base, int irq);
++int ar231x_add_ethernet(int nr, u32 base, const char *mii_name, u32 mii_base,
++			int irq, void *pdata);
 +
 +static inline bool is_2315(void)
 +{
@@ -2859,13 +2584,15 @@
 +#endif
 --- /dev/null
 +++ b/arch/mips/ar231x/devices.c
-@@ -0,0 +1,180 @@
+@@ -0,0 +1,181 @@
 +#include <linux/kernel.h>
 +#include <linux/init.h>
 +#include <linux/serial.h>
 +#include <linux/serial_core.h>
 +#include <linux/serial_8250.h>
 +#include <linux/platform_device.h>
++#include <asm/bootinfo.h>
++
 +#include <ar231x_platform.h>
 +#include <ar231x.h>
 +#include "devices.h"
@@ -2942,7 +2669,6 @@
 +	}
 +};
 +
-+
 +static struct platform_device ar231x_wmac[] = {
 +	{
 +		.id = 0,
@@ -2967,17 +2693,17 @@
 +	[DEV_TYPE_AR2315] = "Atheros AR2315",
 +	[DEV_TYPE_AR2316] = "Atheros AR2316",
 +	[DEV_TYPE_AR2317] = "Atheros AR2317",
++	[DEV_TYPE_AR2318] = "Atheros AR2318",
 +	[DEV_TYPE_UNKNOWN] = "Atheros (unknown)",
 +};
 +
 +const char *get_system_type(void)
 +{
 +	if ((ar231x_devtype >= ARRAY_SIZE(devtype_strings)) ||
-+		!devtype_strings[ar231x_devtype])
++	    !devtype_strings[ar231x_devtype])
 +		return devtype_strings[DEV_TYPE_UNKNOWN];
 +	return devtype_strings[ar231x_devtype];
 +}
-+
 +
 +int __init
 +ar231x_add_ethernet(int nr, u32 base, const char *mii_name, u32 mii_base,
