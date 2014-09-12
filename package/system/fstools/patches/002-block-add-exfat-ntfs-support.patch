@@ -60,7 +60,7 @@
  		printf("\toption\tuuid\t'%s'\n", pr->uuid);
  	else
  		printf("\toption\tdevice\t'%s'\n", pr->dev);
-+	printf("\toption\tfstype\t'%s'\n", (!strcmp(pr->id->name, "ntfs") ? "ntfs-3g" : pr->id->name));
++	printf("\toption\tfstype\t'%s'\n", (!strcmp(pr->id->name, "ntfs") ? "ufsd" : pr->id->name));
  	printf("\toption\tenabled\t'0'\n\n");
  
  	return 0;
@@ -70,7 +70,7 @@
  
 -		err = mount(pr->dev, target, pr->id->name, m->flags,
 -		            (m->options) ? (m->options) : (""));
-+		if (strcmp(pr->id->name, "ntfs-3g") && strcmp(pr->id->name, "ntfs") && strcmp(pr->id->name, "exfat"))
++		if (strcmp(pr->id->name, "ufsd") && strcmp(pr->id->name, "ntfs") && strcmp(pr->id->name, "exfat"))
 +		{
 +			err = mount(pr->dev, target, pr->id->name, m->flags,
 +		    		(m->options) ? (m->options) : (""));
@@ -100,7 +100,7 @@
  			check_filesystem(pr);
  
 -		err = mount(pr->dev, target, pr->id->name, 0, "");
-+		if (strcmp(pr->id->name, "ntfs-3g") && strcmp(pr->id->name, "ntfs") && strcmp(pr->id->name, "exfat"))
++		if (strcmp(pr->id->name, "ufsd") && strcmp(pr->id->name, "ntfs") && strcmp(pr->id->name, "exfat"))
 +		{
 +			err = mount(pr->dev, target, pr->id->name, 0, "");
 +		}
