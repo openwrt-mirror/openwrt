@@ -1,0 +1,17 @@
+#!/bin/sh
+
+. /lib/functions/system.sh
+. /lib/ar71xx.sh
+
+do_reset_360_image_counter() {
+	# load board.bin
+	case $(ar71xx_board_name) in
+		qihoo-c301)
+            echo "Resetting image counter..."
+            mtd erase action_image_config
+            echo "Image counter reseted."
+		;;
+	esac
+}
+
+boot_hook_add preinit_main do_reset_360_image_counter
