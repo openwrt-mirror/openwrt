@@ -27,8 +27,10 @@ do_load_ath10k_board_bin() {
 		;;
 		qihoo-c301)
 			local mac
-			mac=$(macaddr_add $(cat /sys/class/net/eth1/address) -2)
-
+          	mac=$(mtd_get_mac_ascii devdata wlan5mac)
+			if [ -z "$mac" ]; then
+				mac=$(macaddr_add $(cat /sys/class/net/eth0/address) -2)
+			fi
 			dd if=/dev/mtdblock10 \
 				bs=1 skip=20480 count=6 \
 				of=/tmp/ath10k-board.bin
