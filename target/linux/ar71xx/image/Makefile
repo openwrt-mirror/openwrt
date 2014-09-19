@@ -1192,8 +1192,7 @@ $(eval $(call SingleProfile,Planex,64kraw,MZKW300NH,mzk-w300nh,MZK-W300NH,ttyS0,
 $(eval $(call SingleProfile,Seama,64k,MYNETN600,mynet-n600,MYNET-N600,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd16_wd_db600,1310720,16187392))
 $(eval $(call SingleProfile,Seama,64k,MYNETN750,mynet-n750,MYNET-N750,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd13_wd_av,1310720,16187392))
 
-$(eval $(call SingleProfile,Qihoo,64k,QIHOOC301,qihoo-c301,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),wrgac26_qihoo360_360rg,1310720,16187392))
-
+$(eval $(call SingleProfile,Qihoo,64k,QIHOOC301,qihoo-c301,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),wrgac26_qihoo360_360rg,1310720,16121856))
 
 $(eval $(call SingleProfile,Senao,squashfs-only,EAP300V2,eap300v2,EAP300V2,ttyS0,115200,$$(eap300v2_mtdlayout)))
 
@@ -1280,6 +1279,7 @@ $(eval $(call SingleProfile,UBNT,64k,UBNTRS,ubnt-rs,UBNT-RS,ttyS0,115200,RS,RSx,
 $(eval $(call SingleProfile,UBNT,64k,UBNTRSPRO,ubnt-rspro,UBNT-RSPRO,ttyS0,115200,RSPRO,RSPRO,ar7100pro))
 $(eval $(call SingleProfile,UBNT,64k,UBNTLSSR71,ubnt-ls-sr71,UBNT-LS-SR71,ttyS0,115200,LS-SR71,LS-SR71,ar7100))
 
+
 #$(eval $(call SingleProfile,UBNTXM,64kraw,RW2458N,rw2458n,RW2458N,ttyS0,115200,XM,XM,ar7240))
 #$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTAIRROUTER,ubnt-airrouter,UBNT-AR,ttyS0,115200,XM,XM,ar7240))
 #$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTBULLETM,ubnt-bullet-m,UBNT-BM,ttyS0,115200,XM,XM,ar7240))
@@ -1288,6 +1288,7 @@ $(eval $(call SingleProfile,UBNT,64k,UBNTLSSR71,ubnt-ls-sr71,UBNT-LS-SR71,ttyS0,
 #$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTUNIFI,ubnt-unifi,UBNT-UF,ttyS0,115200,XM,BZ,ar7240))
 #$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTUNIFIOUTDOOR,ubnt-unifi-outdoor,UBNT-U20,ttyS0,115200,XM,BZ,ar7240))
 #$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTNANOMXW,ubnt-nano-m-xw,UBNT-NM-XW,ttyS0,115200,XM,XW,ar934x))
+#$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTLOCOXW,ubnt-loco-m-xw,UBNT-LOCO-XW,ttyS0,115200,XM,XW,ar934x))
 #$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTAIRGW,ubnt-air-gateway,UBNT-AGW,ttyATH0,115200,XM,AirGW,ar933x))
 
 $(eval $(call SingleProfile,WHRHPG300N,64kraw,WHRG301N,whr-g301n,WHR-G301N,ttyS0,115200,$$(whrhpg300n_mtdlayout),WHR-G301N))
@@ -1333,7 +1334,7 @@ $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4 TLWR941NV6))
 $(eval $(call MultiProfile,TLWR1043,TLWR1043V1 TLWR1043V2))
 $(eval $(call MultiProfile,TLWDR4300,TLWDR3500V1 TLWDR3600V1 TLWDR4300V1 TLWDR4300V1IL TLWDR4310V1 MW4530RV1))
 $(eval $(call MultiProfile,TUBE2H,TUBE2H8M TUBE2H16M))
-$(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTNANOM UBNTNANOMXW UBNTUNIFI UBNTUNIFIOUTDOOR UAPPRO UBNTAIRGW))
+$(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTNANOM UBNTNANOMXW UBNTLOCOXW UBNTUNIFI UBNTUNIFIOUTDOOR UAPPRO UBNTAIRGW))
 $(eval $(call MultiProfile,WNDR3700,WNDR3700V1 WNDR3700V2 WNDR3800 WNDR3800CH WNDRMAC WNDRMACV2))
 $(eval $(call MultiProfile,WNR612V2,REALWNR612V2 N150R))
 $(eval $(call MultiProfile,WP543,WP543_2M WP543_4M WP543_8M WP543_16M))
