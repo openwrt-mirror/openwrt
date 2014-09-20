@@ -15,6 +15,8 @@
 #include <linux/platform_device.h>
 #include <linux/ath9k_platform.h>
 #include <linux/ar8216_platform.h>
+#include <linux/crc32.h>
+#include <linux/mtd/mtd.h>
 
 #include <asm/mach-ath79/ar71xx_regs.h>
 
@@ -83,7 +85,7 @@ static struct gpio_keys_button qihoo_c301_gpio_keys[] __initdata = {
 		.active_low	= 1,
 	},
 };
-
+static int qihoo_c301_board=0;
 static void qihoo_c301_get_mac(const char *name, char *mac)
 {
 	u8 *nvram = (u8 *) KSEG1ADDR(QIHOO_C301_NVRAM_ADDR);
@@ -102,8 +104,11 @@ static void __init qihoo_c301_setup(void)
 	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
 	u8 tmpmac[ETH_ALEN];
 
-	ath79_gpio_output_select(QIHOO_C301_GPIO_SPI_CS1, 7);
+	ath79_gpio_output_select(QIHOO_C301_GPIO_SPI_CS1,
+                             AR934X_GPIO_OUT_SPI_CS1);
 	ath79_register_m25p80_multi(NULL);
+    qihoo_c301_board=1;
+    ath79_gpio_function_enable(AR934X_GPIO_FUNC_JTAG_DISABLE);
 
 	ath79_gpio_output_select(QIHOO_C301_GPIO_LED_LAN1,
 				 AR934X_GPIO_OUT_LED_LINK1);
@@ -165,3 +170,85 @@ static void __init qihoo_c301_setup(void)
 
 MIPS_MACHINE(ATH79_MACH_QIHOO_C301, "QIHOO-C301", "Qihoo 360 C301",
 	     qihoo_c301_setup);
+
+//the following code stops qihoo's uboot booting into the backup system.
+static void erase_callback(struct erase_info *erase)
+{
+	char * buf = (char*) erase->priv;
+	int ret;
+	size_t nb=0;
+
+	if (erase->state == MTD_ERASE_DONE)
+	{
+		ret = mtd_write(erase->mtd, 0, 0x10000, &nb, buf);
+	}
+	kfree(erase);
+	kfree(buf);
+}
+
+static int qihoo_reset_trynum(void)
+{
+	size_t nb = 0;
+	char *buf=0, *p;
+	const char * match = "image1trynum=";
+	size_t matchlen = strlen(match);
+	struct erase_info *erase;
+	struct mtd_info * mtd;
+	unsigned int newcrc;
+	int ret;
+
+	if (! qihoo_c301_board)
+		return 0;
+
+	mtd = get_mtd_device_nm("action_image_config");
+	if (IS_ERR(mtd))
+	{
+		return PTR_ERR(mtd);
+    }
+	if (mtd->size!=0x10000)
+	{
+		return -1;
+	}
+	buf = kzalloc(0x10000+4, GFP_KERNEL);
+	ret = mtd_read(mtd, 0, 0x10000, &nb, buf);
+	if (nb != 0x10000)
+	{
+		kfree(buf);
+		return -1;
+	}
+	for (p=buf+4; *p; p+=strlen(p)+1)
+	{
+		if (strncmp(p, match, matchlen)==0)
+		{
+			p += matchlen;
+			while (*p)
+				*p++ = '0';
+			break;
+		}
+	}
+
+	newcrc = crc32(~0, buf+4, 0xfffc)^0xffffffff;
+	memcpy(buf, &newcrc, 4);
+
+	erase = kzalloc(sizeof(struct erase_info), GFP_KERNEL);
+	if (!erase)
+	{
+		kfree(buf);
+		return -1;
+	}
+	erase->mtd      = mtd;
+	erase->callback = erase_callback;
+	erase->addr     = 0;
+	erase->len      = 0x10000;
+	erase->priv     = (u_long) buf;
+	ret = mtd_erase(mtd, erase);
+
+	if (ret) {
+		kfree(buf);
+		kfree(erase);
+		return ret;
+	}
+
+	return 0;
+}
+late_initcall(qihoo_reset_trynum);
