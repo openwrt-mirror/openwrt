@@ -110,7 +110,7 @@ static struct dsa_platform_data tl_wr941nd_dsa_data = {
 static void __init tl_wr941nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = ath79_get_eeprom();
+	u8 *eeprom = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_mdio(0, 0x0);
 

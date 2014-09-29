@@ -101,11 +101,11 @@ u8 *ath79_get_eeprom(void)
 	if (flash_32m_jedec[i] != jedec_id)
 	{
 		iounmap(ath79_spi_base);
-		return (u8 *) KSEG1ADDR(0x1fff1000);
+		return (u8 *) KSEG1ADDR(0x1fff0000);
 	}
 
 	ath79_flash_read(0x01ff0000, 0x10000, ath79_eeprom);
 
 	iounmap(ath79_spi_base);
-	return (u8 *) ((u32) ath79_eeprom + 0x1000);
+	return (u8 *) ((u32) ath79_eeprom);
 }

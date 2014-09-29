@@ -116,7 +116,7 @@ static struct gpio_keys_button tl_mr3040_v2_gpio_keys[] __initdata = {
 static void __init common_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = ath79_get_eeprom();
+	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	/* Disable hardware control LAN1 and LAN2 LEDs, enabling GPIO14 and GPIO15 */
 	ath79_gpio_function_disable(AR933X_GPIO_FUNC_ETH_SWITCH_LED1_EN |

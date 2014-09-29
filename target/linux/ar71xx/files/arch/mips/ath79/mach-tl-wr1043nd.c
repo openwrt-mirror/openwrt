@@ -109,7 +109,7 @@ static struct platform_device tl_wr1043nd_rtl8366rb_device = {
 static void __init tl_wr1043nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = ath79_get_eeprom();
+	u8 *eeprom = (ath79_get_eeprom() + 0x1000);
 
 	tl_wr1043nd_rtl8366rb_hw_reset(true);
 

@@ -106,7 +106,7 @@ static struct mdio_board_info db120_mdio0_info[] = {
 static void __init tl_wr1041nv2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = ath79_get_eeprom();
+	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_m25p80(&tl_wr1041nv2_flash_data);
 

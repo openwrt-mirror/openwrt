@@ -79,7 +79,7 @@ static struct gpio_keys_button tl_mr3x20_gpio_keys[] __initdata = {
 static void __init tl_ap99_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = ath79_get_eeprom();
+	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_m25p80(&tl_mr3x20_flash_data);
 

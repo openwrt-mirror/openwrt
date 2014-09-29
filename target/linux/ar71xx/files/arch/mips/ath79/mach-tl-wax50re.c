@@ -225,7 +225,7 @@ static struct gpio_led tl_wa801nd_v2_leds_gpio[] __initdata = {
 static void __init tl_ap123_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = ath79_get_eeprom();
+	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_m25p80(&tl_wax50re_flash_data);
 

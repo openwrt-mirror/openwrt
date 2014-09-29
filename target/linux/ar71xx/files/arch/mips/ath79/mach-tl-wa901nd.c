@@ -95,7 +95,7 @@ static void __init common_setup(void)
 static void __init tl_wa901nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee  = ath79_get_eeprom();
+	u8 *ee  = (ath79_get_eeprom() + 0x1000);
 
 	ath79_gpio_function_disable(AR724X_GPIO_FUNC_ETH_SWITCH_LED0_EN |
 				    AR724X_GPIO_FUNC_ETH_SWITCH_LED1_EN |

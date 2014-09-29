@@ -77,7 +77,7 @@ static struct gpio_keys_button tl_wa901nd_v2_gpio_keys[] __initdata = {
 static void __init tl_wa901nd_v2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom  = ath79_get_eeprom();
+	u8 *eeprom  = (ath79_get_eeprom() + 0x1000);
 
 	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 

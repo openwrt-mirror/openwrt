@@ -87,7 +87,7 @@ static struct gpio_keys_button tl_wa830re_v2_gpio_keys[] __initdata = {
 static void __init tl_ap123_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = ath79_get_eeprom();
+	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	/* Disable JTAG, enabling GPIOs 0-3 */
 	/* Configure OBS4 line, for GPIO 4*/

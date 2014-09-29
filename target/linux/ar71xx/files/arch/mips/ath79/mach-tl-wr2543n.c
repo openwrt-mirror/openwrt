@@ -116,7 +116,7 @@ static struct platform_device tl_wr2543n_rtl8367_device = {
 static void __init tl_wr2543n_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = ath79_get_eeprom();
+	u8 *eeprom = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_m25p80(&tl_wr2543n_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr2543n_leds_gpio),
