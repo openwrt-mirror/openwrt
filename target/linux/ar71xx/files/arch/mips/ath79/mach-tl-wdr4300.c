@@ -27,6 +27,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define WDR4300_GPIO_LED_USB1		11
 #define WDR4300_GPIO_LED_USB2		12
@@ -155,7 +156,7 @@ static struct mdio_board_info wdr4300_mdio0_info[] = {
 static void __init wdr4300_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+	u8 *art = ath79_get_eeprom();
 	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wdr4300_flash_data);

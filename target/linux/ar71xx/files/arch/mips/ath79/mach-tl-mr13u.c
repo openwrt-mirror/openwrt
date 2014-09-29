@@ -20,6 +20,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_MR13U_GPIO_LED_SYSTEM	27
 
@@ -79,7 +80,7 @@ static struct gpio_keys_button tl_mr13u_gpio_keys[] __initdata = {
 static void __init tl_mr13u_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *ee = ath79_get_eeprom();
 
 	/* disable PHY_SWAP and PHY_ADDR_SWAP bits */
 	ath79_setup_ar933x_phy4_switch(false, false);

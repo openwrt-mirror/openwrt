@@ -21,6 +21,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WR741NDV4_GPIO_BTN_RESET	11
 #define TL_WR741NDV4_GPIO_BTN_WPS	26
@@ -132,7 +133,7 @@ static struct gpio_keys_button tl_mr3220v2_gpio_keys[] __initdata = {
 static void __init tl_ap121_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *ee = ath79_get_eeprom();
 
 	ath79_setup_ar933x_phy4_switch(false, false);
 

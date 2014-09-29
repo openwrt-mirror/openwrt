@@ -21,6 +21,7 @@
 #include "dev-m25p80.h"
 #include "machtypes.h"
 #include "pci.h"
+#include "eeprom.h"
 
 #define TL_WA901ND_GPIO_LED_QSS		0
 #define TL_WA901ND_GPIO_LED_SYSTEM	1
@@ -94,7 +95,7 @@ static void __init common_setup(void)
 static void __init tl_wa901nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee  = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *ee  = ath79_get_eeprom();
 
 	ath79_gpio_function_disable(AR724X_GPIO_FUNC_ETH_SWITCH_LED0_EN |
 				    AR724X_GPIO_FUNC_ETH_SWITCH_LED1_EN |

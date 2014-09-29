@@ -28,6 +28,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define WDR3500_GPIO_LED_USB		11
 #define WDR3500_GPIO_LED_WLAN2G		13
@@ -106,7 +107,7 @@ static struct gpio_keys_button wdr3500_gpio_keys[] __initdata = {
 static void __init wdr3500_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+	u8 *art = ath79_get_eeprom();
 	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wdr3500_flash_data);

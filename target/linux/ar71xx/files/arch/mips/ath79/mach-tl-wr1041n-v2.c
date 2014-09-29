@@ -27,6 +27,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WR1041NV2_GPIO_BTN_RESET	14
 #define TL_WR1041NV2_GPIO_LED_WPS	13
@@ -105,7 +106,7 @@ static struct mdio_board_info db120_mdio0_info[] = {
 static void __init tl_wr1041nv2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *ee = ath79_get_eeprom();
 
 	ath79_register_m25p80(&tl_wr1041nv2_flash_data);
 

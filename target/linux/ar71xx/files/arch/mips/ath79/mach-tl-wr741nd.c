@@ -18,6 +18,7 @@
 #include "dev-leds-gpio.h"
 #include "dev-m25p80.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WR741ND_GPIO_LED_QSS		0
 #define TL_WR741ND_GPIO_LED_SYSTEM	1
@@ -95,7 +96,7 @@ static struct gpio_keys_button tl_wr741nd_gpio_keys[] __initdata = {
 static void __init tl_wr741nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *ee = ath79_get_eeprom();
 
 	ath79_register_m25p80(&tl_wr741nd_flash_data);
 

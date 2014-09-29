@@ -20,6 +20,7 @@
 #include "dev-m25p80.h"
 #include "dev-usb.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WR2543N_GPIO_LED_WPS        0
 #define TL_WR2543N_GPIO_LED_USB        8
@@ -115,7 +116,7 @@ static struct platform_device tl_wr2543n_rtl8367_device = {
 static void __init tl_wr2543n_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *eeprom = ath79_get_eeprom();
 
 	ath79_register_m25p80(&tl_wr2543n_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr2543n_leds_gpio),

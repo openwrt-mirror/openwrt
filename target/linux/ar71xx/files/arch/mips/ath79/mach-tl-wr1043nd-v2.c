@@ -36,6 +36,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WR1043_V2_GPIO_LED_WLAN	12
 #define TL_WR1043_V2_GPIO_LED_USB	15
@@ -167,7 +168,7 @@ static struct mdio_board_info wr1043nd_v2_mdio0_info[] = {
 static void __init tl_wr1043nd_v2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+	u8 *art = ath79_get_eeprom();
 
 	ath79_register_m25p80(&wr1043nd_v2_flash_data);
 

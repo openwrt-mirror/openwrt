@@ -30,6 +30,7 @@
 #include "dev-wmac.h"
 #include "machtypes.h"
 #include "pci.h"
+#include "eeprom.h"
 
 #define WDR6300_GPIO_LED_WLAN2G                13
 #define WDR6300_GPIO_LED_SYSTEM                14
@@ -93,7 +94,7 @@ static struct gpio_keys_button wdr6300_gpio_keys[] __initdata = {
 static void __init wdr6300_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+	u8 *art = ath79_get_eeprom();
 	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wdr6300_flash_data);

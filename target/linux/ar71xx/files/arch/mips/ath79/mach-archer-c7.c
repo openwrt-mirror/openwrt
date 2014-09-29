@@ -42,6 +42,7 @@
 #include "dev-wmac.h"
 #include "machtypes.h"
 #include "pci.h"
+#include "eeprom.h"
 
 #define ARCHER_C7_GPIO_LED_WLAN2G	12
 #define ARCHER_C7_GPIO_LED_SYSTEM	14
@@ -186,7 +187,7 @@ static struct mdio_board_info archer_c7_mdio0_info[] = {
 static void __init common_setup(bool pcie_slot)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+	u8 *art = ath79_get_eeprom();
 	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&archer_c7_flash_data);

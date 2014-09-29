@@ -21,6 +21,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WR1043ND_GPIO_LED_USB        1
 #define TL_WR1043ND_GPIO_LED_SYSTEM     2
@@ -108,7 +109,7 @@ static struct platform_device tl_wr1043nd_rtl8366rb_device = {
 static void __init tl_wr1043nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *eeprom = ath79_get_eeprom();
 
 	tl_wr1043nd_rtl8366rb_hw_reset(true);
 

@@ -19,6 +19,7 @@
 #include "dev-leds-gpio.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "eeprom.h"
 
 #define TL_WA901ND_V2_GPIO_LED_QSS		4
 #define TL_WA901ND_V2_GPIO_LED_SYSTEM		2
@@ -76,7 +77,7 @@ static struct gpio_keys_button tl_wa901nd_v2_gpio_keys[] __initdata = {
 static void __init tl_wa901nd_v2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom  = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *eeprom  = ath79_get_eeprom();
 
 	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 
