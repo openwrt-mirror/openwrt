@@ -86,6 +86,7 @@ static struct gpio_keys_button qihoo_c301_gpio_keys[] __initdata = {
 	},
 };
 static int qihoo_c301_board=0;
+static u8 wlan24mac[ETH_ALEN];
 static void qihoo_c301_get_mac(const char *name, char *mac)
 {
 	u8 *nvram = (u8 *) KSEG1ADDR(QIHOO_C301_NVRAM_ADDR);
@@ -101,8 +102,6 @@ static void qihoo_c301_get_mac(const char *name, char *mac)
 
 static void __init qihoo_c301_setup(void)
 {
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_gpio_output_select(QIHOO_C301_GPIO_SPI_CS1,
                              AR934X_GPIO_OUT_SPI_CS1);
@@ -131,8 +130,7 @@ static void __init qihoo_c301_setup(void)
 	ath79_wmac_set_ext_lna_gpio(0, QIHOO_C301_GPIO_EXTERNAL_LNA0);
 	ath79_wmac_set_ext_lna_gpio(1, QIHOO_C301_GPIO_EXTERNAL_LNA1);
 
-	qihoo_c301_get_mac("wlan24mac=", tmpmac);
-	ath79_register_wmac(art + QIHOO_C301_WMAC_CALDATA_OFFSET, tmpmac);
+	qihoo_c301_get_mac("wlan24mac=", wlan24mac);
 
 	ath79_register_pci();
 
@@ -171,84 +169,39 @@ static void __init qihoo_c301_setup(void)
 MIPS_MACHINE(ATH79_MACH_QIHOO_C301, "QIHOO-C301", "Qihoo 360 C301",
 	     qihoo_c301_setup);
 
-//the following code stops qihoo's uboot booting into the backup system.
-static void erase_callback(struct erase_info *erase)
-{
-	char * buf = (char*) erase->priv;
-	int ret;
-	size_t nb=0;
 
-	if (erase->state == MTD_ERASE_DONE)
-	{
-		ret = mtd_write(erase->mtd, 0, 0x10000, &nb, buf);
-	}
-	kfree(erase);
-	kfree(buf);
-}
+//在mtd驱动加载结束后初始化无线数据，以便通过mtd读取ART数据
 
-static int qihoo_reset_trynum(void)
+static int qihoo_init_wmac(void)
 {
-	size_t nb = 0;
-	char *buf=0, *p;
-	const char * match = "image1trynum=";
-	size_t matchlen = strlen(match);
-	struct erase_info *erase;
 	struct mtd_info * mtd;
-	unsigned int newcrc;
+	size_t nb = 0;
+	u8 *art;
 	int ret;
 
-	if (! qihoo_c301_board)
+	if (!qihoo_c301_board)
 		return 0;
 
-	mtd = get_mtd_device_nm("action_image_config");
+	mtd = get_mtd_device_nm("radiocfg");
 	if (IS_ERR(mtd))
-	{
 		return PTR_ERR(mtd);
-    }
-	if (mtd->size!=0x10000)
-	{
-		return -1;
-	}
-	buf = kzalloc(0x10000+4, GFP_KERNEL);
-	ret = mtd_read(mtd, 0, 0x10000, &nb, buf);
-	if (nb != 0x10000)
-	{
-		kfree(buf);
-		return -1;
-	}
-	for (p=buf+4; *p; p+=strlen(p)+1)
-	{
-		if (strncmp(p, match, matchlen)==0)
-		{
-			p += matchlen;
-			while (*p)
-				*p++ = '0';
-			break;
-		}
-	}
 
-	newcrc = crc32(~0, buf+4, 0xfffc)^0xffffffff;
-	memcpy(buf, &newcrc, 4);
-
-	erase = kzalloc(sizeof(struct erase_info), GFP_KERNEL);
-	if (!erase)
-	{
-		kfree(buf);
+	if (mtd->size != 0x10000)
 		return -1;
-	}
-	erase->mtd      = mtd;
-	erase->callback = erase_callback;
-	erase->addr     = 0;
-	erase->len      = 0x10000;
-	erase->priv     = (u_long) buf;
-	ret = mtd_erase(mtd, erase);
 
-	if (ret) {
-		kfree(buf);
-		kfree(erase);
+	art = kzalloc(0x1000, GFP_KERNEL);
+	if (!art)
+		return -1;
+	ret = mtd_read(mtd, QIHOO_C301_WMAC_CALDATA_OFFSET, 0x1000, &nb, art);
+	if (nb != 0x1000)
+	{
+		kfree(art);
 		return ret;
 	}
 
+	ath79_register_wmac(art, wlan24mac);
+
 	return 0;
 }
-late_initcall(qihoo_reset_trynum);
+
+late_initcall(qihoo_init_wmac);

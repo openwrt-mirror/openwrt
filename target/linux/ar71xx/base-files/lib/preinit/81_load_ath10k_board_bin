@@ -27,15 +27,18 @@ do_load_ath10k_board_bin() {
 		;;
 		qihoo-c301)
 			local mac
+            local mtd
+
+            mtd=$(cat /proc/mtd | grep radiocfg | sed 's/mtd\([0-9]*\):.*/\1/g')
           	mac=$(mtd_get_mac_ascii devdata wlan5mac)
 			if [ -z "$mac" ]; then
 				mac=$(macaddr_add $(cat /sys/class/net/eth0/address) -2)
 			fi
-			dd if=/dev/mtdblock10 \
+			dd if=/dev/mtdblock${mtd} \
 				bs=1 skip=20480 count=6 \
 				of=/tmp/ath10k-board.bin
 			macaddr_2bin $mac >> /tmp/ath10k-board.bin
-			dd if=/dev/mtdblock10 \
+			dd if=/dev/mtdblock${mtd} \
 				bs=1 skip=20492 count=2104 >> /tmp/ath10k-board.bin
 
 		;;
