@@ -15,8 +15,8 @@ override MAKEFLAGS=
 override MAKE:=$(SUBMAKE)
 KDIR=$(KERNEL_BUILD_DIR)
 DTS_DIR:=$(LINUX_DIR)/arch/$(ARCH)/boot/dts/
-
-IMG_PREFIX:=openwrt-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+COMPILE_DATE=`date +%F`
+IMG_PREFIX:=openwrt-by-981213-$(REVISION)-$(COMPILE_DATE)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
 MKFS_DEVTABLE_OPT := -D $(INCLUDE_DIR)/device_table.txt
 
