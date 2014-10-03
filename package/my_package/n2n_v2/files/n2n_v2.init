@@ -41,10 +41,10 @@ stop_instance() {
 
 	case "$type" in
 	  edge)
-		killall edge
+		killall -9 edge
 		;;
 	  supernode)
-		killall supernode
+		killall -9 supernode
 		;;
 	esac
 }
@@ -57,6 +57,6 @@ start() {
 
 stop() {
 	config_load 'n2n_v2'
-	config_foreach stop_instance 'edge'
-	config_foreach stop_instance 'supernode'
+    killall -9 edge
+    killall -9 supernode
 }
