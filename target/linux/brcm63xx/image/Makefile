@@ -233,24 +233,6 @@ endef
 
 define Image/Build
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
-	# Various routers
-	$(call Image/Build/CFE,$(1),963281TAN,6328,963281TAN-4M-flash-generic,,--pad 2)
-	$(call Image/Build/CFE,$(1),963281TAN,6328,963281TAN-8M-flash-generic,,--pad 4)
-	$(call Image/Build/CFE,$(1),963281TAN,6328,963281TAN-16M-flash-generic,,--pad 8)
-	$(call Image/Build/CFE,$(1),96345GW2,6345,96345GW2-generic)
-	$(call Image/Build/CFE,$(1),96345GW2,6345,96348GW2-bc221,,--layoutver 5)
-	$(call Image/Build/CFE,$(1),96345GW2,6345,92345GW2-rev,OpenWRT-$(REVISION))
-	$(call Image/Build/CFE,$(1),96348GW,6348,96348GW-generic,,)
-	$(call Image/Build/CFE,$(1),96348R,6348,96348R-generic,,)
-	$(call Image/Build/CFE,$(1),96348GW,6348,96348GW-bc221,,--layoutver 5)
-	$(call Image/Build/CFE,$(1),6338GW,6338,6338GW-generic,,)
-	$(call Image/Build/CFE,$(1),6338W,6338,6338W-generic,,)
-	$(call Image/Build/CFE,$(1),96348GW-11,6348,96348GW-11-generic)
-	$(call Image/Build/CFE,$(1),96348GW-10,6348,96348GW-10-generic)
-	$(call Image/Build/CFE,$(1),96358VW,6358,96358VW-generic)
-	$(call Image/Build/CFE,$(1),96358VW2,6358,96358VW2-generic)
-	$(call Image/Build/CFE,$(1),96368MVNgr,6368,96368MVNgr-generic)
-	$(call Image/Build/CFE,$(1),96368MVWG,6368,96368MVWG-generic)
 
 	# BT Voyager V210_BTR
 	$(call Image/Build/CFE,$(1),V210_BB,6348,BTV210_BTR,,--layoutver 5)
@@ -337,10 +319,38 @@ define Image/Build
   endif
 endef
 
+# Generic 963281TAN
+$(eval $(call CfeImageDTB,963281TAN,bcm963281TAN,963281TAN,6328,963281TAN-4M-flash-generic,,--pad 2))
+$(eval $(call CfeImageDTB,963281TAN,bcm963281TAN,963281TAN,6328,963281TAN-8M-flash-generic,,--pad 4))
+$(eval $(call CfeImageDTB,963281TAN,bcm963281TAN,963281TAN,6328,963281TAN-16M-flash-generic,,--pad 8))
 # Generic 96328avng
 $(eval $(call CfeImageDTB,96328avng,bcm96328avng,96328avng,6328,96328avng-4M-flash-generic,,--pad 2))
 $(eval $(call CfeImageDTB,96328avng,bcm96328avng,96328avng,6328,96328avng-8M-flash-generic,,--pad 4))
 $(eval $(call CfeImageDTB,96328avng,bcm96328avng,96328avng,6328,96328avng-16M-flash-generic,,--pad 8))
+# Generic 96338GW
+$(eval $(call CfeImageDTB,96338GW,bcm96338GW,6338GW,6338,96338GW-generic))
+# Generic 96338W
+$(eval $(call CfeImageDTB,96338W,bcm96338W,6338W,6338,96338W-generic))
+# Generic 96345GW2
+$(eval $(call CfeImageDTB,96345GW2,bcm96345GW2,96345GW2,6345,96345GW2-generic))
+$(eval $(call CfeImageDTB,96345GW2,bcm96345GW2,96345GW2,6345,96345GW2-bc221,,--layoutver 5))
+# Generic 96348GW
+$(eval $(call CfeImageDTB,96348GW,bcm96348GW,96348GW,6348,96348GW-generic))
+$(eval $(call CfeImageDTB,96348GW,bcm96348GW,96348GW,6348,96348GW-bc221,,--layoutver 5))
+# Generic 96348GW-10
+$(eval $(call CfeImageDTB,96348GW_10,bcm96348GW-10,96348GW-10,6348,96348GW-10-generic))
+# Generic 96348GW-11
+$(eval $(call CfeImageDTB,96348GW_11,bcm96348GW-11,96348GW-11,6348,96348GW-11-generic))
+# Generic 96348R
+$(eval $(call CfeImageDTB,96348R,bcm96348R,96348R,6348,96348R-generic))
+# Generic 96358VW
+$(eval $(call CfeImageDTB,96358VW,bcm96358VW,96358VW,6358,96358VW-generic))
+# Generic 96358VW2
+$(eval $(call CfeImageDTB,96358VW2,bcm96358VW2,96358VW2,6358,96358VW2-generic))
+# Generic 96368MVNgr
+$(eval $(call CfeImageDTB,96368MVNgr,bcm96368MVNgr,96368MVNgr,6368,96368MVNgr-generic))
+# Generic 96368MVWG
+$(eval $(call CfeImageDTB,96368MVWG,bcm96368MVWG,96368MVWG,6368,96368MVWG-generic))
 
 # ADB P.DG A4001N
 $(eval $(call CfeImageDTB,A4001N,a4001n,96328dg2x2,6328,A4001N,,--pad 8))
