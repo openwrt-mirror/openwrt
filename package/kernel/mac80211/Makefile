@@ -129,7 +129,7 @@ endef
 $(eval $(call Download,linux-firmware))
 
 PKG_ATH10K_LINUX_FIRMWARE_NAME:=ath10k-firmware
-PKG_ATH10K_LINUX_FIRMWARE_VERSION:=38eeda3ae6f90fde5546bdd48ee4ff3090f238c0
+PKG_ATH10K_LINUX_FIRMWARE_VERSION:=232b419e71dab27b52b96e80ea7649ed67bdac77
 PKG_ATH10K_LINUX_FIRMWARE_SOURCE:=$(PKG_ATH10K_LINUX_FIRMWARE_NAME)-$(PKG_ATH10K_LINUX_FIRMWARE_VERSION).tar.bz2
 PKG_ATH10K_LINUX_FIRMWARE_PROTO:=git
 PKG_ATH10K_LINUX_FIRMWARE_SOURCE_URL:=https://github.com/kvalo/ath10k-firmware.git
@@ -692,7 +692,7 @@ endef
 define KernelPackage/mac80211-hwsim
   $(call KernelPackage/mac80211/Default)
   TITLE:=mac80211 HW simulation device
-  DEPENDS+= +kmod-mac80211
+  DEPENDS+= +kmod-mac80211 +@DRIVER_11N_SUPPORT
   FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/mac80211_hwsim.ko
   AUTOLOAD:=$(call AutoProbe,mac80211_hwsim)
 endef
@@ -1821,18 +1821,17 @@ endef
 
 define KernelPackage/ath10k/install
 	$(INSTALL_DIR) $(1)/lib/firmware/ath10k/QCA988X/hw2.0
-ifeq ($(CONFIG_ATH10K_STA_FW),y)
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
+ifeq ($(CONFIG_ATH10K_STA_FW),y)
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/main/firmware-2.bin_999.999.0.636 \
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 else
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/firmware-2.bin \
-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2/firmware-3.bin_10.2-00082-4-2 \
+		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-3.bin
 endif
 endef
 
