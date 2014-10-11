@@ -1,8 +1,10 @@
 #!/bin/sh
 
-. /lib/functions.sh
-. ../netifd-proto.sh
-init_proto "$@"
+[ -n "$INCLUDE_ONLY" ] || {
+	. /lib/functions.sh
+	. ../netifd-proto.sh
+	init_proto "$@"
+}
 
 proto_qmi_init_config() {
 	available=1
@@ -38,16 +40,18 @@ proto_qmi_setup() {
 	local device apn auth username password pincode delay modes cid pdh
 	json_get_vars device apn auth username password pincode delay modes
 
+	[ -n "$ctl_device" ] && device=$ctl_device
+
 	[ -n "$device" ] || {
 		echo "No control device specified"
 		proto_notify_error "$interface" NO_DEVICE
-		proto_block_restart "$interface"
+		proto_set_available "$interface" 0
 		return 1
 	}
 	[ -c "$device" ] || {
 		echo "The specified control device does not exist"
 		proto_notify_error "$interface" NO_DEVICE
-		proto_block_restart "$interface"
+		proto_set_available "$interface" 0
 		return 1
 	}
 
@@ -57,7 +61,7 @@ proto_qmi_setup() {
 	[ -n "$ifname" ] || {
 		echo "The interface could not be found."
 		proto_notify_error "$interface" NO_IFACE
-		proto_block_restart "$interface"
+		proto_set_available "$interface" 0
 		return 1
 	}
 
@@ -79,7 +83,6 @@ proto_qmi_setup() {
 	[ -n "$apn" ] || {
 		echo "No APN specified"
 		proto_notify_error "$interface" NO_APN
-		proto_block_restart "$interface"
 		return 1
 	}
 
@@ -99,7 +102,6 @@ proto_qmi_setup() {
 	[ $? -ne 0 ] && {
 		echo "Unable to obtain client ID"
 		proto_notify_error "$interface" NO_CID
-		proto_block_restart "$interface"
 		return 1
 	}
 
@@ -134,6 +136,9 @@ proto_qmi_teardown() {
 
 	local device
 	json_get_vars device
+
+	[ -n "$ctl_device" ] && device=$ctl_device
+
 	local cid=$(uci_get_state network $interface cid)
 
 	echo "Stopping network"
@@ -144,5 +149,6 @@ proto_qmi_teardown() {
 	proto_send_update "$interface"
 }
 
-add_protocol qmi
-
+[ -n "$INCLUDE_ONLY" ] || {
+	add_protocol qmi
+}

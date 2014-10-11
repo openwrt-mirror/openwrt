@@ -155,8 +155,11 @@ case "$2" in
 		teardown_interface "$1"
 		setup_interface "$1"
 	;;
-	informed|updated|rebound|ra-updated)
+	informed|updated|rebound)
 		setup_interface "$1"
+	;;
+	ra-updated)
+		[ -n "$ADDRESSES$RA_ADDRESSES$PREFIXES$USERPREFIX" ] && setup_interface "$1"
 	;;
 	started|stopped|unbound)
 		teardown_interface "$1"
