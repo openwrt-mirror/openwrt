@@ -10,6 +10,18 @@ CI_KERNPART="kernel"
 # 'ubi' partition on NAND contains UBI
 CI_UBIPART="ubi"
 
+ubi_mknod() {
+	local dir="$1"
+	local dev="/dev/$(basename $dir)"
+
+	[ -e "$dev" ] && return 0
+
+	local devid="$(cat $dir/dev)"
+	local major="${devid%%:*}"
+	local minor="${devid##*:}"
+	mknod "$dev" c $major $minor
+}
+
 nand_find_volume() {
 	local ubidevdir ubivoldir
 	ubidevdir="/sys/devices/virtual/ubi/$1"
@@ -18,6 +30,7 @@ nand_find_volume() {
 		[ ! -d "$ubivoldir" ] && continue
 		if [ "$( cat $ubivoldir/name )" = "$2" ]; then
 			basename $ubivoldir
+			ubi_mknod "$ubivoldir"
 			return 0
 		fi
 	done
@@ -33,6 +46,7 @@ nand_find_ubi() {
 		[ ! "$mtdnum" ] && continue
 		if [ "$mtdnum" = "$cmtdnum" ]; then
 			ubidev=$( basename $ubidevdir )
+			ubi_mknod "$ubidevdir"
 			echo $ubidev
 			return 0
 		fi
@@ -122,7 +136,7 @@ nand_upgrade_prepare_ubi() {
 		ubiattach -m "$mtdnum"
 		sync
 		ubidev="$( nand_find_ubi "$CI_UBIPART" )"
-	 	[ -z "$has_env" ] || {
+		[ "$has_env" -gt 0 ] && {
 			ubimkvol /dev/$ubidev -n 0 -N ubootenv -s 1MiB
 			ubimkvol /dev/$ubidev -n 1 -N ubootenv2 -s 1MiB
 		}
@@ -260,8 +274,8 @@ nand_do_upgrade_stage2() {
 
 	[ ! "$(find_mtd_index "$CI_UBIPART")" ] && CI_UBIPART="rootfs"
 
-	[ "$file_type" == "ubi" ] && nand_upgrade_ubinized $1
-	[ "$file_type" == "ubifs" ] && nand_upgrade_ubifs $1
+	[ "$file_type" = "ubi" ] && nand_upgrade_ubinized $1
+	[ "$file_type" = "ubifs" ] && nand_upgrade_ubifs $1
 	nand_upgrade_tar $1
 }
 
