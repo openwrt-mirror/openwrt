@@ -28,6 +28,11 @@ PKG_CONFIG_DEPENDS:=CONFIG_OPENSSL_ENGINE_CRYPTO CONFIG_OPENSSL_ENGINE_DIGEST \
 
 include $(INCLUDE_DIR)/package.mk
 
+ifneq ($(CONFIG_CCACHE),)
+HOSTCC=$(HOSTCC_NOCACHE)
+HOSTCXX=$(HOSTCXX_NOCACHE)
+endif
+
 define Package/openssl/Default
   TITLE:=Open source SSL toolkit
   URL:=http://www.openssl.org/
@@ -51,6 +56,7 @@ $(call Package/openssl/Default)
   CATEGORY:=Libraries
   DEPENDS:=+zlib
   TITLE+= (libraries)
+  ABI_VERSION:=$(PKG_VERSION)
   MENU:=1
 endef
 
@@ -99,7 +105,7 @@ ifndef CONFIG_OPENSSL_WITH_EC2M
 endif
 
 ifeq ($(CONFIG_x86_64),y)
-  OPENSSL_TARGET:=linux-x86_64
+  OPENSSL_TARGET:=linux-x86_64-openwrt
   OPENSSL_MAKEFLAGS += LIBDIR=lib
 else
   OPENSSL_OPTIONS+=no-sse2

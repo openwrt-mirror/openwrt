@@ -21,6 +21,7 @@ qstrip=$(strip $(subst ",,$(1)))
 
 empty:=
 space:= $(empty) $(empty)
+comma:=,
 merge=$(subst $(space),,$(1))
 confvar=$(call merge,$(foreach v,$(1),$(if $($(v)),y,n)))
 strip_last=$(patsubst %.$(lastword $(subst .,$(space),$(1))),%,$(1))
@@ -187,9 +188,9 @@ export PKG_CONFIG
 
 HOSTCC:=gcc
 HOSTCXX:=g++
-HOST_CPPFLAGS:=-I$(STAGING_DIR_HOST)/include
+HOST_CPPFLAGS:=-I$(STAGING_DIR_HOST)/include -I$(STAGING_DIR_HOST)/usr/include
 HOST_CFLAGS:=-O2 $(HOST_CPPFLAGS)
-HOST_LDFLAGS:=-L$(STAGING_DIR_HOST)/lib
+HOST_LDFLAGS:=-L$(STAGING_DIR_HOST)/lib -L$(STAGING_DIR_HOST)/usr/lib
 
 TARGET_CC:=$(TARGET_CROSS)gcc
 TARGET_AR:=$(TARGET_CROSS)ar
@@ -277,8 +278,7 @@ V_$(subst .,_,$(subst -,_,$(subst /,_,$(1))))
 endef
 
 define shexport
-$(call shvar,$(1))=$$(call $(1))
-export $(call shvar,$(1))
+export $(call shvar,$(1))=$$(call $(1))
 endef
 
 define include_mk
