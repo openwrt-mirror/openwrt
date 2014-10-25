@@ -1,0 +1,458 @@
+diff -ruN dnsmasq/dnsmasq.conf.example dnsmasq-chinadns/dnsmasq.conf.example
+--- dnsmasq/dnsmasq.conf.example	2014-10-23 11:32:05.045206859 +0800
++++ dnsmasq-chinadns/dnsmasq.conf.example	2014-10-23 11:33:53.095107484 +0800
+@@ -25,6 +25,13 @@
+ #conf-file=%%PREFIX%%/share/dnsmasq/trust-anchors.conf
+ #dnssec
+ 
++# Specify file containing spurious IP. dnsmasq will ignore DNS
++# replies with these IP.
++#spurious-ip-file=/etc/spurious_ips.conf
++# Or specify IP address one by one.
++#spurious-ip = 64.33.99.47
++#spurious-ip = 4.36.66.178
++
+ # Replies which are not DNSSEC signed may be legitimate, because the domain
+ # is unsigned, or may be forgeries. Setting this option tells dnsmasq to
+ # check that an unsigned reply is OK, by finding a secure proof that a DS 
+diff -ruN dnsmasq/dnsmasq.resolv.conf dnsmasq-chinadns/dnsmasq.resolv.conf
+--- dnsmasq/dnsmasq.resolv.conf	1970-01-01 08:00:00.000000000 +0800
++++ dnsmasq-chinadns/dnsmasq.resolv.conf	2014-10-23 10:50:28.169685634 +0800
+@@ -0,0 +1,3 @@
++# Order of name servers will affect CDN.
++nameserver 114.114.114.114
++nameserver 8.8.8.8
+diff -ruN dnsmasq/spurious_ips.conf dnsmasq-chinadns/spurious_ips.conf
+--- dnsmasq/spurious_ips.conf	1970-01-01 08:00:00.000000000 +0800
++++ dnsmasq-chinadns/spurious_ips.conf	2014-10-23 10:50:28.178685624 +0800
+@@ -0,0 +1,38 @@
++74.125.127.102
++74.125.155.102
++74.125.39.102
++74.125.39.113
++209.85.229.138
++128.121.126.139
++159.106.121.75
++169.132.13.103
++192.67.198.6
++202.106.1.2
++202.181.7.85
++203.161.230.171
++203.98.7.65
++207.12.88.98
++208.56.31.43
++209.145.54.50
++209.220.30.174
++209.36.73.33
++211.94.66.147
++213.169.251.35
++216.221.188.182
++216.234.179.13
++243.185.187.39
++37.61.54.158
++4.36.66.178
++46.82.174.68
++59.24.3.173
++64.33.88.161
++64.33.99.47
++64.66.163.251
++65.104.202.252
++65.160.219.113
++66.45.252.237
++72.14.205.104
++72.14.205.99
++78.16.49.15
++8.7.198.45
++93.46.8.89
+diff -ruN dnsmasq/src/config.h dnsmasq-chinadns/src/config.h
+--- dnsmasq/src/config.h	2014-10-23 11:15:36.688177544 +0800
++++ dnsmasq-chinadns/src/config.h	2014-10-23 11:33:53.090107488 +0800
+@@ -200,6 +200,14 @@
+ #   endif
+ #endif
+ 
++#ifndef SPURIOUS_IPS
++#   if defined(__uClinux__)
++#      define SPURIOUS_IPS "/etc/config/spurious_ips.conf"
++#   else
++#      define SPURIOUS_IPS "/etc/spurious_ips.conf"
++#   endif
++#endif
++
+ #ifndef RUNFILE
+ #   if defined(__ANDROID__)
+ #      define RUNFILE "/data/dnsmasq.pid"
+diff -ruN dnsmasq/src/dnsmasq.c dnsmasq-chinadns/src/dnsmasq.c
+--- dnsmasq/src/dnsmasq.c	2014-10-23 11:15:36.690177542 +0800
++++ dnsmasq-chinadns/src/dnsmasq.c	2014-10-23 11:33:53.089107489 +0800
+@@ -84,6 +84,7 @@
+   rand_init(); /* Must precede read_opts() */
+   
+   read_opts(argc, argv, compile_opts);
++  my_syslog(LOG_INFO, _("address of daemon %p"), daemon);
+  
+   if (daemon->edns_pktsz < PACKETSZ)
+     daemon->edns_pktsz = PACKETSZ;
+diff -ruN dnsmasq/src/dnsmasq.h dnsmasq-chinadns/src/dnsmasq.h
+--- dnsmasq/src/dnsmasq.h	2014-10-23 11:15:36.691177541 +0800
++++ dnsmasq-chinadns/src/dnsmasq.h	2014-10-23 11:33:53.087107491 +0800
+@@ -543,6 +543,13 @@
+   char *name;
+ };
+ 
++struct spurious_ip {
++  u8 (*ip)[4];
++  int max_entry; /* maximum entries to hold in ip array. */
++  int nr_entry;
++  char *name;
++};
++
+ /* adn-hosts parms from command-line (also dhcp-hostsfile and dhcp-optsfile */
+ #define AH_DIR      1
+ #define AH_INACTIVE 2
+@@ -576,6 +583,9 @@
+ #define FREC_DO_QUESTION       64
+ #define FREC_ADDED_PHEADER    128
+ #define FREC_CHECK_NOSIGN     256
++#define FREC_RECURSIVE        512
++
++#define FREC_RECURSIVE_BIT      9
+ 
+ #ifdef HAVE_DNSSEC
+ #define HASH_SIZE 20 /* SHA-1 digest size */
+@@ -900,6 +910,7 @@
+ 
+   unsigned int options, options2;
+   struct resolvc default_resolv, *resolv_files;
++  struct spurious_ip spurious;
+   time_t last_resolv;
+   char *servers_file;
+   struct mx_srv_record *mxnames;
+@@ -1135,6 +1146,7 @@
+ char *canonicalise(char *s, int *nomem);
+ unsigned char *do_rfc1035_name(unsigned char *p, char *sval);
+ void *safe_malloc(size_t size);
++void *safe_realloc(void *p, size_t size);
+ void safe_pipe(int *fd, int read_noblock);
+ void *whine_malloc(size_t size);
+ int sa_len(union mysockaddr *addr);
+@@ -1162,6 +1174,7 @@
+ 
+ int wildcard_match(const char* wildcard, const char* match);
+ int wildcard_matchn(const char* wildcard, const char* match, int num);
++int cmp_int32(const void *a, const void *b);
+ 
+ /* log.c */
+ void die(char *message, char *arg1, int exit_code);
+diff -ruN dnsmasq/src/forward.c dnsmasq-chinadns/src/forward.c
+--- dnsmasq/src/forward.c	2014-10-23 11:32:05.059206847 +0800
++++ dnsmasq-chinadns/src/forward.c	2014-10-23 11:33:53.082107495 +0800
+@@ -337,6 +337,9 @@
+ 	  memcpy(forward->hash, hash, HASH_SIZE);
+ 	  forward->forwardall = 0;
+ 	  forward->flags = 0;
++          if (header->hb3 & HB3_RD)
++            forward->flags |= FREC_RECURSIVE;
++          /* my_syslog(LOG_WARNING, _("Forward original HB3_RD: %d"), header->hb3 & HB3_RD); */
+ 	  if (norebind)
+ 	    forward->flags |= FREC_NOREBIND;
+ 	  if (header->hb4 & HB4_CD)
+@@ -529,6 +532,7 @@
+   char **sets = 0;
+   int munged = 0, is_sign;
+   size_t plen; 
++  int extract_addr_ret = 0;
+ 
+   (void)ad_reqd;
+   (void) do_bit;
+@@ -623,8 +627,13 @@
+ 	  SET_RCODE(header, NOERROR);
+ 	  cache_secure = 0;
+ 	}
+-      
+-      if (extract_addresses(header, n, daemon->namebuff, now, sets, is_sign, check_rebind, no_cache, cache_secure, &doctored))
++
++        /* store the return value for later use
++           the special return value -1 is used to denote spurious IP */
++        extract_addr_ret = extract_addresses(header, n, daemon->namebuff, now,
++                                             sets, is_sign, check_rebind,
++                                             no_cache, cache_secure, &doctored);
++        if (extract_addr_ret)
+ 	{
+ 	  my_syslog(LOG_WARNING, _("possible DNS-rebind attack detected: %s"), daemon->namebuff);
+ 	  munged = 1;
+@@ -666,6 +675,8 @@
+       header->nscount = htons(0);
+       header->arcount = htons(0);
+     }
++  if (extract_addr_ret == -1)
++      return (size_t)-1;
+   
+   /* the bogus-nxdomain stuff, doctor and NXDOMAIN->NODATA munging can all elide
+      sections of the packet. Find the new length here and put back pseudoheader
+@@ -673,6 +684,8 @@
+   return resize_packet(header, n, pheader, plen);
+ }
+ 
++#define MAX_RETRY 8
++
+ /* sets new last_server */
+ void reply_query(int fd, int family, time_t now)
+ {
+@@ -682,14 +695,18 @@
+   union mysockaddr serveraddr;
+   struct frec *forward;
+   socklen_t addrlen = sizeof(serveraddr);
+-  ssize_t n = recvfrom(fd, daemon->packet, daemon->packet_buff_sz, 0, &serveraddr.sa, &addrlen);
++  ssize_t n;
+   size_t nn;
+   struct server *server;
+   void *hash;
++  int retry_cnt = 0;
+ #ifndef HAVE_DNSSEC
+   unsigned int crc;
+ #endif
+ 
++retry:
++  n = recvfrom(fd, daemon->packet, daemon->packet_buff_sz, 0, &serveraddr.sa, &addrlen);
++
+   /* packet buffer overwritten */
+   daemon->srv_save = NULL;
+   
+@@ -780,6 +797,17 @@
+     {
+       int check_rebind = 0, no_cache_dnssec = 0, cache_secure = 0;
+ 
++      /* the recursive desired bit has been changed by mitm */
++      if (((forward->flags & FREC_RECURSIVE) >> FREC_RECURSIVE_BIT)
++          ^ (header->hb3 & HB3_RD)) {
++        my_syslog(LOG_WARNING, _("flags: %d, hb3_rd: %d"),
++                  (forward->flags & FREC_RECURSIVE), (header->hb3 & HB3_RD));
++        if (retry_cnt++ < MAX_RETRY)
++          goto retry;
++        else
++          return;
++      }
++
+       if (option_bool(OPT_NO_REBIND))
+ 	check_rebind = !(forward->flags & FREC_NOREBIND);
+       
+@@ -993,9 +1021,14 @@
+       else
+ 	header->hb4 &= ~HB4_CD;
+       
+-      if ((nn = process_reply(header, now, server, (size_t)n, check_rebind, no_cache_dnssec, cache_secure,
+-			      forward->flags & FREC_AD_QUESTION, forward->flags & FREC_DO_QUESTION, 
+-			      forward->flags & FREC_ADDED_PHEADER, forward->flags & FREC_HAS_SUBNET, &forward->source)))
++      nn = process_reply(header, now, server, (size_t)n, check_rebind, no_cache_dnssec, cache_secure,
++                         forward->flags & FREC_AD_QUESTION, forward->flags & FREC_DO_QUESTION, 
++                         forward->flags & FREC_ADDED_PHEADER, forward->flags & FREC_HAS_SUBNET, &forward->source);
++
++      if ((nn == (size_t)-1) && (retry_cnt++ < MAX_RETRY))
++          goto retry;
++
++      if (nn)
+ 	{
+ 	  header->id = htons(forward->orig_id);
+ 	  header->hb4 |= HB4_RA; /* recursion if available */
+diff -ruN dnsmasq/src/option.c dnsmasq-chinadns/src/option.c
+--- dnsmasq/src/option.c	2014-10-23 11:32:05.060206846 +0800
++++ dnsmasq-chinadns/src/option.c	2014-10-23 11:35:07.712038857 +0800
+@@ -147,6 +147,8 @@
+ #define LOPT_LOCAL_SERVICE 335
+ #define LOPT_DNSSEC_TIME   336
+ #define LOPT_LOOP_DETECT   337
++#define LOPT_SPURIOUS_FILE 338
++#define LOPT_SPURIOUS_IP   339
+ 
+ #ifdef HAVE_GETOPT_LONG
+ static const struct option opts[] =  
+@@ -299,6 +301,8 @@
+     { "quiet-dhcp6", 0, 0, LOPT_QUIET_DHCP6 },
+     { "quiet-ra", 0, 0, LOPT_QUIET_RA },
+     { "dns-loop-detect", 0, 0, LOPT_LOOP_DETECT },
++    { "spurious-ip-file", 2, 0, LOPT_SPURIOUS_FILE },
++    { "spurious-ip", 1, 0, LOPT_SPURIOUS_IP },
+     { NULL, 0, 0, 0 }
+   };
+ 
+@@ -457,6 +461,8 @@
+   { LOPT_QUIET_RA, OPT_QUIET_RA, NULL, gettext_noop("Do not log RA."), NULL },
+   { LOPT_LOCAL_SERVICE, OPT_LOCAL_SERVICE, NULL, gettext_noop("Accept queries only from directly-connected networks"), NULL },
+   { LOPT_LOOP_DETECT, OPT_LOOP_DETECT, NULL, gettext_noop("Detect and remove DNS forwarding loops"), NULL },
++  { LOPT_SPURIOUS_FILE, ARG_DUP, "<path>", gettext_noop("Specify path to spurious-ip file."), NULL }, 
++  { LOPT_SPURIOUS_IP, ARG_DUP, "<ipaddr>", gettext_noop("Specify spurious ip."), NULL },
+   { 0, 0, NULL, NULL, NULL }
+ }; 
+ 
+@@ -698,6 +704,29 @@
+     }
+ }
+ 
++static void add_spurious_ip(char *s)
++{
++  /* skip empty string. */
++  char *token = strtok(s, ".");
++  if (!token || strpbrk(s, " \t\n\r") != NULL)
++    return;
++
++  struct spurious_ip *sp = &daemon->spurious;
++  if (sp->ip == NULL || sp->nr_entry == sp->max_entry)
++    {
++      sp->max_entry *= 2;
++      sp->ip = safe_realloc(sp->ip, sp->max_entry * sizeof(sp->ip[0]));
++    }
++
++  int j = 0;
++  do
++    {
++      sp->ip[sp->nr_entry][j++] = atoi(token);
++      /* my_syslog(LOG_INFO, _("%d"), atoi(token)); */
++    } while ((token = strtok(NULL, ".")) && j < 4);
++  sp->nr_entry++;
++}
++
+ #define ret_err(x) do { strcpy(errstr, (x)); return 0; } while (0)
+ 
+ char *parse_server(char *arg, union mysockaddr *addr, union mysockaddr *source_addr, char *interface, int *flags)
+@@ -3853,6 +3882,20 @@
+ 	break;
+       }
+ #endif
++
++    case LOPT_SPURIOUS_FILE:
++      daemon->spurious.name = opt_string_alloc(arg);
++      break;
++
++    case LOPT_SPURIOUS_IP:
++      i = daemon->spurious.nr_entry;
++      add_spurious_ip(arg);
++      my_syslog(LOG_INFO, _("add spurious-ip %d.%d.%d.%d\n"),
++        daemon->spurious.ip[i][0],
++        daemon->spurious.ip[i][1],
++        daemon->spurious.ip[i][2],
++        daemon->spurious.ip[i][3]);
++      break;
+ 		
+     default:
+       ret_err(_("unsupported option (check that dnsmasq was compiled with DHCP/TFTP/DNSSEC/DBus support)"));
+@@ -4182,7 +4225,24 @@
+   
+   read_file(daemon->servers_file, f, LOPT_REV_SERV);
+ }
+- 
++
++void read_spurious_ip_file(char *buff)
++{
++  char *line = NULL;
++  FILE *f = NULL;
++
++  if (!(f = fopen(daemon->spurious.name, "r")))
++    {
++      my_syslog(LOG_ERR, _("cannot read %s: %s"), daemon->spurious.name, strerror(errno));
++      return;
++    }
++
++  while ((line = fgets(buff, MAXDNAME, f)))
++    add_spurious_ip(line);
++
++  my_syslog(LOG_INFO, _("load %d spurious ip"), daemon->spurious.nr_entry);
++  fclose(f);
++}
+ 
+ #ifdef HAVE_DHCP
+ void reread_dhcp(void)
+@@ -4296,6 +4356,7 @@
+   daemon->dhcp_server_port = DHCP_SERVER_PORT;
+   daemon->default_resolv.is_default = 1;
+   daemon->default_resolv.name = RESOLVFILE;
++  daemon->spurious.max_entry = 32;
+   daemon->resolv_files = &daemon->default_resolv;
+   daemon->username = CHUSER;
+   daemon->runfile =  RUNFILE;
+@@ -4525,6 +4586,16 @@
+   if (daemon->if_names || daemon->if_except || daemon->if_addrs || daemon->authserver)
+     reset_option_bool(OPT_LOCAL_SERVICE); 
+ 
++  if (daemon->spurious.name != NULL)
++    read_spurious_ip_file(buff);
++
++  struct spurious_ip *sp = &daemon->spurious;
++  /* release extra memory allocated */
++  sp->ip = safe_realloc(sp->ip, sp->nr_entry * sizeof(sp->ip[0]));
++  sp->max_entry = sp->nr_entry;
++  /* sort ip for bsearch */
++  qsort(sp->ip, sp->nr_entry, sizeof(sp->ip[0]), cmp_int32);
++
+   if (testmode)
+     {
+       fprintf(stderr, "dnsmasq: %s.\n", _("syntax check OK"));
+diff -ruN dnsmasq/src/rfc1035.c dnsmasq-chinadns/src/rfc1035.c
+--- dnsmasq/src/rfc1035.c	2014-10-23 11:15:36.695177536 +0800
++++ dnsmasq-chinadns/src/rfc1035.c	2014-10-23 11:33:53.068107508 +0800
+@@ -892,6 +892,12 @@
+   return minttl;
+ }
+ 
++static int is_spurious(struct in_addr addr) {
++  struct spurious_ip *sp = &daemon->spurious;
++  return bsearch(&addr.s_addr, sp->ip, sp->nr_entry,
++  	sizeof(sp->ip[0]), cmp_int32) != NULL;
++}
++
+ /* Note that the following code can create CNAME chains that don't point to a real record,
+    either because of lack of memory, or lack of SOA records.  These are treated by the cache code as 
+    expired and cleaned out that way. 
+@@ -1109,6 +1115,15 @@
+ 			}
+ #endif
+ 		      
++		      /* before insert it into cache, check if it is a fake addr */
++                      if (is_spurious(addr.addr.addr4)) {
++                        my_syslog(LOG_WARNING, _("spurious IP: %d.%d.%d.%d"),
++                                  ((u8 *)&addr.addr.addr4)[0],
++                                  ((u8 *)&addr.addr.addr4)[1],
++                                  ((u8 *)&addr.addr.addr4)[2],
++                                  ((u8 *)&addr.addr.addr4)[3]);
++                        return -1;
++                      }
+ 		      newc = cache_insert(name, &addr, now, attl, flags | F_FORWARD | secflag);
+ 		      if (newc && cpp)
+ 			{
+diff -ruN dnsmasq/src/util.c dnsmasq-chinadns/src/util.c
+--- dnsmasq/src/util.c	2014-10-23 11:15:36.696177536 +0800
++++ dnsmasq-chinadns/src/util.c	2014-10-23 11:33:53.051107523 +0800
+@@ -245,6 +245,17 @@
+   return ret;
+ }    
+ 
++/* for use during startup */
++void *safe_realloc(void *p, size_t size)
++{
++  void *ret = realloc(p, size);
++  
++  if (!ret)
++    die(_("realloc could not get memory"), NULL, EC_NOMEM);
++     
++  return ret;
++}    
++
+ void safe_pipe(int *fd, int read_noblock)
+ {
+   if (pipe(fd) == -1 || 
+@@ -656,3 +667,15 @@
+ 
+   return (!num) || (*wildcard == *match);
+ }
++
++int cmp_int32(const void *a, const void *b)
++{
++  const int32_t *ia = (int32_t *)a;
++  const int32_t *ib = (int32_t *)b;
++
++  if (*ia > *ib)
++      return 1;
++  if (*ia == *ib)
++      return 0;
++  return -1;
++}
