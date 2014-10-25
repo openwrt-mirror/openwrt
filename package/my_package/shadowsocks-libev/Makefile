@@ -61,7 +61,7 @@ define Package/shadowsocks-libev/install
 	$(INSTALL_DATA) ./files/shadowsocks.config $(1)/etc/config/shadowsocks
 	$(INSTALL_BIN) ./files/shadowsocks.init $(1)/etc/init.d/shadowsocks
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-{local,redir,tunnel} $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-local $(1)/usr/bin
 endef
 
 Package/shadowsocks-libev-polarssl/install=$(Package/shadowsocks-libev/install)
