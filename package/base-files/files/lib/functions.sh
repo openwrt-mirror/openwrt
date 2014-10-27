@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2006-2013 OpenWrt.org
+# Copyright (C) 2006-2014 OpenWrt.org
 # Copyright (C) 2006 Fokus Fraunhofer <carsten.tittel@fokus.fraunhofer.de>
 # Copyright (C) 2010 Vertical Communications
 
@@ -193,7 +193,10 @@ default_postinst() {
 				}
 
 				gid=$id
-				[ -n "$gid" ] && group_add $name $gid
+				[ -n "$gid" ] && {
+					group_exists $name || group_add $name $gid
+				}
+
 				[ -z "$gid" ] && {
 					group_add_next $name
 					gid=$?
@@ -216,6 +219,7 @@ default_postinst() {
 			$i start
 		}
 	done
+	[ -n "${IPKG_INSTROOT}" ] || rm -f /tmp/luci-indexcache 2>/dev/null
 	return 0
 }
 

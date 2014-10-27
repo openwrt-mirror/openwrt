@@ -17,6 +17,9 @@ SCAN_DEPS=modules/*.mk $(TOPDIR)/target/linux/*/modules.mk
 PKG_LICENSE:=GPLv2
 PKG_LICENSE_FILES:=
 
+export SHELL:=/bin/sh
+.ONESHELL:
+
 include $(INCLUDE_DIR)/package.mk
 
 STAMP_BUILT:=$(STAMP_BUILT)_$(firstword $(shell $(SCRIPT_DIR)/kconfig.pl $(LINUX_DIR)/.config | md5sum))

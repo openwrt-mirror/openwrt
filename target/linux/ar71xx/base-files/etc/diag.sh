@@ -62,6 +62,9 @@ get_status_led() {
 	dir-835-a1)
 		status_led="d-link:amber:power"
 		;;
+	dragino2)
+		status_led="dragino2:red:system"
+		;;
 	eap300v2)
 		status_led="engenius:blue:power"
 		;;
@@ -294,6 +297,12 @@ set_state() {
 		;;
 	done)
 		status_led_on
+		case $(ar71xx_board_name) in
+		qihoo-c301)
+			local n=$(fw_printenv activeregion | cut -d = -f 2)
+			fw_setenv "image${n}trynum" 0
+			;;
+		esac
 		;;
 	esac
 }

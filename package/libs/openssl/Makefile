@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2014 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openssl
-PKG_VERSION:=1.0.1i
+PKG_VERSION:=1.0.1j
 PKG_RELEASE:=1
 PKG_USE_MIPS16:=0
 
@@ -18,7 +18,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.openssl.org/source/ \
 	ftp://ftp.funet.fi/pub/crypt/mirrors/ftp.openssl.org/source \
 	ftp://ftp.sunet.se/pub/security/tools/net/openssl/source/
-PKG_MD5SUM:=c8dc151a671b9b92ff3e4c118b174972
+PKG_MD5SUM:=f7175c9cd3c39bb1907ac8bba9df8ed3
 
 PKG_LICENSE:=SSLEAY OPENSSL
 PKG_LICENSE_FILES:=LICENSE
@@ -27,6 +27,11 @@ PKG_CONFIG_DEPENDS:=CONFIG_OPENSSL_ENGINE_CRYPTO CONFIG_OPENSSL_ENGINE_DIGEST \
 	CONFIG_OPENSSL_WITH_EC CONFIG_OPENSSL_WITH_EC2M
 
 include $(INCLUDE_DIR)/package.mk
+
+ifneq ($(CONFIG_CCACHE),)
+HOSTCC=$(HOSTCC_NOCACHE)
+HOSTCXX=$(HOSTCXX_NOCACHE)
+endif
 
 define Package/openssl/Default
   TITLE:=Open source SSL toolkit
@@ -51,6 +56,7 @@ $(call Package/openssl/Default)
   CATEGORY:=Libraries
   DEPENDS:=+zlib
   TITLE+= (libraries)
+  ABI_VERSION:=$(PKG_VERSION)
   MENU:=1
 endef
 
@@ -99,7 +105,7 @@ ifndef CONFIG_OPENSSL_WITH_EC2M
 endif
 
 ifeq ($(CONFIG_x86_64),y)
-  OPENSSL_TARGET:=linux-x86_64
+  OPENSSL_TARGET:=linux-x86_64-openwrt
   OPENSSL_MAKEFLAGS += LIBDIR=lib
 else
   OPENSSL_OPTIONS+=no-sse2

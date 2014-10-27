@@ -40,7 +40,9 @@ ifneq ($(GRUB_TERMINALS),)
   GRUB_TERMINAL_CONFIG := terminal_input $(GRUB_TERMINALS); terminal_output $(GRUB_TERMINALS)
 endif
 
+SIGNATURE:=$(shell dd if=/dev/urandom bs=4 count=1 2>/dev/null | hexdump -v -e '"%02x"')
 ROOTPART:=$(call qstrip,$(CONFIG_TARGET_ROOTFS_PARTNAME))
+ROOTPART:=$(if $(ROOTPART),$(ROOTPART),PARTUUID=$(SIGNATURE)-02)
 
 GRUB_TIMEOUT:=$(call qstrip,$(CONFIG_GRUB_TIMEOUT))
 
@@ -53,15 +55,15 @@ ifneq ($(CONFIG_GRUB_IMAGES),)
   endef
 
   define Image/cmdline/jffs2-64k
-    block2mtd.block2mtd=$(ROOTPART),65536,rootfs root=/dev/mtdblock0 rootfstype=jffs2 rootwait
+    block2mtd.block2mtd=$(ROOTPART),65536,rootfs,5 root=/dev/mtdblock0 rootfstype=jffs2 rootwait
   endef
 
   define Image/cmdline/jffs2-128k
-    block2mtd.block2mtd=$(ROOTPART),131072,rootfs root=/dev/mtdblock0 rootfstype=jffs2 rootwait
+    block2mtd.block2mtd=$(ROOTPART),131072,rootfs,5 root=/dev/mtdblock0 rootfstype=jffs2 rootwait
   endef
 
   define Image/cmdline/squashfs
-    block2mtd.block2mtd=$(ROOTPART),65536,rootfs root=/dev/mtdblock0 rootfstype=squashfs rootwait
+    block2mtd.block2mtd=$(ROOTPART),65536,rootfs,5 root=/dev/mtdblock0 rootfstype=squashfs rootwait
   endef
 
   define Image/Build/grub2
@@ -82,7 +84,7 @@ ifneq ($(CONFIG_GRUB_IMAGES),)
 		-e 's#@CMDLINE@#$(strip $(call Image/cmdline/$(1)) $(BOOTOPTS) $(GRUB_CONSOLE_CMDLINE))#g' \
 		-e 's#@TIMEOUT@#$(GRUB_TIMEOUT)#g' \
 		./grub.cfg > $(KDIR)/root.grub/boot/grub/grub.cfg
-	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" PATH="$(TARGET_PATH)" ./gen_image_generic.sh \
+	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" SIGNATURE="$(SIGNATURE)" PATH="$(TARGET_PATH)" ./gen_image_generic.sh \
 		$(BIN_DIR)/$(IMG_PREFIX)-combined-$(1).img \
 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $(KDIR)/root.grub \
 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(KDIR)/root.$(1) \
