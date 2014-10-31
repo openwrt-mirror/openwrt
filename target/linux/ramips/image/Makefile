@@ -275,12 +275,12 @@ define BuildFirmware/PorayDualSize/squashfs
 	if [ -e "$(call sysupname,$(1),$(2)-4M)" ]; then \
 		mkporayfw -B $(3) -F 4M \
 			-f $(call sysupname,$(1),$(2)-4M) \
-			-o $(call imgname,$(1),$(2))-4M-factory.bin; \
+			-o $(call imgname,$(1),$(2)-4M)-factory.bin; \
 	fi
 	if [ -e "$(call sysupname,$(1),$(2)-8M)" ]; then \
 		mkporayfw -B $(3) -F 8M \
 			-f $(call sysupname,$(1),$(2)-8M) \
-			-o $(call imgname,$(1),$(2))-8M-factory.bin; \
+			-o $(call imgname,$(1),$(2)-8M)-factory.bin; \
 	fi
 endef
 BuildFirmware/PorayDualSize/initramfs=$(call BuildFirmware/DefaultDualSize/initramfs,$(1),$(2),$(3))
@@ -335,6 +335,8 @@ Image/Build/Profile/3G6200N=$(call BuildFirmware/Edimax/$(1),$(1),3g-6200n,3G-62
 Image/Build/Profile/3G6200NL=$(call BuildFirmware/Edimax/$(1),$(1),3g-6200nl,3G-6200NL,$(edimax_3g6200n_mtd_size),CSYS,3G62,0x50000,0xc0000)
 
 Image/Build/Profile/3G300M=$(call BuildFirmware/CustomFlashFactory/$(1),$(1),3g300m,3G300M,$(ralink_default_fw_size_4M),3G150M_SPI Kernel Image,factory)
+
+Image/Build/Profile/A5-V11=$(call BuildFirmware/Poray4M/$(1),$(1),a5-v11,A5-V11)
 
 Image/Build/Profile/AIR3GII=$(call BuildFirmware/Default4M/$(1),$(1),air3gii,AIR3GII)
 
@@ -593,6 +595,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/3G6200N,$(1))
 	$(call Image/Build/Profile/3G6200NL,$(1))
 	$(call Image/Build/Profile/3G300M,$(1))
+	$(call Image/Build/Profile/A5-11,$(1))
 	$(call Image/Build/Profile/AIR3GII,$(1))
 	$(call Image/Build/Profile/ALL02393G,$(1))
 	$(call Image/Build/Profile/ALL0256N,$(1))
