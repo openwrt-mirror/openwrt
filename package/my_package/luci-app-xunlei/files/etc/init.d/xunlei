@@ -34,6 +34,7 @@ start() {
 
 	$file/xunlei/portal
 	sleep 3
+    renice -n 19 $(pidof EmbedThunderManager)
 }
 
 stop() {
