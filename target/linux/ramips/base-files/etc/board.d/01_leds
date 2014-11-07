@@ -27,6 +27,9 @@ case $board in
 	3g300m)
 		set_usb_led "tenda:blue:3g"
 		;;
+	a5-v11)
+		ucidef_set_led_default "power" "POWER" "a5-v11:red:power" "1"
+		;;
 	air3gii)
 		set_wifi_led "airlive:green:wlan"
 		set_usb_led "airlive:green:mobile"
@@ -38,10 +41,9 @@ case $board in
 		ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "all0256n:green:rssihigh" "wlan0" "70" "100" "-69" "8"
 		set_wifi_led "rt2800pci-phy0::radio"
 		;;
+	ar670w|\
+	ar725w|\
 	awapn2403)
-		set_wifi_led "rt2800soc-phy0::radio"
-		;;
-	ar725w)
 		set_wifi_led "rt2800soc-phy0::radio"
 		;;
 	asl26555)

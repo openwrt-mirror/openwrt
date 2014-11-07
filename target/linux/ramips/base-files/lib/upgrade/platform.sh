@@ -17,6 +17,7 @@ platform_check_image() {
 	3g-6200n | \
 	3g-6200nl | \
 	3g300m | \
+	a5-v11 | \
 	air3gii | \
 	all0239-3g | \
 	all0256n | \
@@ -43,6 +44,7 @@ platform_check_image() {
 	dir-620-a1 | \
 	dir-620-d1 | \
 	dir-810l | \
+	e1700 | \
 	esr-9753 | \
 	f7c027 | \
 	fonera20n | \
@@ -104,6 +106,13 @@ platform_check_image() {
 	y1s |\
 	zbt-wa05)
 		[ "$magic" != "27051956" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
+	ar670w)
+		[ "$magic" != "6d000080" ] && {
 			echo "Invalid image type."
 			return 1
 		}

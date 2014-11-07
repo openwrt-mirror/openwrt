@@ -37,6 +37,12 @@ ramips_setup_interfaces()
 	ucidef_set_interface_loopback
 
 	case $board in
+	a5-v11)
+		ucidef_set_interface_lan "eth0.1"
+		ucidef_add_switch "switch0" "1" "1"
+		ucidef_add_switch_vlan "switch0" "1" "0 6t"
+		;;
+
 	3g300m | \
 	w150m | \
 	all0256n | \
@@ -109,13 +115,22 @@ ramips_setup_interfaces()
 	dir-320-b1 | \
 	dir-615-h1 | \
 	hlk-rm04 | \
+	mt7628 | \
 	mzk-w300nh2 | \
 	mzk-750dhp | \
+	whr-300hp2 | \
+	whr-600d | \
 	wt1520)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 6t"
 		ucidef_add_switch_vlan "switch0" "2" "4 6t"
+		;;
+	whr-1166d)
+		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+		ucidef_add_switch "switch0" "1" "1"
+		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 6t"
+		ucidef_add_switch_vlan "switch0" "2" "5 6t"
 		;;
 
 	awm002-evb | \
@@ -148,6 +163,7 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "2" "0 5t"
 		;;
 
+	ar670w | \
 	ar725w | \
 	rt-n15 | \
 	wl-351)
@@ -206,6 +222,14 @@ ramips_setup_interfaces()
 		ucidef_set_interface_lan "eth0"
 		;;
 
+	e1700 | \
+	mt7620a_mt7530)
+		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+		ucidef_add_switch "switch1" "1" "1"
+		ucidef_add_switch_vlan "switch1" "1" "0 1 2 3 6t"
+		ucidef_add_switch_vlan "switch1" "2" "4 6t"
+		;;
+
 	*)
 		RT3X5X=`cat /proc/cpuinfo | egrep "(RT3.5|RT5350)"`
 		if [ -n "${RT3X5X}" ]; then
@@ -252,6 +276,7 @@ ramips_setup_macs()
 		lan_mac=$(macaddr_add "$lan_mac" -2)
 		;;
 
+	a5-v11 |\
 	bc2 |\
 	broadway |\
 	d105 |\
@@ -277,6 +302,10 @@ ramips_setup_macs()
 	dir-645)
 		lan_mac=$(mtd_get_mac_ascii nvram lanmac)
 		wan_mac=$(mtd_get_mac_ascii nvram wanmac)
+		;;
+
+	e1700)
+		wan_mac=$(mtd_get_mac_ascii config WAN_MAC_ADDR)
 		;;
 
 	wcr-150gn)

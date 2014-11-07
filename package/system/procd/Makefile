@@ -8,18 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=procd
-PKG_VERSION:=2014-10-14
+PKG_VERSION:=2014-11-06
 
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://nbd.name/luci2/procd.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=b9a389c841db8433bb3b02158b1512cf577dbff7
+PKG_SOURCE_VERSION:=b899234bd657fa1ae1c71315326c3fe2cd9b6cec
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 CMAKE_INSTALL:=1
 
-PKG_LICENSE:=GPLv2
+PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=
 
 PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
@@ -42,6 +42,23 @@ define Package/procd-nand
   DEPENDS:=@NAND_SUPPORT +ubi-utils
   TITLE:=OpenWrt sysupgrade nand helper
 endef
+
+define Package/procd/config
+menu "Configuration"
+	depends on PACKAGE_procd
+
+config PROCD_SHOW_BOOT
+	bool
+	default n
+	prompt "Print the shutdown to the console as well as logging it to syslog"
+endmenu
+endef
+
+PKG_CONFIG_DEPENDS:= PROCD_SHOW_BOOT
+
+ifeq ($(CONFIG_PACKAGE_PROCD_SHOW_BOOT),y)
+  CMAKE_OPTIONS += -DSHOW_BOOT_ON_CONSOLE
+endif
 
 define Package/procd/install
 	$(INSTALL_DIR) $(1)/sbin $(1)/etc $(1)/lib/functions

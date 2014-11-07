@@ -13,7 +13,7 @@ WATCHDOG_DIR:=watchdog
 define KernelPackage/6lowpan-iphc
   USBMENU:=$(OTHER_MENU)
   TITLE:=6lowpan shared code
-  DEPENDS:=@LINUX_3_14
+  DEPENDS:=@!LINUX_3_3 @!LINUX_3_8 @!LINUX_3_10 @!LINUX_3_13
   KCONFIG:=CONFIG_6LOWPAN_IPHC
   HIDDEN:=1
   FILES:=$(LINUX_DIR)/net/ieee802154/6lowpan_iphc.ko
@@ -29,7 +29,7 @@ $(eval $(call KernelPackage,6lowpan-iphc))
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +LINUX_3_14:kmod-6lowpan-iphc
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +(!LINUX_3_3&&!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13):kmod-6lowpan-iphc
   KCONFIG:= \
 	CONFIG_BLUEZ \
 	CONFIG_BLUEZ_L2CAP \
@@ -257,6 +257,26 @@ define KernelPackage/iio-ad799x/description
 endef
 
 $(eval $(call KernelPackage,iio-ad799x))
+
+
+define KernelPackage/iio-dht11
+  SUBMENU:=$(OTHER_MENU)
+  DEPENDS:=kmod-iio-core @GPIO_SUPPORT @USES_DEVICETREE
+  TITLE:=DHT11 (and compatible) humidity and temperature sensors
+  KCONFIG:= \
+	CONFIG_DHT11
+  FILES:=$(LINUX_DIR)/drivers/iio/humidity/dht11.ko
+  AUTOLOAD:=$(call AutoLoad,56,dht11)
+endef
+
+define KernelPackage/iio-dht11/description
+ support for DHT11 and DHT22 digitial humidity and temperature sensors
+ attached at GPIO lines. You will need a custom device tree file to
+ specify the GPIO line to use.
+endef
+
+$(eval $(call KernelPackage,iio-dht11))
+
 
 define KernelPackage/lp
   SUBMENU:=$(OTHER_MENU)
@@ -744,7 +764,8 @@ define KernelPackage/zram
 	CONFIG_ZSMALLOC \
 	CONFIG_ZRAM \
 	CONFIG_ZRAM_DEBUG=n \
-	CONFIG_PGTABLE_MAPPING=n
+	CONFIG_PGTABLE_MAPPING=n \
+	CONFIG_ZRAM_LZ4_COMPRESS=y
 ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.14.0)),1)
   FILES:=\
 	$(LINUX_DIR)/mm/zsmalloc.ko \

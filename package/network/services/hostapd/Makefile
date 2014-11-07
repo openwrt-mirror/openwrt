@@ -20,6 +20,7 @@ PKG_SOURCE_PROTO:=git
 # PKG_MIRROR_MD5SUM:=4e7c1f97edd7514535056fce54ae053a
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_LICENSE:=BSD-3-Clause
 
 PKG_BUILD_PARALLEL:=1
 
@@ -371,8 +372,8 @@ define Package/wpad/install
 	$(call Install/hostapd,$(1))
 	$(call Install/supplicant,$(1))
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wpad $(1)/usr/sbin/
-	ln -sf wpad $(1)/usr/sbin/hostapd
-	ln -sf wpad $(1)/usr/sbin/wpa_supplicant
+	$(LN) wpad $(1)/usr/sbin/hostapd
+	$(LN) wpad $(1)/usr/sbin/wpa_supplicant
 endef
 Package/wpad-mini/install = $(Package/wpad/install)
 

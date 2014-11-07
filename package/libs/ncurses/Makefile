@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2013 OpenWrt.org
+# Copyright (C) 2006-2014 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -16,7 +16,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@GNU/ncurses
 PKG_MD5SUM:=8cb9c412e5f2d96bc6f459aa8c6282a1
 
-PKG_LICENSE:=FREE
+PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=README
 
 PKG_INSTALL:=1
@@ -131,7 +131,7 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/ncursesw5-config $(2)/bin/
 	$(SED) 's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/usr,g' -e 's/$$$$INCS //g' \
 		$(2)/bin/ncursesw5-config
-	ln -sf $(STAGING_DIR)/host/bin/ncursesw5-config $(1)/usr/bin/ncursesw5-config
+	$(LN) $(2)/bin/ncursesw5-config $(1)/usr/bin/ncursesw5-config
 endef
 else
 define Build/InstallDev
@@ -145,7 +145,7 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/ncurses5-config $(2)/bin/
 	$(SED) 's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/usr,g' \
 		$(2)/bin/ncurses5-config
-	ln -sf $(STAGING_DIR)/host/bin/ncurses5-config $(1)/usr/bin/ncurses5-config
+	$(LN) $(2)/bin/ncurses5-config $(1)/usr/bin/ncurses5-config
 endef
 endif
 
