@@ -1,0 +1,1 @@
+make image PROFILE="TLWR2041" PACKAGES="-dnsmasq dnsmasq-full ip ipset iptables-mod-ipopt kmod-ipt-ipopt iptables-mod-filter kmod-ipt-filter iptables-mod-u32 kmod-ipt-u32 ppp-mod-pptp" FILES="files/"
