@@ -42,7 +42,10 @@ wzr-hp-ag300h)
 	ubootenv_add_uci_config "/dev/mtd3" "0x0" "0x10000" "0x10000"
 	;;
 qihoo-c301)
-	ubootenv_add_uci_config "/dev/mtd9" "0x0" "0x10000" "0x10000"
+	if cat /proc/mtd | grep action_image_config; then
+		local mtd=$(cat /proc/mtd | grep action_image_config | sed 's/mtd\([0-9]*\):.*/\1/g')
+		ubootenv_add_uci_config "/dev/mtd${mtd}" "0x0" "0x10000" "0x10000"
+	fi
 	;;
 esac
 
