@@ -14,6 +14,8 @@
 #include <linux/gpio.h>
 #include <linux/platform_device.h>
 #include <linux/ath9k_platform.h>
+#include <linux/crc32.h>
+#include <linux/mtd/mtd.h>
 
 #include <asm/mach-ath79/ar71xx_regs.h>
 
@@ -81,6 +83,10 @@ static struct gpio_keys_button qihoo_c301_gpio_keys[] __initdata = {
 
 struct flash_platform_data flash __initdata = {NULL, NULL, 0};
 
+static int qihoo_c301_board = 0;
+
+static u8 wlan24mac[ETH_ALEN];
+
 static void qihoo_c301_get_mac(const char *name, char *mac)
 {
 	u8 *nvram = (u8 *) KSEG1ADDR(QIHOO_C301_NVRAM_ADDR);
@@ -94,8 +100,6 @@ static void qihoo_c301_get_mac(const char *name, char *mac)
 
 static void __init qihoo_c301_setup(void)
 {
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80_multi(&flash);
 
@@ -125,8 +129,7 @@ static void __init qihoo_c301_setup(void)
 	ath79_wmac_set_ext_lna_gpio(0, QIHOO_C301_GPIO_EXTERNAL_LNA0);
 	ath79_wmac_set_ext_lna_gpio(1, QIHOO_C301_GPIO_EXTERNAL_LNA1);
 
-	qihoo_c301_get_mac("wlan24mac=", tmpmac);
-	ath79_register_wmac(art + QIHOO_C301_WMAC_CALDATA_OFFSET, tmpmac);
+	qihoo_c301_get_mac("wlan24mac=", wlan24mac);
 
 	ath79_register_pci();
 
@@ -160,7 +163,44 @@ static void __init qihoo_c301_setup(void)
 			 GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED,
 			 "USB power");
 	ath79_register_usb();
+
+	qihoo_c301_board = 1;
 }
 
 MIPS_MACHINE(ATH79_MACH_QIHOO_C301, "QIHOO-C301", "Qihoo 360 C301",
 	     qihoo_c301_setup);
+
+static int qihoo_init_wmac(void)
+{
+	struct mtd_info * mtd;
+	size_t nb = 0;
+	u8 *art;
+	int ret;
+
+	if (!qihoo_c301_board)
+		return 0;
+
+	mtd = get_mtd_device_nm("radiocfg");
+	if (IS_ERR(mtd))
+		return PTR_ERR(mtd);
+
+	if (mtd->size != 0x10000)
+		return -1;
+
+	art = kzalloc(0x1000, GFP_KERNEL);
+	if (!art)
+		return -1;
+
+	ret = mtd_read(mtd, QIHOO_C301_WMAC_CALDATA_OFFSET, 0x1000, &nb, art);
+	if (nb != 0x1000)
+	{
+		kfree(art);
+		return ret;
+	}
+
+	ath79_register_wmac(art, wlan24mac);
+
+	return 0;
+}
+
+late_initcall(qihoo_init_wmac);

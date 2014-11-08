@@ -7,7 +7,7 @@
 
 define Profile/QIHOO360
 	NAME:=Qihoo 360 C301
-	PACKAGES:=kmod-usb-core kmod-usb2 kmod-ledtrig-usbdev kmod-ath10k
+	PACKAGES:=kmod-usb-core kmod-usb2 uboot-envtools kmod-ledtrig-usbdev kmod-ath9k kmod-ath10k
 endef
 
 define Profile/QIHOO360/Description
