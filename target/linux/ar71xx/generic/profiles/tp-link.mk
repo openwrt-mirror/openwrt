@@ -334,6 +334,17 @@ endef
 $(eval $(call Profile,TLWR1043))
 
 
+define Profile/TLWR2041
+	NAME:=TP-LINK TL-WR2041N
+	PACKAGES:=
+endef
+
+define Profile/TLWR2041/Description
+	Package set optimized for the TP-LINK TL-WR2041N.
+endef
+$(eval $(call Profile,TLWR2041))
+
+
 define Profile/TLWR2543
 	NAME:=TP-LINK TL-WR2543N/ND
 	PACKAGES:=kmod-usb-core kmod-usb2 kmod-ledtrig-usbdev

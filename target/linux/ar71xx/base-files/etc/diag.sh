@@ -203,6 +203,7 @@ get_status_led() {
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
 	tl-wdr3500 | \
+	tl-wr2041n | \
 	tl-wr1041n-v2 | \
 	tl-wr1043nd | \
 	tl-wr1043nd-v2 | \
@@ -299,8 +300,10 @@ set_state() {
 		status_led_on
 		case $(ar71xx_board_name) in
 		qihoo-c301)
-			local n=$(fw_printenv activeregion | cut -d = -f 2)
-			fw_setenv "image${n}trynum" 0
+			if cat /proc/mtd | grep action_image_config; then
+				local n=$(fw_printenv activeregion | cut -d = -f 2)
+				fw_setenv "image${n}trynum" 0
+			fi
 			;;
 		esac
 		;;
