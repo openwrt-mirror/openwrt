@@ -1,8 +1,8 @@
+# removed dl/ folder
 *.o
 .DS_Store
 .*.swp
 /env
-/dl
 /.config
 /.config.old
 /bin
