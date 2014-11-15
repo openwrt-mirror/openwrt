@@ -50,7 +50,7 @@ ppp_generic_setup() {
 	[ "${keepalive_adaptive:-1}" -lt 1 ] && lcp_adaptive=""
 	[ -n "$connect" ] || json_get_var connect connect
 	[ -n "$disconnect" ] || json_get_var disconnect disconnect
-
+    [ "$(uci get macvlan.config.enabled)" == "1" ] && shellsync $(cat /etc/config/network | grep -c "proto 'pppoe'") 10 | logger
 	proto_run_command "$config" /usr/sbin/pppd \
 		nodetach ipparam "$config" \
 		ifname "$pppname" \
