@@ -12,6 +12,9 @@ get_status_led() {
 	3g300m | w150m)
 		status_led="tenda:blue:ap"
 		;;
+	ar670w)
+		status_led="ar670w:green:power"
+		;;
 	ar725w)
 		status_led="ar725w:green:power"
 		;;
@@ -44,6 +47,9 @@ get_status_led() {
 		;;
 	dap-1350)
 		status_led="d-link:blue:power"
+		;;
+	e1700)
+		status_led="linksys:green:power"
 		;;
 	esr-9753)
 		status_led="esr-9753:orange:power"
@@ -163,6 +169,10 @@ get_status_led() {
 		;;
 	wr8305rt)
 		status_led="wr8305rt:sys"
+		;;
+	wsr-600 | \
+	wsr-1166)
+		status_led="buffalo:orange:diag"
 		;;
 	wnce2001)
 		status_led="netgear:green:power"

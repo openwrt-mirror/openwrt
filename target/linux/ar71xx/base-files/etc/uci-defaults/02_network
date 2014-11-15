@@ -206,6 +206,7 @@ tl-mr3420-v2 |\
 tl-wr841n-v8 |\
 tl-wr842n-v2 |\
 wnr2000-v3 |\
+wnr2000-v4 |\
 wnr2200 |\
 wnr612-v2)
 	ucidef_set_interfaces_lan_wan "eth1" "eth0"
@@ -290,6 +291,8 @@ eap7660d |\
 loco-m-xw |\
 mr600 |\
 mr600v2 |\
+mr900 |\
+mr900v2 |\
 rb-411 |\
 rb-911g-2hpnd |\
 rb-911g-5hpnd |\

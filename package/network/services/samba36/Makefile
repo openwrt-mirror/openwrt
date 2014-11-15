@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2012 OpenWrt.org
+# Copyright (C) 2007-2014 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -16,7 +16,7 @@ PKG_SOURCE_URL:=http://ftp.samba.org/pub/samba \
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_MD5SUM:=d98425c0c2b73e08f048d31ffc727fb0
 
-PKG_LICENSE:=GPLv3
+PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=COPYING
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
@@ -135,9 +135,9 @@ define Package/samba36-server/install
 	$(INSTALL_BIN) ./files/samba.init $(1)/etc/init.d/samba
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_BIN)/samba_multicall $(1)/usr/sbin
-	ln -sf samba_multicall $(1)/usr/sbin/smbd
-	ln -sf samba_multicall $(1)/usr/sbin/nmbd
-	ln -sf samba_multicall $(1)/usr/sbin/smbpasswd
+	$(LN) samba_multicall $(1)/usr/sbin/smbd
+	$(LN) samba_multicall $(1)/usr/sbin/nmbd
+	$(LN) samba_multicall $(1)/usr/sbin/smbpasswd
 endef
 
 define Package/samba36-client/install

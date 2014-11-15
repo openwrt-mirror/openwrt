@@ -245,6 +245,8 @@ platform_check_image() {
 		;;
 	mr600 | \
 	mr600v2 | \
+	mr900 | \
+	mr900v2 | \
 	om2p | \
 	om2pv2 | \
 	om2p-hs | \
@@ -387,6 +389,14 @@ platform_check_image() {
 		fi
 		return 0
 		;;
+    wnr2000-v4)
+		[ "$magic_long" != "32303034" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
+
 	esac
 
 	echo "Sysupgrade is not yet supported on $board."
@@ -429,6 +439,8 @@ platform_do_upgrade() {
 		;;
 	mr600 | \
 	mr600v2 | \
+	mr900 | \
+	mr900v2 | \
 	om2p | \
 	om2pv2 | \
 	om2p-hs | \

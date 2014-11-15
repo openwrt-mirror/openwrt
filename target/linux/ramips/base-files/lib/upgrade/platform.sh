@@ -44,6 +44,7 @@ platform_check_image() {
 	dir-620-a1 | \
 	dir-620-d1 | \
 	dir-810l | \
+	e1700 | \
 	esr-9753 | \
 	f7c027 | \
 	fonera20n | \
@@ -86,6 +87,10 @@ platform_check_image() {
 	w306r-v20 |\
 	w502u |\
 	whr-g300n |\
+	whr-600d |\
+	whr-1166d |\
+	wsr-600 |\
+	wsr-1166 |\
 	wl-330n | \
 	wl-330n3g | \
 	wl-351 | \
@@ -106,6 +111,13 @@ platform_check_image() {
 	y1s |\
 	zbt-wa05)
 		[ "$magic" != "27051956" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
+	ar670w)
+		[ "$magic" != "6d000080" ] && {
 			echo "Invalid image type."
 			return 1
 		}

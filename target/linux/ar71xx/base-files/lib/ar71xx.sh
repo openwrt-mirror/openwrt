@@ -401,6 +401,12 @@ ar71xx_board_detect() {
 	*MR600)
 		name="mr600"
 		;;
+	*MR900)
+		name="mr900"
+		;;
+	*MR900v2)
+		name="mr900v2"
+		;;
 	*"My Net N600")
 		name="mynet-n600"
 		;;
@@ -712,6 +718,9 @@ ar71xx_board_detect() {
 		;;
 	*"WNDR4300")
 		name="wndr4300"
+		;;
+	*"WNR2000 V4")
+		name="wnr2000-v4"
 		;;
 	*"WNR2000 V3")
 		name="wnr2000-v3"

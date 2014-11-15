@@ -18,11 +18,9 @@ endef
 VMLINUX:=$(IMG_PREFIX)-vmlinux
 UIMAGE:=$(IMG_PREFIX)-uImage
 
-ifeq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),y)
 define Image/Build/Initramfs
 	$(call Image/Build/Profile/$(PROFILE),initramfs)
 endef
-endif
 
 ifeq ($(CONFIG_SOC_RT288X),y)
 define kernel_entry
@@ -295,9 +293,35 @@ define BuildFirmware/Gemtek/squashfs
 endef
 BuildFirmware/Gemtek/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3))
 
+# Airlink101 AR670W -- LZMA without uImage header
+define BuildFirmware/AR670W/squashfs
+	$(call PatchKernelLzmaDtb,$(2),$(3),$(5))
+
+	$(eval output_name=$(IMG_PREFIX)-$(2)-$(1)-$(if $(4),$(4),sysupgrade).bin)
+	$(eval factory_name=$(IMG_PREFIX)-$(2)-$(1)-factory.bin)
+
+	( dd if=$(KDIR)/vmlinux-$(2).bin.lzma bs=65536 \
+		conv=sync; dd if=$(KDIR)/root.$(1) ) > $(KDIR)/$(output_name)
+
+	$(call prepare_generic_squashfs,$(KDIR)/$(output_name))
+
+	if [ `stat -c%s "$(KDIR)/$(output_name)"` \
+		-gt $(ralink_default_fw_size_4M) ]; then \
+		echo "Warning: $(KDIR)/$(output_name) is too big" >&2; \
+	else \
+		mkwrgimg -i $(KDIR)/$(output_name) \
+			-d "/dev/mtdblock/2" \
+			-s "wrgn16a_airlink_ar670w" \
+			-o $(BIN_DIR)/$(factory_name); \
+		$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name); \
+	fi
+endef
+
 #
 # RT288X Profiles
 #
+
+Image/Build/Profile/AR670W=$(call BuildFirmware/AR670W/$(1),$(1),ar670w,AR670W)
 
 Image/Build/Profile/AR725W=$(call BuildFirmware/Gemtek/$(1),$(1),ar725w,AR725W)
 
@@ -313,6 +337,7 @@ Image/Build/Profile/WLITX4AG300N=$(call BuildFirmware/Default4M/$(1),$(1),wli-tx
 
 ifeq ($(SUBTARGET),rt288x)
 define Image/Build/Profile/Default
+	$(call Image/Build/Profile/AR670W,$(1))
 	$(call Image/Build/Profile/AR725W,$(1))
 	$(call Image/Build/Profile/F5D8235V1,$(1))
 	$(call Image/Build/Profile/RTN15,$(1))
@@ -745,6 +770,7 @@ endif
 # MT7620A Profiles
 #
 
+Image/Build/Profile/E1700=$(call BuildFirmware/UMedia/$(1),$(1),e1700,E1700,0x013326)
 Image/Build/Profile/MT7620a=$(call BuildFirmware/Default8M/$(1),$(1),mt7620a,MT7620a)
 Image/Build/Profile/MT7620a_MT7610e=$(call BuildFirmware/Default8M/$(1),$(1),mt7620a_mt7610e,MT7620a_MT7610e)
 Image/Build/Profile/MT7620a_MT7530=$(call BuildFirmware/Default8M/$(1),$(1),mt7620a_mt7530,MT7620a_MT7530)
@@ -767,6 +793,7 @@ Image/Build/Profile/Y1S=$(call BuildFirmware/Default16M/$(1),$(1),Lenovo-y1s,Y1S
 
 ifeq ($(SUBTARGET),mt7620a)
 define Image/Build/Profile/Default
+	$(call Image/Build/Profile/E1700,$(1))
 	$(call Image/Build/Profile/MT7620a,$(1))
 	$(call Image/Build/Profile/MT7620a_MT7610e,$(1))
 	$(call Image/Build/Profile/MT7620a_MT7530,$(1))
@@ -816,10 +843,26 @@ endif
 #
 
 Image/Build/Profile/MT7621=$(call BuildFirmware/Default4M/$(1),$(1),mt7621,MT7621)
+Image/Build/Profile/WSR-600=$(call BuildFirmware/Default4M/$(1),$(1),wsr-600,WSR-600)
+Image/Build/Profile/WSR-1166=$(call BuildFirmware/Default4M/$(1),$(1),wsr-1166,WSR-1166)
 
 ifeq ($(SUBTARGET),mt7621)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/MT7621,$(1))
+	$(call Image/Build/Profile/WSR-600,$(1))
+	$(call Image/Build/Profile/WSR-1166,$(1))
+endef
+endif
+
+#
+# MT7628 Profiles
+#
+
+Image/Build/Profile/MT7628=$(call BuildFirmware/Default4M/$(1),$(1),mt7628,MT7628)
+
+ifeq ($(SUBTARGET),mt7628)
+define Image/Build/Profile/Default
+	$(call Image/Build/Profile/MT7628,$(1))
 endef
 endif
 
@@ -833,13 +876,14 @@ define Image/BuildKernel
 	$(call CompressLzma,$(KDIR)/vmlinux,$(KDIR)/vmlinux.bin.lzma)
 	$(call MkImage,lzma,$(KDIR)/vmlinux.bin.lzma,$(KDIR)/uImage.lzma)
 	cp $(KDIR)/uImage.lzma $(BIN_DIR)/$(UIMAGE).bin
-ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+endef
+
+define Image/BuildKernel/Initramfs
 	cp $(KDIR)/vmlinux-initramfs.elf $(BIN_DIR)/$(VMLINUX)-initramfs.elf
 	cp $(KDIR)/vmlinux-initramfs $(BIN_DIR)/$(VMLINUX)-initramfs.bin
 	$(call CompressLzma,$(KDIR)/vmlinux-initramfs,$(KDIR)/vmlinux-initramfs.bin.lzma)
 	$(call MkImage,lzma,$(KDIR)/vmlinux-initramfs.bin.lzma,$(KDIR)/uImage-initramfs.lzma)
 	cp $(KDIR)/uImage-initramfs.lzma $(BIN_DIR)/$(UIMAGE)-initramfs.bin
-endif
 	$(call Image/Build/Initramfs)
 endef
 
