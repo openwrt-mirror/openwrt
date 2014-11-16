@@ -1,0 +1,47 @@
+diff -ruN a/net/wireless/core.c b/net/wireless/core.c
+--- a/net/wireless/core.c	2014-11-08 01:22:59.000000000 +0800
++++ b/net/wireless/core.c	2014-11-15 22:29:50.029228218 +0800
+@@ -989,8 +989,7 @@
+ 		/* allow mac80211 to determine the timeout */
+ 		wdev->ps_timeout = -1;
+ 
+-		if ((wdev->iftype == NL80211_IFTYPE_STATION ||
+-		     wdev->iftype == NL80211_IFTYPE_P2P_CLIENT ||
++		if ((wdev->iftype == NL80211_IFTYPE_P2P_CLIENT ||
+ 		     wdev->iftype == NL80211_IFTYPE_ADHOC) && !wdev->use_4addr)
+ 			dev->priv_flags |= IFF_DONT_BRIDGE;
+ 		break;
+diff -ruN a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+--- a/net/wireless/nl80211.c	2014-11-15 15:36:40.882750000 +0800
++++ b/net/wireless/nl80211.c	2014-11-15 22:33:02.834647542 +0800
+@@ -2501,8 +2501,6 @@
+ 			       enum nl80211_iftype iftype)
+ {
+ 	if (!use_4addr) {
+-		if (netdev && (netdev->priv_flags & IFF_BRIDGE_PORT))
+-			return -EBUSY;
+ 		return 0;
+ 	}
+ 
+diff -ruN a/net/wireless/util.c b/net/wireless/util.c
+--- a/net/wireless/util.c	2014-11-08 01:23:00.000000000 +0800
++++ b/net/wireless/util.c	2014-11-15 22:31:31.879675816 +0800
+@@ -890,7 +890,6 @@
+ 	/* if it's part of a bridge, reject changing type to station/ibss */
+ 	if ((dev->priv_flags & IFF_BRIDGE_PORT) &&
+ 	    (ntype == NL80211_IFTYPE_ADHOC ||
+-	     ntype == NL80211_IFTYPE_STATION ||
+ 	     ntype == NL80211_IFTYPE_P2P_CLIENT))
+ 		return -EBUSY;
+ 
+@@ -935,10 +934,6 @@
+ 	if (!err) {
+ 		dev->priv_flags &= ~IFF_DONT_BRIDGE;
+ 		switch (ntype) {
+-		case NL80211_IFTYPE_STATION:
+-			if (dev->ieee80211_ptr->use_4addr)
+-				break;
+-			/* fall through */
+ 		case NL80211_IFTYPE_OCB:
+ 		case NL80211_IFTYPE_P2P_CLIENT:
+ 		case NL80211_IFTYPE_ADHOC:

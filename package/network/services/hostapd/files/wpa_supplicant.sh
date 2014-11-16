@@ -24,10 +24,6 @@ wpa_supplicant_setup_vif() {
 	config_get mode "$vif" mode
 	config_get ifname "$vif" ifname
 	config_get_bool wds "$vif" wds 0
-	[ -z "$bridge" ] || [ "$mode" = ap ] || [ "$mode" = sta -a $wds -eq 1 ] || {
-		echo "wpa_supplicant_setup_vif($ifname): Refusing to bridge $mode mode interface"
-		return 1
-	}
 	[ "$mode" = "adhoc" ] && {
 		modestr="mode=1"
 		scan_ssid="0"
