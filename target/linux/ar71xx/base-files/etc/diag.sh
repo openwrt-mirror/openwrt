@@ -73,7 +73,7 @@ get_status_led() {
 		;;
 	el-mini | \
 	el-m150)
-		status_led="EasyLink:green:system"
+		status_led="easylink:green:system"
 		;;
 	gl-inet)
 		status_led="gl-connect:green:lan"
@@ -102,6 +102,10 @@ get_status_led() {
 		;;
 	mr600v2)
 		status_led="mr600:blue:power"
+		;;
+	mr900 | \
+	mr900v2)
+		status_led="mr900:blue:power"
 		;;
 	mynet-n600 | \
 	mynet-n750)

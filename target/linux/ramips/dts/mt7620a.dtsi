@@ -400,7 +400,7 @@
 	};
 
 	sdhci@10130000 {
-		compatible = "ralink,mt7620a-sdhci";
+		compatible = "ralink,mt7620-sdhci";
 		reg = <0x10130000 4000>;
 
 		interrupt-parent = <&intc>;
@@ -442,6 +442,14 @@
 
 		interrupt-parent = <&cpuintc>;
 		interrupts = <4>;
+
+		device_type = "pci";
+
+		bus-range = <0 255>;
+		ranges = <
+			0x02000000 0 0x00000000 0x20000000 0 0x10000000 /* pci memory */
+			0x01000000 0 0x00000000 0x10160000 0 0x00010000 /* io space */
+		>;
 
 		status = "disabled";
 
