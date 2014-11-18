@@ -283,7 +283,7 @@ platform_check_image() {
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
 	tl-wdr3500 | \
-        tl-wr2041n | \
+	tl-wr2041n-v1 | \
 	tl-wdr4300 | \
 	tl-wdr4900-v2 | \
 	tl-wr703n | \
