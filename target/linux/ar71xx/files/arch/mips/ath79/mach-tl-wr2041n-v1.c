@@ -1,5 +1,5 @@
 /*
- *  TP-LINK TL-WR2041N board support
+ *  TP-LINK TL-WR2041N v1 board support
  *
  *  Copyright (C) 2012 Gabor Juhos <juhosg@openwrt.org>
  *  Copyright (C) 2013 Gui Iribarren <gui@altermundi.net>
@@ -7,6 +7,9 @@
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License version 2 as published
  *  by the Free Software Foundation.
+ * 
+ *  TODO: leds: lan switch reversed, wan no problem, wlan always off
+ * 
  */
 
 #include <linux/pci.h>
@@ -28,14 +31,16 @@
 #include "dev-wmac.h"
 #include "machtypes.h"
 
-#define WR2041N_GPIO_LED_WLAN2G		13
-#define WR2041N_GPIO_LED_SYSTEM		14
+#define WR2041N_GPIO_LED_WLAN		13     /* investigate */
+#define WR2041N_GPIO_LED_SYSTEM		14     /* no problem */
 #define WR2041N_GPIO_LED_QSS		15
-#define WR2041N_GPIO_LED_WAN		18
+#define WR2041N_GPIO_LED_WAN		18     /* no problem */
+/* LAN led GPIO seems correct, based on ar9344 datasheet */
 #define WR2041N_GPIO_LED_LAN1		19
 #define WR2041N_GPIO_LED_LAN2		20
 #define WR2041N_GPIO_LED_LAN3		21
 #define WR2041N_GPIO_LED_LAN4		22
+/* #define WR2041N_GPIO_LED_LAN4		12 */
 
 #define WR2041N_GPIO_BTN_WPS		16
 #define WR2041N_GPIO_BTN_RFKILL		17
@@ -69,8 +74,28 @@ static struct gpio_led wr2041n_leds_gpio[] __initdata = {
 		.active_low	= 1,
 	},
         {
-		.name		= "tp-link:green:wlan2g",
-		.gpio		= WR2041N_GPIO_LED_WLAN2G,
+		.name		= "tp-link:green:wlan",
+		.gpio		= WR2041N_GPIO_LED_WLAN,
+		.active_low	= 1,
+	},
+        {
+		.name		= "tp-link:green:lan1",
+		.gpio		= WR2041N_GPIO_LED_LAN1,
+		.active_low	= 1,
+	},
+        {
+		.name		= "tp-link:green:lan2",
+		.gpio		= WR2041N_GPIO_LED_LAN2,
+		.active_low	= 1,
+	},
+        {
+		.name		= "tp-link:green:lan3",
+		.gpio		= WR2041N_GPIO_LED_LAN3,
+		.active_low	= 1,
+	},
+        {
+		.name		= "tp-link:green:lan4",
+		.gpio		= WR2041N_GPIO_LED_LAN4,
 		.active_low	= 1,
 	},
 };
@@ -101,6 +126,21 @@ static void __init wr2041n_setup(void)
 	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wr2041n_flash_data);
+	/*
+	  seems that the built-in switch has a reversed link between
+	  gpio and leds
+	*/
+	ath79_gpio_output_select(WR2041N_GPIO_LED_WAN,
+				 AR934X_GPIO_OUT_LED_LINK4);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN1,
+				 AR934X_GPIO_OUT_LED_LINK0);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN2,
+				 AR934X_GPIO_OUT_LED_LINK1);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN3,
+				 AR934X_GPIO_OUT_LED_LINK2);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN4,
+				 AR934X_GPIO_OUT_LED_LINK3);
+
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(wr2041n_leds_gpio),
 				 wr2041n_leds_gpio);
 	ath79_register_gpio_keys_polled(-1, WR2041N_KEYS_POLL_INTERVAL,
@@ -117,7 +157,7 @@ static void __init wr2041n_setup(void)
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE);
 
 	ath79_register_mdio(1, 0x0);
-
+	/* according to below lines, LAN is eth1 and WAN is eth0 */
 	/* LAN */
 	ath79_init_mac(ath79_eth1_data.mac_addr, mac, -1);
 
@@ -138,18 +178,8 @@ static void __init wr2041n_setup(void)
 
 	ath79_register_eth(0);
 
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN1,
-				 AR934X_GPIO_OUT_LED_LINK3);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN2,
-				 AR934X_GPIO_OUT_LED_LINK2);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN3,
-				 AR934X_GPIO_OUT_LED_LINK1);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN4,
-				 AR934X_GPIO_OUT_LED_LINK0);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_WAN,
-				 AR934X_GPIO_OUT_LED_LINK4);
 }
 
-MIPS_MACHINE(ATH79_MACH_TL_WR2041N, "TL-WR2041N",
-	     "TP-LINK TL-WR2041N",
+MIPS_MACHINE(ATH79_MACH_TL_WR2041N_V1, "TL-WR2041N-v1",
+	     "TP-LINK TL-WR2041N v1",
 	     wr2041n_setup);
