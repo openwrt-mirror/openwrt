@@ -360,7 +360,6 @@ tl-mr3220 |\
 tl-mr3220-v2 |\
 tl-mr3420 |\
 tl-wdr3500 |\
-tl-wr2041n |\
 tl-wr741nd |\
 tl-wr741nd-v4 |\
 tl-wr841n-v7 |\
@@ -370,6 +369,13 @@ whr-hp-g300n |\
 whr-hp-gn |\
 wzr-hp-ag300h)
 	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+	;;
+
+tl-wr2041n-v1)
+	# investigate wan,lan port and vlan; lan-eth1; wan-eth0
+	ucidef_set_interfaces_lan_wan "eth1" "eth0"
 	ucidef_add_switch "switch0" "1" "1"
 	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
 	;;
