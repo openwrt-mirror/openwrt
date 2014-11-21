@@ -376,8 +376,7 @@ wzr-hp-ag300h)
 	;;
 
 tl-wr2041n-v1)
-	# investigate wan,lan port and vlan; lan-eth1; wan-eth0
-	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+	ucidef_set_interfaces_lan_wan "eth0" "eth1"
 	ucidef_add_switch "switch0" "1" "1"
 	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
 	;;
