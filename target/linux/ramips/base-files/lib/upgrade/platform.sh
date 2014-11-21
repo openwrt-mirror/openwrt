@@ -51,6 +51,7 @@ platform_check_image() {
 	freestation5 | \
 	hg255d | \
 	hlk-rm04 | \
+    hiwifi-hc5761 |\
 	ht-tm02 | \
 	hw550-3g | \
 	ip2202 | \
