@@ -51,6 +51,8 @@ struct ar8xxx_priv;
 #define AR8XXX_CAP_GIGE			BIT(0)
 #define AR8XXX_CAP_MIB_COUNTERS		BIT(1)
 
+#define AR8XXX_NUM_PHYS 	5
+
 enum {
 	AR8XXX_VER_AR8216 = 0x01,
 	AR8XXX_VER_AR8236 = 0x03,
@@ -78,6 +80,7 @@ struct ar8xxx_chip {
 	int (*atu_flush)(struct ar8xxx_priv *priv);
 	void (*vtu_flush)(struct ar8xxx_priv *priv);
 	void (*vtu_load_vlan)(struct ar8xxx_priv *priv, u32 vid, u32 port_mask);
+	void (*phy_fixup)(struct ar8xxx_priv *priv, int phy);
 
 	const struct ar8xxx_mib_desc *mib_decs;
 	unsigned num_mibs;
@@ -312,6 +315,53 @@ split_addr(u32 regaddr, u16 *r1, u16 *r2, u16 *page)
 
 	regaddr >>= 3;
 	*page = regaddr & 0x1ff;
+}
+
+/* inspired by phy_poll_reset in drivers/net/phy/phy_device.c */
+static int
+ar8xxx_phy_poll_reset(struct mii_bus *bus)
+{
+        unsigned int sleep_msecs = 20;
+        int ret, elapsed, i;
+
+        for (elapsed = sleep_msecs; elapsed <= 600;
+	     elapsed += sleep_msecs) {
+                msleep(sleep_msecs);
+                for (i = 0; i < AR8XXX_NUM_PHYS; i++) {
+                        ret = mdiobus_read(bus, i, MII_BMCR);
+                        if (ret < 0)
+				return ret;
+                        if (ret & BMCR_RESET)
+				break;
+                        if (i == AR8XXX_NUM_PHYS - 1) {
+                                usleep_range(1000, 2000);
+                                return 0;
+                        }
+                }
+        }
+        return -ETIMEDOUT;
+}
+
+static void
+ar8xxx_phy_init(struct ar8xxx_priv *priv)
+{
+	int i;
+	struct mii_bus *bus;
+
+	bus = priv->mii_bus;
+	for (i = 0; i < AR8XXX_NUM_PHYS; i++) {
+		if (priv->chip->phy_fixup)
+			priv->chip->phy_fixup(priv, i);
+
+		/* initialize the port itself */
+		mdiobus_write(bus, i, MII_ADVERTISE,
+			ADVERTISE_ALL | ADVERTISE_PAUSE_CAP | ADVERTISE_PAUSE_ASYM);
+		if (ar8xxx_has_gige(priv))
+			mdiobus_write(bus, i, MII_CTRL1000, ADVERTISE_1000FULL);
+		mdiobus_write(bus, i, MII_BMCR, BMCR_RESET | BMCR_ANENABLE);
+	}
+
+	ar8xxx_phy_poll_reset(bus);
 }
 
 static u32
@@ -764,6 +814,12 @@ ar8216_setup_port(struct ar8xxx_priv *priv, int port, u32 members)
 static int
 ar8216_hw_init(struct ar8xxx_priv *priv)
 {
+	if (priv->initialized)
+		return 0;
+
+	ar8xxx_phy_init(priv);
+
+	priv->initialized = true;
 	return 0;
 }
 
@@ -857,29 +913,6 @@ ar8236_setup_port(struct ar8xxx_priv *priv, int port, u32 members)
 		   (members << AR8236_PORT_VLAN2_MEMBER_S));
 }
 
-static int
-ar8236_hw_init(struct ar8xxx_priv *priv)
-{
-	int i;
-	struct mii_bus *bus;
-
-	if (priv->initialized)
-		return 0;
-
-	/* Initialize the PHYs */
-	bus = priv->mii_bus;
-	for (i = 0; i < 5; i++) {
-		mdiobus_write(bus, i, MII_ADVERTISE,
-			      ADVERTISE_ALL | ADVERTISE_PAUSE_CAP |
-			      ADVERTISE_PAUSE_ASYM);
-		mdiobus_write(bus, i, MII_BMCR, BMCR_RESET | BMCR_ANENABLE);
-	}
-	msleep(1000);
-
-	priv->initialized = true;
-	return 0;
-}
-
 static void
 ar8236_init_globals(struct ar8xxx_priv *priv)
 {
@@ -895,7 +928,7 @@ ar8236_init_globals(struct ar8xxx_priv *priv)
 
 static const struct ar8xxx_chip ar8236_chip = {
 	.caps = AR8XXX_CAP_MIB_COUNTERS,
-	.hw_init = ar8236_hw_init,
+	.hw_init = ar8216_hw_init,
 	.init_globals = ar8236_init_globals,
 	.init_port = ar8216_init_port,
 	.setup_port = ar8236_setup_port,
@@ -911,9 +944,7 @@ static const struct ar8xxx_chip ar8236_chip = {
 static int
 ar8316_hw_init(struct ar8xxx_priv *priv)
 {
-	int i;
 	u32 val, newval;
-	struct mii_bus *bus;
 
 	val = priv->read(priv, AR8316_REG_POSTRIP);
 
@@ -952,17 +983,7 @@ ar8316_hw_init(struct ar8xxx_priv *priv)
 		msleep(1000);
 	}
 
-	/* Initialize the ports */
-	bus = priv->mii_bus;
-	for (i = 0; i < 5; i++) {
-		/* initialize the port itself */
-		mdiobus_write(bus, i, MII_ADVERTISE,
-			ADVERTISE_ALL | ADVERTISE_PAUSE_CAP | ADVERTISE_PAUSE_ASYM);
-		mdiobus_write(bus, i, MII_CTRL1000, ADVERTISE_1000FULL);
-		mdiobus_write(bus, i, MII_BMCR, BMCR_RESET | BMCR_ANENABLE);
-	}
-
-	msleep(1000);
+	ar8xxx_phy_init(priv);
 
 out:
 	priv->initialized = true;
@@ -1593,9 +1614,7 @@ ar8327_hw_config_of(struct ar8xxx_priv *priv, struct device_node *np)
 static int
 ar8327_hw_init(struct ar8xxx_priv *priv)
 {
-	struct mii_bus *bus;
 	int ret;
-	int i;
 
 	if (priv->phy->dev.of_node)
 		ret = ar8327_hw_config_of(priv, priv->phy->dev.of_node);
@@ -1608,19 +1627,7 @@ ar8327_hw_init(struct ar8xxx_priv *priv)
 
 	ar8327_leds_init(priv);
 
-	bus = priv->mii_bus;
-	for (i = 0; i < AR8327_NUM_PHYS; i++) {
-		ar8327_phy_fixup(priv, i);
-
-		/* start aneg on the PHY */
-		mdiobus_write(bus, i, MII_ADVERTISE, ADVERTISE_ALL |
-						     ADVERTISE_PAUSE_CAP |
-						     ADVERTISE_PAUSE_ASYM);
-		mdiobus_write(bus, i, MII_CTRL1000, ADVERTISE_1000FULL);
-		mdiobus_write(bus, i, MII_BMCR, BMCR_RESET | BMCR_ANENABLE);
-	}
-
-	msleep(1000);
+	ar8xxx_phy_init(priv);
 
 	return 0;
 }
@@ -1799,6 +1806,7 @@ static const struct ar8xxx_chip ar8327_chip = {
 	.atu_flush = ar8327_atu_flush,
 	.vtu_flush = ar8327_vtu_flush,
 	.vtu_load_vlan = ar8327_vtu_load_vlan,
+	.phy_fixup = ar8327_phy_fixup,
 
 	.num_mibs = ARRAY_SIZE(ar8236_mibs),
 	.mib_decs = ar8236_mibs,
@@ -2840,15 +2848,6 @@ ar8xxx_phy_read_status(struct phy_device *phydev)
 	return ret;
 }
 
-static int
-ar8xxx_phy_config_aneg(struct phy_device *phydev)
-{
-	if (phydev->addr == 0)
-		return 0;
-
-	return genphy_config_aneg(phydev);
-}
-
 static const u32 ar8xxx_phy_ids[] = {
 	0x004dd033,
 	0x004dd034, /* AR8327 */
@@ -3020,7 +3019,7 @@ static struct phy_driver ar8xxx_phy_driver = {
 	.remove		= ar8xxx_phy_remove,
 	.detach		= ar8xxx_phy_detach,
 	.config_init	= ar8xxx_phy_config_init,
-	.config_aneg	= ar8xxx_phy_config_aneg,
+	.config_aneg	= genphy_config_aneg,
 	.read_status	= ar8xxx_phy_read_status,
 	.driver		= { .owner = THIS_MODULE },
 };
