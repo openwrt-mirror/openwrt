@@ -36,10 +36,10 @@
 #define WR2041N_GPIO_LED_QSS		15
 #define WR2041N_GPIO_LED_WAN		18     /* no problem */
 /* LAN led GPIO seems correct, based on ar9344 datasheet */
-#define WR2041N_GPIO_LED_LAN1		19
-#define WR2041N_GPIO_LED_LAN2		20
-#define WR2041N_GPIO_LED_LAN3		21
-#define WR2041N_GPIO_LED_LAN4		22
+#define WR2041N_GPIO_LED_LAN4		19
+#define WR2041N_GPIO_LED_LAN3		20
+#define WR2041N_GPIO_LED_LAN2		21
+#define WR2041N_GPIO_LED_LAN1		22
 /* #define WR2041N_GPIO_LED_LAN4		12 */
 
 #define WR2041N_GPIO_BTN_WPS		16
@@ -133,13 +133,13 @@ static void __init wr2041n_setup(void)
 	ath79_gpio_output_select(WR2041N_GPIO_LED_WAN,
 				 AR934X_GPIO_OUT_LED_LINK4);
 	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN1,
-				 AR934X_GPIO_OUT_LED_LINK0);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN2,
-				 AR934X_GPIO_OUT_LED_LINK1);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN3,
-				 AR934X_GPIO_OUT_LED_LINK2);
-	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN4,
 				 AR934X_GPIO_OUT_LED_LINK3);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN2,
+				 AR934X_GPIO_OUT_LED_LINK2);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN3,
+				 AR934X_GPIO_OUT_LED_LINK1);
+	ath79_gpio_output_select(WR2041N_GPIO_LED_LAN4,
+				 AR934X_GPIO_OUT_LED_LINK0);
 
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(wr2041n_leds_gpio),
 				 wr2041n_leds_gpio);
