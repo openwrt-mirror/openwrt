@@ -38,7 +38,7 @@ boot() {
 	/sbin/kmodloader
 
 	# allow wifi modules time to settle
-	sleep 5
+	sleep 10
 
 	/sbin/wifi detect > /tmp/wireless.tmp
 	[ -s /tmp/wireless.tmp ] && {
