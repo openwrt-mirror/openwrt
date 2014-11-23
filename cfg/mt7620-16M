@@ -47,8 +47,8 @@ CONFIG_TARGET_ramips=y
 # CONFIG_TARGET_uml is not set
 # CONFIG_TARGET_x86 is not set
 # CONFIG_TARGET_x86_64 is not set
-CONFIG_TARGET_ramips_rt305x=y
-# CONFIG_TARGET_ramips_mt7620 is not set
+# CONFIG_TARGET_ramips_rt305x is not set
+CONFIG_TARGET_ramips_mt7620=y
 # CONFIG_TARGET_ramips_mt7621 is not set
 # CONFIG_TARGET_ramips_mt7628 is not set
 # CONFIG_TARGET_ramips_rt3883 is not set
@@ -78,7 +78,7 @@ CONFIG_TARGET_ramips_rt305x=y
 # CONFIG_TARGET_ramips_rt305x_FREESTATION5 is not set
 # CONFIG_TARGET_ramips_rt305x_MPRA1 is not set
 # CONFIG_TARGET_ramips_rt305x_MPRA2 is not set
-CONFIG_TARGET_ramips_rt305x_HG255D=y
+# CONFIG_TARGET_ramips_rt305x_HG255D is not set
 # CONFIG_TARGET_ramips_rt305x_HLKRM04 is not set
 # CONFIG_TARGET_ramips_rt305x_HT-TM02 is not set
 # CONFIG_TARGET_ramips_rt305x_A5-V11 is not set
@@ -95,6 +95,10 @@ CONFIG_TARGET_ramips_rt305x_HG255D=y
 # CONFIG_TARGET_ramips_rt305x_UR-326N4G is not set
 # CONFIG_TARGET_ramips_rt305x_VOCORE is not set
 # CONFIG_TARGET_ramips_rt305x_NCS601W is not set
+CONFIG_TARGET_ramips_mt7620_Default=y
+# CONFIG_TARGET_ramips_mt7620_AIBR100 is not set
+# CONFIG_TARGET_ramips_mt7620_E1700 is not set
+# CONFIG_TARGET_ramips_mt7620_MT7620a is not set
 CONFIG_HAS_SUBTARGETS=y
 CONFIG_TARGET_BOARD="ramips"
 CONFIG_TARGET_ARCH_PACKAGES="ramips_24kec"
@@ -112,9 +116,13 @@ CONFIG_DEFAULT_iptables=y
 CONFIG_DEFAULT_iwinfo=y
 CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-leds-gpio=y
+CONFIG_DEFAULT_kmod-ledtrig-usbdev=y
 CONFIG_DEFAULT_kmod-nf-nathelper=y
+CONFIG_DEFAULT_kmod-rt2800-pci=y
 CONFIG_DEFAULT_kmod-rt2800-soc=y
-CONFIG_DEFAULT_kmod-usb-dwc2=y
+CONFIG_DEFAULT_kmod-usb-core=y
+CONFIG_DEFAULT_kmod-usb-ohci=y
+CONFIG_DEFAULT_kmod-usb2=y
 CONFIG_DEFAULT_libc=y
 CONFIG_DEFAULT_libgcc=y
 CONFIG_DEFAULT_mtd=y
@@ -129,6 +137,7 @@ CONFIG_DEFAULT_uci=y
 CONFIG_DEFAULT_wpad-mini=y
 CONFIG_AUDIO_SUPPORT=y
 CONFIG_GPIO_SUPPORT=y
+CONFIG_PCI_SUPPORT=y
 CONFIG_USB_SUPPORT=y
 CONFIG_USES_DEVICETREE=y
 CONFIG_USES_SQUASHFS=y
@@ -1346,8 +1355,10 @@ CONFIG_PACKAGE_wireless-tools=y
 # Block Devices
 #
 # CONFIG_PACKAGE_kmod-aoe is not set
+# CONFIG_PACKAGE_kmod-ata-core is not set
 # CONFIG_PACKAGE_kmod-block2mtd is not set
 # CONFIG_PACKAGE_kmod-dm is not set
+# CONFIG_PACKAGE_kmod-ide-core is not set
 # CONFIG_PACKAGE_kmod-loop is not set
 # CONFIG_PACKAGE_kmod-md-mod is not set
 # CONFIG_PACKAGE_kmod-nbd is not set
@@ -1432,6 +1443,7 @@ CONFIG_PACKAGE_kmod-ufsd-mipsel=y
 #
 # FireWire support
 #
+# CONFIG_PACKAGE_kmod-firewire is not set
 
 #
 # Hardware Monitoring Support
@@ -1599,7 +1611,20 @@ CONFIG_PACKAGE_kmod-nfnetlink=y
 #
 # Network Devices
 #
+# CONFIG_PACKAGE_kmod-3c59x is not set
+# CONFIG_PACKAGE_kmod-8139cp is not set
+# CONFIG_PACKAGE_kmod-8139too is not set
+# CONFIG_PACKAGE_kmod-atl1 is not set
+# CONFIG_PACKAGE_kmod-atl1c is not set
+# CONFIG_PACKAGE_kmod-atl1e is not set
+# CONFIG_PACKAGE_kmod-atl2 is not set
+# CONFIG_PACKAGE_kmod-b44 is not set
+# CONFIG_PACKAGE_kmod-dm9000 is not set
 # CONFIG_PACKAGE_kmod-dummy is not set
+# CONFIG_PACKAGE_kmod-e100 is not set
+# CONFIG_PACKAGE_kmod-e1000 is not set
+# CONFIG_PACKAGE_kmod-et131x is not set
+# CONFIG_PACKAGE_kmod-forcedeth is not set
 # CONFIG_PACKAGE_kmod-gigaset is not set
 # CONFIG_PACKAGE_kmod-hfcmulti is not set
 # CONFIG_PACKAGE_kmod-hfcpci is not set
@@ -1607,14 +1632,28 @@ CONFIG_PACKAGE_kmod-ifb=y
 # CONFIG_PACKAGE_kmod-libphy is not set
 CONFIG_PACKAGE_kmod-macvlan=y
 # CONFIG_PACKAGE_kmod-mii is not set
+# CONFIG_PACKAGE_kmod-natsemi is not set
+# CONFIG_PACKAGE_kmod-ne2k-pci is not set
 # CONFIG_PACKAGE_kmod-of-mdio is not set
+# CONFIG_PACKAGE_kmod-pcnet32 is not set
+# CONFIG_PACKAGE_kmod-r6040 is not set
+# CONFIG_PACKAGE_kmod-r8169 is not set
 # CONFIG_PACKAGE_kmod-siit is not set
+# CONFIG_PACKAGE_kmod-sis190 is not set
+# CONFIG_PACKAGE_kmod-sis900 is not set
+# CONFIG_PACKAGE_kmod-skge is not set
+# CONFIG_PACKAGE_kmod-sky2 is not set
+# CONFIG_PACKAGE_kmod-solos-pci is not set
 # CONFIG_PACKAGE_kmod-swconfig is not set
 # CONFIG_PACKAGE_kmod-switch-ip17xx is not set
 # CONFIG_PACKAGE_kmod-switch-rtl8366-smi is not set
 # CONFIG_PACKAGE_kmod-switch-rtl8366rb is not set
 # CONFIG_PACKAGE_kmod-switch-rtl8366s is not set
 # CONFIG_PACKAGE_kmod-tg3 is not set
+# CONFIG_PACKAGE_kmod-tulip is not set
+# CONFIG_PACKAGE_kmod-via-rhine is not set
+# CONFIG_PACKAGE_kmod-via-velocity is not set
+# CONFIG_PACKAGE_kmod-vmxnet3 is not set
 
 #
 # Network Support
@@ -1676,6 +1715,7 @@ CONFIG_PACKAGE_kmod-tun=y
 #
 # Other modules
 #
+# CONFIG_PACKAGE_kmod-bcma is not set
 # CONFIG_PACKAGE_kmod-bluetooth is not set
 # CONFIG_PACKAGE_kmod-button-hotplug is not set
 CONFIG_PACKAGE_kmod-eeprom-93cx6=y
@@ -1703,8 +1743,10 @@ CONFIG_PACKAGE_kmod-gpio-button-hotplug=y
 # CONFIG_PACKAGE_kmod-regmap is not set
 # CONFIG_PACKAGE_kmod-rotary-gpio-custom is not set
 # CONFIG_PACKAGE_kmod-sdhci is not set
+# CONFIG_PACKAGE_kmod-sdhci-mt7620 is not set
 # CONFIG_PACKAGE_kmod-serial-8250 is not set
 # CONFIG_PACKAGE_kmod-softdog is not set
+# CONFIG_PACKAGE_kmod-ssb is not set
 # CONFIG_PACKAGE_kmod-zram is not set
 
 #
@@ -1735,7 +1777,7 @@ CONFIG_PACKAGE_kmod-usb-acm=y
 # CONFIG_PACKAGE_kmod-usb-chipidea is not set
 # CONFIG_PACKAGE_kmod-usb-cm109 is not set
 CONFIG_PACKAGE_kmod-usb-core=y
-CONFIG_PACKAGE_kmod-usb-dwc2=y
+# CONFIG_PACKAGE_kmod-usb-dwc2 is not set
 # CONFIG_PACKAGE_kmod-usb-hid is not set
 # CONFIG_PACKAGE_kmod-usb-net is not set
 CONFIG_PACKAGE_kmod-usb-ohci=y
@@ -1766,6 +1808,7 @@ CONFIG_PACKAGE_kmod-usb-storage-extras=y
 # CONFIG_PACKAGE_kmod-usb-wdm is not set
 # CONFIG_PACKAGE_kmod-usb-yealink is not set
 CONFIG_PACKAGE_kmod-usb2=y
+# CONFIG_PACKAGE_kmod-usb2-pci is not set
 # CONFIG_PACKAGE_kmod-usb3 is not set
 # CONFIG_PACKAGE_kmod-usbip is not set
 # CONFIG_PACKAGE_kmod-usbip-client is not set
@@ -1832,16 +1875,31 @@ CONFIG_PACKAGE_kmod-video-videobuf2=y
 #
 # Wireless Drivers
 #
+# CONFIG_PACKAGE_kmod-acx-mac80211 is not set
+# CONFIG_PACKAGE_kmod-adm8211 is not set
 CONFIG_PACKAGE_kmod-ath=y
 CONFIG_ATH_USER_REGD=y
 # CONFIG_PACKAGE_ATH_DEBUG is not set
 # CONFIG_PACKAGE_ATH_DFS is not set
+# CONFIG_PACKAGE_kmod-ath10k is not set
+# CONFIG_PACKAGE_kmod-ath5k is not set
+# CONFIG_PACKAGE_kmod-ath9k is not set
 CONFIG_PACKAGE_kmod-ath9k-common=y
 CONFIG_PACKAGE_kmod-ath9k-htc=y
+# CONFIG_PACKAGE_kmod-b43 is not set
+# CONFIG_PACKAGE_kmod-b43legacy is not set
 # CONFIG_PACKAGE_kmod-brcmfmac is not set
+# CONFIG_PACKAGE_kmod-brcmsmac is not set
 # CONFIG_PACKAGE_kmod-brcmutil is not set
 CONFIG_PACKAGE_kmod-carl9170=y
 CONFIG_PACKAGE_kmod-cfg80211=y
+# CONFIG_PACKAGE_kmod-hostap is not set
+# CONFIG_PACKAGE_kmod-hostap-pci is not set
+# CONFIG_PACKAGE_kmod-hostap-plx is not set
+# CONFIG_PACKAGE_kmod-iwl-legacy is not set
+# CONFIG_PACKAGE_kmod-iwl3945 is not set
+# CONFIG_PACKAGE_kmod-iwl4965 is not set
+# CONFIG_PACKAGE_kmod-iwlagn is not set
 # CONFIG_PACKAGE_kmod-lib80211 is not set
 # CONFIG_PACKAGE_kmod-libertas-sd is not set
 # CONFIG_PACKAGE_kmod-libertas-usb is not set
@@ -1849,15 +1907,31 @@ CONFIG_PACKAGE_kmod-mac80211=y
 CONFIG_PACKAGE_MAC80211_DEBUGFS=y
 CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_kmod-mac80211-hwsim is not set
-# CONFIG_PACKAGE_kmod-mt76 is not set
+# CONFIG_PACKAGE_kmod-madwifi is not set
+CONFIG_PACKAGE_kmod-mt76=y
+# CONFIG_PACKAGE_kmod-mtk-wifi-gpl is not set
+# CONFIG_PACKAGE_kmod-mwifiex-pcie is not set
+# CONFIG_PACKAGE_kmod-mwl8k is not set
+# CONFIG_PACKAGE_kmod-net-airo is not set
+# CONFIG_PACKAGE_kmod-net-hermes is not set
+# CONFIG_PACKAGE_kmod-net-hermes-pci is not set
+# CONFIG_PACKAGE_kmod-net-hermes-plx is not set
+# CONFIG_PACKAGE_kmod-net-ipw2100 is not set
+# CONFIG_PACKAGE_kmod-net-ipw2200 is not set
+# CONFIG_PACKAGE_kmod-net-libipw is not set
+# CONFIG_PACKAGE_kmod-net-prism54 is not set
 # CONFIG_PACKAGE_kmod-net-rtl8188eu is not set
 # CONFIG_PACKAGE_kmod-net-zd1201 is not set
-CONFIG_PACKAGE_kmod-p54-common=y
-CONFIG_PACKAGE_kmod-p54-usb=y
+# CONFIG_PACKAGE_kmod-p54-common is not set
+# CONFIG_PACKAGE_kmod-p54-pci is not set
+# CONFIG_PACKAGE_kmod-p54-usb is not set
 # CONFIG_PACKAGE_kmod-ralink-driver-fixes is not set
-CONFIG_PACKAGE_kmod-rt2500-usb=y
+# CONFIG_PACKAGE_kmod-rt2400-pci is not set
+# CONFIG_PACKAGE_kmod-rt2500-pci is not set
+# CONFIG_PACKAGE_kmod-rt2500-usb is not set
 CONFIG_PACKAGE_kmod-rt2800-lib=y
 CONFIG_PACKAGE_kmod-rt2800-mmio=y
+CONFIG_PACKAGE_kmod-rt2800-pci=y
 CONFIG_PACKAGE_kmod-rt2800-soc=y
 CONFIG_PACKAGE_kmod-rt2800-usb=y
 # CONFIG_PACKAGE_kmod-rt2860v2 is not set
@@ -1865,12 +1939,18 @@ CONFIG_PACKAGE_kmod-rt2x00-lib=y
 # CONFIG_PACKAGE_RT2X00_LIB_DEBUGFS is not set
 # CONFIG_PACKAGE_RT2X00_DEBUG is not set
 CONFIG_PACKAGE_kmod-rt2x00-mmio=y
+CONFIG_PACKAGE_kmod-rt2x00-pci=y
 CONFIG_PACKAGE_kmod-rt2x00-usb=y
-CONFIG_PACKAGE_kmod-rt73-usb=y
-CONFIG_PACKAGE_kmod-rtl8187=y
+# CONFIG_PACKAGE_kmod-rt61-pci is not set
+# CONFIG_PACKAGE_kmod-rt73-usb is not set
+# CONFIG_PACKAGE_kmod-rtl8180 is not set
+# CONFIG_PACKAGE_kmod-rtl8187 is not set
 # CONFIG_PACKAGE_kmod-rtl8188eu is not set
 CONFIG_PACKAGE_kmod-rtl8192c-common=y
+# CONFIG_PACKAGE_kmod-rtl8192ce is not set
 CONFIG_PACKAGE_kmod-rtl8192cu=y
+# CONFIG_PACKAGE_kmod-rtl8192de is not set
+# CONFIG_PACKAGE_kmod-rtl8192se is not set
 CONFIG_PACKAGE_kmod-rtlwifi=y
 # CONFIG_PACKAGE_RTLWIFI_DEBUG is not set
 CONFIG_PACKAGE_kmod-rtlwifi-usb=y
@@ -2243,7 +2323,7 @@ CONFIG_PACKAGE_libevent2=y
 # CONFIG_PACKAGE_libftdi is not set
 # CONFIG_PACKAGE_libftdi1 is not set
 # CONFIG_PACKAGE_libgcrypt is not set
-CONFIG_PACKAGE_libgd=y
+# CONFIG_PACKAGE_libgd is not set
 # CONFIG_PACKAGE_libgee is not set
 # CONFIG_PACKAGE_libgmp is not set
 # CONFIG_PACKAGE_libgpg-error is not set
@@ -2280,7 +2360,7 @@ CONFIG_PACKAGE_libjson-c=y
 # CONFIG_PACKAGE_libldns is not set
 # CONFIG_PACKAGE_libleptonica is not set
 # CONFIG_PACKAGE_libloudmouth1 is not set
-CONFIG_PACKAGE_libltdl=y
+# CONFIG_PACKAGE_libltdl is not set
 CONFIG_PACKAGE_liblua=y
 # CONFIG_PACKAGE_liblzma is not set
 # CONFIG_PACKAGE_liblzo is not set
@@ -2349,7 +2429,7 @@ CONFIG_PACKAGE_libpcre=y
 # CONFIG_PACKAGE_libpkcs11-spy is not set
 # CONFIG_PACKAGE_libplist is not set
 # CONFIG_PACKAGE_libplistcxx is not set
-CONFIG_PACKAGE_libpng=y
+# CONFIG_PACKAGE_libpng is not set
 # CONFIG_PACKAGE_libpopt is not set
 # CONFIG_PACKAGE_libprotobuf-c is not set
 # CONFIG_PACKAGE_libptmalloc3 is not set
@@ -2360,7 +2440,7 @@ CONFIG_PACKAGE_libpng=y
 # CONFIG_PACKAGE_librpc is not set
 # CONFIG_PACKAGE_librpcsecgss is not set
 # CONFIG_PACKAGE_librrd is not set
-CONFIG_PACKAGE_librrd1=y
+# CONFIG_PACKAGE_librrd1 is not set
 # CONFIG_PACKAGE_librsync is not set
 # CONFIG_PACKAGE_librtlsdr is not set
 # CONFIG_PACKAGE_libruby is not set
@@ -2521,13 +2601,13 @@ CONFIG_PACKAGE_luci-app-shadowsocks=y
 # CONFIG_PACKAGE_luci-app-siitwizard is not set
 # CONFIG_PACKAGE_luci-app-splash is not set
 # CONFIG_PACKAGE_luci-app-sqm is not set
-CONFIG_PACKAGE_luci-app-statistics=y
+# CONFIG_PACKAGE_luci-app-statistics is not set
 # CONFIG_PACKAGE_luci-app-tinyproxy is not set
-CONFIG_PACKAGE_luci-app-transmission=y
+# CONFIG_PACKAGE_luci-app-transmission is not set
 # CONFIG_PACKAGE_luci-app-udpxy is not set
 CONFIG_PACKAGE_luci-app-upnp=y
 CONFIG_PACKAGE_luci-app-usb-printer=y
-CONFIG_PACKAGE_luci-app-vnstat=y
+# CONFIG_PACKAGE_luci-app-vnstat is not set
 # CONFIG_PACKAGE_luci-app-voice-core is not set
 # CONFIG_PACKAGE_luci-app-voice-diag is not set
 CONFIG_PACKAGE_luci-app-vsftpd=y
@@ -2589,8 +2669,8 @@ CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-base=y
 # CONFIG_PACKAGE_luci-base_compile is not set
 # CONFIG_PACKAGE_luci-base_stripped is not set
-# CONFIG_PACKAGE_luci-base_srcdiet is not set
-CONFIG_PACKAGE_luci-base_source=y
+CONFIG_PACKAGE_luci-base_srcdiet=y
+# CONFIG_PACKAGE_luci-base_source is not set
 # CONFIG_PACKAGE_luci-lib-httpclient is not set
 # CONFIG_PACKAGE_luci-lib-json is not set
 # CONFIG_PACKAGE_luci-lib-luaneightbl is not set
@@ -2721,10 +2801,8 @@ CONFIG_MJPG_STREAMER_OUTPUT_HTTP=y
 # CONFIG_PACKAGE_opentracker6 is not set
 # CONFIG_PACKAGE_rtorrent is not set
 # CONFIG_PACKAGE_rtorrent-rpc is not set
-CONFIG_PACKAGE_transmission-daemon=y
-# CONFIG_PACKAGE_transmission-cli is not set
+# CONFIG_PACKAGE_transmission-daemon is not set
 # CONFIG_PACKAGE_transmission-remote is not set
-CONFIG_PACKAGE_transmission-web=y
 
 #
 # Captive Portals
@@ -3426,6 +3504,7 @@ CONFIG_PACKAGE_uhttpd-mod-ubus=y
 # CONFIG_PACKAGE_aircrack-ptw is not set
 # CONFIG_PACKAGE_airpwn is not set
 # CONFIG_PACKAGE_horst is not set
+# CONFIG_PACKAGE_karma is not set
 # CONFIG_PACKAGE_kismet-client is not set
 # CONFIG_PACKAGE_kismet-drone is not set
 # CONFIG_PACKAGE_kismet-server is not set
@@ -3642,6 +3721,7 @@ CONFIG_PACKAGE_shadowsocks-libev=y
 # CONFIG_PACKAGE_snmpd-static is not set
 # CONFIG_PACKAGE_socat is not set
 # CONFIG_PACKAGE_softflowd is not set
+# CONFIG_PACKAGE_soloscli is not set
 # CONFIG_PACKAGE_sscep is not set
 # CONFIG_PACKAGE_sslcat is not set
 # CONFIG_PACKAGE_sslsniff is not set
@@ -3683,8 +3763,7 @@ CONFIG_PACKAGE_shadowsocks-libev=y
 # CONFIG_PACKAGE_vgp is not set
 # CONFIG_PACKAGE_vnc-reflector is not set
 # CONFIG_PACKAGE_vncrepeater is not set
-CONFIG_PACKAGE_vnstat=y
-CONFIG_PACKAGE_vnstati=y
+# CONFIG_PACKAGE_vnstat is not set
 # CONFIG_PACKAGE_wdiag is not set
 # CONFIG_PACKAGE_whob is not set
 # CONFIG_PACKAGE_wiviz is not set
@@ -3924,57 +4003,7 @@ CONFIG_PACKAGE_hd-idle=y
 # CONFIG_PACKAGE_cksfv is not set
 # CONFIG_PACKAGE_clish is not set
 # CONFIG_PACKAGE_cmdpad is not set
-CONFIG_PACKAGE_collectd=y
-# CONFIG_PACKAGE_collectd-mod-apache is not set
-# CONFIG_PACKAGE_collectd-mod-apcups is not set
-# CONFIG_PACKAGE_collectd-mod-ascent is not set
-# CONFIG_PACKAGE_collectd-mod-bind is not set
-# CONFIG_PACKAGE_collectd-mod-conntrack is not set
-# CONFIG_PACKAGE_collectd-mod-contextswitch is not set
-# CONFIG_PACKAGE_collectd-mod-cpu is not set
-# CONFIG_PACKAGE_collectd-mod-csv is not set
-# CONFIG_PACKAGE_collectd-mod-curl is not set
-# CONFIG_PACKAGE_collectd-mod-df is not set
-# CONFIG_PACKAGE_collectd-mod-disk is not set
-# CONFIG_PACKAGE_collectd-mod-dns is not set
-# CONFIG_PACKAGE_collectd-mod-email is not set
-# CONFIG_PACKAGE_collectd-mod-exec is not set
-# CONFIG_PACKAGE_collectd-mod-filecount is not set
-# CONFIG_PACKAGE_collectd-mod-fscache is not set
-CONFIG_PACKAGE_collectd-mod-interface=y
-# CONFIG_PACKAGE_collectd-mod-iptables is not set
-# CONFIG_PACKAGE_collectd-mod-irq is not set
-CONFIG_PACKAGE_collectd-mod-iwinfo=y
-CONFIG_PACKAGE_collectd-mod-load=y
-# CONFIG_PACKAGE_collectd-mod-logfile is not set
-# CONFIG_PACKAGE_collectd-mod-madwifi is not set
-# CONFIG_PACKAGE_collectd-mod-memory is not set
-CONFIG_PACKAGE_collectd-mod-network=y
-# CONFIG_PACKAGE_collectd-mod-nginx is not set
-# CONFIG_PACKAGE_collectd-mod-ntpd is not set
-# CONFIG_PACKAGE_collectd-mod-olsrd is not set
-# CONFIG_PACKAGE_collectd-mod-openvpn is not set
-# CONFIG_PACKAGE_collectd-mod-ping is not set
-# CONFIG_PACKAGE_collectd-mod-postgresql is not set
-# CONFIG_PACKAGE_collectd-mod-powerdns is not set
-# CONFIG_PACKAGE_collectd-mod-processes is not set
-# CONFIG_PACKAGE_collectd-mod-protocols is not set
-CONFIG_PACKAGE_collectd-mod-rrdtool=y
-# CONFIG_PACKAGE_collectd-mod-sensors is not set
-# CONFIG_PACKAGE_collectd-mod-snmp is not set
-# CONFIG_PACKAGE_collectd-mod-syslog is not set
-# CONFIG_PACKAGE_collectd-mod-table is not set
-# CONFIG_PACKAGE_collectd-mod-tail is not set
-# CONFIG_PACKAGE_collectd-mod-tcpconns is not set
-# CONFIG_PACKAGE_collectd-mod-teamspeak2 is not set
-# CONFIG_PACKAGE_collectd-mod-ted is not set
-# CONFIG_PACKAGE_collectd-mod-thermal is not set
-# CONFIG_PACKAGE_collectd-mod-unixsock is not set
-# CONFIG_PACKAGE_collectd-mod-uptime is not set
-# CONFIG_PACKAGE_collectd-mod-users is not set
-# CONFIG_PACKAGE_collectd-mod-vmem is not set
-# CONFIG_PACKAGE_collectd-mod-wireless is not set
-# CONFIG_PACKAGE_collectd-mod-write-http is not set
+# CONFIG_PACKAGE_collectd is not set
 CONFIG_PACKAGE_comgt=y
 # CONFIG_PACKAGE_comgt-directip is not set
 # CONFIG_PACKAGE_comgt-ncm is not set
@@ -4127,7 +4156,7 @@ CONFIG_PACKAGE_px5g=y
 # CONFIG_PACKAGE_rrdcollect10 is not set
 # CONFIG_PACKAGE_rrdcollect12 is not set
 # CONFIG_PACKAGE_rrdtool is not set
-CONFIG_PACKAGE_rrdtool1=y
+# CONFIG_PACKAGE_rrdtool1 is not set
 # CONFIG_PACKAGE_rsyncrypto is not set
 # CONFIG_PACKAGE_rtl-sdr is not set
 # CONFIG_PACKAGE_sane-backends is not set
