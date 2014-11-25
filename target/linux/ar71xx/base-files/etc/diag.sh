@@ -228,6 +228,7 @@ get_status_led() {
 	tl-wdr4900-v2 | \
 	tl-mr10u | \
 	tl-mr13u | \
+    mw4530r | \
 	tl-wdr4300 | \
 	tl-wr703n | \
 	tl-wr710n | \

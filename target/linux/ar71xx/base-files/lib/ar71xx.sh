@@ -635,6 +635,9 @@ ar71xx_board_detect() {
 	*"TL-WDR6300")
 		name="tl-wdr6300"
 		;;
+    *"MW4530R")
+        name="mw4530r"
+        ;;
 	*"TL-WDR3600/4300/4310")
 		name="tl-wdr4300"
 		;;
