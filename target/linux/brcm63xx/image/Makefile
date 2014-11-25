@@ -57,6 +57,27 @@ define Image/Build/CFEDTB
 		$(7) $(8) $(9) $(10)
 endef
 
+define Image/Build/OLDCFEDTB
+	$(TOPDIR)/scripts/brcmImage.pl -t -p \
+		-b $(3) -c $(4)	-e $(KERNEL_ENTRY) -a $(LOADADDR) \
+		-k $(KDIR)/vmlinux-$(2).lzma.cfe -r $(KDIR)/root.$(1) \
+		-o $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin $(6)
+endef
+
+define Image/Build/SPW303VCFEDTB
+	# Generate the tagged image
+	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(2).lzma.cfe -f $(KDIR)/root.$(1) \
+		--output $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
+		--boardid $(3) --chipid $(4) --entry $(KERNEL_ENTRY) \
+		--load-addr $(LOADADDR) --rsa-signature "$(6)" $(7)
+	# Fix up header
+	$(STAGING_DIR_HOST)/bin/spw303v -i $(BIN_DIR)/openwrt-$(5)-$(1).tmp \
+		-o $(BIN_DIR)/openwrt-$(5)-$(1)-cfe-sysupgrade.bin
+	$(STAGING_DIR_HOST)/bin/xorimage -i $(BIN_DIR)/openwrt-$(5)-$(1)-cfe-sysupgrade.bin \
+		-o $(BIN_DIR)/openwrt-$(5)-$(1)-cfe-factory.bin
+	rm -f $(BIN_DIR)/openwrt-$(5)-$(1).tmp
+endef
+
 define Image/Build/ZYXCFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(2).lzma.cfe -f $(KDIR)/root.$(1) \
@@ -71,54 +92,12 @@ define Image/Build/ZYXCFEDTB
 	rm -f $(BIN_DIR)/openwrt-$(5)-$(1).tmp
 endef
 
-define Image/Build/CFEAGPF
-	# Generate the tagged image
-	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin \
-		--boardid $(2) --chipid $(3) --entry $(LOADADDR) \
-		--load-addr $(LOADADDR) --tag-version 8 \
-		--signature2 IMAGE --block-size 0x20000 \
-		--image-offset $(4) --info1 "-$(call Image/LimitName16,$(5))" --info2 $(1)
-endef
-
-define Image/Build/RG100A
-	# Generate the tagged image
-	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin \
-		--boardid $(2) --chipid $(3) --entry $(LOADADDR) \
-		--load-addr $(LOADADDR) --block-size 0x20000 \
-		--image-offset $(4) --info1 "-$(call Image/LimitName16,$(5))" --info2 $(1)
-endef
-
 define Image/Build/RedBoot
 	cp $(KDIR)/vmlinux.elf $(BIN_DIR)/openwrt-$(1)-vmlinux.elf
 	gzip -9 -c $(KDIR)/vmlinux > $(KDIR)/vmlinux.bin.gz
 	$(STAGING_DIR_HOST)/bin/lzma e $(KDIR)/vmlinux $(KDIR)/vmlinux.bin.l7
 	dd if=$(KDIR)/vmlinux.bin.l7 of=$(BIN_DIR)/openwrt-$(1)-vmlinux.lzma bs=65536 conv=sync
 	dd if=$(KDIR)/vmlinux.bin.gz of=$(BIN_DIR)/openwrt-$(1)-vmlinux.gz bs=65536 conv=sync
-endef
-
-define Image/Build/SPW303V
-	# Generate the tagged image
-	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(4)-$(1)-cfe.bin.tmp \
-		--boardid $(2) --chipid $(3) --entry $(KERNEL_ENTRY) \
-		--load-addr $(LOADADDR) --rsa-signature "$(5)" \
-		--pad 4 $(6) $(7) $(8) $(9)
-	# Fix up header
-	$(STAGING_DIR_HOST)/bin/spw303v -i $(BIN_DIR)/openwrt-$(4)-$(1)-cfe.bin.tmp \
-		-o $(BIN_DIR)/openwrt-$(4)-$(1)-cfe-sysupgrade.bin
-	$(STAGING_DIR_HOST)/bin/xorimage -i $(BIN_DIR)/openwrt-$(4)-$(1)-cfe-sysupgrade.bin \
-		-o $(BIN_DIR)/openwrt-$(4)-$(1)-cfe-factory.bin
-	rm -f $(BIN_DIR)/openwrt-$(4)-$(1)-cfe.bin.tmp
-endef
-
-define Image/Build/CFEOLD
-	$(TOPDIR)/scripts/brcmImage.pl -t -p	\
-		-b $(2) -c $(3)			\
-		-k $(KDIR)/vmlinux.lzma.cfe	\
-		-r $(KDIR)/root.$(1)		\
-		-o $(BIN_DIR)/openwrt-$(2)-$(1)-cfe.bin
 endef
 
 define Image/Build/HCS
@@ -217,6 +196,41 @@ endef
 # $(3) = boardname
 # $(4) = chipid
 # $(5) = imagename
+# $(6) = additional options
+define OldCfeImageDTB
+  define Image/Build/$(5)
+        $$(call Image/Build/OLDCFEDTB,$$(1),$(2),$(3),$(4),$(5),$(6))
+  endef
+
+  TARGET_Default_DTBS += $(2)
+  TARGET_Default_IMAGES += $(5)
+  TARGET_$(1)_DTBS += $(2)
+  TARGET_$(1)_IMAGES += $(5)
+endef
+
+# $(1) = Profile
+# $(2) = dtb
+# $(3) = boardname
+# $(4) = chipid
+# $(5) = imagename
+# $(6) = rsa signature
+# $(7) = additional options
+define Spw303vCfeImageDTB
+  define Image/Build/$(5)
+    $$(call Image/Build/SPW303VCFEDTB,$$(1),$(2),$(3),$(4),$(5),$(6),$(7))
+  endef
+
+  TARGET_Default_DTBS += $(2)
+  TARGET_Default_IMAGES += $(5)
+  TARGET_$(1)_DTBS += $(2)
+  TARGET_$(1)_IMAGES += $(5)
+endef
+
+# $(1) = Profile
+# $(2) = dtb
+# $(3) = boardname
+# $(4) = chipid
+# $(5) = imagename
 # $(6) = rsa signature
 # $(7) = additional options
 define ZyxCfeImageDTB
@@ -234,18 +248,6 @@ endef
 define Image/Build
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 
-	# BT Voyager V210_BTR
-	$(call Image/Build/CFE,$(1),V210_BB,6348,BTV210_BTR,,--layoutver 5)
-	# BT Voyager V210_ROI, V210_WB
-	$(call Image/Build/CFE,$(1),V210,6348,BTV210_ROI_WB,,--layoutver 5)
-	# BT Voyager V2091_BTR
-	$(call Image/Build/CFE,$(1),V2091_BB,6348,BTV2091_BTR,,--layoutver 5)
-	# BT Voyager V2091_ROI, V2091_WB
-	$(call Image/Build/CFE,$(1),V2091,6348,BTV2091_ROI_WB,,--layoutver 5)
-	# BT Voyager V220V, V220V_MGCP_BTR
-	$(call Image/Build/CFE,$(1),RTA1052V,6348,BTV220V_MGCP_BTR,,--layoutver 5)
-	# BT Voyager V2110, V2110_AA, V2110_ROI
-	$(call Image/Build/CFE,$(1),V2110,6348,BTV2110,,--layoutver 5)
 	# BT Voyager V2500V, V2500V_SIP_CLUB, V2500V_AA
 	$(call Image/Build/CFE,$(1),V2500V_BB,6348,BTV2500V,,--layoutver 5)
 	# RTA1025W_16 (numerous routers)
@@ -256,8 +258,6 @@ define Image/Build
 	# Sagem F@ST2504n
 	$(call Image/Build/CFE,$(1),F@ST2504n,6362,F@ST2504n,OpenWRT-$(REVISION))
 
-	# Davolink DV201AMR
-	$(call Image/Build/CFEOLD,$(1),DV201AMR,6348)
 	# USR 9108
 	$(call Image/Build/CFE,$(1),96348GW-A,6348,USR9108)
 	# NetGear DG834GT, DG834PN
@@ -272,8 +272,6 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),AW4339U,6328,DSL274XB-F1-EU,,--signature2="4.06.01.EUF1" --pad 4)
 	$(call Image/Build/CFE,$(1),AW4339U,6328,DSL274XB-F1-AU,,--signature2="4.06.01.AUF1" --pad 4)
 
-	# TP-Link TD-8810A, TD-8810B, TD-8811A, TD-8811B
-	$(call Image/Build/CFE,$(1),8L-2M-8M,6338,TP8810_8811)
 	# TP-Link 8900GB
 	$(call Image/Build/CFE,$(1),96348GW-11,6348,TD8900GB,$(shell printf 'PRID\x89\x10\x00\x02'))
 
@@ -288,25 +286,9 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),F@ST2704V2,6328,F@ST2704V2,OpenWRT-$(REVISION))
 	# Inventel Livebox
 	$(call Image/Build/RedBoot,livebox)
-	# Pirelli Alice Gate VoIP 2 Plus Wi-Fi AGPF-S0
-	$(call Image/Build/CFEAGPF,$(1),AGPF-S0,6358,0x20000,AGV2+W-cfe)
-	$(call Image/Build/CFEAGPF,$(1),AGPF-S0,6358,0x20000,AGV2+W)
-	# Pirelli A226G
-	$(call Image/Build/CFEAGPF,$(1),DWV-S0,6358,0x10000,A226G-cfe)
-	$(call Image/Build/CFEAGPF,$(1),DWV-S0,6358,0x10000,A226G)
-
-	# Pirelli A226M
-	$(call Image/Build/CFEAGPF,$(1),DWV-S0,6358,0x20000,A226M-cfe)
-	$(call Image/Build/CFEAGPF,$(1),DWV-S0,6358,0x20000,A226M)
-
-	# RG100A,DB120 etc.
-	$(call Image/Build/RG100A,$(1),96358VW2,6358,0x20000,RG100A_DB120)
 
 	# Telsey CPVA642-type (e.g. CPA-ZNTE60T)
 	$(call Image/Build/CFE,$(1),CPVA642,6358,CPA-ZNTE60T,,--signature "Telsey Tlc",--signature2 "99.99.999",--second-image-flag "0")
-
-	# T-Com Speedport W 303V Typ B
-	$(call Image/Build/SPW303V,$(1),96358-502V,6358,SPW303V)
 
 	# Netgear CVG834G
 	$(call Image/Build/HCS,$(1),cvg834g,a020,0001,0022,$(KDIR)/vmlinux)
@@ -356,6 +338,8 @@ $(eval $(call CfeImageDTB,96368MVWG,bcm96368MVWG,96368MVWG,6368,96368MVWG-generi
 $(eval $(call CfeImageDTB,A4001N,a4001n,96328dg2x2,6328,A4001N,,--pad 8))
 # ADB P.DG A4001N1
 $(eval $(call CfeImageDTB,A4001N1,a4001n1,963281T_TEF,6328,A4001N1,,--pad 8))
+# Alcatel RG100A
+$(eval $(call CfeImageDTB,RG100A,rg100a,96358VW2,6358,RG100A,,--block-size 0x20000 --image-offset 0x20000))
 # Asmax AR 1004g
 $(eval $(call CfeImageDTB,AR1004G,ar1004g,96348GW-10,6348,AR1004G))
 # Comtrend AR-5381u
@@ -380,6 +364,8 @@ $(eval $(call CfeImageDTB,DSL274XB_C,dsl-274xb-c,96358GW,6358,DSL274XB-C2))
 $(eval $(call CfeImageDTB,DSL274XB_C,dsl-274xb-c,AW4139,6358,DSL274XB-C3))
 # D-Link DVA-G3810BN/TL
 $(eval $(call CfeImageDTB,DVAG3810BN,dva-g3810bn_tl,96358VW,6358,DVAG3810BN))
+# Davolink DV-201AMR
+$(eval $(call OldCfeImageDTB,DV201AMR,dv-201amr,DV201AMR,6348,DV-201AMR))
 # Huawei HG520v
 $(eval $(call CfeImageDTB,HG520v,hg520v,HW6358GW_B,6358,HG520v,EchoLife_HG520v))
 # Huawei HG553
@@ -388,6 +374,15 @@ $(eval $(call CfeImageDTB,HG553,hg553,HW553,6358,HG553,EchoLife_HG553,--image-of
 $(eval $(call CfeImageDTB,HG556a_AB,hg556a-a,HW556,6358,HG556a_A,EchoLife_HG556a,--image-offset 0x20000 --block-size 0x10000 --tag-version 8))
 $(eval $(call CfeImageDTB,HG556a_AB,hg556a-b,HW556,6358,HG556a_B,EchoLife_HG556a,--image-offset 0x20000 --block-size 0x20000 --tag-version 8))
 $(eval $(call CfeImageDTB,HG556a_C,hg556a-c,HW556,6358,HG556a_C,EchoLife_HG556a,--image-offset 0x20000 --block-size 0x20000 --tag-version 8))
+# Pirelli Alice Gate VoIP 2 Plus Wi-Fi AGPF-S0
+$(eval $(call CfeImageDTB,AGPF_S0,agpf-s0,AGPF-S0,6358,AGV2+W,,--block-size 0x20000 --image-offset 0x20000 --signature2 IMAGE --tag-version 8))
+# Pirelli A226G
+$(eval $(call CfeImageDTB,A226G,a226g,DWV-S0,6358,A226G,,--signature2 IMAGE --tag-version 8))
+# Pirelli A226M/A226M-FWB
+$(eval $(call CfeImageDTB,A226M,a226m,DWV-S0,6358,A226M,,--signature2 IMAGE --tag-version 8))
+$(eval $(call CfeImageDTB,A226M,a226m-fwb,DWV-S0,6358,A226M-FWB,,--block-size 0x20000 --image-offset 0x20000 --signature2 IMAGE --tag-version 8))
+# T-Com Speedport W 303V Typ B
+$(eval $(call Spw303vCfeImageDTB,SPW303V,spw303v,96358-502V,6358,SPW303V,,--pad 4))
 # T-Com Speedport W 500V
 $(eval $(call CfeImageDTB,SPW500V,spw500v,96348GW,6348,SPW500V))
 # Tecom GW6000
