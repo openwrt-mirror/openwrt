@@ -19,7 +19,7 @@
 #include "dev-m25p80.h"
 #include "dev-usb.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_MR3X20_GPIO_LED_QSS		0
 #define TL_MR3X20_GPIO_LED_SYSTEM	1
@@ -79,7 +79,6 @@ static struct gpio_keys_button tl_mr3x20_gpio_keys[] __initdata = {
 static void __init tl_ap99_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_m25p80(&tl_mr3x20_flash_data);
 
@@ -87,7 +86,7 @@ static void __init tl_ap99_setup(void)
 					 ARRAY_SIZE(tl_mr3x20_gpio_keys),
 					 tl_mr3x20_gpio_keys);
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 	ath79_init_mac(ath79_eth1_data.mac_addr, mac, -1);
 
 	ath79_register_mdio(0, 0x0);
@@ -97,7 +96,7 @@ static void __init tl_ap99_setup(void)
 	/* WAN port */
 	ath79_register_eth(0);
 
-	ap91_pci_init(ee, mac);
+    tplink_register_ap91_wmac1(0x1000, mac, 1);
 }
 
 static void __init tl_mr3x20_usb_setup(void)

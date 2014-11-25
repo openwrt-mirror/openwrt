@@ -20,7 +20,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_MR13U_GPIO_LED_SYSTEM	27
 
@@ -80,7 +80,6 @@ static struct gpio_keys_button tl_mr13u_gpio_keys[] __initdata = {
 static void __init tl_mr13u_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	/* disable PHY_SWAP and PHY_ADDR_SWAP bits */
 	ath79_setup_ar933x_phy4_switch(false, false);
@@ -101,7 +100,7 @@ static void __init tl_mr13u_setup(void)
 
 	ath79_register_mdio(0, 0x0);
 	ath79_register_eth(0);
-	ath79_register_wmac(ee, mac);
+    tplink_register_builtin_wmac1(0x1000, mac, 0);
 }
 
 MIPS_MACHINE(ATH79_MACH_TL_MR13U, "TL-MR13U", "TP-LINK TL-MR13U v1",

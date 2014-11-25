@@ -36,7 +36,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_WR1043_V2_GPIO_LED_WLAN	12
 #define TL_WR1043_V2_GPIO_LED_USB	15
@@ -168,7 +168,6 @@ static struct mdio_board_info wr1043nd_v2_mdio0_info[] = {
 static void __init tl_wr1043nd_v2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = ath79_get_eeprom();
 
 	ath79_register_m25p80(&wr1043nd_v2_flash_data);
 
@@ -178,7 +177,7 @@ static void __init tl_wr1043nd_v2_setup(void)
 					ARRAY_SIZE(tl_wr1043_v2_gpio_keys),
 					tl_wr1043_v2_gpio_keys);
 
-	ath79_register_wmac(art + TL_WR1043_V2_WMAC_CALDATA_OFFSET, mac);
+    tplink_register_builtin_wmac1(TL_WR1043_V2_WMAC_CALDATA_OFFSET, mac, -1);
 
 	mdiobus_register_board_info(wr1043nd_v2_mdio0_info,
 				    ARRAY_SIZE(wr1043nd_v2_mdio0_info));
@@ -192,7 +191,7 @@ static void __init tl_wr1043nd_v2_setup(void)
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
 	ath79_eth0_pll_data.pll_1000 = 0x56000000;
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 	ath79_register_eth(0);
 
 	/* GMAC1 is connected to the SGMII interface */
@@ -201,7 +200,7 @@ static void __init tl_wr1043nd_v2_setup(void)
 	ath79_eth1_data.duplex = DUPLEX_FULL;
 	ath79_eth1_pll_data.pll_1000 = 0x03000101;
 
-	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
+	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 1);
 	ath79_register_eth(1);
 
 	ath79_register_usb();

@@ -20,7 +20,7 @@
 #include "dev-m25p80.h"
 #include "dev-usb.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_WR2543N_GPIO_LED_WPS        0
 #define TL_WR2543N_GPIO_LED_USB        8
@@ -116,7 +116,6 @@ static struct platform_device tl_wr2543n_rtl8367_device = {
 static void __init tl_wr2543n_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = (ath79_get_eeprom() + 0x1000);
 
 	ath79_register_m25p80(&tl_wr2543n_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr2543n_leds_gpio),
@@ -139,9 +138,9 @@ static void __init tl_wr2543n_setup(void)
 	 */
 	ap9x_pci_setup_wmac_leds(0, tl_wr2543n_wmac_leds_gpio,
 				 ARRAY_SIZE(tl_wr2543n_wmac_leds_gpio));
-	ap91_pci_init(eeprom, mac);
+    tplink_register_ap91_wmac1(0x1000, mac, -1);
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, -1);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 	ath79_eth0_data.mii_bus_dev = &tl_wr2543n_rtl8367_device.dev;
 	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_RGMII;
 	ath79_eth0_data.speed = SPEED_1000;

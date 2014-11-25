@@ -42,7 +42,7 @@
 #include "dev-wmac.h"
 #include "machtypes.h"
 #include "pci.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define ARCHER_C7_GPIO_LED_WLAN2G	12
 #define ARCHER_C7_GPIO_LED_SYSTEM	14
@@ -187,8 +187,6 @@ static struct mdio_board_info archer_c7_mdio0_info[] = {
 static void __init common_setup(bool pcie_slot)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = ath79_get_eeprom();
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&archer_c7_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(archer_c7_leds_gpio),
@@ -197,15 +195,14 @@ static void __init common_setup(bool pcie_slot)
 					ARRAY_SIZE(archer_c7_gpio_keys),
 					archer_c7_gpio_keys);
 
-	ath79_init_mac(tmpmac, mac, -1);
-	ath79_register_wmac(art + ARCHER_C7_WMAC_CALDATA_OFFSET, tmpmac);
+
+    tplink_register_builtin_wmac1(ARCHER_C7_WMAC_CALDATA_OFFSET, mac, -1);
 
 	if (pcie_slot) {
 		ath79_register_pci();
 	} else {
-		ath79_init_mac(tmpmac, mac, -1);
 		ap9x_pci_setup_wmac_led_pin(0, 0);
-		ap91_pci_init(art + ARCHER_C7_PCIE_CALDATA_OFFSET, tmpmac);
+        tplink_register_ap91_wmac1(ARCHER_C7_PCIE_CALDATA_OFFSET, mac, 2);
 	}
 
 	mdiobus_register_board_info(archer_c7_mdio0_info,
@@ -220,7 +217,7 @@ static void __init common_setup(bool pcie_slot)
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
 	ath79_eth0_pll_data.pll_1000 = 0x56000000;
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 	ath79_register_eth(0);
 
 	/* GMAC1 is connected to the SGMII interface */
@@ -229,7 +226,7 @@ static void __init common_setup(bool pcie_slot)
 	ath79_eth1_data.duplex = DUPLEX_FULL;
 	ath79_eth1_pll_data.pll_1000 = 0x03000101;
 
-	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
+	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 1);
 	ath79_register_eth(1);
 
 	gpio_request_one(ARCHER_C7_GPIO_USB1_POWER,

@@ -21,7 +21,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_WR1043ND_GPIO_LED_USB        1
 #define TL_WR1043ND_GPIO_LED_SYSTEM     2
@@ -109,7 +109,6 @@ static struct platform_device tl_wr1043nd_rtl8366rb_device = {
 static void __init tl_wr1043nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = (ath79_get_eeprom() + 0x1000);
 
 	tl_wr1043nd_rtl8366rb_hw_reset(true);
 
@@ -135,7 +134,7 @@ static void __init tl_wr1043nd_setup(void)
 					ARRAY_SIZE(tl_wr1043nd_gpio_keys),
 					tl_wr1043nd_gpio_keys);
 
-	ath79_register_wmac(eeprom, mac);
+    tplink_register_builtin_wmac1(0x1000, mac, -1);
 }
 
 MIPS_MACHINE(ATH79_MACH_TL_WR1043ND, "TL-WR1043ND", "TP-LINK TL-WR1043ND",

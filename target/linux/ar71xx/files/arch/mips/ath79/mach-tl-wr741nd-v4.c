@@ -21,7 +21,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_WR741NDV4_GPIO_BTN_RESET	11
 #define TL_WR741NDV4_GPIO_BTN_WPS	26
@@ -133,7 +133,6 @@ static struct gpio_keys_button tl_mr3220v2_gpio_keys[] __initdata = {
 static void __init tl_ap121_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	ath79_setup_ar933x_phy4_switch(false, false);
 
@@ -145,13 +144,13 @@ static void __init tl_ap121_setup(void)
 
 	ath79_register_m25p80(&tl_wr741ndv4_flash_data);
 	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
-	ath79_init_mac(ath79_eth1_data.mac_addr, mac, -1);
+	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
 
 	ath79_register_mdio(0, 0x0);
 	ath79_register_eth(1);
 	ath79_register_eth(0);
 
-	ath79_register_wmac(ee, mac);
+    tplink_register_builtin_wmac1(0x1000, mac, -1);
 }
 
 static void __init tl_wr741ndv4_setup(void)

@@ -20,7 +20,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_WR703N_GPIO_LED_SYSTEM	27
 #define TL_WR703N_GPIO_BTN_RESET	11
@@ -63,7 +63,6 @@ static struct gpio_keys_button tl_wr703n_gpio_keys[] __initdata = {
 static void __init common_setup(unsigned usb_power_gpio, bool sec_ethernet)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	/* disable PHY_SWAP and PHY_ADDR_SWAP bits */
 	ath79_setup_ar933x_phy4_switch(false, false);
@@ -80,8 +79,6 @@ static void __init common_setup(unsigned usb_power_gpio, bool sec_ethernet)
 			 "USB power");
 	ath79_register_usb();
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
-
 	ath79_register_mdio(0, 0x0);
 	ath79_register_eth(0);
 
@@ -90,8 +87,7 @@ static void __init common_setup(unsigned usb_power_gpio, bool sec_ethernet)
 		ath79_init_mac(ath79_eth1_data.mac_addr, mac, -1);
 		ath79_register_eth(1);
 	}
-
-	ath79_register_wmac(ee, mac);
+    tplink_register_builtin_wmac1(0x1000, mac, 0);
 }
 
 static void __init tl_mr10u_setup(void)

@@ -22,7 +22,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define TL_MR11U_GPIO_LED_3G		27
 #define TL_MR11U_GPIO_LED_WLAN		26
@@ -116,7 +116,6 @@ static struct gpio_keys_button tl_mr3040_v2_gpio_keys[] __initdata = {
 static void __init common_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (ath79_get_eeprom() + 0x1000);
 
 	/* Disable hardware control LAN1 and LAN2 LEDs, enabling GPIO14 and GPIO15 */
 	ath79_gpio_function_disable(AR933X_GPIO_FUNC_ETH_SWITCH_LED1_EN |
@@ -136,7 +135,8 @@ static void __init common_setup(void)
 	ath79_register_mdio(0, 0x0);
 	ath79_register_eth(0);
 
-	ath79_register_wmac(ee, mac);
+
+    tplink_register_builtin_wmac1(0x1000, mac, 0);
 }
 
 static void __init tl_mr11u_setup(void)
