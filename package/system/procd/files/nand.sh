@@ -201,6 +201,7 @@ nand_do_upgrade_success() {
 	reboot -f
 }
 
+# Flash the UBI image to MTD partition
 nand_upgrade_ubinized() {
 	local ubi_file="$1"
 	local mtdnum="$(find_mtd_index "$CI_UBIPART")"
@@ -223,6 +224,7 @@ nand_upgrade_ubinized() {
 	nand_do_upgrade_success
 }
 
+# Write the UBIFS image to UBI volume
 nand_upgrade_ubifs() {
 	local rootfs_length=`(cat $1 | wc -c) 2> /dev/null`
 
@@ -248,10 +250,10 @@ nand_upgrade_tar() {
 	local has_kernel=1
 	local has_env=0
 
-	[ "kernel_length" = 0 -o -z "$kernel_mtd" ] || {
+	[ "$kernel_length" != 0 -a -n "$kernel_mtd" ] && {
 		tar xf $tar_file sysupgrade-$board_name/kernel -O | mtd write - $CI_KERNPART
 	}
-	[ "kernel_length" = 0 -o ! -z "$kernel_mtd" ] && has_kernel=0
+	[ "$kernel_length" = 0 -o ! -z "$kernel_mtd" ] && has_kernel=0
 
 	nand_upgrade_prepare_ubi "$rootfs_length" "$rootfs_type" "$has_kernel" "$has_env"
 
@@ -269,14 +271,17 @@ nand_upgrade_tar() {
 	nand_do_upgrade_success
 }
 
+# Recognize type of passed file and start the upgrade process
 nand_do_upgrade_stage2() {
 	local file_type=$(identify $1)
 
 	[ ! "$(find_mtd_index "$CI_UBIPART")" ] && CI_UBIPART="rootfs"
 
-	[ "$file_type" = "ubi" ] && nand_upgrade_ubinized $1
-	[ "$file_type" = "ubifs" ] && nand_upgrade_ubifs $1
-	nand_upgrade_tar $1
+	case "$file_type" in
+		"ubi")		nand_upgrade_ubinized $1;;
+		"ubifs")	nand_upgrade_ubifs $1;;
+		*)		nand_upgrade_tar $1;;
+	esac
 }
 
 nand_upgrade_stage2() {
@@ -319,6 +324,19 @@ nand_upgrade_stage1() {
 }
 append sysupgrade_pre_upgrade nand_upgrade_stage1
 
+# Check if passed file is a valid one for NAND sysupgrade. Currently it accepts
+# 3 types of files:
+# 1) UBI - should contain an ubinized image, header is checked for the proper
+#    MAGIC
+# 2) UBIFS - should contain UBIFS partition that will replace "rootfs" volume,
+#    header is checked for the proper MAGIC
+# 3) TRX - archive has to include "sysupgrade-BOARD" directory with a non-empty
+#    "CONTROL" file (at this point its content isn't verified)
+#
+# You usually want to call this function in platform_check_image.
+#
+# $(1): board name, used in case of passing TRX file
+# $(2): file to be checked
 nand_do_platform_check() {
 	local board_name="$1"
 	local tar_file="$2"
