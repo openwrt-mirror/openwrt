@@ -117,7 +117,6 @@ static void __init tl_ap143_setup(void)
 	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 	ath79_register_eth(0);
 
-	ath79_init_mac(tmpmac, mac, 0);
     tplink_register_builtin_wmac1(0x1000, mac, -1);
 }
 

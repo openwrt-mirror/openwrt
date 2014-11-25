@@ -39,7 +39,8 @@
 
 static const char *tl_wa830re_v2_part_probes[] = {
 	"tp-link",
-	NULL,mZ
+	NULL,
+};
 
 static struct flash_platform_data tl_wa830re_v2_flash_data = {
 	.part_probes	= tl_wa830re_v2_part_probes,
