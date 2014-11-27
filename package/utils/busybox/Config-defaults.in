@@ -2409,7 +2409,7 @@ config BUSYBOX_DEFAULT_FEATURE_PS_UNUSUAL_SYSTEMS
 	default n
 config BUSYBOX_DEFAULT_RENICE
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_BB_SYSCTL
 	bool
 	default y
