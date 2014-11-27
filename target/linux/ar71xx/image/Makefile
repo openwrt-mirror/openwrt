@@ -276,6 +276,7 @@ cameo_ap121_mtdlayout_8M=mtdparts=spi0.0:64k(u-boot)ro,64k(art)ro,64k(mac)ro,64k
 cameo_db120_mtdlayout=mtdparts=spi0.0:64k(uboot)ro,64k(nvram)ro,15936k(firmware),192k(lang)ro,64k(mac)ro,64k(art)ro
 cameo_db120_mtdlayout_8M=mtdparts=spi0.0:64k(uboot)ro,64k(nvram)ro,7872k(firmware),128k(lang)ro,64k(art)ro
 cap4200ag_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),320k(custom)ro,1536k(kernel),12096k(rootfs),2048k(failsafe),64k(art),13632k@0xa0000(firmware)
+cpe510_mtdlayout=mtdparts=spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
 eap300v2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),320k(custom),13632k(firmware),2048k(failsafe),64k(art)ro
 db120_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1408k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
 cameo_ap94_mtdlayout=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,6208k(firmware),64k(caldata)ro,1600k(unknown)ro,64k@0x7f0000(caldata_copy)
@@ -301,6 +302,7 @@ wnr2000v3_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,3712k(firmw
 wnr2000v4_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,3776k(firmware),64k(art)ro
 wndr3700_mtdlayout=mtdparts=spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,7680k(firmware),64k(art)ro
 wndr3700v2_mtdlayout=mtdparts=spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,15872k(firmware),64k(art)ro
+r6100_mtdlayout=mtdparts=ar934x-nfc:128k(u-boot)ro,256k(caldata),256k(caldata-backup),512k(config),512k(pot),2048k(kernel),122240k(ubi),25600k@0x1a0000(firmware),2048k(language),3072k(traffic_meter)
 wndr4300_mtdlayout=mtdparts=ar934x-nfc:256k(u-boot)ro,256k(u-boot-env)ro,256k(caldata),512k(pot),2048k(language),512k(config),3072k(traffic_meter),2048k(kernel),23552k(ubi),25600k@0x6c0000(firmware),256k(caldata_backup),-(reserved)
 zcn1523h_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6208k(rootfs),1472k(kernel),64k(configure)ro,64k(mfg)ro,64k(art)ro,7680k@0x50000(firmware)
 mynet_n600_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15872k(firmware),64k(radiocfg)ro
@@ -832,6 +834,32 @@ define Image/Build/TPLINK-LZMA/initramfs
 endef
 
 
+Image/Build/TPLINK-SAFELOADER/buildkernel=$(call PatchKernelLzma,$(2),$(3) $(4))
+
+define Image/Build/TPLINK-SAFELOADER
+	-rm -rf $(KDIR)/lzma-loader
+	$(LOADER_MAKE) LOADER=loader-$(2).elf\
+		LZMA_TEXT_START=0x80a00000 LOADADDR=0x80060000 \
+		LOADER_DATA="$(KDIR_TMP)/vmlinux-$(2).bin.lzma" BOARD="$(2)" \
+		compile loader.elf
+
+	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
+		-B $(5) \
+		-k $(KDIR)/loader-$(2).elf \
+		-r $(KDIR)/root.$(1) \
+		-V $(REVISION) \
+		-j \
+		-o $(call factoryname,$(1),$(2))
+	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
+		-B $(5) \
+		-k $(KDIR)/loader-$(2).elf \
+		-r $(KDIR)/root.$(1) \
+		-V $(REVISION) \
+		-j -S \
+		-o $(call sysupname,$(1),$(2))
+endef
+
+
 define Image/Build/CyberTAN
 	echo -n '' > $(KDIR_TMP)/empty.bin
 	$(STAGING_DIR_HOST)/bin/trx -o $(KDIR)/image.tmp \
@@ -1268,6 +1296,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4310V1,tl-wdr4310-v1,TL-WDR4
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4900V2,tl-wdr4900-v2,TL-WDR4900-v2,ttyS0,115200,0x49000002,1,8Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW4530RV1,mw4530r-v1,TL-WDR4300,ttyS0,115200,0x45300001,1,8Mlzma))
 
+$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
+
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,SMART-300,smart-300,SMART-300,ttyS0,115200,0x93410001,1,8Mlzma))
 
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,OOLITE,oolite,GS-OOLITE,ttyATH0,115200,0x3C000101,1,16Mlzma))
@@ -1350,6 +1380,7 @@ endif # ifeq ($(SUBTARGET),generic)
 ifeq ($(SUBTARGET),nand)
 $(eval $(call SingleProfile,NetgearNAND,64k,WNDR3700V4,wndr3700v4,WNDR3700_V4,ttyS0,115200,$$(wndr4300_mtdlayout),0x33373033,WNDR3700v4,"",-H 29763948+128+128,wndr4300))
 $(eval $(call SingleProfile,NetgearNAND,64k,WNDR4300V1,wndr4300,WNDR4300,ttyS0,115200,$$(wndr4300_mtdlayout),0x33373033,WNDR4300,"",-H 29763948+0+128+128+2x2+3x3,wndr4300))
+$(eval $(call SingleProfile,NetgearNAND,64k,R6100,r6100,R6100,ttyS0,115200,$$(r6100_mtdlayout),0x36303030,R6100,"",-H 29764434+0+128+128+2x2+2x2,wndr4300))
 
 $(eval $(call SingleProfile,ZyXELNAND,128k,NBG6716,nbg6716,NBG6716,ttyS0,115200,NBG6716,$$(zyx_nbg6716_mtdlayout),mem=256M))
 
