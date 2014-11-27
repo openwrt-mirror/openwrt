@@ -43,12 +43,19 @@ set_fstab(){
 				ext*)
 					uci set fstab.@mount[$n].options="noatime";;
 				'ntfs')
-                    uci set fstab.@mount[$n].fstype="ufsd"
-					uci set fstab.@mount[$n].options="noatime,nls=utf8,force";;
+				if [ $(lsmod | grep -c ufsd) -gt 1 ]
+				then
+					uci set fstab.@mount[$n].fstype="ufsd"
+					uci set fstab.@mount[$n].options="noatime,nls=utf8,force"
+				else
+					uci set fstab.@mount[$n].fstype="ntfs-3g"
+					uci set fstab.@mount[$n].options="noatime,iocharset=utf8,big_writes"
+				fi
+				;;
 				'exfat')
 					uci set fstab.@mount[$n].options="noatime";;
 				'vfat')
-					uci set fstab.@mount[$n].options="utf8=1,umask=0000,dmask=0000,fmask=0000";;
+					uci set fstab.@mount[$n].options="iocharset=utf8,umask=0000,dmask=0000,fmask=0000";;
                 *)
                     uci set fstab.@mount[$n].enabled=0;;
 			esac
