@@ -31,8 +31,8 @@
 #include <linux/mtd/partitions.h>
 #include <linux/leds.h>
 #include <linux/i2c.h>
-#include <linux/i2c/at24.h>
-#include <linux/i2c/pca953x.h>
+#include <linux/platform_data/at24.h>
+#include <linux/platform_data/pca953x.h>
 #include <linux/spi/spi.h>
 #include <linux/spi/flash.h>
 #include <linux/if_ether.h>
@@ -341,12 +341,17 @@ static struct resource laguna_net_resource[] = {
 	}
 };
 
+static u64 laguna_net_dmamask = DMA_BIT_MASK(32);
 static struct platform_device laguna_net_device = {
 	.name = "cns3xxx_eth",
 	.id = 0,
 	.resource = laguna_net_resource,
 	.num_resources = ARRAY_SIZE(laguna_net_resource),
-	.dev.platform_data = &laguna_net_data,
+	.dev = {
+		.dma_mask = &laguna_net_dmamask,
+		.coherent_dma_mask = DMA_BIT_MASK(32),
+		.platform_data = &laguna_net_data,
+	}
 };
 
 /*
@@ -537,7 +542,7 @@ static struct resource cns3xxx_usb_otg_resources[] = {
 static u64 cns3xxx_usb_otg_dma_mask = DMA_BIT_MASK(32);
 
 static struct platform_device cns3xxx_usb_otg_device = {
-	.name          = "dwc_otg",
+	.name          = "dwc2",
 	.num_resources = ARRAY_SIZE(cns3xxx_usb_otg_resources),
 	.resource      = cns3xxx_usb_otg_resources,
 	.dev           = {
