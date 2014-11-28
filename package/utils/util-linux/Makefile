@@ -286,7 +286,7 @@ endef
 define Package/mount-utils
 $(call Package/util-linux/Default)
   TITLE:=related (u)mount utilities
-  DEPENDS+= +libmount +libsmartcols
+  DEPENDS+= +libblkid +libmount +libsmartcols
 endef
 
 define Package/mount-utils/description
