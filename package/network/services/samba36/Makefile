@@ -148,6 +148,13 @@ define Package/samba36-server/install
 	$(LN) samba_multicall $(1)/usr/sbin/smbpasswd
 endef
 
+
+define Package/samba36-server/conffiles
+/etc/config/samba
+/etc/samba/smb.conf.template
+endef
+
+
 define Package/samba36-client/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_BIN)/smbclient $(1)/usr/sbin
