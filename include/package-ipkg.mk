@@ -66,7 +66,7 @@ ifneq ($(PKG_NAME),toolchain)
 				OBJCOPY=$(TARGET_CROSS)objcopy \
 				XARGS="$(XARGS)"; \
 			$(SCRIPT_DIR)/gen-dependencies.sh "$$(IDIR_$(1))"; \
-		) | while read FILE; do \
+		) | tee $(PKG_INFO_DIR)/$(1).depends | while read FILE; do \
 			grep -qxF "$$$$FILE" $(PKG_INFO_DIR)/$(1).provides || \
 				echo "$$$$FILE" >> $(PKG_INFO_DIR)/$(1).missing; \
 		done; \
