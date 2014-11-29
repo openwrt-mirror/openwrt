@@ -12,7 +12,9 @@
 #include <linux/gpio.h>
 
 #include <asm/mach-ath79/ath79.h>
+#include <asm/mach-ath79/ar71xx_regs.h>
 
+#include "common.h"
 #include "dev-eth.h"
 #include "dev-gpio-buttons.h"
 #include "dev-leds-gpio.h"
@@ -80,6 +82,7 @@ static void __init common_setup(unsigned usb_power_gpio, bool sec_ethernet)
 	ath79_register_usb();
 
 	ath79_register_mdio(0, 0x0);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);	
 	ath79_register_eth(0);
 
 	if (sec_ethernet)
