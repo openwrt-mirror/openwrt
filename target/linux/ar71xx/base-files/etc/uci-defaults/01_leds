@@ -326,6 +326,7 @@ tl-wr2041n-v1)
 	ucidef_set_led_switch "lan2" "LAN2" "tp-link:green:lan2" "switch0" "0x04"
 	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x08"
 	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x10"
+	ucidef_set_led_netdev "wlan" "WLAN" "tp-link:green:wlan" "wlan0"
 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy1tpt"
 	;;
 
