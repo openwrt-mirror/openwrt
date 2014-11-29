@@ -202,7 +202,7 @@ static void __init common_setup(bool pcie_slot)
 		ath79_register_pci();
 	} else {
 		ap9x_pci_setup_wmac_led_pin(0, 0);
-        tplink_register_ap91_wmac1(ARCHER_C7_PCIE_CALDATA_OFFSET, mac, 2);
+        tplink_register_ap91_wmac2(ARCHER_C7_PCIE_CALDATA_OFFSET, mac, 2);
 	}
 
 	mdiobus_register_board_info(archer_c7_mdio0_info,
