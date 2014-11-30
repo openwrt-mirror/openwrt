@@ -43,7 +43,7 @@ set_fstab(){
 				ext*)
 					uci set fstab.@mount[$n].options="noatime";;
 				'ntfs')
-				if [ $(lsmod | grep -c ufsd) -gt 1 ]
+				if [ $(lsmod | grep -c ufsd) -ge 1 ]
 				then
 					uci set fstab.@mount[$n].fstype="ufsd"
 					uci set fstab.@mount[$n].options="noatime,nls=utf8,force"
