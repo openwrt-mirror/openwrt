@@ -1,0 +1,16 @@
+crontab -e should reopen the modified file
+--- a/miscutils/crontab.c
++++ b/miscutils/crontab.c
+@@ -149,10 +149,10 @@
+ 		if (fd >= 0) {
+ 			bb_copyfd_eof(fd, src_fd);
+ 			close(fd);
+-			xlseek(src_fd, 0, SEEK_SET);
+ 		}
+-		close_on_exec_on(src_fd); /* don't want editor to see this fd */
++		close(src_fd);
+ 		edit_file(pas, tmp_fname);
++		src_fd = xopen3(tmp_fname, O_RDONLY, 0600);
+ 		/* fall through */
+ 
+ 	case 0: /* Replace (no -l, -e, or -r were given) */
