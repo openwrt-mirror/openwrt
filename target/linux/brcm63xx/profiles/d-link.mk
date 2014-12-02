@@ -5,6 +5,16 @@
 # See /LICENSE for more information.
 #
 
+define Profile/DSL2650U
+  NAME:=D-Link DSL-2650U
+  PACKAGES:=kmod-b43 wpad-mini\
+	kmod-usb2 kmod-usb-ohci
+endef
+define Profile/DSL2650U/Description
+  Package set optimized for DSL-2650U.
+endef
+$(eval $(call Profile,DSL2650U))
+
 define Profile/DSL274XB_C
   NAME:=D-Link DSL-2740B/DSL-2741B rev C2/C3
   PACKAGES:=kmod-b43 wpad-mini
@@ -13,6 +23,15 @@ define Profile/DSL274XB_C/Description
   Package set optimized for DSL-2740B/DSL-2741B rev C2/C3.
 endef
 $(eval $(call Profile,DSL274XB_C))
+
+define Profile/DSL274XB_F
+  NAME:=D-Link DSL-2740B/DSL-2741B rev F1
+  PACKAGES:=kmod-ath9k wpad-mini
+endef
+define Profile/DSL274XB_F/Description
+  Package set optimized for DSL-2740B/DSL-2741B rev F1.
+endef
+$(eval $(call Profile,DSL274XB_F))
 
 define Profile/DVAG3810BN
   NAME:=D-Link DVA-G3810BN/TL

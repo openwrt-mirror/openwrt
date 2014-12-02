@@ -28,7 +28,7 @@ tools-y += m4 libtool autoconf automake flex bison pkg-config sed mklibs
 tools-y += sstrip ipkg-utils genext2fs e2fsprogs mtd-utils mkimage
 tools-y += firmware-utils patch-image patch quilt yaffs2 flock padjffs2
 tools-y += mm-macros xorg-macros xfce-macros missing-macros xz cmake scons bc
-tools-y += findutils
+tools-y += findutils gengetopt
 tools-$(CONFIG_TARGET_orion_generic) += wrt350nv2-builder upslug2
 tools-$(CONFIG_powerpc) += upx
 tools-$(CONFIG_TARGET_x86) += qemu
@@ -73,6 +73,7 @@ $(curdir)/padjffs2/compile := $(curdir)/findutils/install
 $(curdir)/cloog/compile := $(curdir)/ppl/install
 $(curdir)/bc/compile := $(curdir)/bison/install
 $(curdir)/findutils/compile := $(curdir)/bison/install
+$(curdir)/gengetopt/compile := $(curdir)/automake/install
 
 ifneq ($(CONFIG_CCACHE),)
 $(foreach tool, $(tools-y), $(eval $(curdir)/$(tool)/compile += $(curdir)/ccache/install))

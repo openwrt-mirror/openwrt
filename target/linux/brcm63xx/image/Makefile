@@ -200,9 +200,6 @@ define Image/Build
 	# RTA1320_16M (numerous routers)
 	$(call Image/Build/CFE,$(1),RTA1320_16M,6338,RTA1320_16M,,--layoutver 5)
 
-	# Sagem F@ST2504n
-	$(call Image/Build/CFE,$(1),F@ST2504n,6362,F@ST2504n,OpenWRT-$(REVISION))
-
 	# USR 9108
 	$(call Image/Build/CFE,$(1),96348GW-A,6348,USR9108)
 	# NetGear DG834GT, DG834PN
@@ -211,24 +208,10 @@ define Image/Build
 	$(call Image/Build/CFE,$(1),96348GW-10,6348,F5D7633)
 	# D-Link DSL-2640B, rev B2
 	$(call Image/Build/CFE,$(1),D-4P-W,6348,DSL2640B-B2)
-	# D-Link DSL-2650U
-	$(call Image/Build/CFE,$(1),96358VW2,6358,DSL2650U)
-	# D-Link DSL-2740B/DSL-2741B, rev F1
-	$(call Image/Build/CFE,$(1),AW4339U,6328,DSL274XB-F1-EU,,--signature2="4.06.01.EUF1" --pad 4)
-	$(call Image/Build/CFE,$(1),AW4339U,6328,DSL274XB-F1-AU,,--signature2="4.06.01.AUF1" --pad 4)
 
 	# TP-Link 8900GB
 	$(call Image/Build/CFE,$(1),96348GW-11,6348,TD8900GB,$(shell printf 'PRID\x89\x10\x00\x02'))
 
-	# Sagem F@ST2404
-	$(call Image/Build/CFE,$(1),F@ST2404,6348,F@ST2404-cfe)
-	$(call Image/Build/CFE,$(1),F@ST2404,6348,F@ST2404,OpenWRT-$(REVISION))
-	# Sagem F@ST2604
-	$(call Image/Build/CFE,$(1),F@ST2604,6348,F@ST2604-cfe)
-	$(call Image/Build/CFE,$(1),F@ST2604,6348,F@ST2604,OpenWRT-$(REVISION))
-	# Sagem F@ST2704V2
-	$(call Image/Build/CFE,$(1),F@ST2704V2,6328,F@ST2704V2-cfe)
-	$(call Image/Build/CFE,$(1),F@ST2704V2,6328,F@ST2704V2,OpenWRT-$(REVISION))
 	# Inventel Livebox
 	$(call Image/Build/RedBoot,livebox)
 
@@ -303,10 +286,15 @@ $(eval $(call ImageDTB,CFEDTB,VR3025u,vr-3025u,96368M-1541N,6368,VR-3025u,--pad 
 $(eval $(call ImageDTB,CFEDTB,VR3025un,vr-3025un,96368M-1341N,6368,VR-3025un,--pad 4))
 # Comtrend WAP-5813n
 $(eval $(call ImageDTB,CFEDTB,WAP5813n,wap-5813n,96369R-1231N,6368,WAP-5813n,--pad 4))
+# D-Link DSL-2650U
+$(eval $(call ImageDTB,CFEDTB,DSL2650U,dsl-2650u,96358VW2,6358,DSL2650U))
 # D-Link DSL-2740B/DSL-2741B, rev C2
 $(eval $(call ImageDTB,CFEDTB,DSL274XB_C,dsl-274xb-c,96358GW,6358,DSL274XB-C2))
 # D-Link DSL-2740B/DSL-2741B, rev C3
 $(eval $(call ImageDTB,CFEDTB,DSL274XB_C,dsl-274xb-c,AW4139,6358,DSL274XB-C3))
+# D-Link DSL-2740B/DSL-2741B, rev F1
+$(eval $(call ImageDTB,CFEDTB,DSL274XB_F,dsl-274xb-f,AW4339U,6328,DSL274XB-F1-EU,--signature2 "4.06.01.EUF1" --pad 4))
+$(eval $(call ImageDTB,CFEDTB,DSL274XB_F,dsl-274xb-f,AW4339U,6328,DSL274XB-F1-AU,--signature2 "4.06.01.AUF1" --pad 4))
 # D-Link DVA-G3810BN/TL
 $(eval $(call ImageDTB,CFEDTB,DVAG3810BN,dva-g3810bn_tl,96358VW,6358,DVAG3810BN))
 # Davolink DV-201AMR
@@ -326,6 +314,14 @@ $(eval $(call ImageDTB,CFEDTB,A226G,a226g,DWV-S0,6358,A226G,--signature2 IMAGE -
 # Pirelli A226M/A226M-FWB
 $(eval $(call ImageDTB,CFEDTB,A226M,a226m,DWV-S0,6358,A226M,--signature2 IMAGE --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,A226M,a226m-fwb,DWV-S0,6358,A226M-FWB,--block-size 0x20000 --image-offset 0x20000 --signature2 IMAGE --tag-version 8))
+# Sagem F@ST2404
+$(eval $(call ImageDTB,CFEDTB,FAST2404,fast2404,F@ST2404,6348,F@ST2404))
+# Sagem F@ST2504n
+$(eval $(call ImageDTB,CFEDTB,FAST2504n,fast2504n,F@ST2504n,6362,F@ST2504n))
+# Sagem F@ST2604
+$(eval $(call ImageDTB,CFEDTB,FAST2604,fast2604,F@ST2604,6348,F@ST2604))
+# Sagem F@ST2704V2
+$(eval $(call ImageDTB,CFEDTB,FAST2704V2,fast2704v2,F@ST2704V2,6328,F@ST2704V2))
 # T-Com Speedport W 303V Typ B
 $(eval $(call ImageDTB,SPW303VCFEDTB,SPW303V,spw303v,96358-502V,6358,SPW303V,--pad 4))
 # T-Com Speedport W 500V

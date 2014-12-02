@@ -95,6 +95,7 @@ CONFIG_AEABI=y
 # CONFIG_AFS_FS is not set
 # CONFIG_AF_RXRPC is not set
 # CONFIG_AGP is not set
+# CONFIG_AHCI_MVEBU is not set
 CONFIG_AIO=y
 # CONFIG_AIRO is not set
 # CONFIG_AIRO_CS is not set
@@ -2233,6 +2234,7 @@ CONFIG_MTD_SPLIT_SQUASHFS_ROOT=y
 # CONFIG_MUTEX_SPIN_ON_OWNER is not set
 # CONFIG_MV643XX_ETH is not set
 # CONFIG_MVMDIO is not set
+# CONFIG_MVSW6171_PHY is not set
 # CONFIG_MVSWITCH_PHY is not set
 # CONFIG_MWAVE is not set
 # CONFIG_MWL8K is not set
