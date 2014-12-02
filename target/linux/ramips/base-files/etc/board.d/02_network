@@ -242,7 +242,7 @@ ramips_setup_interfaces()
 	y1s)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch1" "1" "1"
-		ucidef_add_switch_vlan "switch1" "1" "0 1 2 3 5 6t 7"
+		ucidef_add_switch_vlan "switch1" "1" "0 1 2 3 5 7 6t"
 		ucidef_add_switch_vlan "switch1" "2" "4 6t"
 		;;
 	*)
