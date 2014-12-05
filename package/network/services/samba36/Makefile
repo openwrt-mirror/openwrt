@@ -35,7 +35,7 @@ define Package/samba36-server
   CATEGORY:=Network
   TITLE:=Samba 3.6 SMB/CIFS server
   URL:=http://www.samba.org/
-  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS)
+  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS) +libaio
 endef
 
 define Package/samba36-client
@@ -108,6 +108,7 @@ CONFIGURE_ARGS += \
 	--with-piddir=/var/run \
 	--with-privatedir=/etc/samba \
 	--with-sendfile-support \
+	--with-aio-support \
 	--without-acl-support \
 	--without-cluster-support \
 	--without-ads \
