@@ -423,6 +423,15 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  }
  
  static inline int
+@@ -54,7 +391,7 @@ dma_set_mask(struct device *dev, u64 mas
+ 	if(!dev->dma_mask || !dma_supported(dev, mask))
+ 		return -EIO;
+ 
+-	if (ops->set_dma_mask)
++	if (ops && ops->set_dma_mask)
+ 		return ops->set_dma_mask(dev, mask);
+ 
+ 	*dev->dma_mask = mask;
 @@ -74,7 +411,11 @@ static inline void *dma_alloc_attrs(stru
  	void *ret;
  	struct dma_map_ops *ops = get_dma_ops(dev);
@@ -510,7 +519,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  
  
  void dma_free_noncoherent(struct device *dev, size_t size, void *vaddr,
-@@ -167,8 +145,8 @@ void dma_free_noncoherent(struct device
+@@ -167,8 +145,8 @@ void dma_free_noncoherent(struct device 
  }
  EXPORT_SYMBOL(dma_free_noncoherent);
  
@@ -650,7 +659,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  
  void dma_cache_sync(struct device *dev, void *vaddr, size_t size,
  			 enum dma_data_direction direction)
-@@ -360,23 +238,10 @@ void dma_cache_sync(struct device *dev,
+@@ -360,23 +238,10 @@ void dma_cache_sync(struct device *dev, 
  
  EXPORT_SYMBOL(dma_cache_sync);
  

@@ -11,7 +11,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
 --- a/drivers/mtd/ubi/build.c
 +++ b/drivers/mtd/ubi/build.c
-@@ -1207,6 +1207,36 @@ static struct mtd_info * __init open_mtd
+@@ -1209,6 +1209,48 @@
  	return mtd;
  }
  
@@ -23,12 +23,24 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 +{
 +	int err;
 +	struct mtd_info *mtd;
++
 +	/* try attaching mtd device named "ubi" or "data" */
 +	mtd = open_mtd_device("ubi");
 +	if (IS_ERR(mtd))
 +		mtd = open_mtd_device("data");
 +
 +	if (!IS_ERR(mtd)) {
++		size_t len;
++		char magic[4];
++
++		/* check for a valid ubi magic */
++		err = mtd_read(mtd, 0, 4, &len, (void *) magic);
++		if (!err && len == 4 && strncmp(magic, "UBI#", 4)) {
++			ubi_err("no valid UBI magic found inside mtd%d", mtd->index);
++			put_mtd_device(mtd);
++			return;
++		}
++
 +		/* auto-add only media types where UBI makes sense */
 +		if (mtd->type == MTD_NANDFLASH ||
 +		    mtd->type == MTD_DATAFLASH ||
@@ -48,7 +60,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  static int __init ubi_init(void)
  {
  	int err, i, k;
-@@ -1290,6 +1320,12 @@ static int __init ubi_init(void)
+@@ -1298,6 +1340,12 @@
  		}
  	}
  

@@ -8,14 +8,14 @@ include $(TOPDIR)/rules.mk
 
 ARCH:=arm
 BOARD:=oxnas
-BOARDNAME:=PLXTECH NAS782X
+BOARDNAME:=PLXTECH/Oxford NAS782x/OX82x
 DEVICE_TYPE:=nas
 FEATURES:=gpio nand pcie usb usbgadget ramdisk rtc squashfs
 CPU_TYPE:=mpcore
 
 MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 
-KERNEL_PATCHVER:=3.18
+KERNEL_PATCHVER:=3.14
 
 include $(INCLUDE_DIR)/target.mk
 
