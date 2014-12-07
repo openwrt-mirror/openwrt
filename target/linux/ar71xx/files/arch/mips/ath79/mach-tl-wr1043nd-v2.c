@@ -50,7 +50,7 @@
 #define TL_WR1043_V2_KEYS_POLL_INTERVAL	20	/* msecs */
 #define TL_WR1043_V2_KEYS_DEBOUNCE_INTERVAL (3 * TL_WR1043_V2_KEYS_POLL_INTERVAL)
 
-#define TL_WR1043_V2_WMAC_CALDATA_OFFSET	0x1000
+#define TL_WR1043_V2_WMAC_CALDATA_OFFSET	0x0000
 
 static const char *wr1043nd_v2_part_probes[] = {
 	"tp-link",
