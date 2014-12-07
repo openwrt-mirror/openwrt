@@ -102,6 +102,10 @@ detect_mac80211() {
 			dev_id="	option macaddr	$(cat /sys/class/ieee80211/${dev}/macaddress)"
 		fi
 
+		if [ x$mode_band == x"a" ]; then
+			ssid_5ghz="-5GHz"
+		fi
+
 		cat <<EOF
 config wifi-device  radio$devidx
 	option type     mac80211
@@ -117,7 +121,7 @@ config wifi-iface
 	option device   radio$devidx
 	option network  lan
 	option mode     ap
-	option ssid     OpenWrt-$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
+	option ssid     OpenWrt${ssid_5ghz}-$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
 	option encryption none
 
 EOF
