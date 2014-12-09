@@ -118,7 +118,6 @@ static struct gpio_keys_button wr2041n_gpio_keys[] __initdata = {
 	},
 };
 
-
 static void __init wr2041n_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
@@ -154,10 +153,12 @@ static void __init wr2041n_setup(void)
 	ap9x_pci_setup_wmac_led_pin(0, 0);
 	ap91_pci_init(art + WR2041N_PCIE_CALDATA_OFFSET, tmpmac);
 
-	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE);
+	//ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE);    //origin
+
+	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_PHY_SWAP);
 
 	ath79_register_mdio(1, 0x0);
-	/* according to below lines, LAN is eth1 and WAN is eth0 */
+
 	/* LAN */
 	ath79_init_mac(ath79_eth1_data.mac_addr, mac, -1);
 
@@ -171,9 +172,9 @@ static void __init wr2041n_setup(void)
 
 	/* GMAC0 is connected to the PHY4 of the internal switch */
 	ath79_switch_data.phy4_mii_en = 1;
-	ath79_switch_data.phy_poll_mask = BIT(4);
+	ath79_switch_data.phy_poll_mask = BIT(0);  //BIT(4); //origin
 	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_MII;
-	ath79_eth0_data.phy_mask = BIT(4);
+	ath79_eth0_data.phy_mask = BIT(0);    //BIT(4);    //origin
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio1_device.dev;
 
 	ath79_register_eth(0);
