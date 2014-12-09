@@ -200,23 +200,8 @@ define Image/Build
 	# RTA1320_16M (numerous routers)
 	$(call Image/Build/CFE,$(1),RTA1320_16M,6338,RTA1320_16M,,--layoutver 5)
 
-	# USR 9108
-	$(call Image/Build/CFE,$(1),96348GW-A,6348,USR9108)
-	# NetGear DG834GT, DG834PN
-	$(call Image/Build/CFE,$(1),96348GW-10,6348,DG834GT_DG834PN)
-	# Belkin f5d7633
-	$(call Image/Build/CFE,$(1),96348GW-10,6348,F5D7633)
-	# D-Link DSL-2640B, rev B2
-	$(call Image/Build/CFE,$(1),D-4P-W,6348,DSL2640B-B2)
-
-	# TP-Link 8900GB
-	$(call Image/Build/CFE,$(1),96348GW-11,6348,TD8900GB,$(shell printf 'PRID\x89\x10\x00\x02'))
-
 	# Inventel Livebox
 	$(call Image/Build/RedBoot,livebox)
-
-	# Telsey CPVA642-type (e.g. CPA-ZNTE60T)
-	$(call Image/Build/CFE,$(1),CPVA642,6358,CPA-ZNTE60T,,--signature "Telsey Tlc",--signature2 "99.99.999",--second-image-flag "0")
 
 	# Netgear CVG834G
 	$(call Image/Build/HCS,$(1),cvg834g,a020,0001,0022,$(KDIR)/vmlinux)
@@ -270,6 +255,8 @@ $(eval $(call ImageDTB,CFEDTB,A4001N1,a4001n1,963281T_TEF,6328,A4001N1,--pad 8))
 $(eval $(call ImageDTB,CFEDTB,RG100A,rg100a,96358VW2,6358,RG100A,--block-size 0x20000 --image-offset 0x20000))
 # Asmax AR 1004g
 $(eval $(call ImageDTB,CFEDTB,AR1004G,ar1004g,96348GW-10,6348,AR1004G))
+# Belkin F5D7633
+$(eval $(call ImageDTB,CFEDTB,F5D7633,f5d7633,96348GW-10,6348,F5D7633,--block-size 0x20000 --image-offset 0x20000))
 # Comtrend AR-5381u
 $(eval $(call ImageDTB,CFEDTB,AR5381u,ar-5381u,96328A-1241N,6328,AR-5381u,--pad 8))
 # Comtrend AR-5387un
@@ -286,6 +273,8 @@ $(eval $(call ImageDTB,CFEDTB,VR3025u,vr-3025u,96368M-1541N,6368,VR-3025u,--pad 
 $(eval $(call ImageDTB,CFEDTB,VR3025un,vr-3025un,96368M-1341N,6368,VR-3025un,--pad 4))
 # Comtrend WAP-5813n
 $(eval $(call ImageDTB,CFEDTB,WAP5813n,wap-5813n,96369R-1231N,6368,WAP-5813n,--pad 4))
+# D-Link DSL-2640B, rev B2
+$(eval $(call ImageDTB,CFEDTB,DSL2640B_B,dsl-2640b-b,D-4P-W,6348,DSL2640B-B2))
 # D-Link DSL-2650U
 $(eval $(call ImageDTB,CFEDTB,DSL2650U,dsl-2650u,96358VW2,6358,DSL2650U))
 # D-Link DSL-2740B/DSL-2741B, rev C2
@@ -307,6 +296,8 @@ $(eval $(call ImageDTB,CFEDTB,HG553,hg553,HW553,6358,HG553,--rsa-signature "Echo
 $(eval $(call ImageDTB,CFEDTB,HG556a_AB,hg556a-a,HW556,6358,HG556a_A,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x10000 --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,HG556a_AB,hg556a-b,HW556,6358,HG556a_B,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x20000 --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,HG556a_C,hg556a-c,HW556,6358,HG556a_C,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x20000 --tag-version 8))
+# Netgear DG834GT/PN
+$(eval $(call ImageDTB,CFEDTB,DG834GTPN,dg834gtpn,96348GW-10,6348,DG834GT_PN))
 # Pirelli Alice Gate VoIP 2 Plus Wi-Fi AGPF-S0
 $(eval $(call ImageDTB,CFEDTB,AGPF_S0,agpf-s0,AGPF-S0,6358,AGV2+W,--block-size 0x20000 --image-offset 0x20000 --signature2 IMAGE --tag-version 8))
 # Pirelli A226G
@@ -322,6 +313,11 @@ $(eval $(call ImageDTB,CFEDTB,FAST2504n,fast2504n,F@ST2504n,6362,F@ST2504n))
 $(eval $(call ImageDTB,CFEDTB,FAST2604,fast2604,F@ST2604,6348,F@ST2604))
 # Sagem F@ST2704V2
 $(eval $(call ImageDTB,CFEDTB,FAST2704V2,fast2704v2,F@ST2704V2,6328,F@ST2704V2))
+# SFR Neufbox 4
+$(eval $(call ImageDTB,CFEDTB,Neufbox4,nb4-ser-r0,96358VW,6358,NEUFBOX4-SER,--rsa-signature "OpenWRT-$(REVISION)"))
+$(eval $(call ImageDTB,CFEDTB,Neufbox4,nb4-fxc-r1,96358VW,6358,NEUFBOX4-FXC,--rsa-signature "OpenWRT-$(REVISION)"))
+# SFR Neufbox 6
+$(eval $(call ImageDTB,CFEDTB,Neufbox6,nb6-ser-r0,NB6-SER-r0,6362,NEUFBOX6,--rsa-signature "OpenWRT-$(REVISION)"))
 # T-Com Speedport W 303V Typ B
 $(eval $(call ImageDTB,SPW303VCFEDTB,SPW303V,spw303v,96358-502V,6358,SPW303V,--pad 4))
 # T-Com Speedport W 500V
@@ -330,11 +326,12 @@ $(eval $(call ImageDTB,CFEDTB,SPW500V,spw500v,96348GW,6348,SPW500V))
 $(eval $(call ImageDTB,CFEDTB,GW6000,gw6000,96348GW,6348,GW6000))
 # Tecom GW6200
 $(eval $(call ImageDTB,CFEDTB,GW6200,gw6200,96348GW,6348,GW6200,--rsa-signature "$(shell printf '\x99')"))
-# SFR Neufbox 4
-$(eval $(call ImageDTB,CFEDTB,Neufbox4,nb4-ser-r0,96358VW,6358,NEUFBOX4-SER,--rsa-signature "OpenWRT-$(REVISION)"))
-$(eval $(call ImageDTB,CFEDTB,Neufbox4,nb4-fxc-r1,96358VW,6358,NEUFBOX4-FXC,--rsa-signature "OpenWRT-$(REVISION)"))
-# SFR neufbox 6
-$(eval $(call ImageDTB,CFEDTB,Neufbox6,nb6-ser-r0,NB6-SER-r0,6362,NEUFBOX6,--rsa-signature "OpenWRT-$(REVISION)"))
+# Telsey CPVA642-type (e.g. CPA-ZNTE60T)
+$(eval $(call ImageDTB,CFEDTB,CPVA642,cpva642,CPVA642,6358,CPA-ZNTE60T,--signature "Telsey Tlc" --signature2 "99.99.999" --second-image-flag "0" --pad 4))
+# TP-Link TD-W8900GB
+$(eval $(call ImageDTB,CFEDTB,TDW8900GB,td-w8900gb,96348GW-11,6348,TD-W8900GB,--rsa-signature "$(shell printf 'PRID\x89\x10\x00\x02')" --image-offset 0x20000))
+# USRobotics 9108
+$(eval $(call ImageDTB,CFEDTB,USR9108,usr9108,96348GW-A,6348,USR9108))
 # ZyXEL P870HW-51a v2
 $(eval $(call ImageDTB,ZYXCFEDTB,P870HW_51a_v2,p870hw-51a-v2,96368VVW,6368,P870HW-51a_v2,--rsa-signature "ZyXEL" --signature "ZyXEL_0001"))
 
