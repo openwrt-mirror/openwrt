@@ -199,9 +199,9 @@ CONFIG_USE_SSTRIP=y
 # CONFIG_USE_MKLIBS is not set
 CONFIG_USE_UCLIBCXX=y
 # CONFIG_USE_LIBSTDCXX is not set
-# CONFIG_DEVEL is not set
+CONFIG_DEVEL=y
 # CONFIG_BROKEN is not set
-CONFIG_BINARY_FOLDER=""
+CONFIG_BINARY_FOLDER="$(TOPDIR)/bin/ramips-mt7620-16m"
 CONFIG_DOWNLOAD_FOLDER=""
 CONFIG_LOCALMIRROR=""
 CONFIG_AUTOREBUILD=y
@@ -210,9 +210,15 @@ CONFIG_TARGET_ROOTFS_DIR=""
 # CONFIG_CCACHE is not set
 CONFIG_EXTERNAL_KERNEL_TREE=""
 CONFIG_KERNEL_GIT_CLONE_URI=""
+# CONFIG_BUILD_LOG is not set
+# CONFIG_SRC_TREE_OVERRIDE is not set
 CONFIG_EXTRA_OPTIMIZATION="-fno-caller-saves"
+# CONFIG_TARGET_OPTIONS is not set
 CONFIG_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtune=24kec -mdsp"
 CONFIG_SOFT_FLOAT=y
+# CONFIG_EXTERNAL_TOOLCHAIN is not set
+CONFIG_NEED_TOOLCHAIN=y
+# CONFIG_TOOLCHAINOPTS is not set
 # CONFIG_EXTRA_TARGET_ARCH is not set
 CONFIG_EXTRA_BINUTILS_CONFIG_OPTIONS=""
 CONFIG_BINUTILS_VERSION="linaro"
@@ -1290,7 +1296,6 @@ CONFIG_PACKAGE_wireless-tools=y
 # CONFIG_PACKAGE_make is not set
 # CONFIG_PACKAGE_objdump is not set
 # CONFIG_PACKAGE_patch is not set
-# CONFIG_PACKAGE_perf is not set
 # CONFIG_PACKAGE_python-sip is not set
 # CONFIG_PACKAGE_sysprof is not set
 # CONFIG_PACKAGE_tig is not set
@@ -1766,6 +1771,7 @@ CONFIG_PACKAGE_kmod-usb-serial-option=y
 CONFIG_PACKAGE_kmod-usb-serial-wwan=y
 CONFIG_PACKAGE_kmod-usb-storage=y
 CONFIG_PACKAGE_kmod-usb-storage-extras=y
+# CONFIG_PACKAGE_kmod-usb-test is not set
 # CONFIG_PACKAGE_kmod-usb-uhci is not set
 # CONFIG_PACKAGE_kmod-usb-wdm is not set
 # CONFIG_PACKAGE_kmod-usb-yealink is not set
@@ -2275,6 +2281,8 @@ CONFIG_PACKAGE_libevent2=y
 # CONFIG_PACKAGE_libfaad2 is not set
 # CONFIG_PACKAGE_libfaifa is not set
 # CONFIG_PACKAGE_libffi is not set
+# CONFIG_PACKAGE_libffmpeg-audio-dec is not set
+# CONFIG_PACKAGE_libffmpeg-custom is not set
 # CONFIG_PACKAGE_libffmpeg-full is not set
 # CONFIG_PACKAGE_libffmpeg-mini is not set
 # CONFIG_PACKAGE_libflac is not set
@@ -3297,6 +3305,7 @@ CONFIG_PACKAGE_n2n_v2=y
 # CONFIG_PACKAGE_strongswan is not set
 # CONFIG_PACKAGE_strongswan-charon is not set
 # CONFIG_PACKAGE_strongswan-default is not set
+# CONFIG_PACKAGE_strongswan-full is not set
 # CONFIG_PACKAGE_strongswan-minimal is not set
 # CONFIG_PACKAGE_strongswan-mod-addrblock is not set
 # CONFIG_PACKAGE_strongswan-mod-aes is not set
@@ -3821,6 +3830,8 @@ CONFIG_PACKAGE_wpad=y
 CONFIG_PACKAGE_exfat=y
 # CONFIG_PACKAGE_exfat-utils is not set
 # CONFIG_PACKAGE_fuse-utils is not set
+# CONFIG_PACKAGE_gadgetfs-test-bulk is not set
+# CONFIG_PACKAGE_gadgetfs-test-isoc is not set
 # CONFIG_PACKAGE_mkdosfs is not set
 # CONFIG_PACKAGE_ncdu is not set
 # CONFIG_PACKAGE_nfs-utils is not set
@@ -4042,6 +4053,7 @@ CONFIG_PACKAGE_jshn=y
 # CONFIG_PACKAGE_kmemtrace-user is not set
 # CONFIG_PACKAGE_ksymoops is not set
 # CONFIG_PACKAGE_lcd4linux-custom is not set
+# CONFIG_PACKAGE_lcd4linux-full is not set
 # CONFIG_PACKAGE_lcdproc is not set
 # CONFIG_PACKAGE_ldconfig is not set
 # CONFIG_PACKAGE_ldd is not set
@@ -4144,6 +4156,7 @@ CONFIG_PACKAGE_shellsync=y
 # CONFIG_PACKAGE_tcpser is not set
 # CONFIG_PACKAGE_tcsh is not set
 # CONFIG_PACKAGE_tesseract is not set
+# CONFIG_PACKAGE_testusb is not set
 # CONFIG_PACKAGE_tiff-utils is not set
 # CONFIG_PACKAGE_time is not set
 # CONFIG_PACKAGE_tmux is not set
