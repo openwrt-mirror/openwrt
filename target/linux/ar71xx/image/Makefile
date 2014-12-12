@@ -1340,6 +1340,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4310V1,tl-wdr4310-v1,TL-WDR4
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4900V2,tl-wdr4900-v2,TL-WDR4900-v2,ttyS0,115200,0x49000002,1,8Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW4530RV1,mw4530r-v1,TL-WDR4300,ttyS0,115200,0x45300001,1,8Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW305RV38M,mw305r-v3-8m,TL-WR841N-v9,ttyS0,115200,0x83050803,1,8Mlzma))
+$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR882N,tl-wr882n-v1,TL-WR882N-v1,ttyS0,115200,0x08820001,1,8Mlzma))
 
 
 $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
