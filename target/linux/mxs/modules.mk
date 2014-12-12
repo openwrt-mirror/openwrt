@@ -57,11 +57,10 @@ $(eval $(call KernelPackage,sound-soc-mxs))
 define KernelPackage/iio-mxs-lradc
     SUBMENU:=$(OTHER_MENU)
     TITLE:=LRADC driver for i.MX23/28
-    DEPENDS:=@TARGET_mxs
+    DEPENDS:=@TARGET_mxs +kmod-iio-core
     KCONFIG:=CONFIG_MXS_LRADC
-    FILES:=$(LINUX_DIR)/drivers/staging/iio/adc/mxs-lradc.ko \
-	$(LINUX_DIR)/drivers/iio/industrialio-triggered-buffer.ko
-    AUTOLOAD:=$(call AutoLoad,70,industrialio-triggered-buffer mxs-lradc)
+    FILES:=$(LINUX_DIR)/drivers/staging/iio/adc/mxs-lradc.ko 
+    AUTOLOAD:=$(call AutoLoad,70,mxs-lradc)
 endef
 
 define KernelPackage/iio-mxs-lradc/description
@@ -84,3 +83,33 @@ define KernelPackage/crypto-hw-dcp/description
 endef
 
 $(eval $(call KernelPackage,crypto-hw-dcp))
+
+define KernelPackage/spi-mxs
+  SUBMENU:=$(SPI_MENU)
+  TITLE:=Freescale i.MX23/28 SPI driver
+  DEPENDS:=@TARGET_mxs
+  KCONFIG:=CONFIG_SPI_MXS
+  FILES:=$(LINUX_DIR)/drivers/spi/spi-mxs.ko
+  AUTOLOAD:=$(call AutoProbe,spi-mxs)
+endef
+
+define KernelPackage/spi-mxs/description
+  Kernel module for Freescale i.MX23/28 SPI controller
+endef
+
+$(eval $(call KernelPackage,spi-mxs))
+
+I2C_MXS_MODULES:= \
+  CONFIG_I2C_MXS:drivers/i2c/busses/i2c-mxs
+
+define KernelPackage/i2c-mxs
+  $(call i2c_defaults,$(I2C_MXS_MODULES),55)
+  TITLE:=Freescale i.MX23/28 I2C driver
+  DEPENDS:=@TARGET_mxs +kmod-i2c-core
+endef
+
+define KernelPackage/i2c-mxs/description
+    Kernel module for Freescale i.MX23/28 I2C controller
+endef
+
+$(eval $(call KernelPackage,i2c-mxs))

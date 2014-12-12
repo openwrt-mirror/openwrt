@@ -124,7 +124,8 @@ ramips_setup_interfaces()
 	whr-600d | \
 	wsr-600 | \
 	wsr-1166 | \
-	wt1520)
+	wt1520 | \
+	y1)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 6t"
@@ -218,7 +219,8 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "2" "4 6t"
 		;;
 
-	hiwifi-hc5761 )
+	hiwifi-hc5761 | \
+	y1s)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 5 6t"
@@ -237,13 +239,6 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch1" "1" "1"
 		ucidef_add_switch_vlan "switch1" "1" "0 1 2 3 6t"
 		ucidef_add_switch_vlan "switch1" "2" "4 6t"
-		;;
-	y1 |\
-	y1s)
-		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
-		ucidef_add_switch "switch0" "1" "1"
-		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5 6t 7"
-		ucidef_add_switch_vlan "switch0" "2" "4 6t"
 		;;
 	*)
 		RT3X5X=`cat /proc/cpuinfo | egrep "(RT3.5|RT5350)"`
