@@ -33,22 +33,6 @@ endef
 
 $(eval $(call KernelPackage,wdt-stmp3xxx))
 
-define KernelPackage/usb-chipidea-imx
-    TITLE:=Support for ChipIdea controllers on Freescale i.MX SoCs
-    DEPENDS:=+kmod-usb-chipidea @TARGET_mxs
-    FILES:= \
-	$(LINUX_DIR)/drivers/usb/chipidea/ci_hdrc_imx.ko \
-	$(LINUX_DIR)/drivers/usb/chipidea/usbmisc_imx.ko
-    AUTOLOAD:=$(call AutoLoad,52,usbmisc_imx ci_hdrc_imx,1)
-    $(call AddDepends/usb)
-endef
-
-define KernelPackage/usb-chipidea-imx/description
-    Kernel support for USB ChipIdea controllers on Freescale i.MX SoCs
-endef
-
-$(eval $(call KernelPackage,usb-chipidea-imx,1))
-
 define KernelPackage/sound-soc-mxs
     TITLE:=Freescale i.MX23/i.MX28 built-in SoC sound support
     KCONFIG:= \
@@ -63,7 +47,7 @@ define KernelPackage/sound-soc-mxs
     DEPENDS:=@TARGET_mxs +kmod-sound-soc-core
     $(call AddDepends/sound)
 endef
-  
+
 define KernelPackage/sound-soc-mxs/description
     Kernel support for Freescale i.MX23/i.MX28 built-in SoC audio
 endef
@@ -100,3 +84,33 @@ define KernelPackage/crypto-hw-dcp/description
 endef
 
 $(eval $(call KernelPackage,crypto-hw-dcp))
+
+define KernelPackage/spi-mxs
+  SUBMENU:=$(SPI_MENU)
+  TITLE:=Freescale i.MX23/28 SPI driver
+  DEPENDS:=@TARGET_mxs
+  KCONFIG:=CONFIG_SPI_MXS
+  FILES:=$(LINUX_DIR)/drivers/spi/spi-mxs.ko
+  AUTOLOAD:=$(call AutoProbe,spi-mxs)
+endef
+
+define KernelPackage/spi-mxs/description
+  Kernel module for Freescale i.MX23/28 SPI controller
+endef
+
+$(eval $(call KernelPackage,spi-mxs))
+
+I2C_MXS_MODULES:= \
+  CONFIG_I2C_MXS:drivers/i2c/busses/i2c-mxs
+
+define KernelPackage/i2c-mxs
+  $(call i2c_defaults,$(I2C_MXS_MODULES),55)
+  TITLE:=Freescale i.MX23/28 I2C driver
+  DEPENDS:=@TARGET_mxs +kmod-i2c-core
+endef
+
+define KernelPackage/i2c-mxs/description
+    Kernel module for Freescale i.MX23/28 I2C controller
+endef
+
+$(eval $(call KernelPackage,i2c-mxs))
