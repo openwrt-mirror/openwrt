@@ -110,11 +110,11 @@ ramips_setup_interfaces()
 		;;
 
 	3g-6200n | \
+	ai-br100 | \
 	dir-610-a1 | \
 	dir-300-b7 | \
 	dir-320-b1 | \
 	dir-615-h1 | \
-	ai-br100 | \
 	hlk-rm04 | \
 	mt7621 | \
 	mt7628 | \

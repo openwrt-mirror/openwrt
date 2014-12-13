@@ -19,6 +19,7 @@ platform_check_image() {
 	3g300m | \
 	a5-v11 | \
 	air3gii | \
+	ai-br100 |\
 	all0239-3g | \
 	all0256n | \
 	all5002 | \
@@ -103,7 +104,6 @@ platform_check_image() {
 	wr6202 |\
 	wr8305rt |\
 	wrtnode |\
-	ai-br100 |\
 	wt1520 |\
 	wt3020 |\
 	x5 |\

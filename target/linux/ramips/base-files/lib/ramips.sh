@@ -28,6 +28,9 @@ ramips_board_detect() {
 	*"A5-V11")
 		name="a5-v11"
 		;;
+	*"Aigale Ai-BR100")
+		name="ai-br100"
+		;;
 	*"Airlink101 AR670W")
 		name="ar670w"
 		;;
@@ -345,9 +348,6 @@ ramips_board_detect() {
 		;;
 	*"Wansview NCS601W")
 		name="ncs601w"
-		;;
-	*"Aigale Ai-BR100")
-		name="ai-br100"
 		;;
 	*"Sercomm NA930")
 		name="na930"
