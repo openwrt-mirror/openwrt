@@ -164,11 +164,88 @@ endef
 
 $(eval $(call KernelPackage,sound-maestro3))
 
+
+define KernelPackage/hda
+  TITLE:=Intel HD Audio
+  KCONFIG:= \
+    CONFIG_SND_HDA \
+    CONFIG_SND_HDA_RECONFIG=y
+  FILES:= \
+    $(LINUX_DIR)/sound/pci/hda/snd-hda-codec.ko \
+    $(LINUX_DIR)/sound/pci/hda/snd-hda-controller.ko
+  AUTOLOAD:= \
+    $(call AutoLoad,50,snd-hda-codec) \
+    $(call AutoLoad,49,snd-hda-controller)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/hda/description
+ This option enables the HD-audio common driver.
+endef
+
+$(eval $(call KernelPackage,hda))
+
+
+define KernelPackage/hda-intel
+  TITLE:=Intel HD Audio
+  KCONFIG:= \
+    CONFIG_SND_HDA_INTEL \
+    CONFIG_INTEL_MID_DMAC=n \
+    CONFIG_DW_DMAC_CORE=n \
+    CONFIG_DW_DMAC_PCI=n
+  DEPENDS:=+kmod-hda
+  FILES:= \
+    $(LINUX_DIR)/sound/pci/hda/snd-hda-intel.ko \
+    $(LINUX_DIR)/sound/pci/hda/snd-hda-codec.ko
+  AUTOLOAD:=\
+    $(call AutoLoad,50,snd-hda-codec) \
+    $(call AutoLoad,55,snd-hda-intel)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/hda-intel/description
+ This option enables the Intel HD-audio controller.
+endef
+
+$(eval $(call KernelPackage,hda-intel))
+
+
+define KernelPackage/sound-hda-codec-generic
+  TITLE:=Enable generic HD-audio codec parser
+  KCONFIG:=CONFIG_SND_HDA_GENERIC
+  DEPENDS:=+kmod-hda-intel
+  FILES:=$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-generic.ko
+  AUTOLOAD:=$(call AutoLoad,51,snd-hda-codec-generic)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-hda-codec-generic/description
+endef
+
+$(eval $(call KernelPackage,sound-hda-codec-generic))
+
+
+define KernelPackage/sound-hda-codec-realtek
+  TITLE:=Build Realtek HD-audio codec support
+  KCONFIG:=CONFIG_SND_HDA_CODEC_REALTEK
+  DEPENDS:=+kmod-sound-hda-codec-generic
+  FILES:=$(LINUX_DIR)/sound/pci/hda/snd-hda-codec-realtek.ko
+  AUTOLOAD:=$(call AutoLoad,52,snd-hda-codec-realtek)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-hda-codec-realtek/description
+ Include Realtek HD-audio codec support in snd-hda-intel driver, such as ALC880.
+endef
+
+$(eval $(call KernelPackage,sound-hda-codec-realtek))
+
+
 define KernelPackage/sound-dummy
   TITLE:=Dummy (/dev/null) soundcard
   KCONFIG:=CONFIG_SND_DUMMY
   FILES:=$(LINUX_DIR)/sound/drivers/snd-dummy.ko
-  AUTOLOAD:=$(call AutoLoad,35, snd-dummy)
+  AUTOLOAD:=$(call AutoLoad,99, snd-dummy)
   $(call AddDepends/sound)
 endef
 
