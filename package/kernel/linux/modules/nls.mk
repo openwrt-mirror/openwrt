@@ -179,6 +179,22 @@ endef
 $(eval $(call KernelPackage,nls-cp1251))
 
 
+define KernelPackage/nls-cp936
+  SUBMENU:=Native Language Support
+  TITLE:=Codepage 936 (Chinese GBK)
+  KCONFIG:=CONFIG_NLS_CODEPAGE_936
+  FILES:=$(LINUX_DIR)/fs/nls/nls_cp936.ko
+  AUTOLOAD:=$(call AutoLoad,25,nls_cp936)
+  $(call AddDepends/nls)
+endef
+
+define KernelPackage/nls-cp936/description
+ Kernel module for NLS Codepage 936 (CP936 GB2312; Simplified Chinese)
+endef
+
+$(eval $(call KernelPackage,nls-cp936))
+
+
 define KernelPackage/nls-iso8859-1
   SUBMENU:=Native Language Support
   TITLE:=ISO 8859-1 (Latin 1; Western European Languages)
