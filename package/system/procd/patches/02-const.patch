@@ -1,0 +1,400 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dfa9413..c3b4d45 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 2.6)
+ 
+ PROJECT(procd C)
+-ADD_DEFINITIONS(-Os -ggdb -Wall -Werror --std=gnu99 -Wmissing-declarations)
++ADD_DEFINITIONS(-Os -ggdb -Wall -Werror --std=gnu99 -Wmissing-declarations -Wwrite-strings)
+ 
+ SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+ 
+diff --git a/initd/init.c b/initd/init.c
+index 9818c4f..187d072 100644
+--- a/initd/init.c
++++ b/initd/init.c
+@@ -84,7 +84,9 @@ main(int argc, char **argv)
+ 
+ 	pid = fork();
+ 	if (!pid) {
+-		char *kmod[] = { "/sbin/kmodloader", "/etc/modules-boot.d/", NULL };
++		char arg0[] = "/sbin/kmodloader";
++		char arg1[] = "/etc/modules-boot.d/";
++		char *kmod[] = { arg0, arg1, NULL };
+ 
+ 		if (debug < 3) {
+ 			int fd = open("/dev/null", O_RDWR);
+diff --git a/initd/mkdev.c b/initd/mkdev.c
+index e6d3d0c..003fe50 100644
+--- a/initd/mkdev.c
++++ b/initd/mkdev.c
+@@ -60,15 +60,16 @@ static void make_dev(const char *path, bool block, int major, int minor)
+ 
+ static void find_devs(bool block)
+ {
+-	char *path = block ? "/sys/dev/block" : "/sys/dev/char";
++	const char *devpath = block ? "/sys/dev/block" : "/sys/dev/char";
++	char *path;
+ 	struct dirent *dp;
+ 	DIR *dir;
+ 
+-	dir = opendir(path);
++	dir = opendir(devpath);
+ 	if (!dir)
+ 		return;
+ 
+-	path = buf2 + sprintf(buf2, "%s/", path);
++	path = buf2 + sprintf(buf2, "%s/", devpath);
+ 	while ((dp = readdir(dir)) != NULL) {
+ 		char *c;
+ 		int major = 0, minor = 0;
+diff --git a/initd/preinit.c b/initd/preinit.c
+index f38d8ef..5d8154c 100644
+--- a/initd/preinit.c
++++ b/initd/preinit.c
+@@ -51,7 +51,8 @@ static void
+ spawn_procd(struct uloop_process *proc, int ret)
+ {
+ 	char *wdt_fd = watchdog_fd();
+-	char *argv[] = { "/sbin/procd", NULL};
++	char arg0[] = "/sbin/procd";
++	char *argv[] = { arg0, NULL};
+ 	struct stat s;
+ 	char dbg[2];
+ 
+@@ -85,8 +86,13 @@ plugd_proc_cb(struct uloop_process *proc, int ret)
+ void
+ preinit(void)
+ {
+-	char *init[] = { "/bin/sh", "/etc/preinit", NULL };
+-	char *plug[] = { "/sbin/procd", "-h", "/etc/hotplug-preinit.json", NULL };
++	char init0[] = "/bin/sh";
++	char init1[] = "/etc/preinit";
++	char *init[] = { init0, init1, NULL };
++	char plug0[] = "/sbin/procd";
++	char plug1[] = "-h";
++	char plug2[] = "/etc/hotplug-preinit.json";
++	char *plug[] = { plug0, plug1, plug2, NULL };
+ 
+ 	LOG("- preinit -\n");
+ 
+diff --git a/inittab.c b/inittab.c
+index eb402f8..206b567 100644
+--- a/inittab.c
++++ b/inittab.c
+@@ -61,7 +61,7 @@ struct init_action {
+ };
+ 
+ static const char *tab = "/etc/inittab";
+-static char *ask = "/sbin/askfirst";
++static char ask[] = "/sbin/askfirst";
+ 
+ static LIST_HEAD(actions);
+ 
+diff --git a/plug/coldplug.c b/plug/coldplug.c
+index d3a607d..f8780ae 100644
+--- a/plug/coldplug.c
++++ b/plug/coldplug.c
+@@ -39,7 +39,8 @@ static void udevtrigger_complete(struct uloop_process *proc, int ret)
+ 
+ void procd_coldplug(void)
+ {
+-	char *argv[] = { "udevtrigger", NULL };
++	char argv0[] = "udevtrigger";
++	char *argv[] = { argv0, NULL };
+ 	unsigned int oldumask = umask(0);
+ 
+ 	umount2("/dev/pts", MNT_DETACH);
+diff --git a/plug/hotplug.c b/plug/hotplug.c
+index 1a98e8b..e65ec99 100644
+--- a/plug/hotplug.c
++++ b/plug/hotplug.c
+@@ -238,7 +238,7 @@ send_to_kernel:
+ }
+ 
+ static struct cmd_handler {
+-	char *name;
++	const char *name;
+ 	int atomic;
+ 	void (*handler)(struct blob_attr *msg, struct blob_attr *data);
+ } handlers[] = {
+@@ -451,7 +451,7 @@ void hotplug_last_event(uloop_timeout_handler handler)
+ 		uloop_timeout_cancel(&last_event);
+ }
+ 
+-void hotplug(char *rules)
++void hotplug(const char *rules)
+ {
+ 	struct sockaddr_nl nls;
+ 	int nlbufsize = 512 * 1024;
+@@ -479,7 +479,7 @@ void hotplug(char *rules)
+ 	uloop_fd_add(&hotplug_fd, ULOOP_READ);
+ }
+ 
+-int hotplug_run(char *rules)
++int hotplug_run(const char *rules)
+ {
+ 	uloop_init();
+ 	hotplug(rules);
+diff --git a/plug/hotplug.h b/plug/hotplug.h
+index 2a44442..27fc08b 100644
+--- a/plug/hotplug.h
++++ b/plug/hotplug.h
+@@ -17,8 +17,8 @@
+ 
+ #include <libubox/uloop.h>
+ 
+-void hotplug(char *rules);
+-int hotplug_run(char *rules);
++void hotplug(const char *rules);
++int hotplug_run(const char *rules);
+ void hotplug_shutdown(void);
+ void hotplug_last_event(uloop_timeout_handler handler);
+ 
+diff --git a/rcS.c b/rcS.c
+index 8c72c19..f197121 100644
+--- a/rcS.c
++++ b/rcS.c
+@@ -104,7 +104,7 @@ static void q_initd_complete(struct runqueue *q, struct runqueue_task *p)
+ 	free(s);
+ }
+ 
+-static void add_initd(struct runqueue *q, char *file, char *param)
++static void add_initd(struct runqueue *q, const char *file, const char *param)
+ {
+ 	static const struct runqueue_task_type initd_type = {
+ 		.run = q_initd_run,
+@@ -126,7 +126,7 @@ static void add_initd(struct runqueue *q, char *file, char *param)
+ 	runqueue_task_add(q, &s->proc.task, false);
+ }
+ 
+-static int _rc(struct runqueue *q, char *path, const char *file, char *pattern, char *param)
++static int _rc(struct runqueue *q, const char *path, const char *file, const char *pattern, const char *param)
+ {
+ 	char *dir = alloca(2 + strlen(path) + strlen(file) + strlen(pattern));
+ 	glob_t gl;
+@@ -147,7 +147,7 @@ static int _rc(struct runqueue *q, char *path, const char *file, char *pattern,
+ 	return 0;
+ }
+ 
+-int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *))
++int rcS(const char *pattern, const char *param, void (*q_empty)(struct runqueue *))
+ {
+ 	runqueue_init(&q);
+ 	q.empty_cb = q_empty;
+@@ -156,7 +156,7 @@ int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *))
+ 	return _rc(&q, "/etc/rc.d", pattern, "*", param);
+ }
+ 
+-int rc(const char *file, char *param)
++int rc(const char *file, const char *param)
+ {
+ 	return _rc(&r, "/etc/init.d", file, "", param);
+ }
+diff --git a/rcS.h b/rcS.h
+index 91d37d1..9b6bb84 100644
+--- a/rcS.h
++++ b/rcS.h
+@@ -17,7 +17,7 @@
+ 
+ #include <libubox/runqueue.h>
+ 
+-extern int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *));
+-extern int rc(const char *file, char *param);
++extern int rcS(const char *pattern, const char *param, void (*q_empty)(struct runqueue *));
++extern int rc(const char *file, const char *param);
+ 
+ #endif
+diff --git a/service/instance.c b/service/instance.c
+index 35b2def..5486f7a 100644
+--- a/service/instance.c
++++ b/service/instance.c
+@@ -173,47 +173,66 @@ jail_run(struct service_instance *in, char **argv)
+ 	struct blobmsg_list_node *var;
+ 	struct jail *jail = &in->jail;
+ 	int argc = 0;
++	static char ujail[] = "/sbin/ujail";
+ 
+-	argv[argc++] = "/sbin/ujail";
++	argv[argc++] = ujail;
+ 
+ 	if (jail->name) {
+-		argv[argc++] = "-n";
++		static char opt[] = "-n";
++		argv[argc++] = opt;
+ 		argv[argc++] = jail->name;
+ 	}
+ 
+ 	if (jail->root) {
+-		argv[argc++] = "-P";
++		static char opt[] = "-P";
++		argv[argc++] = opt;
+ 		argv[argc++] = jail->root;
+ 	}
+ 
+ 	if (in->seccomp) {
+-		argv[argc++] = "-S";
++		static char opt[] = "-S";
++		argv[argc++] = opt;
+ 		argv[argc++] = in->seccomp;
+ 	}
+ 
+-	if (jail->procfs)
+-		argv[argc++] = "-p";
++	if (jail->procfs) {
++		static char opt[] = "-p";
++		argv[argc++] = opt;
++	}
+ 
+-	if (jail->sysfs)
+-		argv[argc++] = "-s";
++	if (jail->sysfs) {
++		static char opt[] = "-s";
++		argv[argc++] = opt;
++	}
+ 
+-	if (jail->ubus)
+-		argv[argc++] = "-u";
++	if (jail->ubus) {
++		static char opt[] = "-u";
++		argv[argc++] = opt;
++	}
+ 
+-	if (jail->log)
+-		argv[argc++] = "-l";
++	if (jail->log) {
++		static char opt[] = "-l";
++		argv[argc++] = opt;
++	}
+ 
+ 	blobmsg_list_for_each(&jail->mount, var) {
+ 		const char *type = blobmsg_data(var->data);
+ 
+-		if (*type == '1')
+-			argv[argc++] = "-w";
+-		else
+-			argv[argc++] = "-r";
+-		argv[argc++] = (char *) blobmsg_name(var->data);
++		if (*type == '1') {
++			static char opt[] = "-w";
++			argv[argc++] = opt;
++		}
++		else {
++			static char opt[] = "-r";
++			argv[argc++] = opt;
++		}
++		argv[argc++] = strdup(blobmsg_name(var->data));
+ 	}
+ 
+-	argv[argc++] = "--";
++	{
++		static char opt[] = "--";
++		argv[argc++] = opt;
++	}
+ 
+ 	return argc;
+ }
+diff --git a/service/service.c b/service/service.c
+index 2702dc3..ca82538 100644
+--- a/service/service.c
++++ b/service/service.c
+@@ -508,17 +508,19 @@ static struct ubus_object main_object = {
+ };
+ 
+ int
+-service_start_early(char *name, char *cmdline)
++service_start_early(const char *name, const char *cmdline)
+ {
+ 	void *instances, *instance, *command, *respawn;
++	char *cmdlinecopy = alloca(strlen(cmdline) + 1);
+ 	char *t;
++	strcpy(cmdlinecopy, cmdline);
+ 
+ 	blob_buf_init(&b, 0);
+ 	blobmsg_add_string(&b, "name", name);
+ 	instances = blobmsg_open_table(&b, "instances");
+ 	instance = blobmsg_open_table(&b, "instance1");
+ 	command = blobmsg_open_array(&b, "command");
+-	t = strtok(cmdline, " ");
++	t = strtok(cmdlinecopy, " ");
+ 	while (t) {
+ 		blobmsg_add_string(&b, NULL, t);
+ 		t = strtok(NULL, " ");
+diff --git a/service/service.h b/service/service.h
+index 892a147..28ffc1c 100644
+--- a/service/service.h
++++ b/service/service.h
+@@ -49,7 +49,7 @@ struct service {
+ void service_validate_add(struct service *s, struct blob_attr *attr);
+ void service_validate_dump(struct blob_buf *b, struct service *s);
+ void service_validate_dump_all(struct blob_buf *b, char *p, char *s);
+-int service_start_early(char *name, char *cmdline);
++int service_start_early(const char *name, const char *cmdline);
+ void service_validate_del(struct service *s);
+ void service_validate_init(void);
+ void service_init(void);
+diff --git a/service/trigger.c b/service/trigger.c
+index 97a06bb..254c5d1 100644
+--- a/service/trigger.c
++++ b/service/trigger.c
+@@ -52,7 +52,7 @@ struct trigger {
+ 
+ struct job;
+ struct cmd {
+-	char *name;
++	const char *name;
+ 	void (*handler)(struct job *job, struct blob_attr *exec, struct blob_attr *env);
+ };
+ 
+diff --git a/signal.c b/signal.c
+index 16824f7..9c76abf 100644
+--- a/signal.c
++++ b/signal.c
+@@ -33,7 +33,7 @@ static void do_reboot(void)
+ static void signal_shutdown(int signal, siginfo_t *siginfo, void *data)
+ {
+ 	int event = 0;
+-	char *msg = NULL;
++	const char *msg = NULL;
+ 
+ 	switch(signal) {
+ 	case SIGINT:
+diff --git a/system.c b/system.c
+index 77111f9..854a125 100644
+--- a/system.c
++++ b/system.c
+@@ -120,6 +120,7 @@ static int system_board(struct ubus_context *ctx, struct ubus_object *obj,
+ 		{
+ 			char *dest;
+ 			char ch;
++			const char *key;
+ 
+ 			key = line;
+ 			val = strchr(line, '=');
+@@ -335,7 +336,8 @@ static void
+ procd_spawn_upgraded(char *path)
+ {
+ 	char *wdt_fd = watchdog_fd();
+-	char *argv[] = { "/tmp/upgraded", NULL, NULL};
++	char arg0[] = "/tmp/upgraded";
++	char *argv[] = { arg0, NULL, NULL};
+ 
+ 	argv[1] = path;
+ 
+diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
+index d7433e7..2e5f7dc 100644
+--- a/upgraded/upgraded.c
++++ b/upgraded/upgraded.c
+@@ -36,7 +36,9 @@ static void upgrade_proc_cb(struct uloop_process *proc, int ret)
+ 
+ static void sysupgarde(char *folder)
+ {
+-	char *args[] = { "/sbin/sysupgrade", "nand", NULL, NULL };
++	char arg0[] = "/sbin/sysupgrade";
++	char arg1[] = "nand";
++	char *args[] = { arg0, arg1, NULL, NULL };
+ 
+ 	args[2] = folder;
+ 	upgrade_proc.cb = upgrade_proc_cb;
