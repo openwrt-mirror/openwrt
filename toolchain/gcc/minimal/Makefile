@@ -34,6 +34,7 @@ define Host/Compile
 endef
 
 define Host/Install
+	$(call Host/SetToolchainInfo)
 	$(GCC_MAKE) -C $(GCC_BUILD_DIR) install-gcc install-target-libgcc
 endef
 
