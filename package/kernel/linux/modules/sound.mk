@@ -134,6 +134,50 @@ endef
 $(eval $(call KernelPackage,sound-i8x0))
 
 
+define KernelPackage/sound-cs5535audio
+  TITLE:=CS5535 PCI Controller
+  DEPENDS:=+kmod-ac97
+  KCONFIG:=CONFIG_SND_CS5535AUDIO
+  FILES:=$(LINUX_DIR)/sound/pci/cs5535audio/snd-cs5535audio.ko
+  AUTOLOAD:=$(call AutoLoad,36,snd-cs5535audio)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-cs5535audio/description
+ Support for the integrated AC97 sound device on olpc
+endef
+
+$(eval $(call KernelPackage,sound-cs5535audio))
+
+define KernelPackage/sound-maestro3
+  TITLE:=ESS Maestro3/Allegro/Canyon3D-2
+  DEPENDS:=+kmod-ac97
+  KCONFIG:=CONFIG_SND_MAESTRO3 CONFIG_SND_MAESTRO3_INPUT=y
+  FILES:=$(LINUX_DIR)/sound/pci/snd-maestro3.ko
+  AUTOLOAD:=$(call AutoLoad,35, snd-maestro3)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-maestro3/description
+ support for soundcards based on ESS Maestro 3 (Allegro) chips
+endef
+
+$(eval $(call KernelPackage,sound-maestro3))
+
+define KernelPackage/sound-dummy
+  TITLE:=Dummy (/dev/null) soundcard
+  KCONFIG:=CONFIG_SND_DUMMY
+  FILES:=$(LINUX_DIR)/sound/drivers/snd-dummy.ko
+  AUTOLOAD:=$(call AutoLoad,35, snd-dummy)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-dummy/description
+ This driver does nothing, but emulates various mixer controls and PCM devices.
+endef
+
+$(eval $(call KernelPackage,sound-dummy))
+
 define KernelPackage/sound-soc-core
   TITLE:=SoC sound support
   DEPENDS:=+kmod-regmap +kmod-ac97
