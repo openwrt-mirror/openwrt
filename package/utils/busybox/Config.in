@@ -1,5 +1,3 @@
-if PACKAGE_busybox
-
 config BUSYBOX_CUSTOM
 	bool "Customize busybox options"
 	default n
@@ -22,5 +20,3 @@ config BUSYBOX_USE_LIBRPC
 	bool
 	default y if BUSYBOX_CUSTOM && BUSYBOX_CONFIG_FEATURE_HAVE_RPC
 	default y if !BUSYBOX_CUSTOM && BUSYBOX_DEFAULT_FEATURE_HAVE_RPC
-
-endif
