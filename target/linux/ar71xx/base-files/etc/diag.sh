@@ -80,6 +80,9 @@ get_status_led() {
 	el-m150)
 		status_led="easylink:green:system"
 		;;
+	f9k1115v2)
+		status_led="belkin:blue:status"
+		;;
 	gl-inet)
 		status_led="gl-connect:green:lan"
 		;;
@@ -310,6 +313,9 @@ set_state() {
 		;;
 	failsafe)
 		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
 		status_led_on
