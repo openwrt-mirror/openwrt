@@ -5,6 +5,7 @@ set_fstab(){
 	my_fstype="`block info | grep "/dev/$device" | awk -F 'TYPE="' '{print $2}' | sed 's/\"//'`"
 	
 	[ -n "$my_fstype" ] && {
+		[ $my_fstype = "ntfs" ] && [ $(uci show fstab | grep -c "$device") != "0" ] && return 0
 		logger -t Auto-Mount "New block.File system:${my_fstype}"
 		if [ "$my_fstype" = 'swap' ]; then
 			
@@ -31,6 +32,7 @@ set_fstab(){
 		else
 			
 			section=$(echo $get_uuid | sed 's/-//g')
+			[ $my_fstype = 'ntfs' ] && section=$device
 
 			uci set fstab.${section}="mount"
 			uci set fstab.${section}.enabled=1
@@ -42,6 +44,8 @@ set_fstab(){
 				ext*)
 					uci set fstab.${section}.options="noatime";;
 				'ntfs')
+				uci set fstab.${section}.device="/dev/$device"
+				uci delete fstab.${section}.uuid
 				if [ $(lsmod | grep -c ufsd) -ge 1 ]
 				then
 					uci set fstab.${section}.fstype="ufsd"
