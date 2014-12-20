@@ -1,6 +1,6 @@
-diff -Naur iptables-1.4.12.2/extensions/libxt_IMQ.c iptables-1.4.12.2-imq/extensions/libxt_IMQ.c
---- iptables-1.4.12.2/extensions/libxt_IMQ.c	1970-01-01 02:00:00.000000000 +0200
-+++ iptables-1.4.12.2-imq/extensions/libxt_IMQ.c	2011-09-30 13:53:21.000000000 +0300
+diff -Naur iptables-1.4.12.1/extensions/libxt_IMQ.c iptables-1.4.12.1-imq/extensions/libxt_IMQ.c
+--- iptables-1.4.12.1/extensions/libxt_IMQ.c	1970-01-01 02:00:00.000000000 +0200
++++ iptables-1.4.12.1-imq/extensions/libxt_IMQ.c	2011-09-30 13:53:21.000000000 +0300
 @@ -0,0 +1,105 @@
 +/* Shared library add-on to iptables to add IMQ target support. */
 +#include <stdio.h>
@@ -107,9 +107,9 @@ diff -Naur iptables-1.4.12.2/extensions/libxt_IMQ.c iptables-1.4.12.2-imq/extens
 +	xtables_register_target(&imq_target);
 +	xtables_register_target(&imq_target6);
 +}
-diff -Naur iptables-1.4.12.2/extensions/libxt_IMQ.man iptables-1.4.12.2-imq/extensions/libxt_IMQ.man
---- iptables-1.4.12.2/extensions/libxt_IMQ.man	1970-01-01 02:00:00.000000000 +0200
-+++ iptables-1.4.12.2-imq/extensions/libxt_IMQ.man	2011-09-30 13:53:21.000000000 +0300
+diff -Naur iptables-1.4.12.1/extensions/libxt_IMQ.man iptables-1.4.12.1-imq/extensions/libxt_IMQ.man
+--- iptables-1.4.12.1/extensions/libxt_IMQ.man	1970-01-01 02:00:00.000000000 +0200
++++ iptables-1.4.12.1-imq/extensions/libxt_IMQ.man	2011-09-30 13:53:21.000000000 +0300
 @@ -0,0 +1,15 @@
 +This target is used to redirect the traffic to the IMQ driver and you can apply
 +QoS rules like HTB or CBQ.
@@ -126,9 +126,9 @@ diff -Naur iptables-1.4.12.2/extensions/libxt_IMQ.man iptables-1.4.12.2-imq/exte
 +Redirect incomming traffic from interface eth0 to imq0 and outgoing traffic to imq1:
 +iptables \-t mangle \-A FORWARD \-i eth0 \-j IMQ \-\-to\-dev 0
 +iptables \-t mangle \-A FORWARD \-o eth0 \-j IMQ \-\-to\-dev 1
-diff -Naur iptables-1.4.12.2/include/linux/netfilter/xt_IMQ.h iptables-1.4.12.2-imq/include/linux/netfilter/xt_IMQ.h
---- iptables-1.4.12.2/include/linux/netfilter/xt_IMQ.h	1970-01-01 02:00:00.000000000 +0200
-+++ iptables-1.4.12.2-imq/include/linux/netfilter/xt_IMQ.h	2011-09-30 13:53:21.000000000 +0300
+diff -Naur iptables-1.4.12.1/include/linux/netfilter/xt_IMQ.h iptables-1.4.12.1-imq/include/linux/netfilter/xt_IMQ.h
+--- iptables-1.4.12.1/include/linux/netfilter/xt_IMQ.h	1970-01-01 02:00:00.000000000 +0200
++++ iptables-1.4.12.1-imq/include/linux/netfilter/xt_IMQ.h	2011-09-30 13:53:21.000000000 +0300
 @@ -0,0 +1,9 @@
 +#ifndef _XT_IMQ_H
 +#define _XT_IMQ_H
