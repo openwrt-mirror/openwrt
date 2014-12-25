@@ -1,5 +1,6 @@
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
+diff -ruN a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2014-12-18 20:38:36.000000000 +0800
++++ b/CMakeLists.txt	2014-12-25 20:33:34.611491940 +0800
 @@ -26,7 +26,9 @@
  		libblkid-tiny/hfs.c
  		libblkid-tiny/swap.c
@@ -11,8 +12,9 @@
  INSTALL(TARGETS blkid-tiny LIBRARY DESTINATION lib)
  
  ADD_LIBRARY(ubi-utils STATIC
---- a/libblkid-tiny/exfat.c
-+++ b/libblkid-tiny/exfat.c
+diff -ruN a/libblkid-tiny/exfat.c b/libblkid-tiny/exfat.c
+--- a/libblkid-tiny/exfat.c	1970-01-01 08:00:00.000000000 +0800
++++ b/libblkid-tiny/exfat.c	2014-12-25 20:33:34.644491893 +0800
 @@ -0,0 +1,146 @@
 +/*
 + * Copyright (C) 2010 Andrew Nayenko <resver@gmail.com>
@@ -160,9 +162,10 @@
 +		{ NULL }
 +	}
 +};
---- a/libblkid-tiny/libblkid-tiny.c
-+++ b/libblkid-tiny/libblkid-tiny.c
-@@ -10,10 +10,14 @@
+diff -ruN a/libblkid-tiny/libblkid-tiny.c b/libblkid-tiny/libblkid-tiny.c
+--- a/libblkid-tiny/libblkid-tiny.c	2014-12-18 20:38:36.000000000 +0800
++++ b/libblkid-tiny/libblkid-tiny.c	2014-12-25 20:33:34.644491893 +0800
+@@ -10,11 +10,15 @@
  #define DEBUG(fmt, ...)
  #endif
  
@@ -172,12 +175,13 @@
  
  static unsigned char *probe_buffer;
  static unsigned int probe_buffer_size = 0;
-+
-+extern __off64_t lseek64 (int __fd, __off64_t __offset, int __whence) __THROW;
  
++extern __off64_t lseek64 (int __fd, __off64_t __offset, int __whence) __THROW;
++
  int get_linux_version (void)
  {
-@@ -101,7 +101,7 @@
+ 	static int kver = -1;
+@@ -99,7 +103,7 @@
  
  	memset(probe_buffer, 0, probe_buffer_size);
  
@@ -186,7 +190,7 @@
  	ret = read(pr->fd, probe_buffer, len);
  
  	if (ret != len)
-@@ -156,6 +158,61 @@
+@@ -152,6 +156,61 @@
  	return 0;
  }
  
@@ -248,7 +252,7 @@
  static const struct blkid_idinfo *idinfos[] =
  {
  	&vfat_idinfo,
-@@ -171,6 +228,8 @@
+@@ -167,6 +226,8 @@
  	&jffs2_idinfo,
  	&hfsplus_idinfo,
  	&hfs_idinfo,
@@ -257,9 +261,10 @@
  };
  
  int probe_block(char *block, struct blkid_struct_probe *pr)
---- a/libblkid-tiny/ntfs.c
-+++ b/libblkid-tiny/ntfs.c
-@@ -0,0 +1,224 @@
+diff -ruN a/libblkid-tiny/ntfs.c b/libblkid-tiny/ntfs.c
+--- a/libblkid-tiny/ntfs.c	1970-01-01 08:00:00.000000000 +0800
++++ b/libblkid-tiny/ntfs.c	2014-12-25 20:10:41.977127000 +0800
+@@ -0,0 +1,225 @@
 +/*
 + * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
 + * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
@@ -340,10 +345,10 @@
 +	MFT_RECORD_ATTR_VOLUME_NAME		= 0x60,
 +	MFT_RECORD_ATTR_END			= 0xffffffff
 +};
-+
++struct ntfs_super_block ns;
 +static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 +{
-+	struct ntfs_super_block *ns;
++	struct ntfs_super_block *_ns;
 +	struct master_file_table_record *mft;
 +
 +	uint32_t sectors_per_cluster, mft_record_size, attr_off;
@@ -351,15 +356,16 @@
 +	uint64_t nr_clusters, off;
 +	unsigned char *buf_mft;
 +
-+	ns = blkid_probe_get_sb(pr, mag, struct ntfs_super_block);
-+	if (!ns)
++	_ns = blkid_probe_get_sb(pr, mag, struct ntfs_super_block);
++	if (!_ns)
 +		return -1;
 +
 +	/*
 +	 * Check bios parameters block
 +	 */
-+	sector_size = le16_to_cpu(ns->bpb.sector_size);
-+	sectors_per_cluster = ns->bpb.sectors_per_cluster;
++	memcpy(&ns, _ns, sizeof(struct ntfs_super_block));
++	sector_size = le16_to_cpu(ns.bpb.sector_size);
++	sectors_per_cluster = ns.bpb.sectors_per_cluster;
 +
 +	if (sector_size < 256 || sector_size > 4096)
 +		return 1;
@@ -371,23 +377,23 @@
 +		return 1;
 +	}
 +
-+	if ((uint16_t) le16_to_cpu(ns->bpb.sector_size) *
-+			ns->bpb.sectors_per_cluster > NTFS_MAX_CLUSTER_SIZE)
++	if ((uint16_t) le16_to_cpu(ns.bpb.sector_size) *
++			ns.bpb.sectors_per_cluster > NTFS_MAX_CLUSTER_SIZE)
 +		return 1;
 +
 +	/* Unused fields must be zero */
-+	if (le16_to_cpu(ns->bpb.reserved_sectors)
-+	    || le16_to_cpu(ns->bpb.root_entries)
-+	    || le16_to_cpu(ns->bpb.sectors)
-+	    || le16_to_cpu(ns->bpb.sectors_per_fat)
-+	    || le32_to_cpu(ns->bpb.large_sectors)
-+	    || ns->bpb.fats)
++	if (le16_to_cpu(ns.bpb.reserved_sectors)
++	    || le16_to_cpu(ns.bpb.root_entries)
++	    || le16_to_cpu(ns.bpb.sectors)
++	    || le16_to_cpu(ns.bpb.sectors_per_fat)
++	    || le32_to_cpu(ns.bpb.large_sectors)
++	    || ns.bpb.fats)
 +		return 1;
 +
-+	if ((uint8_t) ns->clusters_per_mft_record < 0xe1
-+	    || (uint8_t) ns->clusters_per_mft_record > 0xf7) {
++	if ((uint8_t) ns.clusters_per_mft_record < 0xe1
++	    || (uint8_t) ns.clusters_per_mft_record > 0xf7) {
 +
-+		switch (ns->clusters_per_mft_record) {
++		switch (ns.clusters_per_mft_record) {
 +		case 1: case 2: case 4: case 8: case 16: case 32: case 64:
 +			break;
 +		default:
@@ -395,20 +401,20 @@
 +		}
 +	}
 +
-+	if (ns->clusters_per_mft_record > 0)
-+		mft_record_size = ns->clusters_per_mft_record *
++	if (ns.clusters_per_mft_record > 0)
++		mft_record_size = ns.clusters_per_mft_record *
 +				  sectors_per_cluster * sector_size;
 +	else
-+		mft_record_size = 1 << (0 - ns->clusters_per_mft_record);
++		mft_record_size = 1 << (0 - ns.clusters_per_mft_record);
 +
-+	nr_clusters = le64_to_cpu(ns->number_of_sectors) / sectors_per_cluster;
++	nr_clusters = le64_to_cpu(ns.number_of_sectors) / sectors_per_cluster;
 +
-+	if ((le64_to_cpu(ns->mft_cluster_location) > nr_clusters) ||
-+	    (le64_to_cpu(ns->mft_mirror_cluster_location) > nr_clusters))
++	if ((le64_to_cpu(ns.mft_cluster_location) > nr_clusters) ||
++	    (le64_to_cpu(ns.mft_mirror_cluster_location) > nr_clusters))
 +		return 1;
 +
 +
-+	off = le64_to_cpu(ns->mft_cluster_location) * sector_size *
++	off = le64_to_cpu(ns.mft_cluster_location) * sector_size *
 +		sectors_per_cluster;
 +
 +	DBG(DEBUG_LOWPROBE, printf("NTFS: sector_size=%d, mft_record_size=%d, "
@@ -465,9 +471,9 @@
 +	}
 +
 +	blkid_probe_sprintf_uuid(pr,
-+			(unsigned char *) &ns->volume_serial,
-+			sizeof(ns->volume_serial),
-+			"%016" PRIX64, le64_to_cpu(ns->volume_serial));
++			(unsigned char *) &ns.volume_serial,
++			sizeof(ns.volume_serial),
++			"%016" PRIX64, le64_to_cpu(ns.volume_serial));
 +	return 0;
 +}
 +
@@ -484,8 +490,9 @@
 +	}
 +};
 +
---- a/libblkid-tiny/superblocks.h
-+++ b/libblkid-tiny/superblocks.h
+diff -ruN a/libblkid-tiny/superblocks.h b/libblkid-tiny/superblocks.h
+--- a/libblkid-tiny/superblocks.h	2014-12-18 20:38:36.000000000 +0800
++++ b/libblkid-tiny/superblocks.h	2014-12-25 20:33:34.645491892 +0800
 @@ -88,5 +88,7 @@
  extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
  extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name);
