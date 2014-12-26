@@ -88,7 +88,6 @@ define prepare_generic_squashfs
 endef
 
 define Image/BuildKernel/Initramfs
-	cp $(KDIR)/vmlinux-initramfs.elf $(BIN_DIR)/$(IMG_PREFIX)-vmlinux-initramfs.elf
 	$(call Image/Build/Initramfs)
 endef
 
@@ -153,7 +152,7 @@ ifneq ($(CONFIG_NAND_SUPPORT),)
    define Image/Build/UbinizeImage
 	sh $(TOPDIR)/scripts/ubinize-image.sh $(2) \
 		"$(KDIR)/root.$(3)" \
-		"$(BIN_DIR)/$(IMG_PREFIX)-$(1)-$(3)-ubinized.bin" \
+		"$(KDIR)/$(IMG_PREFIX)-$(1)-$(3)-ubinized.bin" \
 		$(4)
    endef
 
