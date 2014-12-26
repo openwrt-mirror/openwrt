@@ -188,6 +188,7 @@ el-mini)
 	;;
 
 tl-wdr4300|\
+tl-wr941nd-v7|\
 mw4530r|\
 tl-wr1041n-v2)
 	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
