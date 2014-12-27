@@ -53,6 +53,9 @@
 #define ATH_MGMT_IND_BUSY		(1 << 0)
 #define ATH_MGMT_IND_INVALID		(1 << 2)
 
+#define QCA955X_ETH_CFG_GE0_MII_EN	BIT(1)
+#define QCA955X_ETH_CFG_GE0_MII_SLAVE	BIT(4)
+
 static const char *wr941ndv7_part_probes[] = {
 	"tp-link",
 	NULL,
