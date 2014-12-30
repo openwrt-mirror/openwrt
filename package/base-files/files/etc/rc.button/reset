@@ -3,15 +3,38 @@
 [ "${ACTION}" = "released" ] || exit 0
 
 . /lib/functions.sh
+. /etc/diag.sh
 
 logger "$BUTTON pressed for $SEEN seconds"
-
+get_status_led
 if [ "$SEEN" -lt 1 ]
 then
-	echo "WPS_PBC" > /dev/console
-	hostapd_cli wps_pbc | logger
+	WPS_LED=$(ls /sys/class/leds | grep -E 'qss|wps' | awk '{printf $1}')
+	[ -z $WPS_LED ] || led_timer $WPS_LED 150 150
+	for dir in /var/run/hostapd*; do
+		[ -d "$dir" ] || continue
+		hostapd_cli -p "$dir" wps_pbc
+	done
+	sleep 1
+	[ -z $WPS_LED ] || led_off $WPS_LED
+elif [ "$SEEN" -lt 5 ] && [ "$SEEN" -gt 2 ]
+then
+	echo "Unmount Hard Disks" > /dev/console
+	led_timer $status_led 300 300
+	[ -a /etc/init.d/xunlei ] && /etc/init.d/xunlei stop
+	[ -a /etc/init.d/aria2 ] && /etc/init.d/aria2 stop
+	[ -a /etc/init.d/transmission ] && /etc/init.d/transmission stop
+	[ -a /etc/init.d/samba ] && /etc/init.d/samba stop
+	[ -a /etc/init.d/vsftpd ] && /etc/init.d/vsftpd stop
+	umount /dev/sd*
+	logger -t Auto-Mount "Button action: Unmount Hard Disks"
+	[ -a /etc/init.d/samba ] && /etc/init.d/samba start
+	[ -a /etc/init.d/vsftpd ] && /etc/init.d/vsftpd start
+	sleep 1
+	status_led_on
 elif [ "$SEEN" -gt 5 ]
 then
 	echo "FACTORY RESET" > /dev/console
+	status_led_blink_failsafe
 	jffs2reset -y && reboot &
 fi
