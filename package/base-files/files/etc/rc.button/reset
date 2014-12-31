@@ -9,7 +9,7 @@ logger "$BUTTON pressed for $SEEN seconds"
 get_status_led
 if [ "$SEEN" -lt 1 ]
 then
-	WPS_LED=$(ls /sys/class/leds | grep -E 'qss|wps' | awk '{printf $1}')
+	WPS_LED=$(ls /sys/class/leds | grep -E 'qss|wps' | head -n 1)
 	[ -z $WPS_LED ] || led_timer $WPS_LED 150 150
 	for dir in /var/run/hostapd*; do
 		[ -d "$dir" ] || continue
@@ -17,7 +17,7 @@ then
 	done
 	sleep 1
 	[ -z $WPS_LED ] || led_off $WPS_LED
-elif [ "$SEEN" -lt 5 ] && [ "$SEEN" -gt 2 ]
+elif [ "$SEEN" -le 5 ] && [ "$SEEN" -ge 2 ]
 then
 	echo "Unmount Hard Disks" > /dev/console
 	led_timer $status_led 300 300
