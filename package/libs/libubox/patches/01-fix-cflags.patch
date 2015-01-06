@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,7 +3,7 @@
+ INCLUDE(CheckFunctionExists)
+
+ PROJECT(ubox C)
+-ADD_DEFINITIONS(-Os -Wall -Werror --std=gnu99 -g3 -Wmissing-declarations)
++ADD_DEFINITIONS(-Wall -Werror --std=gnu99 -g3 -Wmissing-declarations)
+
+ OPTION(BUILD_LUA "build Lua plugin" ON)
+
