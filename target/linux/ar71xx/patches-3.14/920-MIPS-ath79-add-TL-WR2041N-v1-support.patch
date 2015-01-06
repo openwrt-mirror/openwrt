@@ -1,6 +1,6 @@
 --- a/arch/mips/ath79/Kconfig
 +++ b/arch/mips/ath79/Kconfig
-@@ -951,6 +951,16 @@ config ATH79_MACH_TL_WR1043ND_V2
+@@ -961,6 +961,16 @@ config ATH79_MACH_TL_WR1043ND_V2
  	select ATH79_DEV_USB
  	select ATH79_DEV_WMAC
  
@@ -19,7 +19,7 @@
  	select SOC_AR724X
 --- a/arch/mips/ath79/Makefile
 +++ b/arch/mips/ath79/Makefile
-@@ -121,6 +121,7 @@ obj-$(CONFIG_ATH79_MACH_TL_WR841N_V9)	+=
+@@ -122,6 +122,7 @@ obj-$(CONFIG_ATH79_MACH_TL_WR841N_V9)	+=
  obj-$(CONFIG_ATH79_MACH_TL_WR941ND)	+= mach-tl-wr941nd.o
  obj-$(CONFIG_ATH79_MACH_TL_WR1041N_V2)	+= mach-tl-wr1041n-v2.o
  obj-$(CONFIG_ATH79_MACH_TL_WR1043ND)	+= mach-tl-wr1043nd.o
@@ -29,7 +29,7 @@
  obj-$(CONFIG_ATH79_MACH_TL_WR703N)	+= mach-tl-wr703n.o
 --- a/arch/mips/ath79/machtypes.h
 +++ b/arch/mips/ath79/machtypes.h
-@@ -140,6 +140,7 @@ enum ath79_mach_type {
+@@ -141,6 +141,7 @@ enum ath79_mach_type {
  	ATH79_MACH_TL_WR1041N_V2,	/* TP-LINK TL-WR1041N v2 */
  	ATH79_MACH_TL_WR1043ND,		/* TP-LINK TL-WR1043ND */
  	ATH79_MACH_TL_WR1043ND_V2,	/* TP-LINK TL-WR1043ND v2 */

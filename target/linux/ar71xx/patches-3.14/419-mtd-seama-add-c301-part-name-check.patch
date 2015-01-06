@@ -1,6 +1,6 @@
---- a/drivers/mtd/mtdsplit_seama.c
-+++ b/drivers/mtd/mtdsplit_seama.c
-@@ -38,6 +38,11 @@
+--- a/drivers/mtd/mtdsplit/mtdsplit_seama.c
++++ b/drivers/mtd/mtdsplit/mtdsplit_seama.c
+@@ -38,6 +38,11 @@ static int mtdsplit_parse_seama(struct m
  	struct mtd_partition *parts;
  	int err;
  
