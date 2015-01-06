@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=e2fsprogs
 PKG_VERSION:=1.42.4
 PKG_MD5SUM:=b6e296f210d642361b7394437ff0f318
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SF/e2fsprogs
@@ -64,6 +64,30 @@ endef
 define Package/badblocks
 $(call Package/e2fsprogs)
   TITLE:=Ext2 Filesystem badblocks utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/dumpe2fs
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem information dumping utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/e2freefrag
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem free space fragmentation information utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/filefrag
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem file fragmentation report utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/debugfs
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem debugger
   DEPENDS:= +e2fsprogs
 endef
 
@@ -124,6 +148,9 @@ define Package/e2fsprogs/install
 	$(LN) mke2fs $(1)/usr/sbin/mkfs.ext2
 	$(LN) mke2fs $(1)/usr/sbin/mkfs.ext3
 	$(LN) mke2fs $(1)/usr/sbin/mkfs.ext4
+	$(LN) e2fsck $(1)/usr/sbin/fsck.ext2
+	$(LN) e2fsck $(1)/usr/sbin/fsck.ext3
+	$(LN) e2fsck $(1)/usr/sbin/fsck.ext4
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libe2p.so.* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -151,6 +178,7 @@ endef
 define Package/tune2fs/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/tune2fs $(1)/usr/sbin/
+	$(LN) tune2fs $(1)/usr/sbin/findfs
 endef
 
 define Package/resize2fs/install
@@ -163,8 +191,34 @@ define Package/badblocks/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/badblocks $(1)/usr/sbin/
 endef
 
+define Package/dumpe2fs/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/dumpe2fs $(1)/usr/sbin/
+endef
+
+define Package/e2freefrag/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/e2freefrag $(1)/usr/sbin/
+endef
+
+define Package/filefrag/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/filefrag $(1)/usr/sbin/
+endef
+
+define Package/debugfs/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/debugfs $(1)/usr/sbin/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libss.so.* $(1)/usr/lib/
+endef
+
 $(eval $(call BuildPackage,e2fsprogs))
 $(eval $(call BuildPackage,libext2fs))
 $(eval $(call BuildPackage,tune2fs))
 $(eval $(call BuildPackage,resize2fs))
 $(eval $(call BuildPackage,badblocks))
+$(eval $(call BuildPackage,dumpe2fs))
+$(eval $(call BuildPackage,e2freefrag))
+$(eval $(call BuildPackage,filefrag))
+$(eval $(call BuildPackage,debugfs))
