@@ -1,6 +1,6 @@
-g'"iff -ruN a/drivers/net/wireless/ath/ath9k/ahb.c b/drivers/net/wireless/ath/ath9k/ahb.c
+diff -ruN a/drivers/net/wireless/ath/ath9k/ahb.c b/drivers/net/wireless/ath/ath9k/ahb.c
 --- a/drivers/net/wireless/ath/ath9k/ahb.c	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ahb.c	2014-12-11 21:25:42.756006734 +0800
++++ b/drivers/net/wireless/ath/ath9k/ahb.c	2015-01-09 18:08:25.976505178 +0800
 @@ -43,6 +43,10 @@
  		.name = "qca953x_wmac",
  		.driver_data = AR9300_DEVID_AR953X,
@@ -14,7 +14,7 @@ g'"iff -ruN a/drivers/net/wireless/ath/ath9k/ahb.c b/drivers/net/wireless/ath/at
  
 diff -ruN a/drivers/net/wireless/ath/ath9k/ani.c b/drivers/net/wireless/ath/ath9k/ani.c
 --- a/drivers/net/wireless/ath/ath9k/ani.c	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ani.c	2014-12-11 21:25:42.805006717 +0800
++++ b/drivers/net/wireless/ath/ath9k/ani.c	2015-01-09 18:08:25.994505122 +0800
 @@ -259,7 +259,7 @@
  				     entry_cck->fir_step_level);
  
@@ -26,7 +26,7 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ani.c b/drivers/net/wireless/ath/ath9
  	if (aniState->mrcCCK != entry_cck->mrc_cck_on)
 diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_calib.c b/drivers/net/wireless/ath/ath9k/ar9003_calib.c
 --- a/drivers/net/wireless/ath/ath9k/ar9003_calib.c	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_calib.c	2014-12-11 21:25:42.805006717 +0800
++++ b/drivers/net/wireless/ath/ath9k/ar9003_calib.c	2015-01-09 18:08:26.009505077 +0800
 @@ -1281,7 +1281,7 @@
  	struct ath9k_hw_cal_data *caldata = ah->caldata;
  	int i;
@@ -47,7 +47,7 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_calib.c b/drivers/net/wireless
  		priv_ops->init_cal = ar9003_hw_init_cal_soc;
 diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
 --- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c	2014-12-11 21:25:42.806006716 +0800
++++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c	2015-01-09 18:08:26.011505070 +0800
 @@ -3316,11 +3316,13 @@
  	if (ar9300_check_eeprom_header(ah, read, cptr))
  		goto found;
@@ -119,7 +119,7 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c b/drivers/net/wireles
  		/*
 diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_hw.c b/drivers/net/wireless/ath/ath9k/ar9003_hw.c
 --- a/drivers/net/wireless/ath/ath9k/ar9003_hw.c	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_hw.c	2014-12-11 21:25:42.807006716 +0800
++++ b/drivers/net/wireless/ath/ath9k/ar9003_hw.c	2015-01-09 18:08:26.045504967 +0800
 @@ -29,6 +29,7 @@
  #include "ar9565_1p0_initvals.h"
  #include "ar9565_1p1_initvals.h"
@@ -244,8 +244,8 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_hw.c b/drivers/net/wireless/at
  			ar9300Common_wo_xlna_rx_gain_table_2p2);
  }
 diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_phy.c b/drivers/net/wireless/ath/ath9k/ar9003_phy.c
---- a/drivers/net/wireless/ath/ath9k/ar9003_phy.c	2014-12-11 13:25:07.104305000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_phy.c	2014-12-11 21:25:42.807006716 +0800
+--- a/drivers/net/wireless/ath/ath9k/ar9003_phy.c	2015-01-09 18:04:24.322241000 +0800
++++ b/drivers/net/wireless/ath/ath9k/ar9003_phy.c	2015-01-09 19:05:05.286142797 +0800
 @@ -89,7 +89,7 @@
  			} else {
  				channelSel = CHANSEL_2G(freq) >> 1;
@@ -291,6 +291,15 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_phy.c b/drivers/net/wireless/a
  
  	/* Configure baseband for dynamic 20/40 operation */
  	if (IS_CHAN_HT40(chan)) {
+@@ -651,7 +653,7 @@
+ 	else
+ 		ah->enabled_cals &= ~TX_CL_CAL;
+ 
+-	if (AR_SREV_9340(ah) || AR_SREV_9531(ah) || AR_SREV_9550(ah)) {
++	if (AR_SREV_9340(ah) || AR_SREV_9531(ah) || AR_SREV_9550(ah) || AR_SREV_9563(ah)) {
+ 		if (ah->is_clk_25mhz) {
+ 			REG_WRITE(ah, AR_RTC_DERIVED_CLK, 0x17c << 1);
+ 			REG_WRITE(ah, AR_SLP32_MODE, 0x0010f3d7);
 @@ -718,6 +720,21 @@
  	return ret;
  }
@@ -347,7 +356,7 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_phy.c b/drivers/net/wireless/a
  
 diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_phy.h b/drivers/net/wireless/ath/ath9k/ar9003_phy.h
 --- a/drivers/net/wireless/ath/ath9k/ar9003_phy.h	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_phy.h	2014-12-11 21:25:42.808006716 +0800
++++ b/drivers/net/wireless/ath/ath9k/ar9003_phy.h	2015-01-09 18:08:26.097504808 +0800
 @@ -454,7 +454,7 @@
  #define AR_PHY_GEN_CTRL          (AR_SM_BASE + 0x4)
  #define AR_PHY_MODE              (AR_SM_BASE + 0x8)
@@ -480,8 +489,8 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ar9003_phy.h b/drivers/net/wireless/a
  #define AR_PHY_TPC_4_B1         (AR_SM1_BASE + 0x204)
  #define AR_PHY_TPC_5_B1         (AR_SM1_BASE + 0x208)
 diff -ruN a/drivers/net/wireless/ath/ath9k/ath9k.h b/drivers/net/wireless/ath/ath9k/ath9k.h
---- a/drivers/net/wireless/ath/ath9k/ath9k.h	2014-12-11 13:25:06.990305000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/ath9k.h	2014-12-11 21:25:42.808006716 +0800
+--- a/drivers/net/wireless/ath/ath9k/ath9k.h	2015-01-09 18:04:24.268241000 +0800
++++ b/drivers/net/wireless/ath/ath9k/ath9k.h	2015-01-09 18:08:26.107504778 +0800
 @@ -807,6 +807,7 @@
  #define ATH_LED_PIN_9300		10
  #define ATH_LED_PIN_9485		6
@@ -491,8 +500,8 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/ath9k.h b/drivers/net/wireless/ath/at
  #ifdef CPTCFG_MAC80211_LEDS
  void ath_init_leds(struct ath_softc *sc);
 diff -ruN a/drivers/net/wireless/ath/ath9k/gpio.c b/drivers/net/wireless/ath/ath9k/gpio.c
---- a/drivers/net/wireless/ath/ath9k/gpio.c	2014-12-11 13:25:07.028305000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/gpio.c	2014-12-11 21:25:42.809006716 +0800
+--- a/drivers/net/wireless/ath/ath9k/gpio.c	2015-01-09 18:04:24.278241000 +0800
++++ b/drivers/net/wireless/ath/ath9k/gpio.c	2015-01-09 18:08:26.140504678 +0800
 @@ -164,6 +164,8 @@
  		ah->led_pin = ATH_LED_PIN_9300;
  	else if (AR_SREV_9462(sc->sc_ah) || AR_SREV_9565(sc->sc_ah))
@@ -503,8 +512,8 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/gpio.c b/drivers/net/wireless/ath/ath
  		ah->led_pin = ATH_LED_PIN_DEF;
  
 diff -ruN a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k/hw.c
---- a/drivers/net/wireless/ath/ath9k/hw.c	2014-12-11 13:25:07.092305000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/hw.c	2014-12-11 21:30:26.828911580 +0800
+--- a/drivers/net/wireless/ath/ath9k/hw.c	2015-01-09 18:04:24.317241000 +0800
++++ b/drivers/net/wireless/ath/ath9k/hw.c	2015-01-09 18:08:26.170504587 +0800
 @@ -259,6 +259,9 @@
  	case AR9300_DEVID_AR953X:
  		ah->hw_version.macVersion = AR_SREV_VERSION_9531;
@@ -671,8 +680,8 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k
  
  /* For devices with external radios */
 diff -ruN a/drivers/net/wireless/ath/ath9k/hw.h b/drivers/net/wireless/ath/ath9k/hw.h
---- a/drivers/net/wireless/ath/ath9k/hw.h	2014-12-11 13:25:07.075305000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/hw.h	2014-12-11 21:25:42.811006715 +0800
+--- a/drivers/net/wireless/ath/ath9k/hw.h	2015-01-09 18:04:24.312241000 +0800
++++ b/drivers/net/wireless/ath/ath9k/hw.h	2015-01-09 18:08:26.273504272 +0800
 @@ -55,6 +55,7 @@
  #define AR9485_DEVID_AR1111	0x0037
  #define AR9300_DEVID_AR9565     0x0036
@@ -682,8 +691,8 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/hw.h b/drivers/net/wireless/ath/ath9k
  #define AR5416_AR9100_DEVID	0x000b
  
 diff -ruN a/drivers/net/wireless/ath/ath9k/mac.c b/drivers/net/wireless/ath/ath9k/mac.c
---- a/drivers/net/wireless/ath/ath9k/mac.c	2014-12-11 13:25:07.047305000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/mac.c	2014-12-11 21:25:42.812006714 +0800
+--- a/drivers/net/wireless/ath/ath9k/mac.c	2015-01-09 18:04:24.297241000 +0800
++++ b/drivers/net/wireless/ath/ath9k/mac.c	2015-01-09 18:08:26.373503967 +0800
 @@ -830,7 +830,7 @@
  		return;
  	}
@@ -695,7 +704,7 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/mac.c b/drivers/net/wireless/ath/ath9
  	async_mask = AR_INTR_MAC_IRQ;
 diff -ruN a/drivers/net/wireless/ath/ath9k/qca956x_initvals.h b/drivers/net/wireless/ath/ath9k/qca956x_initvals.h
 --- a/drivers/net/wireless/ath/ath9k/qca956x_initvals.h	1970-01-01 08:00:00.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/qca956x_initvals.h	2014-12-11 21:25:42.813006714 +0800
++++ b/drivers/net/wireless/ath/ath9k/qca956x_initvals.h	2015-01-09 18:08:26.374503964 +0800
 @@ -0,0 +1,1903 @@
 +/*
 + * Copyright (c) 2010-2011 Atheros Communications Inc.
@@ -2602,7 +2611,7 @@ diff -ruN a/drivers/net/wireless/ath/ath9k/qca956x_initvals.h b/drivers/net/wire
 +#endif
 diff -ruN a/drivers/net/wireless/ath/ath9k/reg.h b/drivers/net/wireless/ath/ath9k/reg.h
 --- a/drivers/net/wireless/ath/ath9k/reg.h	2014-11-08 01:22:58.000000000 +0800
-+++ b/drivers/net/wireless/ath/ath9k/reg.h	2014-12-11 21:34:49.047823748 +0800
++++ b/drivers/net/wireless/ath/ath9k/reg.h	2015-01-09 18:08:26.380503946 +0800
 @@ -814,6 +814,7 @@
  #define AR_SREV_REVISION_9531_10        0
  #define AR_SREV_REVISION_9531_11        1
