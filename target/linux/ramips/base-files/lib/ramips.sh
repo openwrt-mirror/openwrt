@@ -58,6 +58,9 @@ ramips_board_detect() {
 	*"ARC FreeStation5")
 		name="freestation5"
 		;;
+	*"Archer C20i")
+		name="c20i"
+		;;
 	*"Argus ATP-52B")
 		name="argus-atp52b"
 		;;
@@ -82,10 +85,10 @@ ramips_board_detect() {
 	*"Aztech HW550-3G")
 		name="hw550-3g"
 		;;
-	*"Buffalo WSR-600")
+	*"Buffalo WSR-600DHP")
 		name="wsr-600"
 		;;
-	*"Buffalo WSR-1166")
+	*"Buffalo WSR-1166DHP")
 		name="wsr-1166"
 		;;
 	*"CY-SWR1100")
@@ -172,7 +175,7 @@ ramips_board_detect() {
 	*"HILINK HLK-RM04")
 		name="hlk-rm04"
 		;;
-	*"HOOTOO HT-TM02")
+	*"HooToo HT-TM02")
 		name="ht-tm02"
 		;;
 	*"HAME MPR-A1")
