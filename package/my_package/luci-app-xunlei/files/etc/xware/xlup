@@ -16,9 +16,9 @@ VERSION=`wget -qO- http://dl.lazyzhu.com/file/Thunder/Xware/latest`
 
 {
 	if [ "$zversion" -eq 1 ];then
-        wget ${url}/${ver}/${FILES}
+        wget --no-check-certificate ${url}/${ver}/${FILES}
 	else
-        wget ${url}/${VERSION}/${FILES}
+        wget --no-check-certificate ${url}/${VERSION}/${FILES}
 	fi
 }
 
