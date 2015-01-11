@@ -1,6 +1,7 @@
---- a/block.c
-+++ b/block.c
-@@ -241,6 +241,55 @@
+diff -ruN a/block.c b/block.c
+--- a/block.c	2015-01-11 12:35:56.775935603 +0800
++++ b/block.c	2015-01-11 12:35:01.155976358 +0800
+@@ -245,6 +245,55 @@
  	free(optstr);
  }
  
@@ -56,7 +57,7 @@
  static int mount_add(struct uci_section *s)
  {
  	struct blob_attr *tb[__MOUNT_MAX] = { 0 };
-@@ -517,6 +566,7 @@
+@@ -523,6 +572,7 @@
  		printf("\toption\tuuid\t'%s'\n", pr->uuid);
  	else
  		printf("\toption\tdevice\t'%s'\n", pr->dev);
@@ -64,7 +65,7 @@
  	printf("\toption\tenabled\t'0'\n\n");
  
  	return 0;
-@@ -691,8 +741,28 @@
+@@ -701,8 +751,28 @@
  		if (check_fs)
  			check_filesystem(pr);
  
@@ -95,7 +96,7 @@
  		if (err)
  			ERROR("mounting %s (%s) as %s failed (%d) - %s\n",
  					pr->dev, pr->id->name, target, err, strerror(err));
-@@ -711,7 +781,21 @@
+@@ -721,7 +791,21 @@
  		if (check_fs)
  			check_filesystem(pr);
  

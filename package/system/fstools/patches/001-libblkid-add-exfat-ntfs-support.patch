@@ -1,20 +1,18 @@
 diff -ruN a/CMakeLists.txt b/CMakeLists.txt
---- a/CMakeLists.txt	2014-12-18 20:38:36.000000000 +0800
-+++ b/CMakeLists.txt	2014-12-25 20:33:34.611491940 +0800
-@@ -26,7 +26,9 @@
- 		libblkid-tiny/hfs.c
- 		libblkid-tiny/swap.c
+--- a/CMakeLists.txt	2015-01-11 12:19:11.000000000 +0800
++++ b/CMakeLists.txt	2015-01-11 12:29:51.501203247 +0800
+@@ -28,6 +28,8 @@
  		libblkid-tiny/ubifs.c
--		libblkid-tiny/squashfs.c)
-+		libblkid-tiny/squashfs.c
+ 		libblkid-tiny/squashfs.c
+ 		libblkid-tiny/btrfs.c
 +		libblkid-tiny/exfat.c
-+		libblkid-tiny/ntfs.c)
++		libblkid-tiny/ntfs.c
+ 		)
  INSTALL(TARGETS blkid-tiny LIBRARY DESTINATION lib)
  
- ADD_LIBRARY(ubi-utils STATIC
 diff -ruN a/libblkid-tiny/exfat.c b/libblkid-tiny/exfat.c
 --- a/libblkid-tiny/exfat.c	1970-01-01 08:00:00.000000000 +0800
-+++ b/libblkid-tiny/exfat.c	2014-12-25 20:33:34.644491893 +0800
++++ b/libblkid-tiny/exfat.c	2015-01-11 12:29:05.314237089 +0800
 @@ -0,0 +1,146 @@
 +/*
 + * Copyright (C) 2010 Andrew Nayenko <resver@gmail.com>
@@ -163,8 +161,8 @@ diff -ruN a/libblkid-tiny/exfat.c b/libblkid-tiny/exfat.c
 +	}
 +};
 diff -ruN a/libblkid-tiny/libblkid-tiny.c b/libblkid-tiny/libblkid-tiny.c
---- a/libblkid-tiny/libblkid-tiny.c	2014-12-18 20:38:36.000000000 +0800
-+++ b/libblkid-tiny/libblkid-tiny.c	2014-12-25 20:33:34.644491893 +0800
+--- a/libblkid-tiny/libblkid-tiny.c	2015-01-11 12:19:11.000000000 +0800
++++ b/libblkid-tiny/libblkid-tiny.c	2015-01-11 12:30:22.283180692 +0800
 @@ -10,11 +10,15 @@
  #define DEBUG(fmt, ...)
  #endif
@@ -252,10 +250,10 @@ diff -ruN a/libblkid-tiny/libblkid-tiny.c b/libblkid-tiny/libblkid-tiny.c
  static const struct blkid_idinfo *idinfos[] =
  {
  	&vfat_idinfo,
-@@ -167,6 +226,8 @@
- 	&jffs2_idinfo,
+@@ -168,6 +227,8 @@
  	&hfsplus_idinfo,
  	&hfs_idinfo,
+ 	&btrfs_idinfo,
 +	&ntfs_idinfo,
 +	&exfat_idinfo,
  };
@@ -263,7 +261,7 @@ diff -ruN a/libblkid-tiny/libblkid-tiny.c b/libblkid-tiny/libblkid-tiny.c
  int probe_block(char *block, struct blkid_struct_probe *pr)
 diff -ruN a/libblkid-tiny/ntfs.c b/libblkid-tiny/ntfs.c
 --- a/libblkid-tiny/ntfs.c	1970-01-01 08:00:00.000000000 +0800
-+++ b/libblkid-tiny/ntfs.c	2014-12-25 20:10:41.977127000 +0800
++++ b/libblkid-tiny/ntfs.c	2015-01-11 12:29:05.316237088 +0800
 @@ -0,0 +1,225 @@
 +/*
 + * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
@@ -491,8 +489,8 @@ diff -ruN a/libblkid-tiny/ntfs.c b/libblkid-tiny/ntfs.c
 +};
 +
 diff -ruN a/libblkid-tiny/superblocks.h b/libblkid-tiny/superblocks.h
---- a/libblkid-tiny/superblocks.h	2014-12-18 20:38:36.000000000 +0800
-+++ b/libblkid-tiny/superblocks.h	2014-12-25 20:33:34.645491892 +0800
+--- a/libblkid-tiny/superblocks.h	2015-01-11 12:19:11.000000000 +0800
++++ b/libblkid-tiny/superblocks.h	2015-01-11 12:29:05.324237081 +0800
 @@ -88,5 +88,7 @@
  extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
  extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name);
