@@ -22,21 +22,34 @@ define Image/Build/Initramfs
 	$(call Image/Build/Profile/$(PROFILE),initramfs)
 endef
 
-ifeq ($(CONFIG_SOC_RT288X),y)
-define kernel_entry
--a 0x88000000 -e 0x88000000
+DEVICE_VARS += DTS
+
+loadaddr-y := 0x80000000
+loadaddr-$(CONFIG_TARGET_ramips_rt288x) := 0x88000000
+loadaddr-$(CONFIG_TARGET_ramips_mt7621) := 0x80001000
+
+KERNEL_LOADADDR := $(loadaddr-y)
+
+KERNEL_DTB = kernel-bin | patch-dtb | lzma
+define Device/Default
+  KERNEL := $(KERNEL_DTB) | uImage lzma
+  IMAGES := sysupgrade.bin
+  IMAGE_SIZE := $(ralink_default_fw_size_8M)
+  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | check-size $$$$(IMAGE_SIZE) | pad-rootfs
 endef
-else
-ifeq ($(CONFIG_SOC_MT7621),y)
-define kernel_entry
--a 0x80001000 -e 0x80001000
+
+define Build/patch-dtb
+	$(LINUX_DIR)/scripts/dtc/dtc -O dtb -o $@.dtb ../dts/$(DTS).dts
+	$(STAGING_DIR_HOST)/bin/patch-dtb $@ $@.dtb
 endef
-else
-define kernel_entry
--a 0x80000000 -e 0x80000000
+
+define Build/trx
+	$(STAGING_DIR_HOST)/bin/trx \
+		-o $@ \
+		-m $(IMAGE_SIZE) \
+		-f $(word 1,$^) \
+		-a 4 -f $(word 2,$^)
 endef
-endif
-endif
 
 define MkCombineduImage
 	$(call PatchKernelLzma,$(2),$(3))
@@ -59,7 +72,7 @@ endef
 # $(3), output filename
 define MkImage
 	$(eval imagename=$(if $(4),$(4),MIPS OpenWrt Linux-$(LINUX_VERSION)))
-	-mkimage -A mips -O linux -T kernel -C $(1) $(call kernel_entry)\
+	-mkimage -A mips -O linux -T kernel -C $(1) -a $(loadaddr-y) -e $(loadaddr-y) \
 		-n "$(imagename)" \
 		-d $(2) $(3)
 endef
@@ -79,14 +92,20 @@ define MkImageSysupgrade/squashfs
 	fi
 endef
 
-define MkImageTrx/squashfs
+define MkImageTpl/squashfs
 	$(eval output_name=$(IMG_PREFIX)-$(2)-$(1)-$(if $(4),$(4),sysupgrade).bin)
-	$(STAGING_DIR_HOST)/bin/trx \
+	$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -j \
 		-o $(KDIR)/$(output_name) \
-		-m $(3) \
-		-f $(KDIR)/vmlinux-$(2).uImage \
-		-a 4 -f $(KDIR)/root.$(1)
-	$(call prepare_generic_squashfs,$(KDIR)/$(output_name))
+		-k $(KDIR)/vmlinux-$(1)$(4).bin.lzma \
+		-r $(KDIR)/root.$(1)
+	$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
+endef
+
+define MkImageTpl/initramfs
+	$(eval output_name=$(IMG_PREFIX)-$(2)-$(1).bin)
+	$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -c \
+		-o $(KDIR)/$(output_name) \
+		-k $(KDIR)/vmlinux-$(1).bin.lzma
 	$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
 endef
 
@@ -119,9 +138,14 @@ define BuildFirmware/OF
 	$(call MkImageSysupgrade/$(1),$(1),$(2),$(4),$(6))
 endef
 
-define BuildFirmware/OF/trx
-	$(call MkImageLzmaDtb,$(2),$(3),$(5))
-	$(call MkImageTrx/$(1),$(1),$(2),$(4),$(6))
+define BuildFirmware/OF/tplink
+	$(call PatchKernelLzmaDtb,$(1),$(2),$(4))
+	$(call MkImageTpl/$(1),$(1),$(2),$(4),$(5))
+endef
+
+define BuildFirmware/OF/tplink/initramfs
+	$(call PatchKernelLzmaDtb,$(2),$(3),-initramfs)
+	$(call MkImageTpl/$(1),$(1),$(2),$(4),$(5))
 endef
 
 # $(1), squashfs/initramfs
@@ -152,8 +176,8 @@ BuildFirmware/Default4M/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(
 ralink_default_fw_size_8M=8060928
 BuildFirmware/Default8M/squashfs=$(call BuildFirmware/OF,$(1),$(2),$(3),$(ralink_default_fw_size_8M),$(4))
 BuildFirmware/Default8M/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3),$(4))
-BuildFirmware/Trx8M/squashfs=$(call BuildFirmware/OF/trx,$(1),$(2),$(3),$(ralink_default_fw_size_8M),$(4))
-BuildFirmware/Trx8M/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3),$(4))
+BuildFirmware/Tplink/squashfs=$(call BuildFirmware/OF/tplink,$(1),$(2),$(3),$(4))
+BuildFirmware/Tplink/initramfs=$(call BuildFirmware/OF/tplink/initramfs,$(1),$(2),$(3),$(4))
 
 ralink_default_fw_size_16M=16121856
 BuildFirmware/Default16M/squashfs=$(call BuildFirmware/OF,$(1),$(2),$(3),$(ralink_default_fw_size_16M),$(4))
@@ -810,6 +834,7 @@ Image/Build/Profile/WR8305RT=$(call BuildFirmware/Default8M/$(1),$(1),wr8305rt,W
 Image/Build/Profile/WRTNODE=$(call BuildFirmware/Default16M/$(1),$(1),wrtnode,WRTNODE)
 Image/Build/Profile/WT3020=$(call BuildFirmware/PorayDualSize/$(1),$(1),wt3020,WT3020)
 Image/Build/Profile/ZBT-WA05=$(call BuildFirmware/Default8M/$(1),$(1),zbt-wa05,ZBT-WA05)
+Image/Build/Profile/ArcherC20i=$(call BuildFirmware/Tplink/$(1),$(1),ArcherC20i,ArcherC20i)
 
 
 ifeq ($(SUBTARGET),mt7620)
@@ -836,6 +861,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/WRTNODE,$(1))
 	$(call Image/Build/Profile/WT3020,$(1))
 	$(call Image/Build/Profile/ZBT-WA05,$(1))
+	$(call Image/Build/Profile/ArcherC20i,$(1))
 endef
 endif
 
@@ -843,17 +869,23 @@ endif
 # MT7621 Profiles
 #
 
-Image/Build/Profile/MT7621=$(call BuildFirmware/Default4M/$(1),$(1),mt7621,MT7621)
-Image/Build/Profile/WSR-600=$(call BuildFirmware/Default8M/$(1),$(1),wsr-600,WSR-600)
-Image/Build/Profile/WSR-1166=$(call BuildFirmware/Trx8M/$(1),$(1),wsr-1166,WSR-1166)
-
 ifeq ($(SUBTARGET),mt7621)
-define Image/Build/Profile/Default
-	$(call Image/Build/Profile/MT7621,$(1))
-	$(call Image/Build/Profile/WSR-600,$(1))
-	$(call Image/Build/Profile/WSR-1166,$(1))
-endef
+  TARGET_DEVICES += mt7621 wsr-600 wsr-1166
 endif
+
+define Device/mt7621
+  DTS := MT7621
+  IMAGE_SIZE := $(ralink_default_fw_size_4M)
+endef
+
+define Device/wsr-600
+  DTS := WSR-600
+endef
+
+define Device/wsr-1166
+  DTS := WSR-1166
+  IMAGE/sysupgrade.bin := trx | pad-rootfs
+endef
 
 #
 # MT7628 Profiles
@@ -867,9 +899,9 @@ define Image/Build/Profile/Default
 endef
 endif
 
-
+ifndef TARGET_DEVICES
 #
-# Generic Targets
+# Generic Targets - only needed for legacy image building code
 #
 define Image/BuildKernel
 	cp $(KDIR)/vmlinux.elf $(BIN_DIR)/$(VMLINUX).elf
@@ -893,5 +925,6 @@ define Image/Build
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 	$(call Image/Build/Profile/$(PROFILE),$(1))
 endef
+endif
 
 $(eval $(call BuildImage))

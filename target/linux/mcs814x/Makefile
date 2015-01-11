@@ -9,11 +9,11 @@ include $(TOPDIR)/rules.mk
 ARCH:=arm
 BOARD:=mcs814x
 BOARDNAME:=Moschip MCS814x
-FEATURES:=usb squashfs
+FEATURES:=usb squashfs low_mem
 CPU_TYPE:=arm926ej-s
 MAINTAINER:=Florian Fainelli <florian@openwrt.org>
 
-KERNEL_PATCHVER:=3.3
+KERNEL_PATCHVER:=3.14
 
 DEVICE_TYPE:=other
 

@@ -58,6 +58,9 @@ ramips_board_detect() {
 	*"ARC FreeStation5")
 		name="freestation5"
 		;;
+	*"Archer C20i")
+		name="c20i"
+		;;
 	*"Argus ATP-52B")
 		name="argus-atp52b"
 		;;
@@ -172,7 +175,7 @@ ramips_board_detect() {
 	*"HILINK HLK-RM04")
 		name="hlk-rm04"
 		;;
-	*"HOOTOO HT-TM02")
+	*"HooToo HT-TM02")
 		name="ht-tm02"
 		;;
 	*"HAME MPR-A1")
