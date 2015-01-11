@@ -1,5 +1,5 @@
---- a/drivers/mtd/mtdsplit_seama.c
-+++ b/drivers/mtd/mtdsplit_seama.c
+--- a/drivers/mtd/mtdsplit/mtdsplit_seama.c
++++ b/drivers/mtd/mtdsplit/mtdsplit_seama.c
 @@ -38,6 +38,11 @@
  	struct mtd_partition *parts;
  	int err;
