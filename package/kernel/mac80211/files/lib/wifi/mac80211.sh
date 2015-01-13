@@ -104,6 +104,8 @@ detect_mac80211() {
 
 		if [ x$mode_band == x"a" ]; then
 			ssid_5ghz="-5GHz"
+		else
+			ssid_5ghz="-2.4GHz"
 		fi
 
 		cat <<EOF
