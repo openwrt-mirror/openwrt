@@ -1,0 +1,56 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "ShadowVPN"
+msgstr "ShadowVPN"
+
+msgid "ShadowVPN is running"
+msgstr "ShadowVPN 运行中"
+
+msgid "ShadowVPN is not running"
+msgstr "ShadowVPN 未运行"
+
+msgid "General Setting"
+msgstr "基本设置"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Server Address"
+msgstr "服务器地址"
+
+msgid "Server Port"
+msgstr "服务器端口"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Concurrency Number"
+msgstr "并发连接数"
+
+msgid "Must be the SAME with server"
+msgstr "必须与服务端相同"
+
+msgid "Override MTU"
+msgstr "设置MTU"
+
+msgid "Interface Name"
+msgstr "接口名称"
+
+msgid "Routing Configuration"
+msgstr "路由设置"
+
+msgid "Routing Mode"
+msgstr "路由模式"
+
+msgid "Global Mode"
+msgstr "全局模式"
+
+msgid "Domestic Routes"
+msgstr "国内路由"
+
+msgid "Foreign Routes"
+msgstr "国外路由"
+
+msgid "Routing File"
+msgstr "路由文件"

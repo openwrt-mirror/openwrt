@@ -1,0 +1,38 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "RedSocks2"
+msgstr "RedSocks2"
+
+msgid "RedSocks2 is running"
+msgstr "RedSocks2 运行中"
+
+msgid "RedSocks2 is not running"
+msgstr "RedSocks2 未运行"
+
+msgid "General Setting"
+msgstr "基本设置"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Disable"
+msgstr "禁用"
+
+msgid "Local Port"
+msgstr "本地端口"
+
+msgid "Proxy Type"
+msgstr "代理类型"
+
+msgid "Proxy IP"
+msgstr "代理 IP"
+
+msgid "Proxy Port"
+msgstr "代理端口"
+
+msgid "Auto Proxy"
+msgstr "自动判断"
+
+msgid "Wait Timeout"
+msgstr "等待超时"
