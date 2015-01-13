@@ -1,7 +1,8 @@
 /*
- * Marvell 88E6171 switch driver
+ * Marvell 88E61xx switch driver
  *
  * Copyright (c) 2014 Claudio Leite <leitec@staticky.com>
+ * Copyright (c) 2014 Nikita Nazarenko <nnazarenko@radiofid.com>
  *
  * Based on code (c) 2008 Felix Fietkau <nbd@openwrt.org>
  *
@@ -23,12 +24,13 @@
 #include <linux/device.h>
 #include <linux/platform_device.h>
 
-#include "mvsw6171.h"
+#include "mvsw61xx.h"
 
-MODULE_DESCRIPTION("Marvell 88E6171 Switch driver");
+MODULE_DESCRIPTION("Marvell 88E61xx Switch driver");
 MODULE_AUTHOR("Claudio Leite <leitec@staticky.com>");
+MODULE_AUTHOR("Nikita Nazarenko <nnazarenko@radiofid.com>");
 MODULE_LICENSE("GPL v2");
-MODULE_ALIAS("platform:mvsw6171");
+MODULE_ALIAS("platform:mvsw61xx");
 
 /*
  * Register access is done through direct or indirect addressing,
@@ -43,7 +45,7 @@ MODULE_ALIAS("platform:mvsw6171");
  */
 
 static int
-mvsw6171_wait_mask_raw(struct mii_bus *bus, int addr,
+mvsw61xx_wait_mask_raw(struct mii_bus *bus, int addr,
 		int reg, u16 mask, u16 val)
 {
 	int i = 100;
@@ -67,7 +69,7 @@ r16(struct mii_bus *bus, bool indirect, int base_addr, int addr, int reg)
 		return bus->read(bus, addr, reg);
 
 	/* Indirect read: First, make sure switch is free */
-	mvsw6171_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
+	mvsw61xx_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
 			MV_INDIRECT_INPROGRESS, 0);
 
 	/* Load address and request read */
@@ -76,7 +78,7 @@ r16(struct mii_bus *bus, bool indirect, int base_addr, int addr, int reg)
 			ind_addr);
 
 	/* Wait until it's ready */
-	mvsw6171_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
+	mvsw61xx_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
 			MV_INDIRECT_INPROGRESS, 0);
 
 	/* Read the requested data */
@@ -95,14 +97,14 @@ w16(struct mii_bus *bus, bool indirect, int base_addr, int addr,
 	}
 
 	/* Indirect write: First, make sure switch is free */
-	mvsw6171_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
+	mvsw61xx_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
 			MV_INDIRECT_INPROGRESS, 0);
 
 	/* Load the data to be written */
 	bus->write(bus, base_addr, MV_INDIRECT_REG_DATA, val);
 
 	/* Wait again for switch to be free */
-	mvsw6171_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
+	mvsw61xx_wait_mask_raw(bus, base_addr, MV_INDIRECT_REG_CMD,
 			MV_INDIRECT_INPROGRESS, 0);
 
 	/* Load address, and issue write command */
@@ -116,7 +118,7 @@ w16(struct mii_bus *bus, bool indirect, int base_addr, int addr,
 static inline u16
 sr16(struct switch_dev *dev, int addr, int reg)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	return r16(state->bus, state->is_indirect, state->base_addr, addr, reg);
 }
@@ -124,13 +126,13 @@ sr16(struct switch_dev *dev, int addr, int reg)
 static inline void
 sw16(struct switch_dev *dev, int addr, int reg, u16 val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	w16(state->bus, state->is_indirect, state->base_addr, addr, reg, val);
 }
 
 static int
-mvsw6171_wait_mask_s(struct switch_dev *dev, int addr,
+mvsw61xx_wait_mask_s(struct switch_dev *dev, int addr,
 		int reg, u16 mask, u16 val)
 {
 	int i = 100;
@@ -146,10 +148,10 @@ mvsw6171_wait_mask_s(struct switch_dev *dev, int addr,
 }
 
 static int
-mvsw6171_get_port_mask(struct switch_dev *dev,
+mvsw61xx_get_port_mask(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	char *buf = state->buf;
 	int port, len, i;
 	u16 reg;
@@ -172,10 +174,10 @@ mvsw6171_get_port_mask(struct switch_dev *dev,
 }
 
 static int
-mvsw6171_get_port_qmode(struct switch_dev *dev,
+mvsw61xx_get_port_qmode(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	val->value.i = state->ports[val->port_vlan].qmode;
 
@@ -183,10 +185,10 @@ mvsw6171_get_port_qmode(struct switch_dev *dev,
 }
 
 static int
-mvsw6171_set_port_qmode(struct switch_dev *dev,
+mvsw61xx_set_port_qmode(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	state->ports[val->port_vlan].qmode = val->value.i;
 
@@ -194,9 +196,9 @@ mvsw6171_set_port_qmode(struct switch_dev *dev,
 }
 
 static int
-mvsw6171_get_pvid(struct switch_dev *dev, int port, int *val)
+mvsw61xx_get_pvid(struct switch_dev *dev, int port, int *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	*val = state->ports[port].pvid;
 
@@ -204,9 +206,9 @@ mvsw6171_get_pvid(struct switch_dev *dev, int port, int *val)
 }
 
 static int
-mvsw6171_set_pvid(struct switch_dev *dev, int port, int val)
+mvsw61xx_set_pvid(struct switch_dev *dev, int port, int val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	if (val < 0 || val >= MV_VLANS)
 		return -EINVAL;
@@ -217,10 +219,10 @@ mvsw6171_set_pvid(struct switch_dev *dev, int port, int val)
 }
 
 static int
-mvsw6171_get_port_status(struct switch_dev *dev,
+mvsw61xx_get_port_status(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	char *buf = state->buf;
 	u16 status, speed;
 	int len;
@@ -261,7 +263,7 @@ mvsw6171_get_port_status(struct switch_dev *dev,
 }
 
 static int
-mvsw6171_get_port_speed(struct switch_dev *dev,
+mvsw61xx_get_port_speed(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
 	u16 status, speed;
@@ -289,10 +291,10 @@ mvsw6171_get_port_speed(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_get_vlan_ports(struct switch_dev *dev,
+static int mvsw61xx_get_vlan_ports(struct switch_dev *dev,
 		struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int i, j, mode, vno;
 
 	vno = val->port_vlan;
@@ -320,10 +322,10 @@ static int mvsw6171_get_vlan_ports(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_set_vlan_ports(struct switch_dev *dev,
+static int mvsw61xx_set_vlan_ports(struct switch_dev *dev,
 		struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int i, mode, pno, vno;
 
 	vno = val->port_vlan;
@@ -333,6 +335,7 @@ static int mvsw6171_set_vlan_ports(struct switch_dev *dev,
 
 	state->vlans[vno].mask = 0;
 	state->vlans[vno].port_mode = 0;
+	state->vlans[vno].port_sstate = 0;
 
 	if(state->vlans[vno].vid == 0)
 		state->vlans[vno].vid = vno;
@@ -348,6 +351,8 @@ static int mvsw6171_set_vlan_ports(struct switch_dev *dev,
 			mode = MV_VTUCTL_EGRESS_UNTAGGED;
 
 		state->vlans[vno].port_mode |= mode << (pno * 4);
+		state->vlans[vno].port_sstate |=
+			MV_STUCTL_STATE_FORWARDING << (pno * 4 + 2);
 	}
 
 	/*
@@ -362,10 +367,10 @@ static int mvsw6171_set_vlan_ports(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_get_vlan_port_based(struct switch_dev *dev,
+static int mvsw61xx_get_vlan_port_based(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int vno = val->port_vlan;
 
 	if (vno <= 0 || vno >= dev->vlans)
@@ -379,10 +384,10 @@ static int mvsw6171_get_vlan_port_based(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_set_vlan_port_based(struct switch_dev *dev,
+static int mvsw61xx_set_vlan_port_based(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int vno = val->port_vlan;
 
 	if (vno <= 0 || vno >= dev->vlans)
@@ -396,10 +401,10 @@ static int mvsw6171_set_vlan_port_based(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_get_vid(struct switch_dev *dev,
+static int mvsw61xx_get_vid(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int vno = val->port_vlan;
 
 	if (vno <= 0 || vno >= dev->vlans)
@@ -410,10 +415,10 @@ static int mvsw6171_get_vid(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_set_vid(struct switch_dev *dev,
+static int mvsw61xx_set_vid(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int vno = val->port_vlan;
 
 	if (vno <= 0 || vno >= dev->vlans)
@@ -424,37 +429,37 @@ static int mvsw6171_set_vid(struct switch_dev *dev,
 	return 0;
 }
 
-static int mvsw6171_get_enable_vlan(struct switch_dev *dev,
+static int mvsw61xx_get_enable_vlan(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	val->value.i = state->vlan_enabled;
 
 	return 0;
 }
 
-static int mvsw6171_set_enable_vlan(struct switch_dev *dev,
+static int mvsw61xx_set_enable_vlan(struct switch_dev *dev,
 		const struct switch_attr *attr, struct switch_val *val)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 
 	state->vlan_enabled = val->value.i;
 
 	return 0;
 }
 
-static int mvsw6171_vtu_program(struct switch_dev *dev)
+static int mvsw61xx_vtu_program(struct switch_dev *dev)
 {
-	struct mvsw6171_state *state = get_state(dev);
-	u16 v1, v2;
+	struct mvsw61xx_state *state = get_state(dev);
+	u16 v1, v2, s1, s2;
 	int i;
 
 	/* Flush */
-	mvsw6171_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
+	mvsw61xx_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
 			MV_VTUOP_INPROGRESS, 0);
 	sw16(dev, MV_GLOBALREG(VTU_OP),
-			MV_VTUOP_INPROGRESS | MV_VTUOP_VALID);
+			MV_VTUOP_INPROGRESS | MV_VTUOP_PURGE);
 
 	/* Write VLAN table */
 	for (i = 1; i < dev->vlans; i++) {
@@ -463,30 +468,48 @@ static int mvsw6171_vtu_program(struct switch_dev *dev)
 				state->vlans[i].port_based == true)
 			continue;
 
-		mvsw6171_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
+		mvsw61xx_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
 				MV_VTUOP_INPROGRESS, 0);
 
+		/* Write per-VLAN port state into STU */
+		s1 = (u16) (state->vlans[i].port_sstate & 0xffff);
+		s2 = (u16) ((state->vlans[i].port_sstate >> 16) & 0xffff);
+
+		sw16(dev, MV_GLOBALREG(VTU_VID), MV_VTU_VID_VALID);
+		sw16(dev, MV_GLOBALREG(VTU_SID), i);
+		sw16(dev, MV_GLOBALREG(VTU_DATA1), s1);
+		sw16(dev, MV_GLOBALREG(VTU_DATA2), s2);
+		sw16(dev, MV_GLOBALREG(VTU_DATA3), 0);
+
+		sw16(dev, MV_GLOBALREG(VTU_OP),
+				MV_VTUOP_INPROGRESS | MV_VTUOP_STULOAD);
+		mvsw61xx_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
+				MV_VTUOP_INPROGRESS, 0);
+
+		/* Write VLAN information into VTU */
+		v1 = (u16) (state->vlans[i].port_mode & 0xffff);
+		v2 = (u16) ((state->vlans[i].port_mode >> 16) & 0xffff);
+
 		sw16(dev, MV_GLOBALREG(VTU_VID),
-				MV_VTUOP_VALID | state->vlans[i].vid);
-
-		v1 = (u16)(state->vlans[i].port_mode & 0xffff);
-		v2 = (u16)((state->vlans[i].port_mode >> 16) & 0xffff);
-
+				MV_VTU_VID_VALID | state->vlans[i].vid);
+		sw16(dev, MV_GLOBALREG(VTU_SID), i);
+		sw16(dev, MV_GLOBALREG(VTU_FID), 0);
 		sw16(dev, MV_GLOBALREG(VTU_DATA1), v1);
 		sw16(dev, MV_GLOBALREG(VTU_DATA2), v2);
+		sw16(dev, MV_GLOBALREG(VTU_DATA3), 0);
 
 		sw16(dev, MV_GLOBALREG(VTU_OP),
 				MV_VTUOP_INPROGRESS | MV_VTUOP_LOAD);
-		mvsw6171_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
+		mvsw61xx_wait_mask_s(dev, MV_GLOBALREG(VTU_OP),
 				MV_VTUOP_INPROGRESS, 0);
 	}
 
 	return 0;
 }
 
-static void mvsw6171_vlan_port_config(struct switch_dev *dev, int vno)
+static void mvsw61xx_vlan_port_config(struct switch_dev *dev, int vno)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int i, mode;
 
 	for (i = 0; i < dev->ports; i++) {
@@ -505,16 +528,14 @@ static void mvsw6171_vlan_port_config(struct switch_dev *dev, int vno)
 	}
 }
 
-static int mvsw6171_update_state(struct switch_dev *dev)
+static int mvsw61xx_update_state(struct switch_dev *dev)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int i;
 	u16 reg;
 
 	if (!state->registered)
 		return -EINVAL;
-
-	mvsw6171_vtu_program(dev);
 
 	/*
 	 * Set 802.1q-only mode if vlan_enabled is true.
@@ -549,7 +570,7 @@ static int mvsw6171_update_state(struct switch_dev *dev)
 	}
 
 	for (i = 0; i < dev->vlans; i++)
-		mvsw6171_vlan_port_config(dev, i);
+		mvsw61xx_vlan_port_config(dev, i);
 
 	for (i = 0; i < dev->ports; i++) {
 		reg = sr16(dev, MV_PORTREG(VLANID, i)) & ~MV_PVID_MASK;
@@ -568,31 +589,33 @@ static int mvsw6171_update_state(struct switch_dev *dev)
 		sw16(dev, MV_PORTREG(CONTROL2, i), reg);
 	}
 
+	mvsw61xx_vtu_program(dev);
+
 	return 0;
 }
 
-static int mvsw6171_apply(struct switch_dev *dev)
+static int mvsw61xx_apply(struct switch_dev *dev)
 {
-	return mvsw6171_update_state(dev);
+	return mvsw61xx_update_state(dev);
 }
 
-static int mvsw6171_reset(struct switch_dev *dev)
+static int mvsw61xx_reset(struct switch_dev *dev)
 {
-	struct mvsw6171_state *state = get_state(dev);
+	struct mvsw61xx_state *state = get_state(dev);
 	int i;
 	u16 reg;
 
 	/* Disable all ports before reset */
 	for (i = 0; i < dev->ports; i++) {
 		reg = sr16(dev, MV_PORTREG(CONTROL, i)) &
-			~MV_PORTCTRL_ENABLED;
+			~MV_PORTCTRL_FORWARDING;
 		sw16(dev, MV_PORTREG(CONTROL, i), reg);
 	}
 
 	reg = sr16(dev, MV_GLOBALREG(CONTROL)) | MV_CONTROL_RESET;
 
 	sw16(dev, MV_GLOBALREG(CONTROL), reg);
-	if (mvsw6171_wait_mask_s(dev, MV_GLOBALREG(CONTROL),
+	if (mvsw61xx_wait_mask_s(dev, MV_GLOBALREG(CONTROL),
 				MV_CONTROL_RESET, 0) < 0)
 		return -ETIMEDOUT;
 
@@ -602,9 +625,9 @@ static int mvsw6171_reset(struct switch_dev *dev)
 		state->ports[i].pvid = 0;
 
 		/* Force flow control off */
-		reg = sr16(dev, MV_PORTREG(FORCE, i)) & ~MV_FORCE_FC_MASK;
-		reg |= MV_FORCE_FC_DISABLE;
-		sw16(dev, MV_PORTREG(FORCE, i), reg);
+		reg = sr16(dev, MV_PORTREG(PHYCTL, i)) & ~MV_PHYCTL_FC_MASK;
+		reg |= MV_PHYCTL_FC_DISABLE;
+		sw16(dev, MV_PORTREG(PHYCTL, i), reg);
 
 		/* Set port association vector */
 		sw16(dev, MV_PORTREG(ASSOC, i), (1 << i));
@@ -615,16 +638,17 @@ static int mvsw6171_reset(struct switch_dev *dev)
 		state->vlans[i].mask = 0;
 		state->vlans[i].vid = 0;
 		state->vlans[i].port_mode = 0;
+		state->vlans[i].port_sstate = 0;
 	}
 
 	state->vlan_enabled = 0;
 
-	mvsw6171_update_state(dev);
+	mvsw61xx_update_state(dev);
 
 	/* Re-enable ports */
 	for (i = 0; i < dev->ports; i++) {
 		reg = sr16(dev, MV_PORTREG(CONTROL, i)) |
-			MV_PORTCTRL_ENABLED;
+			MV_PORTCTRL_FORWARDING;
 		sw16(dev, MV_PORTREG(CONTROL, i), reg);
 	}
 
@@ -632,116 +656,116 @@ static int mvsw6171_reset(struct switch_dev *dev)
 }
 
 enum {
-	MVSW6171_ENABLE_VLAN,
+	MVSW61XX_ENABLE_VLAN,
 };
 
 enum {
-	MVSW6171_VLAN_PORT_BASED,
-	MVSW6171_VLAN_ID,
+	MVSW61XX_VLAN_PORT_BASED,
+	MVSW61XX_VLAN_ID,
 };
 
 enum {
-	MVSW6171_PORT_MASK,
-	MVSW6171_PORT_QMODE,
-	MVSW6171_PORT_STATUS,
-	MVSW6171_PORT_LINK,
+	MVSW61XX_PORT_MASK,
+	MVSW61XX_PORT_QMODE,
+	MVSW61XX_PORT_STATUS,
+	MVSW61XX_PORT_LINK,
 };
 
-static const struct switch_attr mvsw6171_global[] = {
-	[MVSW6171_ENABLE_VLAN] = {
-		.id = MVSW6171_ENABLE_VLAN,
+static const struct switch_attr mvsw61xx_global[] = {
+	[MVSW61XX_ENABLE_VLAN] = {
+		.id = MVSW61XX_ENABLE_VLAN,
 		.type = SWITCH_TYPE_INT,
 		.name = "enable_vlan",
 		.description = "Enable 802.1q VLAN support",
-		.get = mvsw6171_get_enable_vlan,
-		.set = mvsw6171_set_enable_vlan,
+		.get = mvsw61xx_get_enable_vlan,
+		.set = mvsw61xx_set_enable_vlan,
 	},
 };
 
-static const struct switch_attr mvsw6171_vlan[] = {
-	[MVSW6171_VLAN_PORT_BASED] = {
-		.id = MVSW6171_VLAN_PORT_BASED,
+static const struct switch_attr mvsw61xx_vlan[] = {
+	[MVSW61XX_VLAN_PORT_BASED] = {
+		.id = MVSW61XX_VLAN_PORT_BASED,
 		.type = SWITCH_TYPE_INT,
 		.name = "port_based",
 		.description = "Use port-based (non-802.1q) VLAN only",
-		.get = mvsw6171_get_vlan_port_based,
-		.set = mvsw6171_set_vlan_port_based,
+		.get = mvsw61xx_get_vlan_port_based,
+		.set = mvsw61xx_set_vlan_port_based,
 	},
-	[MVSW6171_VLAN_ID] = {
-		.id = MVSW6171_VLAN_ID,
+	[MVSW61XX_VLAN_ID] = {
+		.id = MVSW61XX_VLAN_ID,
 		.type = SWITCH_TYPE_INT,
 		.name = "vid",
 		.description = "Get/set VLAN ID",
-		.get = mvsw6171_get_vid,
-		.set = mvsw6171_set_vid,
+		.get = mvsw61xx_get_vid,
+		.set = mvsw61xx_set_vid,
 	},
 };
 
-static const struct switch_attr mvsw6171_port[] = {
-	[MVSW6171_PORT_MASK] = {
-		.id = MVSW6171_PORT_MASK,
+static const struct switch_attr mvsw61xx_port[] = {
+	[MVSW61XX_PORT_MASK] = {
+		.id = MVSW61XX_PORT_MASK,
 		.type = SWITCH_TYPE_STRING,
 		.description = "Port-based VLAN mask",
 		.name = "mask",
-		.get = mvsw6171_get_port_mask,
+		.get = mvsw61xx_get_port_mask,
 		.set = NULL,
 	},
-	[MVSW6171_PORT_QMODE] = {
-		.id = MVSW6171_PORT_QMODE,
+	[MVSW61XX_PORT_QMODE] = {
+		.id = MVSW61XX_PORT_QMODE,
 		.type = SWITCH_TYPE_INT,
 		.description = "802.1q mode: 0=off/1=fallback/2=check/3=secure",
 		.name = "qmode",
-		.get = mvsw6171_get_port_qmode,
-		.set = mvsw6171_set_port_qmode,
+		.get = mvsw61xx_get_port_qmode,
+		.set = mvsw61xx_set_port_qmode,
 	},
-	[MVSW6171_PORT_STATUS] = {
-		.id = MVSW6171_PORT_STATUS,
+	[MVSW61XX_PORT_STATUS] = {
+		.id = MVSW61XX_PORT_STATUS,
 		.type = SWITCH_TYPE_STRING,
 		.description = "Return port status",
 		.name = "status",
-		.get = mvsw6171_get_port_status,
+		.get = mvsw61xx_get_port_status,
 		.set = NULL,
 	},
-	[MVSW6171_PORT_LINK] = {
-		.id = MVSW6171_PORT_LINK,
+	[MVSW61XX_PORT_LINK] = {
+		.id = MVSW61XX_PORT_LINK,
 		.type = SWITCH_TYPE_INT,
 		.description = "Get link speed",
 		.name = "link",
-		.get = mvsw6171_get_port_speed,
+		.get = mvsw61xx_get_port_speed,
 		.set = NULL,
 	},
 };
 
-static const struct switch_dev_ops mvsw6171_ops = {
+static const struct switch_dev_ops mvsw61xx_ops = {
 	.attr_global = {
-		.attr = mvsw6171_global,
-		.n_attr = ARRAY_SIZE(mvsw6171_global),
+		.attr = mvsw61xx_global,
+		.n_attr = ARRAY_SIZE(mvsw61xx_global),
 	},
 	.attr_vlan = {
-		.attr = mvsw6171_vlan,
-		.n_attr = ARRAY_SIZE(mvsw6171_vlan),
+		.attr = mvsw61xx_vlan,
+		.n_attr = ARRAY_SIZE(mvsw61xx_vlan),
 	},
 	.attr_port = {
-		.attr = mvsw6171_port,
-		.n_attr = ARRAY_SIZE(mvsw6171_port),
+		.attr = mvsw61xx_port,
+		.n_attr = ARRAY_SIZE(mvsw61xx_port),
 	},
-	.get_port_pvid = mvsw6171_get_pvid,
-	.set_port_pvid = mvsw6171_set_pvid,
-	.get_vlan_ports = mvsw6171_get_vlan_ports,
-	.set_vlan_ports = mvsw6171_set_vlan_ports,
-	.apply_config = mvsw6171_apply,
-	.reset_switch = mvsw6171_reset,
+	.get_port_pvid = mvsw61xx_get_pvid,
+	.set_port_pvid = mvsw61xx_set_pvid,
+	.get_vlan_ports = mvsw61xx_get_vlan_ports,
+	.set_vlan_ports = mvsw61xx_set_vlan_ports,
+	.apply_config = mvsw61xx_apply,
+	.reset_switch = mvsw61xx_reset,
 };
 
 /* end swconfig stuff */
 
-static int mvsw6171_probe(struct platform_device *pdev)
+static int mvsw61xx_probe(struct platform_device *pdev)
 {
-	struct mvsw6171_state *state;
+	struct mvsw61xx_state *state;
 	struct device_node *np = pdev->dev.of_node;
 	struct device_node *mdio;
+	char *model_str;
 	u32 val;
-	u16 reg;
 	int err;
 
 	state = kzalloc(sizeof(*state), GFP_KERNEL);
@@ -776,17 +800,28 @@ static int mvsw6171_probe(struct platform_device *pdev)
 		state->base_addr = MV_BASE;
 	}
 
-	reg = r16(state->bus, state->is_indirect, state->base_addr,
-			MV_PORTREG(IDENT, 0)) & MV_IDENT_MASK;
-	if (reg != MV_IDENT_VALUE) {
-		dev_err(&pdev->dev, "No switch found at 0x%02x\n",
+	state->model = r16(state->bus, state->is_indirect, state->base_addr,
+				MV_PORTREG(IDENT, 0)) & MV_IDENT_MASK;
+
+	switch(state->model) {
+	case MV_IDENT_VALUE_6171:
+		model_str = MV_IDENT_STR_6171;
+		break;
+	case MV_IDENT_VALUE_6172:
+		model_str = MV_IDENT_STR_6172;
+		break;
+	case MV_IDENT_VALUE_6176:
+		model_str = MV_IDENT_STR_6176;
+		break;
+	default:
+		dev_err(&pdev->dev, "No compatible switch found at 0x%02x\n",
 				state->base_addr);
 		err = -ENODEV;
 		goto out_err;
 	}
 
 	platform_set_drvdata(pdev, state);
-	dev_info(&pdev->dev, "Found %s at %s:%02x\n", MV_IDENT_STR,
+	dev_info(&pdev->dev, "Found %s at %s:%02x\n", model_str,
 			state->bus->id, state->base_addr);
 
 	dev_info(&pdev->dev, "Using %sdirect addressing\n",
@@ -808,8 +843,8 @@ static int mvsw6171_probe(struct platform_device *pdev)
 	state->dev.vlans = MV_VLANS;
 	state->dev.cpu_port = state->cpu_port0;
 	state->dev.ports = MV_PORTS;
-	state->dev.name = MV_IDENT_STR;
-	state->dev.ops = &mvsw6171_ops;
+	state->dev.name = model_str;
+	state->dev.ops = &mvsw61xx_ops;
 	state->dev.alias = dev_name(&pdev->dev);
 
 	err = register_switch(&state->dev, NULL);
@@ -825,9 +860,9 @@ out_err:
 }
 
 static int
-mvsw6171_remove(struct platform_device *pdev)
+mvsw61xx_remove(struct platform_device *pdev)
 {
-	struct mvsw6171_state *state = platform_get_drvdata(pdev);
+	struct mvsw61xx_state *state = platform_get_drvdata(pdev);
 
 	if (state->registered)
 		unregister_switch(&state->dev);
@@ -837,30 +872,32 @@ mvsw6171_remove(struct platform_device *pdev)
 	return 0;
 }
 
-static const struct of_device_id mvsw6171_match[] = {
+static const struct of_device_id mvsw61xx_match[] = {
 	{ .compatible = "marvell,88e6171" },
+	{ .compatible = "marvell,88e6172" },
+	{ .compatible = "marvell,88e6176" },
 	{ }
 };
-MODULE_DEVICE_TABLE(of, mvsw6171_match);
+MODULE_DEVICE_TABLE(of, mvsw61xx_match);
 
-static struct platform_driver mvsw6171_driver = {
-	.probe = mvsw6171_probe,
-	.remove = mvsw6171_remove,
+static struct platform_driver mvsw61xx_driver = {
+	.probe = mvsw61xx_probe,
+	.remove = mvsw61xx_remove,
 	.driver = {
-		.name = "mvsw6171",
-		.of_match_table = of_match_ptr(mvsw6171_match),
+		.name = "mvsw61xx",
+		.of_match_table = of_match_ptr(mvsw61xx_match),
 		.owner = THIS_MODULE,
 	},
 };
 
-static int __init mvsw6171_module_init(void)
+static int __init mvsw61xx_module_init(void)
 {
-	return platform_driver_register(&mvsw6171_driver);
+	return platform_driver_register(&mvsw61xx_driver);
 }
-late_initcall(mvsw6171_module_init);
+late_initcall(mvsw61xx_module_init);
 
-static void __exit mvsw6171_module_exit(void)
+static void __exit mvsw61xx_module_exit(void)
 {
-	platform_driver_unregister(&mvsw6171_driver);
+	platform_driver_unregister(&mvsw61xx_driver);
 }
-module_exit(mvsw6171_module_exit);
+module_exit(mvsw61xx_module_exit);
