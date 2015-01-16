@@ -24,15 +24,12 @@ KDIR_TMP:=$(KDIR)/tmp
 
 UIMAGE:=$(BIN_DIR)/$(IMG_PREFIX)-uImage
 
-define Image/Build/MkuImage
-	mkimage -A arm -O linux -T kernel -a $(LOADADDR) -C none -e $(LOADADDR) \
-	-n 'ARM OpenWrt Linux-$(LINUX_VERSION)' -d $(1) $(2);
-endef
-
 define Image/Build/DTB
 	cp $(KDIR)/zImage$(2) $(KDIR)/zImage$(2)-$(1);
 	cat $(DTS_DIR)/$(1).dtb >> $(KDIR)/zImage$(2)-$(1);
-	$(call Image/Build/MkuImage,$(KDIR)/zImage$(2)-$(1),$(KDIR)/uImage$(2)-$(1))
+	$(call Image/BuildKernel/MkuImage, \
+		none, $(LOADADDR), $(LOADADDR), \
+		$(KDIR)/zImage$(2)-$(1), $(KDIR)/uImage$(2)-$(1))
 	cp $(KDIR)/uImage$(2)-$(1) $(UIMAGE)$(2)-$(1);
 endef
 
@@ -44,7 +41,7 @@ define Image/BuildKernel
 endef
 
 define Image/Build/squashfs
-	$(STAGING_DIR_HOST)/bin/padjffs2 $(KDIR)/root.squashfs 128
+	$(call prepare_generic_squashfs,$(KDIR)/root.squashfs)
 	$(foreach nandboard,$(NANDBOARDS),$(call Image/Build/UbinizeImage,$(nandboard),,squashfs,$(UBI_OPTS));)
 	( \
 		dd if=$(KDIR)/uImage-armada-xp-mamba bs=3072k conv=sync; \
