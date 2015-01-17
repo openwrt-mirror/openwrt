@@ -196,13 +196,13 @@ static void __init common_setup(bool pcie_slot)
 					archer_c7_gpio_keys);
 
 
-    tplink_register_builtin_wmac1(ARCHER_C7_WMAC_CALDATA_OFFSET, mac, -1);
+	tplink_register_builtin_wmac1(ARCHER_C7_WMAC_CALDATA_OFFSET, mac, -1);
 
 	if (pcie_slot) {
 		ath79_register_pci();
 	} else {
 		ap9x_pci_setup_wmac_led_pin(0, 0);
-        tplink_register_ap91_wmac2(ARCHER_C7_PCIE_CALDATA_OFFSET, mac, 2);
+		tplink_register_ap91_wmac2(ARCHER_C7_PCIE_CALDATA_OFFSET, mac, 2);
 	}
 
 	mdiobus_register_board_info(archer_c7_mdio0_info,
@@ -217,7 +217,7 @@ static void __init common_setup(bool pcie_slot)
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
 	ath79_eth0_pll_data.pll_1000 = 0x56000000;
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
 	ath79_register_eth(0);
 
 	/* GMAC1 is connected to the SGMII interface */
@@ -226,7 +226,7 @@ static void __init common_setup(bool pcie_slot)
 	ath79_eth1_data.duplex = DUPLEX_FULL;
 	ath79_eth1_pll_data.pll_1000 = 0x03000101;
 
-	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
 	ath79_register_eth(1);
 
 	gpio_request_one(ARCHER_C7_GPIO_USB1_POWER,
