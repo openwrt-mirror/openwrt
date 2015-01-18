@@ -55,9 +55,11 @@ platform_check_image() {
 	ht-tm02 | \
 	hw550-3g | \
 	ip2202 | \
+	m2m | \
 	m3 | \
 	m4 | \
 	mlw221 | \
+	mlwg2 | \
 	mofi3500-3gn | \
 	mpr-a1 | \
 	mpr-a2 | \
@@ -131,7 +133,8 @@ platform_check_image() {
 		;;
 	cy-swr1100 |\
 	dir-610-a1 |\
-	dir-645)
+	dir-645 |\
+	dir-860l-b1)
 		[ "$magic" != "5ea3a417" ] && {
 			echo "Invalid image type."
 			return 1

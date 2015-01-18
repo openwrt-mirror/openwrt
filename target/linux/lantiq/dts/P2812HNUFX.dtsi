@@ -1,19 +1,15 @@
-/dts-v1/;
-
 /include/ "vr9.dtsi"
 
 / {
-	model = "P2812HNUFX - ZyXEL P-2812HNU-Fx";
-	
 	chosen {
-		/*bootargs = "console=ttyLTQ0,115200 init=/etc/preinit";*/
+		bootargs = "console=ttyLTQ0,115200 init=/etc/preinit";
 	};
 
 	memory@0 {
 		reg = <0x0 0x8000000>;
 	};
-	
-	fpi@10000000 {
+
+        fpi@10000000 {
 		#address-cells = <1>;
 		#size-cells = <1>;
 		compatible = "lantiq,fpi", "simple-bus";
@@ -23,31 +19,9 @@
 		localbus@0 {
 			#address-cells = <2>;
 			#size-cells = <1>;
+			ranges = <0 0 0x0 0x3ffffff /* addrsel0 */
+				1 0 0x4000000 0x4000010>; /* addsel1 */
 			compatible = "lantiq,localbus", "simple-bus";
-
-			nand-parts@0 {
-				compatible = "gen_nand", "lantiq,nand-xway";
-				lantiq,cs = <1>;
-				bank-width = <2>;
-				reg = <0 0x0 0x2000000>;
-				#address-cells = <1>;
-				#size-cells = <1>;
-
-				partition@0 {
-					label = "u-boot";
-					reg = <0x00000 0x40000>;
-				};
-
-				partition@40000 {
-					label = "u-boot environment";
-					reg = <0x40000 0x20000>;
-				};
-
-				partition@60000 {
-					label = "root";
-					reg = <0x60000 0x7fa0000>;
-				};
-			};
 		};
 
 		gpio: pinmux@E100B10 {
@@ -63,6 +37,10 @@
 			reg = <0xE100B10 0xA0>;
 
 			state_default: pinmux {
+				exin3 {
+					lantiq,groups = "exin3";
+					lantiq,function = "exin";
+				};
 				mdio {
 					lantiq,groups = "mdio";
 					lantiq,function = "mdio";
@@ -82,14 +60,29 @@
 					lantiq,open-drain = <0>;
 					lantiq,output = <1>;
 				};
-				pci {
-					lantiq,groups = "gnt1", "req1";
+				pci-in {
+					lantiq,groups = "req1";
 					lantiq,function = "pci";
+					lantiq,output = <0>;
+					lantiq,open-drain = <1>;
+					lantiq,pull = <2>;
 				};
-				pci-rst {
-					lantiq,pins = "io21";
-					lantiq,pull = <0>;
+				pci-out {
+					lantiq,groups = "gnt1";
+					lantiq,function = "pci";
+					lantiq,output = <1>;
 					lantiq,open-drain = <0>;
+					lantiq,pull = <0>;
+				};
+				pci_rst {
+					lantiq,pins = "io21";
+					lantiq,output = <1>;
+					lantiq,open-drain = <0>;
+					lantiq,pull = <2>;
+				};
+				pcie-rst {
+					lantiq,pins = "io38";
+					lantiq,pull = <0>;
 					lantiq,output = <1>;
 				};
 				ifxhcd-rst {
@@ -98,11 +91,18 @@
 					lantiq,open-drain = <0>;
 					lantiq,output = <1>;
 				};
-				nand {
-					lantiq,groups = "nand cle", "nand ale",
-							"nand rd", "nand cs1", "nand rdy";
+				nand_out {
+					lantiq,groups = "nand cle", "nand ale";
 					lantiq,function = "ebu";
-					lantiq,pull = <1>;
+					lantiq,output = <1>;
+					lantiq,open-drain = <0>;
+					lantiq,pull = <0>;
+				};
+				nand_cs1 {
+					lantiq,groups = "nand cs1";
+					lantiq,function = "ebu";
+					lantiq,open-drain = <0>;
+					lantiq,pull = <0>;
 				};
 			};
 		};
@@ -111,11 +111,10 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 			compatible = "lantiq,xrx200-net";
-			reg = <	0xE108000 0x3000 /* switch */
-				0xE10B100 0x70 /* mdio */
-				0xE10B1D8 0x30 /* mii */
-				0xE10B308 0x30 /* pmac */
-			>;
+			reg = < 0xE108000 0x3000	/* switch */
+				0xE10B100 0x70		/* mdio */
+				0xE10B1D8 0x30		/* mii */
+				0xE10B308 0x30 >;	/* pmac */
 			interrupt-parent = <&icu0>;
 			interrupts = <73 72>;
 
@@ -163,6 +162,7 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				compatible = "lantiq,xrx200-mdio";
+
 				phy0: ethernet-phy@0 {
 					reg = <0x0>;
 					compatible = "lantiq,phy11g", "ethernet-phy-ieee802.3-c22";
@@ -194,11 +194,9 @@
 
 			lantiq,shadow = <0xffffff>;
 			lantiq,groups = <0x7>;
-			/*
-			lantiq,dsl = <0x3>;
-			lantiq,phy1 = <0x7>;
-			lantiq,phy2 = <0x7>;
-			*/
+			lantiq,dsl = <0x0>;
+			lantiq,phy1 = <0x0>;
+			lantiq,phy2 = <0x0>;
 		};
 
 		ifxhcd@E101000 {
@@ -208,23 +206,33 @@
 		};
 
 		pci@E105400 {
+			status = "okay";
+			#address-cells = <3>;
+			#size-cells = <2>;
+			#interrupt-cells = <1>;
+			compatible = "lantiq,pci-xway";
+			bus-range = <0x0 0x0>;
+			ranges = <0x2000000 0 0x8000000 0x8000000 0 0x2000000   /* pci memory */
+				0x1000000 0 0x00000000 0xAE00000 0 0x200000>; /* io space */
+			reg = <0x7000000 0x8000         /* config space */
+				0xE105400 0x400>;       /* pci bridge */
 			lantiq,bus-clock = <33333333>;
-			/* lantiq,external-clock; */
+			/*lantiq,external-clock;*/
 			lantiq,delay-hi = <0>; /* 0ns delay */
 			lantiq,delay-lo = <0>; /* 0.0ns delay */
 			interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
 			interrupt-map = <
-				0x7000 0 0 1 &icu0 29 //1 // slot 14, irq 29
+				0x7000 0 0 1 &icu0 30 1 // slot 14, irq 30
 				>;
 			gpio-reset = <&gpio 21 0>;
 			req-mask = <0x1>;	/* GNT1 */
-			status = "okay";
 		};
 	};
 
 	gphy-xrx200 {
 		compatible = "lantiq,phy-xrx200";
-		firmware = "lantiq/vr9_phy11g_a1x.bin";
+		firmware1 = "lantiq/vr9_phy11g_a1x.bin";	/*VR9 1.1*/
+		firmware2 = "lantiq/vr9_phy11g_a2x.bin";	/*VR9 1.2*/
 		phys = [ 00 01 ];
 	};
 
@@ -233,76 +241,17 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <100>;
+
 		reset {
 			label = "reset";
 			gpios = <&gpio 39 1>;
 			linux,code = <0x198>;
 		};
+
 		rfkill {
 			label = "rfkill";
 			gpios = <&gpio 1 1>;
 			linux,code = <0xf7>;
-		};
-	};
-
-	gpio-leds {
-		compatible = "gpio-leds";
-
-		internet2 {
-			label = "internet2";
-			gpios = <&stp 16 1>;
-		};
-		internet {
-			label = "internet";
-			gpios = <&stp 17 1>;
-		};
-		dsl {
-			label = "dsl";
-			gpios = <&stp 18 1>;
-		};
-		dsl2 {
-			label = "dsl2";
-			gpios = <&stp 19 1>;
-		};
-		wifi2 {
-			label = "wifi2";
-			gpios = <&stp 20 1>;
-		};
-		wlan {
-			label = "wifi";
-			gpios = <&stp 21 1>;
-		};
-		power2 {
-			label = "power2";
-			gpios = <&stp 22 1>;
-		};
-		power {
-			label = "power";
-			gpios = <&stp 23 1>;
-		};
-		usb1 {
-			label = "usb";
-			gpios = <&gpio 38 1>;
-		};
-		usb2 {
-			label = "usb2";
-			gpios = <&gpio 44 1>;
-		};
-		phone1 {
-			label = "phone1";
-			gpios = <&gpio 11 1>;
-		};
-		phone1warn {
-			label = "phone1warn";
-			gpios = <&gpio 12 1>;
-		};
-		phone2 {
-			label = "phone2";
-			gpios = <&gpio 28 1>;
-		};
-		phone2warn {
-			label = "phone2warn";
-			gpios = <&gpio 26 1>;
 		};
 	};
 };

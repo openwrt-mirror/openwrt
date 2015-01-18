@@ -133,6 +133,9 @@ ramips_board_detect() {
 	*"DIR-810L")
 		name="dir-810l"
 		;;
+	*"DIR-860L B1")
+		name="dir-860l-b1"
+		;;
 	*"DAP-1350")
 		name="dap-1350"
 		;;
@@ -187,6 +190,9 @@ ramips_board_detect() {
 	*"Kingston MLW221")
 		name="mlw221"
 		;;
+	*"Kingston MLWG2")
+		name="mlwg2"
+		;;
 	*"Linksys E1700")
 		name="e1700"
 		;;
@@ -210,6 +216,9 @@ ramips_board_detect() {
 		;;
 	*"NW718")
 		name="nw718"
+		;;
+	*"Intenso Memory 2 Move")
+		name="m2m"
 		;;
 	*"Omnima EMB HPM")
 		name="omni-emb-hpm"
