@@ -16,6 +16,7 @@ platform_check_image() {
 	case "$board" in
 	3g-6200n | \
 	3g-6200nl | \
+	3g150b | \
 	3g300m | \
 	a5-v11 | \
 	air3gii | \
@@ -50,6 +51,7 @@ platform_check_image() {
 	f7c027 | \
 	fonera20n | \
 	freestation5 | \
+	firewrt |\
 	hg255d | \
 	hlk-rm04 | \
 	ht-tm02 | \
