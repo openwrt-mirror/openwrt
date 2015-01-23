@@ -1444,7 +1444,7 @@ CONFIG_PACKAGE_kmod-crypto-arc4=y
 # CONFIG_PACKAGE_kmod-crypto-authenc is not set
 # CONFIG_PACKAGE_kmod-crypto-cbc is not set
 CONFIG_PACKAGE_kmod-crypto-core=y
-# CONFIG_PACKAGE_kmod-crypto-crc32c is not set
+CONFIG_PACKAGE_kmod-crypto-crc32c=y
 # CONFIG_PACKAGE_kmod-crypto-ctr is not set
 # CONFIG_PACKAGE_kmod-crypto-deflate is not set
 # CONFIG_PACKAGE_kmod-crypto-des is not set
@@ -1488,7 +1488,7 @@ CONFIG_PACKAGE_kmod-fs-autofs4=y
 # CONFIG_PACKAGE_kmod-fs-cifs is not set
 # CONFIG_PACKAGE_kmod-fs-configfs is not set
 # CONFIG_PACKAGE_kmod-fs-cramfs is not set
-# CONFIG_PACKAGE_kmod-fs-exportfs is not set
+CONFIG_PACKAGE_kmod-fs-exportfs=y
 CONFIG_PACKAGE_kmod-fs-ext4=y
 # CONFIG_PACKAGE_kmod-fs-f2fs is not set
 # CONFIG_PACKAGE_kmod-fs-fscache is not set
@@ -1505,7 +1505,7 @@ CONFIG_PACKAGE_kmod-fs-ext4=y
 # CONFIG_PACKAGE_kmod-fs-reiserfs is not set
 # CONFIG_PACKAGE_kmod-fs-udf is not set
 CONFIG_PACKAGE_kmod-fs-vfat=y
-# CONFIG_PACKAGE_kmod-fs-xfs is not set
+CONFIG_PACKAGE_kmod-fs-xfs=y
 # CONFIG_PACKAGE_kmod-fuse is not set
 
 #
@@ -1562,7 +1562,7 @@ CONFIG_PACKAGE_kmod-ledtrig-usbdev=y
 CONFIG_PACKAGE_kmod-lib-crc-ccitt=y
 # CONFIG_PACKAGE_kmod-lib-crc-itu-t is not set
 CONFIG_PACKAGE_kmod-lib-crc16=y
-# CONFIG_PACKAGE_kmod-lib-crc32c is not set
+CONFIG_PACKAGE_kmod-lib-crc32c=y
 # CONFIG_PACKAGE_kmod-lib-crc7 is not set
 # CONFIG_PACKAGE_kmod-lib-crc8 is not set
 # CONFIG_PACKAGE_kmod-lib-lzo is not set
@@ -2102,10 +2102,10 @@ CONFIG_PACKAGE_libpolarssl=y
 # CONFIG_PACKAGE_libarchive is not set
 # CONFIG_PACKAGE_libartnet is not set
 # CONFIG_PACKAGE_libaudiofile is not set
-# CONFIG_PACKAGE_libavahi is not set
 # CONFIG_PACKAGE_libavahi-client is not set
 # CONFIG_PACKAGE_libavahi-compat-libdnssd is not set
 # CONFIG_PACKAGE_libavahi-dbus-support is not set
+# CONFIG_PACKAGE_libavahi-nodbus-support is not set
 # CONFIG_PACKAGE_libavl is not set
 # CONFIG_PACKAGE_libbfd is not set
 CONFIG_PACKAGE_libblkid=y
@@ -2400,7 +2400,7 @@ CONFIG_PACKAGE_luci-mod-admin-full=y
 # CONFIG_PACKAGE_luci-app-bird6 is not set
 # CONFIG_PACKAGE_luci-app-bmx6 is not set
 # CONFIG_PACKAGE_luci-app-chinadns is not set
-CONFIG_PACKAGE_luci-app-commands=y
+# CONFIG_PACKAGE_luci-app-commands is not set
 # CONFIG_PACKAGE_luci-app-cshark is not set
 CONFIG_PACKAGE_luci-app-ddns=y
 # CONFIG_PACKAGE_luci-app-diag-core is not set
@@ -2473,6 +2473,7 @@ CONFIG_PACKAGE_luci-proto-ppp=y
 # 6. Libraries
 #
 # CONFIG_PACKAGE_luci-lib-httpclient is not set
+CONFIG_PACKAGE_luci-lib-ip=y
 # CONFIG_PACKAGE_luci-lib-json is not set
 # CONFIG_PACKAGE_luci-lib-luaneightbl is not set
 CONFIG_PACKAGE_luci-lib-nixio=y
@@ -2513,31 +2514,6 @@ CONFIG_PACKAGE_luci-lib-nixio=y
 # CONFIG_PACKAGE_luci-i18n-base-vi is not set
 CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-base-zh-tw is not set
-# CONFIG_PACKAGE_luci-i18n-commands-ca is not set
-# CONFIG_PACKAGE_luci-i18n-commands-cs is not set
-# CONFIG_PACKAGE_luci-i18n-commands-de is not set
-# CONFIG_PACKAGE_luci-i18n-commands-el is not set
-# CONFIG_PACKAGE_luci-i18n-commands-en is not set
-# CONFIG_PACKAGE_luci-i18n-commands-es is not set
-# CONFIG_PACKAGE_luci-i18n-commands-fr is not set
-# CONFIG_PACKAGE_luci-i18n-commands-he is not set
-# CONFIG_PACKAGE_luci-i18n-commands-hu is not set
-# CONFIG_PACKAGE_luci-i18n-commands-it is not set
-# CONFIG_PACKAGE_luci-i18n-commands-ja is not set
-# CONFIG_PACKAGE_luci-i18n-commands-ms is not set
-# CONFIG_PACKAGE_luci-i18n-commands-no is not set
-# CONFIG_PACKAGE_luci-i18n-commands-pl is not set
-# CONFIG_PACKAGE_luci-i18n-commands-pt is not set
-# CONFIG_PACKAGE_luci-i18n-commands-pt-br is not set
-# CONFIG_PACKAGE_luci-i18n-commands-ro is not set
-# CONFIG_PACKAGE_luci-i18n-commands-ru is not set
-# CONFIG_PACKAGE_luci-i18n-commands-sk is not set
-# CONFIG_PACKAGE_luci-i18n-commands-sv is not set
-# CONFIG_PACKAGE_luci-i18n-commands-tr is not set
-# CONFIG_PACKAGE_luci-i18n-commands-uk is not set
-# CONFIG_PACKAGE_luci-i18n-commands-vi is not set
-CONFIG_PACKAGE_luci-i18n-commands-zh-cn=y
-# CONFIG_PACKAGE_luci-i18n-commands-zh-tw is not set
 # CONFIG_PACKAGE_luci-i18n-ddns-ca is not set
 # CONFIG_PACKAGE_luci-i18n-ddns-cs is not set
 # CONFIG_PACKAGE_luci-i18n-ddns-de is not set
@@ -2818,6 +2794,7 @@ CONFIG_PACKAGE_wget=y
 # CONFIG_PACKAGE_owftpd is not set
 # CONFIG_PACKAGE_owhttpd is not set
 # CONFIG_PACKAGE_owserver is not set
+# CONFIG_PACKAGE_sshfs is not set
 
 #
 # Firewall
@@ -2892,9 +2869,9 @@ CONFIG_PACKAGE_miniupnpd=y
 # IP Addresses and Names
 #
 # CONFIG_PACKAGE_avahi-autoipd is not set
-# CONFIG_PACKAGE_avahi-daemon is not set
+# CONFIG_PACKAGE_avahi-dbus-daemon is not set
 # CONFIG_PACKAGE_avahi-dnsconfd is not set
-# CONFIG_PACKAGE_avahi-utils is not set
+# CONFIG_PACKAGE_avahi-nodbus-daemon is not set
 # CONFIG_PACKAGE_bind-check is not set
 # CONFIG_PACKAGE_bind-client is not set
 # CONFIG_PACKAGE_bind-dig is not set
@@ -3032,7 +3009,6 @@ CONFIG_PACKAGE_tc=y
 # CONFIG_PACKAGE_openssh-moduli is not set
 # CONFIG_PACKAGE_openssh-server is not set
 # CONFIG_PACKAGE_openssh-server-pam is not set
-# CONFIG_PACKAGE_openssh-sftp-avahi-service is not set
 # CONFIG_PACKAGE_openssh-sftp-client is not set
 # CONFIG_PACKAGE_openssh-sftp-server is not set
 # CONFIG_PACKAGE_sshtunnel is not set
@@ -3395,7 +3371,6 @@ CONFIG_PACKAGE_wpad-mini=y
 # CONFIG_PACKAGE_lame is not set
 # CONFIG_PACKAGE_lame-lib is not set
 # CONFIG_PACKAGE_mpc is not set
-# CONFIG_PACKAGE_mpd-avahi-service is not set
 # CONFIG_PACKAGE_mpd-mini is not set
 # CONFIG_PACKAGE_portaudio is not set
 # CONFIG_PACKAGE_pulseaudio-daemon is not set
@@ -3623,6 +3598,7 @@ CONFIG_PACKAGE_mount-utils=y
 # CONFIG_PACKAGE_smartd is not set
 # CONFIG_PACKAGE_smartmontools is not set
 # CONFIG_PACKAGE_smstools3 is not set
+# CONFIG_PACKAGE_sockread is not set
 # CONFIG_PACKAGE_spidev-test is not set
 # CONFIG_PACKAGE_stm32flash is not set
 # CONFIG_PACKAGE_stoken is not set
