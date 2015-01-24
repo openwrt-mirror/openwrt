@@ -304,7 +304,18 @@ define Build/append-rootfs
 endef
 
 define Build/pad-rootfs
-	$(call prepare_generic_squashfs,$@)
+	$(call prepare_generic_squashfs,$@ $(1))
+endef
+
+define Build/pad-offset
+	let \
+		size="$$(stat -c%s $@)" \
+		pad="$(word 1, $(1))" \
+		offset="$(word 2, $(1))" \
+		pad="(pad - ((size + offset) % pad)) % pad" \
+		newsize='size + pad'; \
+		dd if=$@ of=$@.new bs=$$newsize count=1 conv=sync
+	mv $@.new $@
 endef
 
 define Build/check-size
@@ -330,6 +341,7 @@ define Device/Init
   KERNEL_INITRAMFS_PREFIX = $$(IMAGE_PREFIX)-initramfs
   KERNEL_INITRAMFS_IMAGE = $$(KERNEL_INITRAMFS_PREFIX)$$(KERNEL_SUFFIX)
   KERNEL_INSTALL :=
+  KERNEL_NAME := vmlinux
   KERNEL_SIZE :=
 
   FILESYSTEMS := $(TARGET_FILESYSTEMS)
@@ -351,7 +363,7 @@ define Device/Build/initramfs
   $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_INITRAMFS_IMAGE)
 	cp $$^ $$@
 
-  $(KDIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/vmlinux-initramfs
+  $(KDIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_NAME)-initramfs
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL_INITRAMFS))
 endef
@@ -367,7 +379,7 @@ define Device/Build/kernel
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
   $(BIN_DIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_IMAGE)
 	cp $$^ $$@
-  $(KDIR)/$$(KERNEL_IMAGE): $(KDIR)/vmlinux
+  $(KDIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_NAME)
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL))
 	$$(if $$(KERNEL_SIZE),$$(call Device/Build/check_size,$$(KERNEL_SIZE)))

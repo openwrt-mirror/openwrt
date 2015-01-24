@@ -24,6 +24,7 @@ case $board in
 	3g-6200nl)
 		set_wifi_led "edimax:green:wlan"
 		;;
+	3g150b |\
 	3g300m)
 		set_usb_led "tenda:blue:3g"
 		;;
@@ -130,6 +131,10 @@ case $board in
 		set_wifi_led "kingston:blue:wifi"
 		ucidef_set_led_default "system" "system" "kingston:blue:system" "1"
 		;;
+	mlwg2)
+		set_wifi_led "kingston:blue:wifi"
+		ucidef_set_led_default "system" "system" "kingston:blue:system" "1"
+		;;
 	mofi3500-3gn)
 		set_usb_led "mofi3500-3gn:green:usb"
 		;;
@@ -147,6 +152,10 @@ case $board in
 		;;
 	nw718)
 		set_usb_led "nw718:amber:usb"
+		;;
+	m2m)
+		set_wifi_led "m2m:blue:wifi"
+		ucidef_set_led_netdev "eth" "Ethernet" "m2m:green:wan" "eth0"
 		;;
 	omni-emb-hpm)
 		ucidef_set_led_default "power" "POWER" "emb:orange:power" "1"
@@ -191,8 +200,8 @@ case $board in
 		;;
 	rt-n14u)
 		ucidef_set_led_default "power" "power" "asus:blue:power" "1"
-		ucidef_set_led_interafce "lan" "asus:blue:lan"
-		ucidef_set_led_netdev "wan" "asus:blue:wan"
+		ucidef_set_led_netdev "lan" "lan" "asus:blue:lan" eth0.1
+		ucidef_set_led_netdev "wan" "wan" "asus:blue:wan" eth0.2
 		set_wifi_led "asus:blue:air"
 		set_usb_led "asus:blue:usb"
 		;;

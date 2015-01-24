@@ -8,12 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=u-boot
-PKG_VERSION:=2015.01-rc3
+PKG_VERSION:=2015.01
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:= \
 	http://mirror2.openwrt.org/sources \
 	ftp://ftp.denx.de/pub/u-boot
-PKG_SOURCE_VERSION:=e680848838ca20a60d43b66a218d865b
+
+PKG_MD5SUM:=7f08dc9e98a71652bd6968888ed6ec95
+
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0 GPL-2.0+
@@ -63,15 +65,11 @@ define uboot/Cubietruck
   TITLE:=U-Boot for Cubietruck
 endef
 
-define uboot/Hackberry
-  TITLE:=U-Boot for the Hackbeery
-endef
-
 define uboot/Mele_M9
   TITLE:=U-Boot for the Mele M9 (A31)
 endef
 
-define uboot/OLIMEX-A13-SOM
+define uboot/OLIMEX_A13_SOM
   TITLE:=U-Boot for the Olimex A13 SOM
 endef
 
@@ -83,6 +81,10 @@ define uboot/Linksprite_pcDuino3
   TITLE:=U-Boot for Linksprite pcDuino3
 endef  
 
+define uboot/Lamobo_R1
+  TITLE:=U-Boot for Lamobo R1
+endef
+
 UBOOTS:= \
 	A10-OLinuXino-Lime \
 	A13-OLinuXino \
@@ -93,11 +95,11 @@ UBOOTS:= \
 	Cubieboard \
 	Cubieboard2 \
 	Cubietruck \
-	Hackberry \
 	Mele_M9 \
-	OLIMEX-A13-SOM \
+	OLIMEX_A13_SOM \
 	Linksprite_pcDuino \
 	Linksprite_pcDuino3 \
+	Lamobo_R1 \
 
 define Package/uboot/template
 define Package/uboot-sunxi-$(1)

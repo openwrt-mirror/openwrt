@@ -43,6 +43,7 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "1" "0 6t"
 		;;
 
+	3g150b | \
 	3g300m | \
 	w150m | \
 	all0256n | \
@@ -60,6 +61,14 @@ ramips_setup_interfaces()
 	3g-6200nl | \
 	mlw221)
 		ucidef_set_interface_lan "eth0.2"
+		;;
+	mlwg2)
+		ucidef_set_interface_lan "eth0.1"
+		;;
+
+	m2m)
+		ucidef_add_switch "switch0" "4"
+		ucidef_set_interface_lan "eth0"
 		;;
 
 	wizard8800 | \
@@ -110,6 +119,7 @@ ramips_setup_interfaces()
 	dir-300-b7 | \
 	dir-320-b1 | \
 	dir-615-h1 | \
+	firewrt | \
 	hlk-rm04 | \
 	mt7621 | \
 	mt7628 | \
@@ -138,6 +148,7 @@ ramips_setup_interfaces()
 	awm003-evb | \
 	argus-atp52b | \
 	dir-645 | \
+	dir-860l-b1 | \
 	f5d8235-v1 | \
 	f5d8235-v2 | \
 	rt-n14u | \

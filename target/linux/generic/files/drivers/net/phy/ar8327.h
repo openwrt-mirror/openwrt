@@ -84,6 +84,8 @@
 #define   AR8327_MAX_FRAME_SIZE_MTU		BITS(0, 14)
 
 #define AR8327_REG_PORT_STATUS(_i)		(0x07c + (_i) * 4)
+#define   AR8327_PORT_STATUS_TXFLOW_AUTO	BIT(10)
+#define   AR8327_PORT_STATUS_RXFLOW_AUTO	BIT(11)
 
 #define AR8327_REG_HEADER_CTRL			0x098
 #define AR8327_REG_PORT_HEADER(_i)		(0x09c + (_i) * 4)
@@ -219,6 +221,9 @@ struct ar8327_data {
 
 	struct ar8327_led **leds;
 	unsigned int num_leds;
+
+	/* all fields below are cleared on reset */
+	bool eee[AR8XXX_NUM_PHYS];
 };
 
 #endif

@@ -309,6 +309,7 @@ platform_check_image() {
 	tl-mr3220-v2 | \
 	tl-mr3420 | \
 	tl-mr3420-v2 | \
+	tl-wa701nd-v2 | \
 	tl-wa7510n | \
 	tl-wa750re | \
 	tl-wa850re | \
@@ -373,6 +374,7 @@ platform_check_image() {
 		return 1
 		;;
 
+	unifi-outdoor-plus | \
 	uap-pro)
 		[ "$magic_long" != "19852003" ] && {
 			echo "Invalid image type."
@@ -488,6 +490,7 @@ platform_do_upgrade() {
 	om5p)
 		platform_do_upgrade_openmesh "$ARGV"
 		;;
+	unifi-outdoor-plus | \
 	uap-pro)
 		MTD_CONFIG_ARGS="-s 0x180000"
 		default_do_upgrade "$ARGV"

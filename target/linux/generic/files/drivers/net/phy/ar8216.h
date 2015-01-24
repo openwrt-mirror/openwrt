@@ -366,11 +366,13 @@ struct ar8xxx_chip {
 	void (*init_port)(struct ar8xxx_priv *priv, int port);
 	void (*setup_port)(struct ar8xxx_priv *priv, int port, u32 members);
 	u32 (*read_port_status)(struct ar8xxx_priv *priv, int port);
+	u32 (*read_port_eee_status)(struct ar8xxx_priv *priv, int port);
 	int (*atu_flush)(struct ar8xxx_priv *priv);
 	void (*vtu_flush)(struct ar8xxx_priv *priv);
 	void (*vtu_load_vlan)(struct ar8xxx_priv *priv, u32 vid, u32 port_mask);
 	void (*phy_fixup)(struct ar8xxx_priv *priv, int phy);
 	void (*set_mirror_regs)(struct ar8xxx_priv *priv);
+	int (*sw_hw_apply)(struct switch_dev *dev);
 
 	const struct ar8xxx_mib_desc *mib_decs;
 	unsigned num_mibs;
@@ -431,6 +433,8 @@ ar8xxx_phy_dbg_write(struct ar8xxx_priv *priv, int phy_addr,
 		     u16 dbg_addr, u16 dbg_data);
 void
 ar8xxx_phy_mmd_write(struct ar8xxx_priv *priv, int phy_addr, u16 addr, u16 data);
+u16
+ar8xxx_phy_mmd_read(struct ar8xxx_priv *priv, int phy_addr, u16 addr);
 void
 ar8xxx_phy_init(struct ar8xxx_priv *priv);
 int
@@ -487,6 +491,14 @@ int
 ar8xxx_sw_get_port_link(struct switch_dev *dev, int port,
 			struct switch_port_link *link);
 int
+ar8xxx_sw_set_port_reset_mib(struct switch_dev *dev,
+                             const struct switch_attr *attr,
+                             struct switch_val *val);
+int
+ar8xxx_sw_get_port_mib(struct switch_dev *dev,
+                       const struct switch_attr *attr,
+                       struct switch_val *val);
+int
 ar8216_wait_bit(struct ar8xxx_priv *priv, int reg, u32 mask, u32 val);
 
 static inline struct ar8xxx_priv *
@@ -534,6 +546,12 @@ static inline void
 ar8xxx_reg_set(struct ar8xxx_priv *priv, int reg, u32 val)
 {
 	ar8xxx_rmw(priv, reg, 0, val);
+}
+
+static inline void
+ar8xxx_reg_clear(struct ar8xxx_priv *priv, int reg, u32 val)
+{
+	ar8xxx_rmw(priv, reg, val, 0);
 }
 
 #endif

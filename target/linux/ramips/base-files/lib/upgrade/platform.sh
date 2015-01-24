@@ -16,6 +16,7 @@ platform_check_image() {
 	case "$board" in
 	3g-6200n | \
 	3g-6200nl | \
+	3g150b | \
 	3g300m | \
 	a5-v11 | \
 	air3gii | \
@@ -50,15 +51,18 @@ platform_check_image() {
 	f7c027 | \
 	fonera20n | \
 	freestation5 | \
+	firewrt |\
 	hg255d | \
 	hlk-rm04 | \
     hiwifi-hc5761 |\
 	ht-tm02 | \
 	hw550-3g | \
 	ip2202 | \
+	m2m | \
 	m3 | \
 	m4 | \
 	mlw221 | \
+	mlwg2 | \
 	mofi3500-3gn | \
 	mpr-a1 | \
 	mpr-a2 | \
@@ -132,7 +136,8 @@ platform_check_image() {
 		;;
 	cy-swr1100 |\
 	dir-610-a1 |\
-	dir-645)
+	dir-645 |\
+	dir-860l-b1)
 		[ "$magic" != "5ea3a417" ] && {
 			echo "Invalid image type."
 			return 1

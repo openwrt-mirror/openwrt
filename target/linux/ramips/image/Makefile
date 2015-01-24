@@ -51,6 +51,24 @@ define Build/trx
 		-a 4 -f $(word 2,$^)
 endef
 
+define Build/seama
+	$(STAGING_DIR_HOST)/bin/seama -i $@ $(1)
+	mv $@.seama $@
+endef
+
+define Build/seama-seal
+	$(call Build/seama,-s $@.seama $(1))
+endef
+
+define Build/relocate-kernel
+	( \
+		dd if=$(KDIR)/relocate/loader.bin bs=32 conv=sync && \
+		perl -e '@s = stat("$@"); print pack("V", @s[7])' && \
+		cat $@ \
+	) > $@.new
+	mv $@.new $@
+endef
+
 define MkCombineduImage
 	$(call PatchKernelLzma,$(2),$(3))
 	if [ `stat -c%s "$(KDIR)/vmlinux-$(2).bin.lzma"` -gt `expr $(4) - 64` ]; then \
@@ -531,6 +549,8 @@ Image/Build/Profile/M4=$(call BuildFirmware/PorayDualSize/$(1),$(1),m4,M4)
 Image/Build/Profile/MOFI3500-3GN=$(call BuildFirmware/Default8M/$(1),$(1),mofi3500-3gn,MOFI3500-3GN)
 
 # Kernel name should be "Linux Kernel Image" to make the OpenWrt image installable from factory Web UI
+Image/Build/Profile/3G150B=$(call BuildFirmware/Default4M/$(1),$(1),3g150b,3G150B,Linux Kernel Image)
+
 Image/Build/Profile/MPRA1=$(call BuildFirmware/Default4M/$(1),$(1),mpr-a1,MPRA1,Linux Kernel Image)
 Image/Build/Profile/MPRA2=$(call BuildFirmware/Default8M/$(1),$(1),mpr-a2,MPRA2,Linux Kernel Image)
 
@@ -545,6 +565,8 @@ Image/Build/Profile/NCS601W=$(call BuildFirmware/Default8M/$(1),$(1),ncs601W,NCS
 
 nw718_mtd_size=3801088
 Image/Build/Profile/NW718=$(call BuildFirmware/CustomFlashFactory/$(1),$(1),nw718m,NW718,$(nw718_mtd_size),ARA1B4NCRNW718;1,factory)
+
+Image/Build/Profile/M2M=$(call BuildFirmware/Default8M/$(1),$(1),m2m,M2M,Linux Kernel Image)
 
 Image/Build/Profile/OMNI-EMB=$(call BuildFirmware/Default8M/$(1),$(1),omni-emb,OMNI-EMB)
 
@@ -656,6 +678,7 @@ ifeq ($(SUBTARGET),rt305x)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/3G6200N,$(1))
 	$(call Image/Build/Profile/3G6200NL,$(1))
+	$(call Image/Build/Profile/3G150B,$(1))
 	$(call Image/Build/Profile/3G300M,$(1))
 	$(call Image/Build/Profile/A5-11,$(1))
 	$(call Image/Build/Profile/AIR3GII,$(1))
@@ -694,6 +717,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/HT-TM02,$(1))
 	$(call Image/Build/Profile/HW550-3G,$(1))
 	$(call Image/Build/Profile/IP2202,$(1))
+	$(call Image/Build/Profile/M2M,$(1))
 	$(call Image/Build/Profile/M3,$(1))
 	$(call Image/Build/Profile/M4,$(1))
 	$(call Image/Build/Profile/MOFI3500-3GN,$(1))
@@ -829,6 +853,7 @@ Image/Build/Profile/HiWiFi-HC5761=$(call BuildFirmware/Default16M/$(1),$(1),hiwi
 Image/Build/Profile/Y1=$(call BuildFirmware/Default16M/$(1),$(1),Lenovo-y1,Y1)
 Image/Build/Profile/Y1S=$(call BuildFirmware/Default16M/$(1),$(1),Lenovo-y1s,Y1S)
 Image/Build/Profile/MLW221=$(call BuildFirmware/Default16M/$(1),$(1),mlw221,MLW221)
+Image/Build/Profile/MLWG2=$(call BuildFirmware/Default16M/$(1),$(1),mlwg2,MLWG2)
 Image/Build/Profile/WMR300=$(call BuildFirmware/Default8M/$(1),$(1),wmr-300,WMR300)
 Image/Build/Profile/RT-N14U=$(call BuildFirmware/Default8M/$(1),$(1),rt-n14u,RT-N14U)
 Image/Build/Profile/WR8305RT=$(call BuildFirmware/Default8M/$(1),$(1),wr8305rt,WR8305RT)
@@ -857,6 +882,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/Y1,$(1))
 	$(call Image/Build/Profile/Y1S,$(1))
 	$(call Image/Build/Profile/MLW221,$(1))
+	$(call Image/Build/Profile/MLWG2,$(1))
 	$(call Image/Build/Profile/WMR300,$(1))
 	$(call Image/Build/Profile/RT-N14U,$(1))
 	$(call Image/Build/Profile/WR8305RT,$(1))
@@ -872,7 +898,7 @@ endif
 #
 
 ifeq ($(SUBTARGET),mt7621)
-  TARGET_DEVICES += mt7621 wsr-600 wsr-1166
+  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt
 endif
 
 define Device/mt7621
@@ -887,6 +913,26 @@ endef
 define Device/wsr-1166
   DTS := WSR-1166
   IMAGE/sysupgrade.bin := trx | pad-rootfs
+endef
+
+define Device/dir-860l-b1
+  DTS := DIR-860L-B1
+  IMAGES += factory.bin
+  KERNEL := kernel-bin | patch-dtb | relocate-kernel | lzma | uImage lzma
+  IMAGE/sysupgrade.bin := \
+	append-kernel | pad-offset 65536 64 | append-rootfs | \
+	seama -m "dev=/dev/mtdblock/2" -m "type=firmware" | \
+	pad-rootfs | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory.bin := \
+	append-kernel | pad-offset 65536 64 | append-rootfs | pad-rootfs -x 64 | \
+	seama -m "dev=/dev/mtdblock/2" -m "type=firmware" | \
+	check-size $$$$(IMAGE_SIZE) | \
+	seama-seal -m "signature=wrgac13_dlink.2013gui_dir860lb"
+endef
+
+define Device/firewrt
+  DTS := FIREWRT
+  IMAGE_SIZE := $(ralink_default_fw_size_8M)
 endef
 
 #
@@ -926,6 +972,14 @@ define Image/Build
 	$(call Image/Build/$(1))
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 	$(call Image/Build/Profile/$(PROFILE),$(1))
+endef
+endif
+
+ifeq ($(SUBTARGET),mt7621)
+define Build/Compile
+	rm -rf $(KDIR)/relocate
+	$(CP) ./relocate $(KDIR)
+	$(MAKE) -C $(KDIR)/relocate KERNEL_ADDR=$(KERNEL_LOADADDR) CROSS_COMPILE=$(TARGET_CROSS)
 endef
 endif
 

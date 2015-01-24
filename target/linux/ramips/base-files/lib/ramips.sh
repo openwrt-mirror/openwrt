@@ -91,6 +91,9 @@ ramips_board_detect() {
 	*"Buffalo WSR-1166DHP")
 		name="wsr-1166"
 		;;
+	*"Firefly FireWRT")
+		name="firewrt"
+		;;
 	*"CY-SWR1100")
 		name="cy-swr1100"
 		;;
@@ -132,6 +135,9 @@ ramips_board_detect() {
 		;;
 	*"DIR-810L")
 		name="dir-810l"
+		;;
+	*"DIR-860L B1")
+		name="dir-860l-b1"
 		;;
 	*"DAP-1350")
 		name="dap-1350"
@@ -187,6 +193,9 @@ ramips_board_detect() {
 	*"Kingston MLW221")
 		name="mlw221"
 		;;
+	*"Kingston MLWG2")
+		name="mlwg2"
+		;;
 	*"Linksys E1700")
 		name="e1700"
 		;;
@@ -210,6 +219,9 @@ ramips_board_detect() {
 		;;
 	*"NW718")
 		name="nw718"
+		;;
+	*"Intenso Memory 2 Move")
+		name="m2m"
 		;;
 	*"Omnima EMB HPM")
 		name="omni-emb-hpm"
@@ -303,6 +315,9 @@ ramips_board_detect() {
 		;;
 	*"Tenda 3G300M")
 		name="3g300m"
+		;;
+	*"Tenda 3G150B")
+		name="3g150b"
 		;;
 	*"Tenda W306R V2.0")
 		name="w306r-v20"

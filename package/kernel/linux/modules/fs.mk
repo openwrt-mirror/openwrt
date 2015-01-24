@@ -180,7 +180,9 @@ define KernelPackage/fs-f2fs
   KCONFIG:= \
 	CONFIG_F2FS_FS \
 	CONFIG_F2FS_STAT_FS=y \
-	CONFIG_F2FS_FS_XATTR=n \
+	CONFIG_F2FS_FS_XATTR=y \
+	CONFIG_F2FS_FS_POSIX_ACL=n \
+	CONFIG_F2FS_FS_SECURITY=n \
 	CONFIG_F2FS_CHECK_FS=n
   FILES:=$(LINUX_DIR)/fs/f2fs/f2fs.ko
   AUTOLOAD:=$(call AutoLoad,30,f2fs,1)
@@ -321,10 +323,18 @@ define KernelPackage/fs-nfs-common
   KCONFIG:= \
 	CONFIG_LOCKD \
 	CONFIG_SUNRPC
+ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.18.0)),1)
+  FILES:= \
+	$(LINUX_DIR)/fs/nfs_common/grace.ko \
+	$(LINUX_DIR)/fs/lockd/lockd.ko \
+	$(LINUX_DIR)/net/sunrpc/sunrpc.ko
+  AUTOLOAD:=$(call AutoLoad,30,grace sunrpc lockd)
+else
   FILES:= \
 	$(LINUX_DIR)/fs/lockd/lockd.ko \
 	$(LINUX_DIR)/net/sunrpc/sunrpc.ko
   AUTOLOAD:=$(call AutoLoad,30,sunrpc lockd)
+endif
 endef
 
 $(eval $(call KernelPackage,fs-nfs-common))
