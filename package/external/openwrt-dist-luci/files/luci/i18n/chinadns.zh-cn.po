@@ -16,6 +16,18 @@ msgstr "基本设置"
 msgid "Enable"
 msgstr "启用"
 
+msgid "Enable Compression Pointer"
+msgstr "启用压缩指针"
+
+msgid "Using DNS compression pointer mutation, backlist and delaying would be disabled"
+msgstr "使用DNS压缩指针, IP黑名单和延迟时间将被禁用"
+
+msgid "Enable Bidirectional Filter"
+msgstr "启用双向过滤"
+
+msgid "Also filter results inside China from foreign DNS servers"
+msgstr "同时过滤从国外DNS返回的IP为国内的结果"
+
 msgid "Local Port"
 msgstr "本地端口"
 
@@ -30,12 +42,6 @@ msgstr "上游服务器"
 
 msgid "Use commas to separate multiple ip address"
 msgstr "多个IP地址使用逗号隔开"
-
-msgid "Enable Bidirectional Filter"
-msgstr "启用双向过滤"
-
-msgid "Also filter results inside China from foreign DNS servers"
-msgstr "同时过滤从国外DNS返回的IP为国内的结果"
 
 msgid "Delay Time(sec)"
 msgstr "延迟时间(秒)"
