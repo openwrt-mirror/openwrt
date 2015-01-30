@@ -142,6 +142,9 @@ tplink_board_detect() {
 	"084200"*)
 		model="TP-Link TL-WR842N/ND"
 		;;
+	"084300"*)
+		model="TP-Link TL-WR843N/ND"
+		;;
 	"085000"*)
 		model="TP-Link TL-WA850RE"
 		;;
@@ -782,6 +785,9 @@ ar71xx_board_detect() {
 		;;
 	*"WNR612 V2")
 		name="wnr612-v2"
+		;;
+	*"WNR1000 V2")
+		name="wnr1000-v2"
 		;;
 	*WRT160NL)
 		name="wrt160nl"

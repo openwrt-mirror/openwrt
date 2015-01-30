@@ -144,10 +144,38 @@ endef
 
 $(eval $(call KernelPackage,8021q))
 
+
+define KernelPackage/udptunnel4
+  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+  TITLE:=IPv4 UDP tunneling support
+  DEPENDS:=@(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14)
+  KCONFIG:=CONFIG_NET_UDP_TUNNEL
+  FILES:=$(LINUX_DIR)/net/ipv4/udp_tunnel.ko
+  AUTOLOAD:=$(call AutoLoad,32,udp_tunnel)
+endef
+
+
+$(eval $(call KernelPackage,udptunnel4))
+
+define KernelPackage/udptunnel6
+  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+  TITLE:=IPv6 UDP tunneling support
+  DEPENDS:=@(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14) +kmod-ipv6
+  KCONFIG:=CONFIG_NET_UDP_TUNNEL
+  FILES:=$(LINUX_DIR)/net/ipv6/ip6_udp_tunnel.ko
+  AUTOLOAD:=$(call AutoLoad,32,ip6_udp_tunnel)
+endef
+
+$(eval $(call KernelPackage,udptunnel6))
+
+
 define KernelPackage/vxlan
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Native VXLAN Kernel support
-  DEPENDS:=+kmod-iptunnel
+  DEPENDS:= \
+	+kmod-iptunnel \
+	+(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14):kmod-udptunnel4 \
+	+(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14&&IPV6):kmod-udptunnel6
   KCONFIG:=CONFIG_VXLAN
   FILES:=$(LINUX_DIR)/drivers/net/vxlan.ko
   AUTOLOAD:=$(call AutoLoad,13,vxlan)
@@ -251,7 +279,7 @@ $(eval $(call KernelPackage,ipip))
 
 
 IPSEC-m:= \
-	$(if $(CONFIG_LINUX_3_3),,xfrm/xfrm_algo) \
+	xfrm/xfrm_algo \
 	xfrm/xfrm_ipcomp \
 	xfrm/xfrm_user \
 	key/af_key \
@@ -484,7 +512,7 @@ $(eval $(call KernelPackage,gre))
 define KernelPackage/gre6
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=GRE support over IPV6
-  DEPENDS:=+kmod-ipv6 +kmod-iptunnel +kmod-ip6-tunnel @!LINUX_3_3 @!LINUX_3_6
+  DEPENDS:=+kmod-ipv6 +kmod-iptunnel +kmod-ip6-tunnel
   KCONFIG:=CONFIG_IPV6_GRE
   FILES:=$(LINUX_DIR)/net/ipv6/ip6_gre.ko
   AUTOLOAD:=$(call AutoLoad,39,ip6_gre)
@@ -843,7 +871,10 @@ $(eval $(call KernelPackage,pktgen))
 define KernelPackage/l2tp
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Layer Two Tunneling Protocol (L2TP)
-  DEPENDS:=+IPV6:kmod-ipv6
+  DEPENDS:= \
+	+IPV6:kmod-ipv6 \
+	+(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14):kmod-udptunnel4 \
+	+(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14&&IPV6):kmod-udptunnel6
   KCONFIG:=CONFIG_L2TP \
 	CONFIG_L2TP_V3=y \
 	CONFIG_L2TP_DEBUGFS=n

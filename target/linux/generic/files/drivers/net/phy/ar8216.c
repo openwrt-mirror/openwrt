@@ -134,19 +134,6 @@ const struct ar8xxx_mib_desc ar8236_mibs[39] = {
 static DEFINE_MUTEX(ar8xxx_dev_list_lock);
 static LIST_HEAD(ar8xxx_dev_list);
 
-static inline void
-split_addr(u32 regaddr, u16 *r1, u16 *r2, u16 *page)
-{
-	regaddr >>= 1;
-	*r1 = regaddr & 0x1e;
-
-	regaddr >>= 5;
-	*r2 = regaddr & 0x7;
-
-	regaddr >>= 3;
-	*page = regaddr & 0x1ff;
-}
-
 /* inspired by phy_poll_reset in drivers/net/phy/phy_device.c */
 static int
 ar8xxx_phy_poll_reset(struct mii_bus *bus)
@@ -217,8 +204,8 @@ ar8xxx_phy_init(struct ar8xxx_priv *priv)
 	ar8xxx_phy_poll_reset(bus);
 }
 
-static u32
-mii_read32(struct ar8xxx_priv *priv, int phy_id, int regnum)
+u32
+ar8xxx_mii_read32(struct ar8xxx_priv *priv, int phy_id, int regnum)
 {
 	struct mii_bus *bus = priv->mii_bus;
 	u16 lo, hi;
@@ -229,8 +216,8 @@ mii_read32(struct ar8xxx_priv *priv, int phy_id, int regnum)
 	return (hi << 16) | lo;
 }
 
-static void
-mii_write32(struct ar8xxx_priv *priv, int phy_id, int regnum, u32 val)
+void
+ar8xxx_mii_write32(struct ar8xxx_priv *priv, int phy_id, int regnum, u32 val)
 {
 	struct mii_bus *bus = priv->mii_bus;
 	u16 lo, hi;
@@ -260,8 +247,8 @@ ar8xxx_read(struct ar8xxx_priv *priv, int reg)
 	mutex_lock(&bus->mdio_lock);
 
 	bus->write(bus, 0x18, 0, page);
-	usleep_range(1000, 2000); /* wait for the page switch to propagate */
-	val = mii_read32(priv, 0x10 | r2, r1);
+	wait_for_page_switch();
+	val = ar8xxx_mii_read32(priv, 0x10 | r2, r1);
 
 	mutex_unlock(&bus->mdio_lock);
 
@@ -279,8 +266,8 @@ ar8xxx_write(struct ar8xxx_priv *priv, int reg, u32 val)
 	mutex_lock(&bus->mdio_lock);
 
 	bus->write(bus, 0x18, 0, page);
-	usleep_range(1000, 2000); /* wait for the page switch to propagate */
-	mii_write32(priv, 0x10 | r2, r1, val);
+	wait_for_page_switch();
+	ar8xxx_mii_write32(priv, 0x10 | r2, r1, val);
 
 	mutex_unlock(&bus->mdio_lock);
 }
@@ -297,12 +284,12 @@ ar8xxx_rmw(struct ar8xxx_priv *priv, int reg, u32 mask, u32 val)
 	mutex_lock(&bus->mdio_lock);
 
 	bus->write(bus, 0x18, 0, page);
-	usleep_range(1000, 2000); /* wait for the page switch to propagate */
+	wait_for_page_switch();
 
-	ret = mii_read32(priv, 0x10 | r2, r1);
+	ret = ar8xxx_mii_read32(priv, 0x10 | r2, r1);
 	ret &= ~mask;
 	ret |= val;
-	mii_write32(priv, 0x10 | r2, r1, ret);
+	ar8xxx_mii_write32(priv, 0x10 | r2, r1, ret);
 
 	mutex_unlock(&bus->mdio_lock);
 
@@ -613,7 +600,8 @@ ar8216_atu_flush(struct ar8xxx_priv *priv)
 
 	ret = ar8216_wait_bit(priv, AR8216_REG_ATU, AR8216_ATU_ACTIVE, 0);
 	if (!ret)
-		ar8xxx_write(priv, AR8216_REG_ATU, AR8216_ATU_OP_FLUSH);
+		ar8xxx_write(priv, AR8216_REG_ATU, AR8216_ATU_OP_FLUSH |
+						   AR8216_ATU_ACTIVE);
 
 	return ret;
 }
@@ -1290,6 +1278,78 @@ unlock:
 	return ret;
 }
 
+int
+ar8xxx_sw_get_arl_table(struct switch_dev *dev,
+			const struct switch_attr *attr,
+			struct switch_val *val)
+{
+	struct ar8xxx_priv *priv = swdev_to_ar8xxx(dev);
+	struct mii_bus *bus = priv->mii_bus;
+	const struct ar8xxx_chip *chip = priv->chip;
+	char *buf = priv->arl_buf;
+	int i, j, k, len = 0;
+	struct arl_entry *a, *a1;
+	u32 status;
+
+	if (!chip->get_arl_entry)
+		return -EOPNOTSUPP;
+
+	mutex_lock(&priv->reg_mutex);
+	mutex_lock(&bus->mdio_lock);
+
+	chip->get_arl_entry(priv, NULL, NULL, AR8XXX_ARL_INITIALIZE);
+
+	for(i = 0; i < AR8XXX_NUM_ARL_RECORDS; ++i) {
+		a = &priv->arl_table[i];
+		duplicate:
+		chip->get_arl_entry(priv, a, &status, AR8XXX_ARL_GET_NEXT);
+
+		if (!status)
+			break;
+
+		/* avoid duplicates
+		 * ARL table can include multiple valid entries
+		 * per MAC, just with differing status codes
+		 */
+		for (j = 0; j < i; ++j) {
+			a1 = &priv->arl_table[j];
+			if (a->port == a1->port && !memcmp(a->mac, a1->mac, sizeof(a->mac)))
+				goto duplicate;
+		}
+	}
+
+	mutex_unlock(&bus->mdio_lock);
+
+	len += snprintf(buf + len, sizeof(priv->arl_buf) - len,
+                        "address resolution table\n");
+
+	if (i == AR8XXX_NUM_ARL_RECORDS)
+		len += snprintf(buf + len, sizeof(priv->arl_buf) - len,
+				"Too many entries found, displaying the first %d only!\n",
+				AR8XXX_NUM_ARL_RECORDS);
+
+	for (j = 0; j < priv->dev.ports; ++j) {
+		for (k = 0; k < i; ++k) {
+			a = &priv->arl_table[k];
+			if (a->port != j)
+				continue;
+			len += snprintf(buf + len, sizeof(priv->arl_buf) - len,
+					"Port %d: MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
+					j,
+					a->mac[5], a->mac[4], a->mac[3],
+					a->mac[2], a->mac[1], a->mac[0]);
+		}
+	}
+
+	val->value.s = buf;
+	val->len = len;
+
+	mutex_unlock(&priv->reg_mutex);
+
+	return 0;
+}
+
+
 static const struct switch_attr ar8xxx_sw_attr_globals[] = {
 	{
 		.type = SWITCH_TYPE_INT,
@@ -1337,6 +1397,13 @@ static const struct switch_attr ar8xxx_sw_attr_globals[] = {
 		.get = ar8xxx_sw_get_mirror_source_port,
 		.max = AR8216_NUM_PORTS - 1
  	},
+	{
+		.type = SWITCH_TYPE_STRING,
+		.name = "arl_table",
+		.description = "Get ARL table",
+		.set = NULL,
+		.get = ar8xxx_sw_get_arl_table,
+	},
 };
 
 const struct switch_attr ar8xxx_sw_attr_port[2] = {
@@ -1706,12 +1773,46 @@ ar8xxx_phy_config_init(struct phy_device *phydev)
 	return 0;
 }
 
+static bool
+ar8xxx_check_link_states(struct ar8xxx_priv *priv)
+{
+	bool link_new, changed = false;
+	u32 status;
+	int i;
+
+	mutex_lock(&priv->reg_mutex);
+
+	for (i = 0; i < priv->dev.ports; i++) {
+		status = priv->chip->read_port_status(priv, i);
+		link_new = !!(status & AR8216_PORT_STATUS_LINK_UP);
+		if (link_new == priv->link_up[i])
+			continue;
+
+		priv->link_up[i] = link_new;
+		changed = true;
+		dev_info(&priv->phy->dev, "Port %d is %s\n",
+			 i, link_new ? "up" : "down");
+	}
+
+	if (changed)
+		priv->chip->atu_flush(priv);
+
+	mutex_unlock(&priv->reg_mutex);
+
+	return changed;
+}
+
 static int
 ar8xxx_phy_read_status(struct phy_device *phydev)
 {
 	struct ar8xxx_priv *priv = phydev->priv;
 	struct switch_port_link link;
-	int ret;
+
+	/* check for link changes and flush ATU
+	 * if a change was detected
+	 */
+	if (phydev->state == PHY_CHANGELINK)
+		ar8xxx_check_link_states(priv);
 
 	if (phydev->addr != 0)
 		return genphy_read_status(phydev);
@@ -1736,16 +1837,11 @@ ar8xxx_phy_read_status(struct phy_device *phydev)
 	}
 	phydev->duplex = link.duplex ? DUPLEX_FULL : DUPLEX_HALF;
 
-	/* flush the address translation unit */
-	mutex_lock(&priv->reg_mutex);
-	ret = priv->chip->atu_flush(priv);
-	mutex_unlock(&priv->reg_mutex);
-
 	phydev->state = PHY_RUNNING;
 	netif_carrier_on(phydev->attached_dev);
 	phydev->adjust_link(phydev->attached_dev);
 
-	return ret;
+	return 0;
 }
 
 static int
