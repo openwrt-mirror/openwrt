@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -13,7 +13,7 @@ WATCHDOG_DIR:=watchdog
 define KernelPackage/6lowpan-iphc
   USBMENU:=$(OTHER_MENU)
   TITLE:=6lowpan shared code
-  DEPENDS:=@!LINUX_3_3 @!LINUX_3_8 @!LINUX_3_10 @!LINUX_3_13
+  DEPENDS:=@!LINUX_3_8 @!LINUX_3_10 @!LINUX_3_13
   KCONFIG:=CONFIG_6LOWPAN_IPHC
   HIDDEN:=1
   FILES:=$(LINUX_DIR)/net/ieee802154/6lowpan_iphc.ko
@@ -29,7 +29,7 @@ $(eval $(call KernelPackage,6lowpan-iphc))
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +(!LINUX_3_3&&!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13):kmod-6lowpan-iphc
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13):kmod-6lowpan-iphc
   KCONFIG:= \
 	CONFIG_BLUEZ \
 	CONFIG_BLUEZ_L2CAP \
@@ -73,7 +73,7 @@ $(eval $(call KernelPackage,bluetooth))
 define KernelPackage/bluetooth_6lowpan
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth 6LoWPAN support
-  DEPENDS:=+kmod-bluetooth @!(LINUX_3_3||LINUX_3_8||LINUX_3_10||LINUX_3_13||LINUX_3_14)
+  DEPENDS:=+kmod-bluetooth @!(LINUX_3_8||LINUX_3_10||LINUX_3_13||LINUX_3_14)
   KCONFIG:= \
   CONFIG_6LOWPAN=m \
   CONFIG_BT_6LOWPAN=m
@@ -231,7 +231,6 @@ $(eval $(call KernelPackage,gpio-pcf857x))
 
 define KernelPackage/iio-core
   SUBMENU:=$(OTHER_MENU)
-  DEPENDS:=@!LINUX_3_3 @!LINUX_3_6
   TITLE:=Industrial IO core
   KCONFIG:= \
 	CONFIG_IIO \
@@ -444,7 +443,7 @@ $(eval $(call KernelPackage,ssb))
 define KernelPackage/bcma
   SUBMENU:=$(OTHER_MENU)
   TITLE:=BCMA support
-  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx
+  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx @!TARGET_ppc40x
   KCONFIG:=\
 	CONFIG_BCMA \
 	CONFIG_BCMA_POSSIBLE=y \
@@ -699,7 +698,7 @@ define KernelPackage/serial-8250
 	CONFIG_SERIAL_8250_SHARE_IRQ=y \
 	CONFIG_SERIAL_8250_DETECT_IRQ=n \
 	CONFIG_SERIAL_8250_RSA=n
-  FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250$(if $(call kernel_patchver_ge,3.7),$(if $(call kernel_patchver_le,3.8),_core)).ko
+  FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250$(if $(CONFIG_LINUX_3_8),_core).ko
 endef
 
 define KernelPackage/serial-8250/description
@@ -749,7 +748,7 @@ $(eval $(call KernelPackage,ikconfig))
 define KernelPackage/zram
   SUBMENU:=$(OTHER_MENU)
   TITLE:=ZRAM
-  DEPENDS:=@!LINUX_3_3 +kmod-lib-lzo
+  DEPENDS:=+kmod-lib-lzo @!TARGET_ep93xx +(!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13&&!LINUX_3_14):kmod-lib-lz4
   KCONFIG:= \
 	CONFIG_ZSMALLOC \
 	CONFIG_ZRAM \

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011 OpenWrt.org
+# Copyright (C) 2011-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -24,7 +24,7 @@ $(eval $(call KernelPackage,fb-ep93xx))
 define KernelPackage/input-keyboard-ep93xx
   SUBMENU:=$(OTHER_MENU)
   TITLE:=EP93xx Matrix Keypad support
-  DEPENDS:=@TARGET_ep93xx +!LINUX_3_3:kmod-input-matrixkmap
+  DEPENDS:=@TARGET_ep93xx +kmod-input-matrixkmap
   KCONFIG:= \
 	CONFIG_KEYBOARD_EP93XX \
 	CONFIG_INPUT_KEYBOARD=y
@@ -39,18 +39,12 @@ endef
 
 $(eval $(call KernelPackage,input-keyboard-ep93xx))
 
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.8.0)),1)
-SND_EP93XX_SOC_DIR:=cirrus
-else
-SND_EP93XX_SOC_DIR:=ep93xx
-endif
-
 define KernelPackage/sound-soc-ep93xx
   SUBMENU:=$(SOUND_MENU)
   TITLE:=EP93xx SoC sound support
   DEPENDS:=@TARGET_ep93xx +kmod-sound-core +kmod-sound-soc-core
   KCONFIG:=CONFIG_SND_EP93XX_SOC
-  FILES:=$(LINUX_DIR)/sound/soc/$(SND_EP93XX_SOC_DIR)/snd-soc-ep93xx.ko
+  FILES:=$(LINUX_DIR)/sound/soc/cirrus/snd-soc-ep93xx.ko
   AUTOLOAD:=$(call AutoLoad,57,snd-soc-ep93xx)
 endef
 
@@ -67,7 +61,7 @@ define KernelPackage/sound-soc-ep93xx-ac97
   TITLE:=EP93xx SoC AC97 support
   DEPENDS:=@TARGET_ep93xx +kmod-sound-soc-core
   KCONFIG:=CONFIG_SND_EP93XX_SOC_AC97
-  FILES:=$(LINUX_DIR)/sound/soc/$(SND_EP93XX_SOC_DIR)/snd-soc-ep93xx-ac97.ko
+  FILES:=$(LINUX_DIR)/sound/soc/cirrus/snd-soc-ep93xx-ac97.ko
   AUTOLOAD:=$(call AutoLoad,56,snd-soc-ep93xx-ac97)
 endef
 
@@ -82,7 +76,7 @@ define KernelPackage/sound-soc-ep93xx-simone
   TITLE:=Sim.One EP93xx Soc sound support
   DEPENDS:=@TARGET_ep93xx +kmod-sound-soc-core
   KCONFIG:=CONFIG_SND_EP93XX_SOC_SIMONE
-  FILES:=$(LINUX_DIR)/sound/soc/$(SND_EP93XX_SOC_DIR)/snd-soc-simone.ko
+  FILES:=$(LINUX_DIR)/sound/soc/cirrus/snd-soc-simone.ko
   AUTOLOAD:=$(call AutoLoad,59,snd-soc-ep93xx)
 endef
 
