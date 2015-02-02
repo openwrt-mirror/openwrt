@@ -347,6 +347,7 @@ tl-wdr3500)
 
 tl-wdr6300)
 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "tp-link:green:wlan2g" "phy1tpt"
+	ucidef_set_led_netdev "wlan5g" "WLAN5G" "mercury:green:wlan5g" "wlan0"
 	;;
 
 mw4530r)

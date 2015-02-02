@@ -32,25 +32,25 @@
 #include "pci.h"
 #include "tplink-wmac.h"
 
-#define WDR6300_GPIO_LED_WLAN2G                13
-#define WDR6300_GPIO_LED_SYSTEM                14
-#define WDR6300_GPIO_LED_QSS                11
-#define WDR6300_GPIO_LED_WAN                12
-#define WDR6300_GPIO_LED_LAN1                15
-#define WDR6300_GPIO_LED_LAN2                21
-#define WDR6300_GPIO_LED_LAN3                22
-#define WDR6300_GPIO_LED_LAN4                20
+#define WDR6300_GPIO_LED_WLAN2G			13
+#define WDR6300_GPIO_LED_WLAN5G			17
+#define WDR6300_GPIO_LED_SYSTEM			14
+#define WDR6300_GPIO_LED_QSS				11
+#define WDR6300_GPIO_LED_WAN				12
+#define WDR6300_GPIO_LED_LAN1				15
+#define WDR6300_GPIO_LED_LAN2				21
+#define WDR6300_GPIO_LED_LAN3				22
+#define WDR6300_GPIO_LED_LAN4				20
 
-#define WDR6300_GPIO_BTN_RST		16
+#define WDR6300_GPIO_BTN_RST				16
 
 
-#define WDR6300_KEYS_POLL_INTERVAL	20	/* msecs */
-#define WDR6300_KEYS_DEBOUNCE_INTERVAL	(3 * WDR6300_KEYS_POLL_INTERVAL)
+#define WDR6300_KEYS_POLL_INTERVAL			20	/* msecs */
+#define WDR6300_KEYS_DEBOUNCE_INTERVAL		(3 * WDR6300_KEYS_POLL_INTERVAL)
 
 #define WDR6300_MAC0_OFFSET		0
 #define WDR6300_MAC1_OFFSET		6
 #define WDR6300_WMAC_CALDATA_OFFSET	0x1000
-//#define WDR6300_PCIE_CALDATA_OFFSET	0x5000
 
 static const char *wdr6300_part_probes[] = {
 	"tp-link",
@@ -75,6 +75,11 @@ static struct gpio_led wdr6300_leds_gpio[] __initdata = {
 	{
 		.name		= "tp-link:green:wlan2g",
 		.gpio		= WDR6300_GPIO_LED_WLAN2G,
+		.active_low	= 1,
+	},
+	{
+		.name		= "tp-link:green:wlan5g",
+		.gpio		= WDR6300_GPIO_LED_WLAN5G,
 		.active_low	= 1,
 	},
 };
@@ -102,7 +107,7 @@ static void __init wdr6300_setup(void)
 					ARRAY_SIZE(wdr6300_gpio_keys),
 					wdr6300_gpio_keys);
 
-    tplink_register_builtin_wmac1(WDR6300_WMAC_CALDATA_OFFSET, mac, 0);
+	tplink_register_builtin_wmac1(WDR6300_WMAC_CALDATA_OFFSET, mac, 0);
 
 	ath79_register_pci();
 
@@ -119,7 +124,7 @@ static void __init wdr6300_setup(void)
 	ath79_register_eth(1);
 
 	/* WAN */
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 2);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
 
 	/* GMAC0 is connected to the PHY4 of the internal switch */
 	ath79_switch_data.phy4_mii_en = 1;
@@ -129,8 +134,6 @@ static void __init wdr6300_setup(void)
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio1_device.dev;
 
 	ath79_register_eth(0);
-
-//	ath79_register_usb();
 
 	ath79_gpio_output_select(WDR6300_GPIO_LED_LAN1,
 				 AR934X_GPIO_OUT_LED_LINK3);
@@ -145,5 +148,5 @@ static void __init wdr6300_setup(void)
 }
 
 MIPS_MACHINE(ATH79_MACH_TL_WDR6300, "TL-WDR6300",
-	     "TP-LINK TL-WDR6300",
-	     wdr6300_setup);
+		 "TP-LINK TL-WDR6300",
+		 wdr6300_setup);
