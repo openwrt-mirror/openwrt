@@ -45,7 +45,7 @@ EOF
 
 start() {
 	genconf
-	service_start /usr/bin/ss-local -c /tmp/shadowsocks.json
+	service_start /usr/bin/ss-local -c /tmp/shadowsocks.json -b 0.0.0.0
 }
 
 stop() {
