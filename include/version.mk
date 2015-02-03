@@ -67,6 +67,8 @@ VERSION_TAINTS := $(strip $(foreach taint,$(VERSION_TAINT_SPECS), \
 
 PKG_CONFIG_DEPENDS += $(foreach taint,$(VERSION_TAINT_SPECS),$(call taint2sym,$(taint)))
 
+BUILT_DATE := $(shell date +'%b %e %Y')
+
 VERSION_SED:=$(SED) 's,%U,$(VERSION_REPO),g' \
 	-e 's,%V,$(VERSION_NUMBER),g' \
 	-e 's,%v,\L$(subst $(space),_,$(VERSION_NUMBER)),g' \
@@ -82,6 +84,7 @@ VERSION_SED:=$(SED) 's,%U,$(VERSION_REPO),g' \
 	-e 's,%t,$(VERSION_TAINTS),g' \
 	-e 's,%M,$(VERSION_MANUFACTURER),g' \
 	-e 's,%P,$(VERSION_PRODUCT),g' \
-	-e 's,%h,$(VERSION_HWREV),g'
+	-e 's,%h,$(VERSION_HWREV),g' \
+	-e 's,%B,$(BUILT_DATE),g'
 
 VERSION_SED_SCRIPT:=$(subst '\'','\'\\\\\'\'',$(VERSION_SED))
