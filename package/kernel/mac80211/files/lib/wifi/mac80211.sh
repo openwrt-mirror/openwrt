@@ -120,6 +120,7 @@ config wifi-device  radio$devidx
 $dev_id
 $ht_capab
 	option noscan   1
+	option smps	0
 	option country CN
 
 config wifi-iface
