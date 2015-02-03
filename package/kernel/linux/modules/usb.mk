@@ -16,15 +16,10 @@ define KernelPackage/usb-core
   TITLE:=Support for USB
   DEPENDS:=@USB_SUPPORT
   KCONFIG:=CONFIG_USB CONFIG_XPS_USB_HCD_XILINX=n CONFIG_USB_FHCI_HCD=n
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.16.0)),1)
   FILES:= \
 	$(LINUX_DIR)/drivers/usb/core/usbcore.ko \
-	$(LINUX_DIR)/drivers/usb/common/usb-common.ko
-else
-  FILES:= \
-	$(LINUX_DIR)/drivers/usb/core/usbcore.ko \
-	$(LINUX_DIR)/drivers/usb/usb-common.ko
-endif
+	$(LINUX_DIR)/drivers/usb/usb-common.ko@lt3.16 \
+	$(LINUX_DIR)/drivers/usb/common/usb-common.ko@ge3.16
   AUTOLOAD:=$(call AutoLoad,20,usb-common usbcore,1)
   $(call AddDepends/nls)
 endef
@@ -222,7 +217,9 @@ $(eval $(call KernelPackage,usb-phy-twl6030))
 define KernelPackage/usb-gadget
   TITLE:=USB Gadget support
   KCONFIG:=CONFIG_USB_GADGET
-  FILES:=$(LINUX_DIR)/drivers/usb/gadget/udc-core.ko
+  FILES:=\
+	$(LINUX_DIR)/drivers/usb/gadget/udc-core.ko@lt3.18 \
+	$(LINUX_DIR)/drivers/usb/gadget/udc/udc-core.ko@ge3.18
   AUTOLOAD:=$(call AutoLoad,45,udc-core)
   DEPENDS:=@USB_GADGET_SUPPORT
   $(call AddDepends/usb)
