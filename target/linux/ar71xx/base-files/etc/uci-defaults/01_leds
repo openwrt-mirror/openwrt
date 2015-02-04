@@ -176,9 +176,8 @@ mr600)
 	;;
 
 qihoo-c301)
-#	ucidef_set_led_wlan "wlan2g" "WLAN2G" "360:green:status" "phy1tpt"
-	ucidef_set_led_netdev "wlan2g" "WLAN2G" "360:green:status" "wlan1"
-	ucidef_set_led_netdev "wlan5g" "WLAN5G" "360:red:status" "wlan0"
+	ucidef_set_led_wlan "wlan2g" "WLAN2G" "360:green:status" "phy1tpt"
+	ucidef_set_led_wlan "wlan5g" "WLAN5G" "360:red:status" "phy0tpt"
 	ucidef_set_led_default "ethled" "ENABLE_ETH_LIGHT" "360:green:ethsw" "1"
 	;;
 
@@ -347,7 +346,7 @@ tl-wdr3500)
 
 tl-wdr6300)
 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "tp-link:green:wlan2g" "phy1tpt"
-	ucidef_set_led_netdev "wlan5g" "WLAN5G" "mercury:green:wlan5g" "wlan0"
+	ucidef_set_led_wlan "wlan5g" "WLAN5G" "tp-link:green:wlan5g" "phy0tpt"
 	;;
 
 mw4530r)
