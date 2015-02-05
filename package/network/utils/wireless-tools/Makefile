@@ -33,6 +33,7 @@ $(call Package/wireless-tools/Default)
   SECTION:=net
   CATEGORY:=Base system
   TITLE:=Tools for manipulating Linux Wireless Extensions
+  DEPENDS:=+SSP_SUPPORT:libssp
 endef
 
 define Package/wireless-tools/description
