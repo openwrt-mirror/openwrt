@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ShadowVPN
-PKG_VERSION:=0.1.6-0ca655b48a
+PKG_VERSION:=0.1.6-efe6a47922
 PKG_RELEASE:=1
-PKG_REV:=0ca655b48a49f55e05ee57e2b57472d9c179a5a7
+PKG_REV:=efe6a479221e6e9273f0f2644f7d8380de6074c0
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -53,7 +53,6 @@ define Package/ShadowVPN/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/shadowvpn.config $(1)/etc/config/shadowvpn
 	$(INSTALL_DIR) $(1)/etc/shadowvpn
-	$(INSTALL_DATA) ./files/client.conf $(1)/etc/shadowvpn/client.conf
 	$(INSTALL_DATA) ./files/client_up.sh $(1)/etc/shadowvpn/client_up.sh
 	$(INSTALL_DATA) ./files/client_down.sh $(1)/etc/shadowvpn/client_down.sh
 	$(INSTALL_DIR) $(1)/usr/bin

@@ -1,11 +1,9 @@
 #!/bin/sh /etc/rc.common
-# shadowvpn init script
 
 START=90
 STOP=15
 
 CONFIG=/var/etc/shadowvpn.conf
-TPL=/etc/shadowvpn/client.conf
 
 start_vpn() {
 	local enable server port password concurrency mtu intf
@@ -17,18 +15,23 @@ start_vpn() {
 	config_get concurrency $1 concurrency
 	config_get mtu $1 mtu
 	config_get intf $1 intf
-	if [ -z "$server" -o -z "$port" -o -z "$password" ]; then
-		echo "Missing required configuration"
-		return 2
-	fi
+	: ${server:?}
+	: ${port:?}
+	: ${password:?}
 	mkdir -p $(dirname $CONFIG)
-	cat $TPL | grep -v "^#" | grep -v "^$" | \
-	sed -e "s#|SERVER|#$server#" \
-		-e "s#|PORT|#$port#" \
-		-e "s#|PASSWORD|#$password#" \
-		-e "s#|CONCURRENCY|#${concurrency:-1}#" \
-		-e "s#|MTU|#${mtu:-1440}#" \
-		-e "s#|INTF|#${intf:-tun0}#" >$CONFIG
+	cat <<-EOF >$CONFIG
+		server=$server
+		port=$port
+		password=$password
+		mode=client
+		concurrency=${concurrency:-1}
+		mtu=${mtu:-1440}
+		intf=${intf:-tun0}
+		up=/etc/shadowvpn/client_up.sh
+		down=/etc/shadowvpn/client_down.sh
+		pidfile=/var/run/shadowvpn.pid
+		logfile=/var/log/shadowvpn.log
+EOF
 	/usr/bin/shadowvpn -c $CONFIG -s start
 }
 
