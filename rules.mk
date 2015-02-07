@@ -210,6 +210,12 @@ CP:=cp -fpR
 LN:=ln -sf
 XARGS:=xargs -r
 
+BASH:=bash
+TAR:=tar
+FIND:=find
+PATCH:=patch
+PYTHON:=python
+
 INSTALL_BIN:=install -m0755
 INSTALL_DIR:=install -d -m0755
 INSTALL_DATA:=install -m0644
