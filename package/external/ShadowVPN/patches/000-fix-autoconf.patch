@@ -6,7 +6,7 @@ index aae77f9..9b3fcbd 100644
 -EXTRA_DIST = \
 -	autogen.sh \
 -	README.md \
--	LICENSE
+-	COPYING
 +EXTRA_DIST = autogen.sh
  
 -SUBDIRS = src samples
