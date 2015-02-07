@@ -17,5 +17,5 @@ start() {
 stop() {
 	#service_stop /usr/bin/ss-local
 	service_stop /usr/bin/ss-redir
-	#service_start /usr/bin/ss-tunnel
+	#service_stop /usr/bin/ss-tunnel
 }
