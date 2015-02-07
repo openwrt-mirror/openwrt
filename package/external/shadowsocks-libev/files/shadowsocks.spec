@@ -9,12 +9,13 @@ SERVICE_DAEMONIZE=1
 EXTRA_COMMANDS="rules"
 CONFIG_FILE=/var/etc/shadowsocks.json
 
-get_args() {
+get_config() {
 	config_get_bool enable $1 enable
 	config_get_bool use_conf_file $1 use_conf_file
 	config_get config_file $1 config_file
 	config_get server $1 server
 	config_get server_port $1 server_port
+	config_get local $1 local
 	config_get local_port $1 local_port
 	config_get password $1 password
 	config_get timeout $1 timeout
@@ -29,33 +30,11 @@ get_args() {
 	config_get wan_fw_ip $1 wan_fw_ip
 	config_get ipt_ext $1 ipt_ext
 	: ${timeout:=60}
+	: ${local:=0.0.0.0}
 	: ${local_port:=1080}
 	: ${tunnel_port:=5300}
 	: ${tunnel_forward:=8.8.4.4:53}
 	: ${config_file:=/etc/shadowsocks/config.json}
-}
-
-check_args() {
-	local ERR="not defined"
-
-	while [ -n "$1" ]; do
-		case $1 in
-			s)
-				: ${server:?$ERR}
-				;;
-			p)
-				: ${server_port:?$ERR}
-				;;
-			k)
-				: ${password:?$ERR}
-				;;
-			m)
-				: ${encrypt_method:?$ERR}
-				;;
-		esac
-		shift
-	done
-	return 0
 }
 
 start_rules() {
@@ -82,13 +61,15 @@ start_rules() {
 
 start_redir() {
 	service_start /usr/bin/ss-redir \
-		-c "$CONFIG_FILE"
+		-c "$CONFIG_FILE" \
+		-b "$local"
 	return $?
 }
 
 start_tunnel() {
 	service_start /usr/bin/ss-tunnel \
 		-c "$CONFIG_FILE" \
+		-b "$local" \
 		-l "$tunnel_port" \
 		-L "$tunnel_forward" \
 		-u
@@ -97,14 +78,17 @@ start_tunnel() {
 
 rules() {
 	config_load shadowsocks
-	config_foreach get_args shadowsocks
+	config_foreach get_config shadowsocks
 	[ "$enable" = 1 ] || exit 0
 	mkdir -p $(dirname $CONFIG_FILE)
 
 	if [ "$use_conf_file" = 1 ]; then
 		cat $config_file >$CONFIG_FILE
 	else
-		check_args s p k m
+		: ${server:?}
+		: ${server_port:?}
+		: ${password:?}
+		: ${encrypt_method:?}
 		cat <<-EOF >$CONFIG_FILE
 			{
 			    "server": "$server",
@@ -119,16 +103,16 @@ EOF
 	start_rules
 }
 
-start() {
-	rules && start_redir
-	[ "$tunnel_enable" = 1 ] && start_tunnel
-}
-
 boot() {
-	until iptables-save -t nat | grep -q "^-A zone_lan_prerouting"; do
+	until iptables-save -t nat | grep -q "^:zone_lan_prerouting"; do
 		sleep 1
 	done
 	start
+}
+
+start() {
+	rules && start_redir
+	[ "$tunnel_enable" = 1 ] && start_tunnel
 }
 
 stop() {
