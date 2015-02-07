@@ -1,9 +1,9 @@
 --- a/arch/mips/ath79/machtypes.h
 +++ b/arch/mips/ath79/machtypes.h
-@@ -142,6 +142,7 @@ enum ath79_mach_type {
- 	ATH79_MACH_TL_WR841N_V9,	/* TP-LINK TL-WR841N/ND v9 */
+@@ -143,6 +143,7 @@ enum ath79_mach_type {
  	ATH79_MACH_TL_WR842N_V2,	/* TP-LINK TL-WR842N/ND v2 */
  	ATH79_MACH_TL_WR941ND,		/* TP-LINK TL-WR941ND */
+ 	ATH79_MACH_TL_WR941ND_V5,	/* TP-LINK TL-WR941ND v5 */
 +	ATH79_MACH_TUBE2H,		/* Alfa Network Tube2H */
  	ATH79_MACH_UBNT_AIRROUTER,	/* Ubiquiti AirRouter */
  	ATH79_MACH_UBNT_BULLET_M,	/* Ubiquiti Bullet M */

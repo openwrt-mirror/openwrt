@@ -55,7 +55,7 @@ HOST_CONFIGURE_VARS = \
 	CFLAGS="$(HOST_CFLAGS)" \
 	CPPFLAGS="$(HOST_CPPFLAGS)" \
 	LDFLAGS="$(HOST_LDFLAGS)" \
-	SHELL="$(BASH)"
+	SHELL="$(SHELL)"
 
 HOST_CONFIGURE_ARGS = \
 	--target=$(GNU_HOST_NAME) \
@@ -72,12 +72,6 @@ HOST_CONFIGURE_ARGS = \
 HOST_MAKE_FLAGS =
 
 HOST_CONFIGURE_CMD = $(BASH) ./configure
-
-ifneq ($(HOST_OS),Darwin)
-  ifeq ($(CONFIG_BUILD_STATIC_TOOLS),y)
-    HOST_STATIC_LINKING = -static
-  endif
-endif
 
 define Host/Configure/Default
 	$(if $(HOST_CONFIGURE_PARALLEL),+)(cd $(HOST_BUILD_DIR)/$(3); \
