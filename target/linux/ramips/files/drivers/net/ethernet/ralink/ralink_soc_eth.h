@@ -25,6 +25,12 @@
 #include <linux/dma-mapping.h>
 #include <linux/phy.h>
 #include <linux/ethtool.h>
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
+#define u64_stats_fetch_retry_irq u64_stats_fetch_retry_bh
+#define u64_stats_fetch_begin_irq u64_stats_fetch_begin_bh
+#endif
 
 enum fe_reg {
 	FE_REG_PDMA_GLO_CFG = 0,
@@ -43,6 +49,7 @@ enum fe_reg {
 	FE_REG_FE_DMA_VID_BASE,
 	FE_REG_FE_COUNTER_BASE,
 	FE_REG_FE_RST_GL,
+	FE_REG_FE_INT_STATUS2,
 	FE_REG_COUNT
 };
 
@@ -401,6 +408,7 @@ struct fe_soc_data
 	u32 pdma_glo_cfg;
 	u32 rx_int;
 	u32 tx_int;
+	u32 status_int;
 	u32 checksum_bit;
 };
 

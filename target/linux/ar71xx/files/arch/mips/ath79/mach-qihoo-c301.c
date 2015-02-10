@@ -85,9 +85,10 @@ static struct gpio_keys_button qihoo_c301_gpio_keys[] __initdata = {
 		.active_low	= 1,
 	},
 };
-struct flash_platform_data flash __initdata = {NULL, NULL, 0};
+static struct flash_platform_data flash __initdata = {NULL, NULL, 0};
 static int qihoo_c301_board=0;
 static u8 wlan24mac[ETH_ALEN];
+
 static void qihoo_c301_get_mac(const char *name, char *mac)
 {
 	u8 *nvram = (u8 *) KSEG1ADDR(QIHOO_C301_NVRAM_ADDR);
