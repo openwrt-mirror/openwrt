@@ -97,12 +97,11 @@
 	pcie@10140000 {
 		status = "okay";
 
-		pcie-bridge {
+		pcie0 {
 			mt76@0,0 {
 				reg = <0x0000 0 0 0 0>;
 				device_type = "pci";
-				mediatek,mtd-eeprom = <&factory 32768>;
-				mediatek,2ghz = <0>;
+				mediatek,mtd-eeprom = <&factory 0x8000>;
 			};
 		};
 	};
