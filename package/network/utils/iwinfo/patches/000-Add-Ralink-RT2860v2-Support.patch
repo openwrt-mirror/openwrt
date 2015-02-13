@@ -198,8 +198,8 @@ diff -ruN a/iwinfo_lua.c b/iwinfo_lua.c
  	luaL_register(L, NULL, R_wext);
 diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 --- a/iwinfo_rt2860v2.c	1970-01-01 08:00:00.000000000 +0800
-+++ b/iwinfo_rt2860v2.c	2015-01-24 15:18:48.099843767 +0800
-@@ -0,0 +1,626 @@
++++ b/iwinfo_rt2860v2.c	2015-02-10 14:51:02.861981097 +0800
+@@ -0,0 +1,587 @@
 +/*
 + * iwinfo - Wireless Information Library - RT2860v2 Backend (Based on WEXT Backend)
 + *
@@ -274,7 +274,7 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +
 +	if(rt2860v2_ioctl(ifname, SIOCGIWNAME, &wrq) >= 0)
 +	{
-+		return (strncmp(wrq.u.name,"RT2860v2_AP",11)==0);
++		return (strncmp(wrq.u.name,"RTWIFI SoftAP",13)==0);
 +	}
 +	return 0;
 +}
@@ -738,7 +738,7 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +
 +static int rt2860v2_get_hardware_name(const char *ifname, char *buf)
 +{
-+	sprintf(buf, "Ralink/MediaTek RT2860v2");
++	sprintf(buf, "Ralink/MediaTek ApSoC Wireless");
 +	return 0;
 +}
 +
@@ -756,45 +756,6 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +	return -1;
 +}
 +
-+int rt2860v2_get_scanlist(const char *ifname, char *buf, int *len)
-+{
-+	char cmd[256];
-+	char tempchar[256];
-+	int i;
-+    int entrylen=0;
-+	struct iwinfo_scanlist_entry tempscanlist;
-+	sprintf(cmd, "iwpriv %s set SiteSurvey=0", ifname);
-+	system(cmd);
-+	sprintf(cmd, "iwpriv %s get_site_survey", ifname);
-+	FILE *fp = popen(cmd, "r");
-+	for(i=0;i<11;i++)
-+		fscanf(fp, "%s", tempchar);
-+	while(fscanf(fp, "%d%s%2hhx:%2hhx:%2hhx:%2hhx:%2hhx:%2hhx%s%d%s%s%s%s",
-+              &tempscanlist.channel,
-+              &tempscanlist.ssid,
-+              &tempscanlist.mac[0],
-+              &tempscanlist.mac[1],
-+              &tempscanlist.mac[2],
-+              &tempscanlist.mac[3],
-+              &tempscanlist.mac[4],
-+              &tempscanlist.mac[5],
-+              &tempchar,
-+              &tempscanlist.signal,
-+              &tempchar,
-+              &tempchar,
-+              &tempchar,
-+              &tempchar
-+             )==14
-+      )
-+    {
-+        memcpy(&buf[entrylen], &tempscanlist, sizeof(struct iwinfo_scanlist_entry));
-+		entrylen += sizeof(struct iwinfo_scanlist_entry);
-+        memset(&tempscanlist, 0, sizeof(struct iwinfo_scanlist_entry));
-+    }
-+    *len = entrylen;
-+	pclose(fp);
-+	return 0;
-+}
 +
 +const struct iwinfo_ops rt2860v2_ops = {
 +	.name             = "rt2860v2",
@@ -821,7 +782,7 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +	.phyname          = rt2860v2_get_phyname,
 +	.assoclist        = rt2860v2_get_assoclist,
 +	.txpwrlist        = rt2860v2_get_txpwrlist,
-+	.scanlist         = rt2860v2_get_scanlist,
++	.scanlist         = wext_get_scanlist,
 +	.freqlist         = rt2860v2_get_freqlist,
 +	.countrylist      = rt2860v2_get_countrylist,
 +	.close            = rt2860v2_close
