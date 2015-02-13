@@ -22,9 +22,9 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/ufsd-mipseb-3.14
   SUBMENU:=Filesystems
   TITLE:=Paragon ufsd for mipseb kernel-3.14
-  DEPENDS:=+kmod-nls-base +kmod-nls-utf8
+  DEPENDS:=+kmod-nls-base +kmod-nls-utf8 +kmod-ufsd-dep
   FILES:=$(PKG_BUILD_DIR)/ufsd.ko
-  AUTOLOAD:=$(call AutoLoad,30,ufsd)
+  AUTOLOAD:=$(call AutoLoad,AutoProbe,ufsd)
 endef
 
 define KernelPackage/ufsd-mipseb-3.14/description
