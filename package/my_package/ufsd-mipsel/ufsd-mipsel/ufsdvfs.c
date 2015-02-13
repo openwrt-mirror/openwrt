@@ -2924,6 +2924,9 @@ ufsd_create(
 #if defined HAVE_DECL_INOP_CREATE_V3 && HAVE_DECL_INOP_CREATE_V3
     IN umode_t         mode,
     struct nameidata * nd  __attribute__((__unused__))
+#elif defined HAVE_DECL_INOP_CREATE_V4 && HAVE_DECL_INOP_CREATE_V4
+    IN umode_t         mode,
+    bool nd  __attribute__((__unused__))
 #else
     IN int             mode
 #endif
@@ -4942,6 +4945,8 @@ ufsd_lookup(
     IN struct dentry* de
 #if defined HAVE_DECL_INOP_LOOKUP_V2 && HAVE_DECL_INOP_LOOKUP_V2
   , IN struct nameidata * nd  __attribute__((__unused__))
+#elif defined HAVE_DECL_INOP_LOOKUP_V3 && HAVE_DECL_INOP_LOOKUP_V3
+  , unsigned int nd  __attribute__((__unused__))
 #endif
     )
 {
@@ -8516,6 +8521,8 @@ ufsd_direct_IO(
                             offset, nr_segs, ufsd_get_block_io, NULL );
 #elif defined HAVE_DECL_BLOCKDEV_DIRECT_IO_V2 && HAVE_DECL_BLOCKDEV_DIRECT_IO_V2
   ret = blockdev_direct_IO( rw, iocb, i, iov, offset, nr_segs, ufsd_get_block_io );
+#elif defined HAVE_DECL_BLOCKDEV_DIRECT_IO_V3 && HAVE_DECL_BLOCKDEV_DIRECT_IO_V3
+  ret = blockdev_direct_IO( rw, iocb, i, iov, offset, ufsd_get_block_io );
 #else
   #error "Unknown type blockdev_direct_IO"
 #endif

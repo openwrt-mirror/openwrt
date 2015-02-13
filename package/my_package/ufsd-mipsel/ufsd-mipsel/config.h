@@ -44,7 +44,16 @@
 /* ssize_t blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
    const struct iovec *iov, loff_t offset, unsigned long nr_segs, get_block_t
    get_block); */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0)
 #define HAVE_DECL_BLOCKDEV_DIRECT_IO_V2 1
+#else
+#define HAVE_DECL_BLOCKDEV_DIRECT_IO_V2 0
+
+/*static inline ssize_t blockdev_direct_IO(int rw, struct kiocb *iocb,
+2496                 struct inode *inode, struct iov_iter *iter, loff_t offset,
+2497                 get_block_t get_block)*/
+#define HAVE_DECL_BLOCKDEV_DIRECT_IO_V3 1
+#endif
 
 /* Define to 1 if you have the declaration of `block_read_full_page', and to 0
    if you don't. */
@@ -133,8 +142,9 @@
 
 /* ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long,
    loff_t); */
-#define HAVE_DECL_FO_AIO_WRITE_V2 1
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 19) && LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0)
+	#define HAVE_DECL_FO_AIO_WRITE_V2 1
+#endif
 /* int (*statfs) (struct super_block *, struct statfs *); */
 /* #undef HAVE_DECL_FST_GETSB_V1 */
 
@@ -159,8 +169,9 @@
 
 /* Define to 1 if you have the declaration of `generic_file_splice_write', and
    to 0 if you don't. */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0)
 #define HAVE_DECL_GENERIC_FILE_SPLICE_WRITE 1
-
+#endif
 /* Define to 1 if you have the declaration of `generic_file_write', and to 0
    if you don't. */
 #define HAVE_DECL_GENERIC_FILE_WRITE 0
@@ -206,16 +217,27 @@
 /* int (*create) (struct inode *,struct dentry *,int, struct nameidata *); */
 #define HAVE_DECL_INOP_CREATE_V2 0
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,6,0)
 /* int (*create) (struct inode *,struct dentry *,umode_t,struct nameidata *);
    */
 #define HAVE_DECL_INOP_CREATE_V3 1
-
+/*int (*create) (struct inode *,struct dentry *, umode_t, bool);
+*/
+#else
+#define HAVE_DECL_INOP_CREATE_V4 1
 /* struct dentry * (*lookup) (struct inode *,struct dentry *); */
+#endif
+
 #define HAVE_DECL_INOP_LOOKUP_V1 0
 
 /* struct dentry * (*lookup) (struct inode *,struct dentry *, struct nameidata
    *); */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,8,0)
 #define HAVE_DECL_INOP_LOOKUP_V2 1
+#else
+/*struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);*/
+#define HAVE_DECL_INOP_LOOKUP_V3 1
+#endif
 
 /* int (*mkdir) (struct inode *,struct dentry *,int); */
 #define HAVE_DECL_INOP_MKDIR_V1 0
@@ -591,13 +613,13 @@
 
 /* Define to 1 if `get_dentry' is a member of `struct export_operations'. */
 /* #undef HAVE_STRUCT_EXPORT_OPERATIONS_GET_DENTRY */
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 19) && LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0)
 /* Define to 1 if `aio_read' is a member of `struct file_operations'. */
 #define HAVE_STRUCT_FILE_OPERATIONS_AIO_READ 1
 
 /* Define to 1 if `aio_write' is a member of `struct file_operations'. */
 #define HAVE_STRUCT_FILE_OPERATIONS_AIO_WRITE 1
-
+#endif
 /* Define to 1 if `ioctl' is a member of `struct file_operations'. */
 /* #undef HAVE_STRUCT_FILE_OPERATIONS_IOCTL */
 
