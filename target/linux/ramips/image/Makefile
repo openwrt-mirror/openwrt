@@ -116,7 +116,7 @@ define MkImageTpl/squashfs
 		-o $(KDIR)/$(output_name) \
 		-k $(KDIR)/vmlinux-$(1)$(4).bin.lzma \
 		-r $(KDIR)/root.$(1)
-	$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
+	-$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
 endef
 
 define MkImageTpl/initramfs
@@ -124,7 +124,7 @@ define MkImageTpl/initramfs
 	-$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -c \
 		-o $(KDIR)/$(output_name) \
 		-k $(KDIR)/vmlinux-$(1).bin.lzma
-	$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
+	-$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
 endef
 
 # $(1), lowercase board name like "mt7620a_v22sg"
