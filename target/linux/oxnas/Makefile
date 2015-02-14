@@ -10,12 +10,12 @@ ARCH:=arm
 BOARD:=oxnas
 BOARDNAME:=PLXTECH/Oxford NAS782x/OX82x
 DEVICE_TYPE:=nas
-FEATURES:=gpio nand pcie usb usbgadget ramdisk rtc squashfs ubifs
+FEATURES:=gpio nand pcie usb ramdisk rtc squashfs ubifs
 CPU_TYPE:=mpcore
 
 MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 
-KERNEL_PATCHVER:=3.14
+KERNEL_PATCHVER:=3.18
 
 include $(INCLUDE_DIR)/target.mk
 

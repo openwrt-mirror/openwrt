@@ -20,6 +20,12 @@
 
 #include "mtdsplit.h"
 
+/*
+ * uimage_header itself is only 64B, but it may be prepended with another data.
+ * Currently the biggest size is for Edimax devices: 20B + 64B
+ */
+#define MAX_HEADER_LEN		84
+
 #define IH_MAGIC	0x27051956	/* Image Magic Number		*/
 #define IH_NMLEN		32	/* Image Name Length		*/
 
@@ -48,16 +54,13 @@ struct uimage_header {
 };
 
 static int
-read_uimage_header(struct mtd_info *mtd, size_t offset,
-		   struct uimage_header *header)
+read_uimage_header(struct mtd_info *mtd, size_t offset, u_char *buf,
+		   size_t header_len)
 {
-	size_t header_len;
 	size_t retlen;
 	int ret;
 
-	header_len = sizeof(*header);
-	ret = mtd_read(mtd, offset, header_len, &retlen,
-		       (unsigned char *) header);
+	ret = mtd_read(mtd, offset, header_len, &retlen, buf);
 	if (ret) {
 		pr_debug("read error in \"%s\"\n", mtd->name);
 		return ret;
@@ -71,13 +74,19 @@ read_uimage_header(struct mtd_info *mtd, size_t offset,
 	return 0;
 }
 
+/**
+ * __mtdsplit_parse_uimage - scan partition and create kernel + rootfs parts
+ *
+ * @find_header: function to call for a block of data that will return offset
+ *      of a valid uImage header if found
+ */
 static int __mtdsplit_parse_uimage(struct mtd_info *master,
 				   struct mtd_partition **pparts,
 				   struct mtd_part_parser_data *data,
-				   bool (*verify)(struct uimage_header *hdr))
+				   ssize_t (*find_header)(u_char *buf, size_t len))
 {
 	struct mtd_partition *parts;
-	struct uimage_header *header;
+	u_char *buf;
 	int nr_parts;
 	size_t offset;
 	size_t uimage_offset;
@@ -92,25 +101,29 @@ static int __mtdsplit_parse_uimage(struct mtd_info *master,
 	if (!parts)
 		return -ENOMEM;
 
-	header = vmalloc(sizeof(*header));
-	if (!header) {
+	buf = vmalloc(MAX_HEADER_LEN);
+	if (!buf) {
 		ret = -ENOMEM;
 		goto err_free_parts;
 	}
 
 	/* find uImage on erase block boundaries */
 	for (offset = 0; offset < master->size; offset += master->erasesize) {
+		struct uimage_header *header;
+
 		uimage_size = 0;
 
-		ret = read_uimage_header(master, offset, header);
+		ret = read_uimage_header(master, offset, buf, MAX_HEADER_LEN);
 		if (ret)
 			continue;
 
-		if (!verify(header)) {
+		ret = find_header(buf, MAX_HEADER_LEN);
+		if (ret < 0) {
 			pr_debug("no valid uImage found in \"%s\" at offset %llx\n",
 				 master->name, (unsigned long long) offset);
 			continue;
 		}
+		header = (struct uimage_header *)(buf + ret);
 
 		uimage_size = sizeof(*header) + be32_to_cpu(header->ih_size);
 		if ((offset + uimage_size) > master->size) {
@@ -124,7 +137,7 @@ static int __mtdsplit_parse_uimage(struct mtd_info *master,
 	if (uimage_size == 0) {
 		pr_debug("no uImage found in \"%s\"\n", master->name);
 		ret = -ENODEV;
-		goto err_free_header;
+		goto err_free_buf;
 	}
 
 	uimage_offset = offset;
@@ -141,7 +154,7 @@ static int __mtdsplit_parse_uimage(struct mtd_info *master,
 		if (ret) {
 			pr_debug("no rootfs after uImage in \"%s\"\n",
 				 master->name);
-			goto err_free_header;
+			goto err_free_buf;
 		}
 
 		rootfs_size = master->size - rootfs_offset;
@@ -155,7 +168,7 @@ static int __mtdsplit_parse_uimage(struct mtd_info *master,
 		if (ret) {
 			pr_debug("no rootfs before uImage in \"%s\"\n",
 				 master->name);
-			goto err_free_header;
+			goto err_free_buf;
 		}
 
 		rootfs_offset = 0;
@@ -165,7 +178,7 @@ static int __mtdsplit_parse_uimage(struct mtd_info *master,
 	if (rootfs_size == 0) {
 		pr_debug("no rootfs found in \"%s\"\n", master->name);
 		ret = -ENODEV;
-		goto err_free_header;
+		goto err_free_buf;
 	}
 
 	parts[uimage_part].name = KERNEL_PART_NAME;
@@ -176,41 +189,43 @@ static int __mtdsplit_parse_uimage(struct mtd_info *master,
 	parts[rf_part].offset = rootfs_offset;
 	parts[rf_part].size = rootfs_size;
 
-	vfree(header);
+	vfree(buf);
 
 	*pparts = parts;
 	return nr_parts;
 
-err_free_header:
-	vfree(header);
+err_free_buf:
+	vfree(buf);
 
 err_free_parts:
 	kfree(parts);
 	return ret;
 }
 
-static bool uimage_verify_default(struct uimage_header *header)
+static ssize_t uimage_verify_default(u_char *buf, size_t len)
 {
+	struct uimage_header *header = (struct uimage_header *)buf;
+
 	/* default sanity checks */
 	if (be32_to_cpu(header->ih_magic) != IH_MAGIC) {
 		pr_debug("invalid uImage magic: %08x\n",
 			 be32_to_cpu(header->ih_magic));
-		return false;
+		return -EINVAL;
 	}
 
 	if (header->ih_os != IH_OS_LINUX) {
 		pr_debug("invalid uImage OS: %08x\n",
 			 be32_to_cpu(header->ih_os));
-		return false;
+		return -EINVAL;
 	}
 
 	if (header->ih_type != IH_TYPE_KERNEL) {
 		pr_debug("invalid uImage type: %08x\n",
 			 be32_to_cpu(header->ih_type));
-		return false;
+		return -EINVAL;
 	}
 
-	return true;
+	return 0;
 }
 
 static int
@@ -238,9 +253,11 @@ static struct mtd_part_parser uimage_generic_parser = {
 #define FW_MAGIC_WNDR3700	0x33373030
 #define FW_MAGIC_WNDR3700V2	0x33373031
 
-static bool uimage_verify_wndr3700(struct uimage_header *header)
+static ssize_t uimage_verify_wndr3700(u_char *buf, size_t len)
 {
+	struct uimage_header *header = (struct uimage_header *)buf;
 	uint8_t expected_type = IH_TYPE_FILESYSTEM;
+
 	switch be32_to_cpu(header->ih_magic) {
 	case FW_MAGIC_WNR612V2:
 	case FW_MAGIC_WNR1000V2:
@@ -254,14 +271,14 @@ static bool uimage_verify_wndr3700(struct uimage_header *header)
 		expected_type = IH_TYPE_KERNEL;
 		break;
 	default:
-		return false;
+		return -EINVAL;
 	}
 
 	if (header->ih_os != IH_OS_LINUX ||
 	    header->ih_type != expected_type)
-		return false;
+		return -EINVAL;
 
-	return true;
+	return 0;
 }
 
 static int
@@ -280,10 +297,63 @@ static struct mtd_part_parser uimage_netgear_parser = {
 	.type = MTD_PARSER_TYPE_FIRMWARE,
 };
 
+/**************************************************
+ * Edimax
+ **************************************************/
+
+#define FW_EDIMAX_OFFSET	20
+#define FW_MAGIC_EDIMAX		0x43535953
+
+static ssize_t uimage_find_edimax(u_char *buf, size_t len)
+{
+	struct uimage_header *header;
+
+	if (len < FW_EDIMAX_OFFSET + sizeof(*header)) {
+		pr_err("Buffer too small for checking Edimax header\n");
+		return -ENOSPC;
+	}
+
+	header = (struct uimage_header *)(buf + FW_EDIMAX_OFFSET);
+
+	switch be32_to_cpu(header->ih_magic) {
+	case FW_MAGIC_EDIMAX:
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	if (header->ih_os != IH_OS_LINUX ||
+	    header->ih_type != IH_TYPE_FILESYSTEM)
+		return -EINVAL;
+
+	return FW_EDIMAX_OFFSET;
+}
+
+static int
+mtdsplit_uimage_parse_edimax(struct mtd_info *master,
+			      struct mtd_partition **pparts,
+			      struct mtd_part_parser_data *data)
+{
+	return __mtdsplit_parse_uimage(master, pparts, data,
+				       uimage_find_edimax);
+}
+
+static struct mtd_part_parser uimage_edimax_parser = {
+	.owner = THIS_MODULE,
+	.name = "edimax-fw",
+	.parse_fn = mtdsplit_uimage_parse_edimax,
+	.type = MTD_PARSER_TYPE_FIRMWARE,
+};
+
+/**************************************************
+ * Init
+ **************************************************/
+
 static int __init mtdsplit_uimage_init(void)
 {
 	register_mtd_parser(&uimage_generic_parser);
 	register_mtd_parser(&uimage_netgear_parser);
+	register_mtd_parser(&uimage_edimax_parser);
 
 	return 0;
 }

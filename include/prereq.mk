@@ -30,12 +30,12 @@ define Require
     prereq: prereq-$(1)
 
     prereq-$(1): $(if $(PREREQ_PREV),prereq-$(PREREQ_PREV)) FORCE
-		echo -n "Checking '$(1)'... "
+		printf "Checking '$(1)'... "
 		if $(NO_TRACE_MAKE) -f $(firstword $(MAKEFILE_LIST)) check-$(1) >/dev/null 2>/dev/null; then \
 			echo 'ok.'; \
 		else \
 			echo 'failed.'; \
-			echo -e "$(PKG_NAME): $(strip $(2))" >> $(TMP_DIR)/.prereq-error; \
+			echo "$(PKG_NAME): $(strip $(2))" >> $(TMP_DIR)/.prereq-error; \
 		fi
 
     check-$(1): FORCE
@@ -88,7 +88,8 @@ define SetupHostCommand
   define Require/$(1)
 	for cmd in $(call QuoteHostCommand,$(3)) $(call QuoteHostCommand,$(4)) \
 	           $(call QuoteHostCommand,$(5)) $(call QuoteHostCommand,$(6)) \
-	           $(call QuoteHostCommand,$(7)) $(call QuoteHostCommand,$(8)); do \
+	           $(call QuoteHostCommand,$(7)) $(call QuoteHostCommand,$(8)) \
+			   $(call QuoteHostCommand,$(9)); do \
 		if [ -n "$$$$$$$$cmd" ]; then \
 			bin="$$$$$$$$(PATH="$(subst $(space),:,$(filter-out $(STAGING_DIR_HOST)/%,$(subst :,$(space),$(PATH))))" \
 				which "$$$$$$$${cmd%% *}")"; \

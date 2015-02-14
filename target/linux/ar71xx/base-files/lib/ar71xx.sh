@@ -97,6 +97,9 @@ tplink_board_detect() {
 	"015300"*)
 		model="EasyLink EL-MINI"
 		;;
+	"120000"*)
+		model="MERCURY MAC1200R"
+		;;
 	"3C0001"*)
 		model="OOLITE"
 		;;
@@ -179,6 +182,9 @@ tplink_board_detect() {
 		;;
 	"001101"*)
 		model="TP-Link TL-MR11U"
+		;;
+	"001201"*)
+		model="TP-Link TL-MR12U"
 		;;
 	"001301"*)
 		model="TP-Link TL-MR13U"
@@ -437,6 +443,9 @@ ar71xx_board_detect() {
 		;;
 	*LS-SR71)
 		name="ls-sr71"
+		;;
+	*"MAC1200R")
+		name="mc-mac1200r"
 		;;
 	*MR600v2)
 		name="mr600v2"
@@ -725,6 +734,9 @@ ar71xx_board_detect() {
 		;;
 	*"TL-MR11U")
 		name="tl-mr11u"
+		;;
+	*"TL-MR12U")
+		name="tl-mr12u"
 		;;
 	*"TL-MR13U")
 		name="tl-mr13u"

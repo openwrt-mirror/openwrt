@@ -105,6 +105,9 @@ get_status_led() {
 	ls-sr71)
 		status_led="ubnt:green:d22"
 		;;
+	mc-mac1200r)
+		status_led="mercury:green:system"
+		;;
 	mr600)
 		status_led="mr600:orange:power"
 		;;
@@ -130,7 +133,7 @@ get_status_led() {
 		status_led="nbg460n:green:power"
 		;;
 	nbg6716)
-		status_led="nbg6716:white:power"
+		status_led="zyxel:white:power"
 		;;
 	om2p | \
 	om2pv2 | \
@@ -235,6 +238,7 @@ get_status_led() {
 	archer-c7 | \
 	tl-wdr4900-v2 | \
 	tl-mr10u | \
+	tl-mr12u | \
 	tl-mr13u | \
 	tl-wdr4300 | \
 	tl-wr703n | \
