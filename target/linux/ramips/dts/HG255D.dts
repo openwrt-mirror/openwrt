@@ -13,8 +13,16 @@
 	pinctrl {
 		state_default: pinctrl0 {
 			gpio {
-				ralink,group = "spi", "i2c", "jtag", "rgmii", "mdio", "uartf";
+				ralink,group = "spi", "i2c", "jtag", "uartf";
 				ralink,function = "gpio";
+			};
+			rgmii {
+				ralink,group = "rgmii";
+				ralink,function = "rgmii";
+			};
+			mdio {
+				ralink,group = "mdio";
+				ralink,function = "mdio";
 			};
 		};
 	};
@@ -114,14 +122,13 @@
 
 	esw@10110000 {
 		ralink,portmap = <0x2f>;
-		ralink,fct2 = <0x0002500c>;
 		/*
-		 * ext phy base addr 31, rx/tx clock skew 0,
-		 * turbo mii off, rgmi 3.3v off, port 5 polling off
-		 * port5: enabled, gige, full-duplex, rx/tx-flow-control
-		 * port6: enabled, gige, full-duplex, rx/tx-flow-control
+		 * ext phy base addr 0x5, rx/tx clock skew 1,
+		 * turbo mii off, rgmi 3.3v off, port 5 polling enabled
+		 * port5: Default value
+		 * port6: force enabled, gige, full-duplex, rx/tx-flow-control
 		*/
-		ralink,fpa2 = <0x1f003fff>;
+		ralink,fpa2 = <0x25502d28>;
 
 	};
 
