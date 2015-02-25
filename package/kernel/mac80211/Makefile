@@ -1488,6 +1488,29 @@ define KernelPackage/brcmfmac/description
  Kernel module for Broadcom IEEE802.11n USB Wireless cards
 endef
 
+define KernelPackage/brcmfmac/config
+  if PACKAGE_kmod-brcmfmac
+
+	config BRCMFMAC_SDIO
+		bool "Enable SDIO bus interface support"
+		default n
+		help
+		  Enable support for cards attached to an SDIO bus.
+		  Select this option only if you are sure that your
+		  board has a Broadcom wireless chip atacched to
+		  that bus.
+
+	config BRCMFMAC_PCIE
+		bool "Enable PCIE bus interface support"
+		depends on PCI_SUPPORT
+		default y
+		help
+		  Supported PCIe connected chipsets:
+		  BCM4354, BCM4356, BCM43567, BCM43570, BCM43602
+
+  endif
+endef
+
 config_package=$(if $(CONFIG_PACKAGE_kmod-$(1)),m)
 
 config-y:= \
@@ -1558,7 +1581,9 @@ config-y += B43LEGACY_DMA_MODE
 config-$(call config_package,brcmutil) += BRCMUTIL
 config-$(call config_package,brcmsmac) += BRCMSMAC
 config-$(call config_package,brcmfmac) += BRCMFMAC
+config-$(CONFIG_BRCMFMAC_SDIO) += BRCMFMAC_SDIO
 config-y += BRCMFMAC_USB
+config-$(CONFIG_BRCMFMAC_PCIE) += BRCMFMAC_PCIE
 config-$(CONFIG_PACKAGE_BRCM80211_DEBUG) += BRCMDBG
 
 config-$(call config_package,mac80211-hwsim) += MAC80211_HWSIM
