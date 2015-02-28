@@ -1,7 +1,7 @@
 diff -ruN a/api/mtk.h b/api/mtk.h
 --- a/api/mtk.h	1970-01-01 08:00:00.000000000 +0800
-+++ b/api/mtk.h	2015-02-17 13:29:41.122727050 +0800
-@@ -0,0 +1,92 @@
++++ b/api/mtk.h	2015-02-28 17:04:23.634425626 +0800
+@@ -0,0 +1,88 @@
 +#ifndef __MTK_H__
 +#define __MTK_H__
 +
@@ -65,23 +65,19 @@ diff -ruN a/api/mtk.h b/api/mtk.h
 +        RT_802_11_MAC_ENTRY Entry[MAX_NUMBER_OF_MAC];
 +} RT_802_11_MAC_TABLE, *PRT_802_11_MAC_TABLE;
 +
-+
++//Head:Ch  SSID                             BSSID               Security               Siganl(%)W-Mode  ExtCH  NT WPS DPID     
 +typedef struct _SITE_SURVEY 
 +{ 
 +	char channel[4];
-+//	unsigned char channel;
-+//	unsigned char centralchannel;
-+//	unsigned char unused;
 +	unsigned char ssid[33]; 
-+	char bssid[18];
-+	char encryption[9];
-+	char authmode[16];
++	char bssid[20];
++	char encryption[23];
 +	char signal[9];
 +	char wmode[8];
++	char extch[7];
++	char nt[3];
 +	char wps[4];
 +	char dpid[5];
-+//	char bsstype[3];
-+//	char centralchannel[3];
 +} SITE_SURVEY;
 +
 +typedef struct _SITE_SURVEY_ARRAY
@@ -96,7 +92,7 @@ diff -ruN a/api/mtk.h b/api/mtk.h
 +
 diff -ruN a/include/iwinfo/lua.h b/include/iwinfo/lua.h
 --- a/include/iwinfo/lua.h	2015-01-11 11:53:32.000000000 +0800
-+++ b/include/iwinfo/lua.h	2015-01-23 13:18:24.210275000 +0800
++++ b/include/iwinfo/lua.h	2015-02-28 14:08:46.309334969 +0800
 @@ -41,6 +41,9 @@
  #define IWINFO_NL80211_META	"iwinfo.nl80211"
  #endif
@@ -109,7 +105,7 @@ diff -ruN a/include/iwinfo/lua.h b/include/iwinfo/lua.h
  	{ #op, iwinfo_L_##type##_##op }
 diff -ruN a/include/iwinfo.h b/include/iwinfo.h
 --- a/include/iwinfo.h	2015-01-11 11:53:32.000000000 +0800
-+++ b/include/iwinfo.h	2015-01-23 13:18:24.209275000 +0800
++++ b/include/iwinfo.h	2015-02-28 14:08:46.385333124 +0800
 @@ -190,6 +190,7 @@
  extern const struct iwinfo_ops madwifi_ops;
  extern const struct iwinfo_ops nl80211_ops;
@@ -120,7 +116,7 @@ diff -ruN a/include/iwinfo.h b/include/iwinfo.h
  
 diff -ruN a/iwinfo_lib.c b/iwinfo_lib.c
 --- a/iwinfo_lib.c	2015-01-11 11:53:32.000000000 +0800
-+++ b/iwinfo_lib.c	2015-01-23 13:18:24.210275000 +0800
++++ b/iwinfo_lib.c	2015-02-28 14:08:46.386333100 +0800
 @@ -327,6 +327,9 @@
  #ifdef USE_WL
  	&wl_ops,
@@ -133,7 +129,7 @@ diff -ruN a/iwinfo_lib.c b/iwinfo_lib.c
  
 diff -ruN a/iwinfo_lua.c b/iwinfo_lua.c
 --- a/iwinfo_lua.c	2015-01-11 11:53:32.000000000 +0800
-+++ b/iwinfo_lua.c	2015-01-23 13:18:24.216275000 +0800
++++ b/iwinfo_lua.c	2015-02-28 14:08:46.387333076 +0800
 @@ -699,6 +699,36 @@
  LUA_WRAP_STRUCT_OP(nl80211,hardware_id)
  #endif
@@ -228,8 +224,8 @@ diff -ruN a/iwinfo_lua.c b/iwinfo_lua.c
  	luaL_register(L, NULL, R_wext);
 diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 --- a/iwinfo_rt2860v2.c	1970-01-01 08:00:00.000000000 +0800
-+++ b/iwinfo_rt2860v2.c	2015-02-17 14:24:36.880508975 +0800
-@@ -0,0 +1,682 @@
++++ b/iwinfo_rt2860v2.c	2015-02-28 18:15:05.307603566 +0800
+@@ -0,0 +1,677 @@
 +/*
 + * iwinfo - Wireless Information Library - RT2860v2 Backend (Based on WEXT Backend)
 + *
@@ -316,7 +312,7 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +
 +static int rt2860v2_get_mode(const char *ifname, int *buf)
 +{
-+	*buf = IWINFO_OPMODE_MASTER;
++	*buf = strncmp(ifname,"ra",2)?IWINFO_OPMODE_CLIENT:IWINFO_OPMODE_MASTER;
 +	return 0;
 +}
 +
@@ -823,7 +819,9 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +	}
 +
 +	//Write data
-+	sprintf(header, "%-4s%-33s%-18s%-9s%-16s%-9s%-8s%-4s%-5s\n", "Ch", "SSID", "BSSID", "Enc", "Auth", "Siganl(%)", "W-Mode"," WPS", " DPID");
++	//Head:Ch  SSID                             BSSID               Security               Siganl(%)W-Mode  ExtCH  NT WPS DPID
++	//     1   TP-LINK_88071A                   1c:fa:68:88:07:1a   WPA1PSKWPA2PSK/AES     24       11b/g/n ABOVE  In YES     
++	sprintf(header, "%-4s%-33s%-20s%-23s%-9s%-8s%-7s%-3s%-4s%-4s\n", "Ch", "SSID", "BSSID", "Security", "Siganl(%)", "W-Mode","ExtCH","NT","WPS", "DPID");
 +	if (wrq.u.data.length > 0)
 +	{
 +		ssap=(SSA *)(wrq.u.data.pointer+strlen(header)+1);
@@ -834,11 +832,12 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +		{
 +			ssap->SiteSurvey[i].channel[3] = '\0';
 +			ssap->SiteSurvey[i].ssid[32] = '\0';
-+			ssap->SiteSurvey[i].bssid[17] = '\0';
-+			ssap->SiteSurvey[i].encryption[8] = '\0';
-+			ssap->SiteSurvey[i].authmode[15] = '\0';
++			ssap->SiteSurvey[i].bssid[19] = '\0';
++			ssap->SiteSurvey[i].encryption[22] = '\0';
 +			ssap->SiteSurvey[i].signal[8] = '\0';
 +			ssap->SiteSurvey[i].wmode[7] = '\0';
++			ssap->SiteSurvey[i].extch[6] = '\0';
++			ssap->SiteSurvey[i].nt[2] = '\0';
 +			ssap->SiteSurvey[i].wps[3] = '\0';
 +			ssap->SiteSurvey[i].dpid[4] = '\0';
 +			sp+=strlen(header);
@@ -848,20 +847,11 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +		{
 +			for (i = 0; i < apCount; i++)
 +			{
-+/*				dbg("%-4s%-33s%-18s%-9s%-16s%-9s%-8s%-4s%-5s\n",
-+					ssap->SiteSurvey[i].channel,
-+					(char*)ssap->SiteSurvey[i].ssid,
-+					ssap->SiteSurvey[i].bssid,
-+					ssap->SiteSurvey[i].encryption,
-+					ssap->SiteSurvey[i].authmode,
-+					ssap->SiteSurvey[i].signal,
-+					ssap->SiteSurvey[i].wmode,
-+					ssap->SiteSurvey[i].wps,
-+					ssap->SiteSurvey[i].dpid
-+				);*/
 +				memset(&tempscanlist, 0, sizeof(struct iwinfo_scanlist_entry));
-+				sscanf(ssap->SiteSurvey[i].channel,"%d",&tempscanlist.channel);
-+				strcpy(tempscanlist.ssid,ssap->SiteSurvey[i].ssid);
++				tempscanlist.mode=IWINFO_OPMODE_MASTER;//Hoping that there is no Ad-Hoc :-D
++				tempscanlist.channel=atoi(ssap->SiteSurvey[i].channel);
++				int ssidlen=31;while(ssap->SiteSurvey[i].ssid[ssidlen]==' ')ssidlen--;
++				strlcpy(tempscanlist.ssid,ssap->SiteSurvey[i].ssid,ssidlen+2);
 +				sscanf(ssap->SiteSurvey[i].bssid, "%2hhx:%2hhx:%2hhx:%2hhx:%2hhx:%2hhx",
 +					   &tempscanlist.mac[0],
 +					   &tempscanlist.mac[1],
@@ -869,7 +859,8 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +					   &tempscanlist.mac[3],
 +					   &tempscanlist.mac[4],
 +					   &tempscanlist.mac[5]);
-+
++				tempscanlist.quality_max=100;
++				tempscanlist.quality=atoi(ssap->SiteSurvey[i].signal);
 +				//Signal,Encryption and AuthMode??
 +
 +				memcpy(&buf[entrylen], &tempscanlist, sizeof(struct iwinfo_scanlist_entry));
@@ -914,7 +905,7 @@ diff -ruN a/iwinfo_rt2860v2.c b/iwinfo_rt2860v2.c
 +};
 diff -ruN a/Makefile b/Makefile
 --- a/Makefile	2015-01-11 11:53:32.000000000 +0800
-+++ b/Makefile	2015-01-23 13:26:00.880773833 +0800
++++ b/Makefile	2015-02-28 14:08:46.388333051 +0800
 @@ -32,6 +32,11 @@
  	IWINFO_LIB_OBJ     += iwinfo_nl80211.o
  endif
