@@ -1,0 +1,12 @@
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_data.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_data.c
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_data.c
+@@ -1014,6 +1014,7 @@ BOOLEAN RTMP_FillTxBlkInfo(
+ 		{
+ 			TX_BLK_SET_FLAG(pTxBlk, fTX_bMoreData);
+ 		}
++		pTxBlk->pMbss = &pAd->ApCfg.MBSSID[pTxBlk->apidx];
+ 	}
+ 	else
+ 	{

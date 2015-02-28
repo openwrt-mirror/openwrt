@@ -1,0 +1,62 @@
+Index: mt7620-wifi2716_all_dpa_20130426/rt2860v2/ap/ap.c
+===================================================================
+--- mt7620-wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap.c
++++ mt7620-wifi2716_all_dpa_20130426/rt2860v2/ap/ap.c
+@@ -306,6 +306,17 @@ VOID APStartUp(
+ 		else
+ 			pMbss->WpaMixPairCipher = MIX_CIPHER_NOTUSE;
+ 
++        if (pMbss->WepStatus == Ndis802_11Encryption2Enabled ||
++            pMbss->WepStatus == Ndis802_11Encryption3Enabled ||
++            pMbss->WepStatus == Ndis802_11Encryption4Enabled)
++        {
++            RT_CfgSetWPAPSKKey(pAd, pMbss->WPAKeyString,
++                               strlen(pMbss->WPAKeyString),
++                               (PUCHAR)pAd->ApCfg.MBSSID[apidx].Ssid,
++                               pAd->ApCfg.MBSSID[apidx].SsidLen,
++                               pAd->ApCfg.MBSSID[apidx].PMK);
++        }
++
+ 		/* Generate the corresponding RSNIE */
+ 		RTMPMakeRSNIE(pAd, pMbss->AuthMode, pMbss->WepStatus, apidx);
+ 
+Index: mt7620-wifi2716_all_dpa_20130426/rt2860v2/ap/ap_cfg.c
+===================================================================
+--- mt7620-wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_cfg.c
++++ mt7620-wifi2716_all_dpa_20130426/rt2860v2/ap/ap_cfg.c
+@@ -6404,6 +6404,9 @@ INT	Set_AP_WPAPSK_Proc(
+ 	if (retval == FALSE)
+ 		return FALSE;
+ 
++    /* Keep this key string */
++    strcpy(pAd->ApCfg.MBSSID[apidx].WPAKeyString, arg);
++
+ #ifdef WSC_AP_SUPPORT
+     NdisZeroMemory(pMBSSStruct->WscControl.WpaPsk, 64);
+     pMBSSStruct->WscControl.WpaPskLen = 0;
+Index: mt7620-wifi2716_all_dpa_20130426/rt2860v2/common/cmm_profile.c
+===================================================================
+--- mt7620-wifi2716_all_dpa_20130426.orig/rt2860v2/common/cmm_profile.c
++++ mt7620-wifi2716_all_dpa_20130426/rt2860v2/common/cmm_profile.c
+@@ -1711,6 +1711,9 @@ static int rtmp_parse_wpapsk_buffer_from
+ 	if (ret == FALSE)
+ 		return FALSE;
+ 
++    /* Keep this key string */
++    strcpy(pAd->ApCfg.MBSSID[i].WPAKeyString, tmpbuf);
++
+ #ifdef WSC_AP_SUPPORT
+ 	NdisZeroMemory(pAd->ApCfg.MBSSID[i].WscControl.WpaPsk, 64);
+ 	pAd->ApCfg.MBSSID[i].WscControl.WpaPskLen = 0;
+Index: mt7620-wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h
+===================================================================
+--- mt7620-wifi2716_all_dpa_20130426.orig/rt2860v2/include/rtmp.h
++++ mt7620-wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h
+@@ -1405,6 +1405,7 @@ typedef struct _MULTISSID_STRUCT {
+ 	UCHAR TimBitmaps[WLAN_MAX_NUM_OF_TIM];
+ 
+ 	/* WPA */
++	UCHAR WPAKeyString[65];
+ 	UCHAR GMK[32];
+ 	UCHAR PMK[32];
+ 	UCHAR GTK[32];

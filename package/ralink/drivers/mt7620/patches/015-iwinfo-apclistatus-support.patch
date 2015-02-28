@@ -1,0 +1,2400 @@
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_apcli_inf.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_apcli_inf.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_apcli_inf.c	2014-03-20 14:01:32.250614495 +0800
+@@ -86,6 +86,7 @@
+ 	netDevOpHook.stop = ApCli_VirtualIF_Close;
+ 	netDevOpHook.xmit = ApCli_VirtualIF_PacketSend;
+ 	netDevOpHook.ioctl = ApCli_VirtualIF_Ioctl;
++	netDevOpHook.iw_handler = (struct iw_handler_def *) &rt28xx_ap_iw_handler_def;
+ 	RTMP_AP_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_APC_INIT,
+ 						0, &netDevOpHook, 0);
+ }
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_cfg.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_cfg.c	2014-03-20 14:01:32.230614495 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_cfg.c	2014-03-20 14:02:39.998614487 +0800
+@@ -8838,7 +8838,117 @@
+ extern VOID eFuseGetFreeBlockCount(PRTMP_ADAPTER pAd, PUINT EfuseFreeBlock);
+ #endif /* RTMP_EFUSE_SUPPORT */
+ 
++VOID RTMPIoctlConnstatus(
++	IN PRTMP_ADAPTER pAd, 
++	IN RTMP_IOCTL_INPUT_STRUCT *wrq)
++{
++	INT Status;
++	PSTRING msg;
++    	UCHAR idx = 0;
++	UCHAR i = 0;
++	ULONG txCount = 0;
++	UINT32 rxCount = 0;
++ 	POS_COOKIE pObj;
++ 	UCHAR ifIndex;
++	BOOLEAN bConnect=FALSE;
++	UINT32 MaxWcidNum = MAX_LEN_OF_MAC_TABLE;
++	STRING	ChStr[24] = {0};
++/*	msg = (PSTRING)kmalloc(sizeof(CHAR)*(2048), MEM_ALLOC_FLAG); */
++	os_alloc_mem(pAd, (UCHAR **)&msg, sizeof(CHAR)*(2048));
++	if (msg == NULL) {
++		return;
++	}
++
++
++    memset(msg, 0x00, 1600);
++    sprintf(msg, "\n");
++
++ 	pObj = (POS_COOKIE) pAd->OS_Cookie;
++ 
++ 	DBGPRINT(RT_DEBUG_TRACE, ("==>RTMPIoctlConnstatus\n"));
++ 
++ 	if (pObj->ioctl_if_type != INT_APCLI)
++ 		return FALSE;
++ 
++ 	ifIndex = pObj->ioctl_if;
+ 
++#ifdef MAC_REPEATER_SUPPORT
++	if (pAd->ApCfg.bMACRepeaterEn)
++		MaxWcidNum = MAX_MAC_TABLE_SIZE_WITH_REPEATER;
++#endif /* MAC_REPEATER_SUPPORT */
++ 
++ 	//DBGPRINT(RT_DEBUG_OFF, ("=============================================================\n"));
++ 	sprintf(msg+strlen(msg), "=============================================================\n");
++ 	if((pAd->ApCfg.ApCliTab[ifIndex].CtrlCurrState == APCLI_CTRL_CONNECTED)
++ 		&& (pAd->ApCfg.ApCliTab[ifIndex].SsidLen != 0))
++ 	{
++ 		for (i=0; i<MaxWcidNum; i++)
++ 		{
++ 			PMAC_TABLE_ENTRY pEntry = &pAd->MacTab.Content[i];
++ 
++ 			if ( IS_ENTRY_APCLI(pEntry)
++				&& (pEntry->Sst == SST_ASSOC)
++				&& (pEntry->PortSecured == WPA_802_1X_PORT_SECURED))
++ 				{
++				 	sprintf(msg+strlen(msg), "ApCli%d Connected AP : %02X:%02X:%02X:%02X:%02X:%02X   SSID:%s\n",ifIndex,
++				 						pEntry->Addr[0], pEntry->Addr[1], pEntry->Addr[2],
++				 						pEntry->Addr[3], pEntry->Addr[4], pEntry->Addr[5],
++				 						pAd->ApCfg.ApCliTab[ifIndex].Ssid);
++					
++					bConnect=TRUE;
++ 				}
++ 		}
++
++		if (!bConnect)
++			 	sprintf(msg+strlen(msg), "ApCli%d Connected AP : Disconnect\n",ifIndex);
++
++ 	}
++ 	else
++ 	{
++
++		if (pAd->ApCfg.ApCliTab[ifIndex].ConnectState > APCLI_NOT_TRIGGER_CONNECT 
++			&& pAd->ApCfg.ApCliTab[ifIndex].FailReason == 0)
++			sprintf(ChStr,"Connecting");
++		else if (pAd->ApCfg.ApCliTab[ifIndex].ConnectState == APCLI_NOT_TRIGGER_CONNECT 
++			&& pAd->ApCfg.ApCliTab[ifIndex].FailReason == 0)	
++			sprintf(ChStr,"Not trigger connect");		
++		else if (pAd->ApCfg.ApCliTab[ifIndex].ConnectState == APCLI_NOT_TRIGGER_CONNECT 
++			&& pAd->ApCfg.ApCliTab[ifIndex].FailReason != 0)
++		{
++			switch(pAd->ApCfg.ApCliTab[ifIndex].FailReason) {
++				case 1 :
++					sprintf(ChStr,"Probe timeout");					
++					break;
++				case 2 :
++					sprintf(ChStr,"Auth fail");										
++					break;
++				case 3 :
++					sprintf(ChStr,"Assoc fail");										
++					break;
++				case 4 :
++					sprintf(ChStr,"4-way fail");										
++					break;
++				case 5 :
++					sprintf(ChStr,"unknow");										
++					break;					
++			}
++				
++		}
++			
++			
++		sprintf(msg+strlen(msg), "ApCli%d Connected AP : Disconnect reason = %s\n",ifIndex,ChStr);
++
++ 	}
++	sprintf(msg+strlen(msg), "=============================================================\n");
++
++	    wrq->u.data.length = strlen(msg);
++	    Status = copy_to_user(wrq->u.data.pointer, msg, wrq->u.data.length);
++
++	os_free_mem(NULL, msg);
++	
++     	DBGPRINT(RT_DEBUG_TRACE, ("<==RTMPIoctlConnStatus\n"));
++ 	return TRUE;	
++}
+ /* 
+     ==========================================================================
+     Description:
+@@ -9303,6 +9413,10 @@
+ 			pAd->ApCfg.ApCliTab[ifIndex].CfgSsidLen, pAd->ApCfg.ApCliTab[ifIndex].CfgSsid));
+ 
+ 		pAd->ApCfg.ApCliTab[ifIndex].Enable = apcliEn;
++
++		pAd->ApCfg.ApCliTab[ifIndex].ConnectState = APCLI_START_PROBE;
++		pAd->ApCfg.ApCliTab[ifIndex].FailReason = 0;
++		NdisGetSystemUpTime(&pAd->ApCfg.ApCliTab[ifIndex].LastTriggerTime);
+ 	}
+ 	else
+ 		success = FALSE;
+@@ -12626,15 +12740,45 @@
+ 		    break;
+ 
+ #if defined (AP_SCAN_SUPPORT) || defined (CONFIG_STA_SUPPORT)
++		case CMD_RTPRIV_IOCTL_AP_SIOCSIWSCAN:
++		{	
++			PNET_DEV pNetDev = (PNET_DEV)pData;
++#ifdef AP_SCAN_SUPPORT			
++			if (pObj->ioctl_if_type == INT_APCLI)
++				RTMPIoctlSetSiteSurvey(pAd,wrq);
++			else
++				return NDIS_STATUS_FAILURE;
++#endif
++#ifdef CONFIG_STA_SUPPORT	
++				RTMPIoctlSetSiteSurvey(pAd,wrq);
++#endif
++
++		}
++			break;
++			
+ 		case CMD_RTPRIV_IOCTL_GSITESURVEY:
+ 			RTMPIoctlGetSiteSurvey(pAd,wrq);
+ 			break;
++
++		case CMD_RTPRIV_IOCTL_AP_SIOCGIWSCAN:
++		        if (Data == INT_APCLI)
++                        {
++                                RtmpIoctl_rt_ioctl_giwscan(pAd, pData, Data);
++                        }
++                        else
++                                return NDIS_STATUS_FAILURE;
++                        break;			
+ #endif /* AP_SCAN_SUPPORT */
+ 
+ 		case CMD_RTPRIV_IOCTL_STATISTICS:
+ 			RTMPIoctlStatistics(pAd, wrq);
+ 			break;
+ 
++
++		case CMD_RTPRIV_IOCTL_CONNSTATUS:
++			RTMPIoctlConnstatus(pAd, wrq);
++			break;
++			
+ #ifdef WSC_AP_SUPPORT
+ 		case CMD_RTPRIV_IOCTL_WSC_PROFILE:
+ 		    RTMPIoctlWscProfile(pAd, wrq);
+@@ -12887,7 +13031,34 @@
+ 			RtmpHostapdSecuritySet(pAd, wrq);
+ 			break;
+ #endif /* HOSTAPD_SUPPORT */
+-
++		case CMD_RTPRIV_IOCTL_AP_SIOCGIWENCODEEXT:
++			RtmpIoctl_rt_ioctl_giwencodeext(pAd, pData,Data);
++			break;
++		case CMD_RTPRIV_IOCTL_AP_SIOCGIWTXPOW:
++		{
++			UINT tmp = pAd->ApCfg.RssiSample.LastRssi0 - pAd->BbpRssiToDbmDelta;
++			NdisCopyMemory(pData, &tmp, 4);
++			//(UINT)*(pData) =  pAd->ApCfg.RssiSample.LastRssi0 - pAd->BbpRssiToDbmDelta;
++			break;
++		}
++		case CMD_RTPRIV_IOCTL_AP_GET_PHYMODE:
++		{
++			UCHAR tmp = pAd->CommonCfg.PhyMode;
++			NdisCopyMemory(pData, &tmp, 1);			
++			break;
++		}	
++		case CMD_RTPRIV_IOCTL_AP_GET_SHORTGI:
++		{
++			UCHAR tmp = pAd->CommonCfg.RegTransmitSetting.field.ShortGI;
++			NdisCopyMemory(pData, &tmp, 1);			
++			break;
++		}
++		case CMD_RTPRIV_IOCTL_AP_GET_BW:
++		{
++			UCHAR tmp = pAd->CommonCfg.RegTransmitSetting.field.BW;
++			NdisCopyMemory(pData, &tmp, 1);			
++			break;
++		}		
+ 		default:
+ 			Status = RTMP_COM_IoctlHandle(pAd, wrq, cmd, subcmd, pData, Data);
+ 			break;
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_cfg.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/cmm_cfg.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_cfg.c	2014-03-20 14:03:26.690614481 +0800
+@@ -27,10 +27,779 @@
+ 
+ 
+ #include "rt_config.h"
+-
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)
++#define IWE_STREAM_ADD_EVENT(_A, _B, _C, _D, _E)                iwe_stream_add_event(_A, _B, _C, _D, _E)
++#define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)                iwe_stream_add_point(_A, _B, _C, _D, _E)
++#define IWE_STREAM_ADD_VALUE(_A, _B, _C, _D, _E, _F)    iwe_stream_add_value(_A, _B, _C, _D, _E, _F)
++#else
++#define IWE_STREAM_ADD_EVENT(_A, _B, _C, _D, _E)                iwe_stream_add_event(_B, _C, _D, _E)
++#define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)                iwe_stream_add_point(_B, _C, _D, _E)
++#define IWE_STREAM_ADD_VALUE(_A, _B, _C, _D, _E, _F)    iwe_stream_add_value(_B, _C, _D, _E, _F)
++#endif
+ static BOOLEAN RT_isLegalCmdBeforeInfUp(
+        IN PSTRING SetCmd);
+ 
++static void cal_quality(
++        IN RT_CMD_STA_IOCTL_BSS *pSignal,
++        IN BSS_ENTRY *pBssEntry)
++{
++        memcpy(pSignal->Bssid, pBssEntry->Bssid, MAC_ADDR_LEN);
++
++        /* Normalize Rssi */
++        if (pBssEntry->Rssi >= -50)
++        pSignal->ChannelQuality = 100;
++        else if (pBssEntry->Rssi >= -80) /* between -50 ~ -80dbm */
++                pSignal->ChannelQuality = (__u8)(24 + ((pBssEntry->Rssi + 80) * 26)/10);
++        else if (pBssEntry->Rssi >= -90)   /* between -80 ~ -90dbm */
++        pSignal->ChannelQuality = (__u8)((pBssEntry->Rssi + 90) * 26)/10;
++        else
++                pSignal->ChannelQuality = 0;
++
++    pSignal->Rssi = (__u8)(pBssEntry->Rssi);
++
++    if (pBssEntry->Rssi >= -70)
++                pSignal->Noise = -92;
++        else
++                pSignal->Noise = pBssEntry->Rssi - pBssEntry->MinSNR;
++}
++
++
++static void set_quality(
++                        struct iw_quality *iq,
++                        RT_CMD_STA_IOCTL_BSS *pBss)
++{
++        iq->qual = pBss->ChannelQuality;
++        iq->level = (__u8)(pBss->Rssi);
++        iq->noise = pBss->Noise;
++
++
++        iq->updated = 1;     /* Flags to know if updated */
++
++#if WIRELESS_EXT >= 17
++        iq->updated = IW_QUAL_QUAL_UPDATED | IW_QUAL_LEVEL_UPDATED | IW_QUAL_NOISE_UPDATED;
++#endif
++
++#if WIRELESS_EXT >= 19
++        iq->updated |= IW_QUAL_DBM;     /* Level + Noise are dBm */
++#endif
++}
++
++INT
++RtmpIoctl_rt_ioctl_giwscan(
++        IN      RTMP_ADAPTER                    *pAd,
++        IN      VOID                                    *pData,
++        IN      ULONG                                   Data)
++{
++	
++        RT_CMD_STA_IOCTL_SCAN_TABLE *pIoctlScan = (RT_CMD_STA_IOCTL_SCAN_TABLE *)pData;
++        RT_CMD_STA_IOCTL_BSS_TABLE *pBssTable;
++        BSS_ENTRY *pBssEntry;
++        UINT32 IdBss;
++
++
++        pIoctlScan->BssNr = 0;
++
++#ifdef MESH_SUPPORT
++        if(pIoctlScan->priv_flags == INT_MESH)
++        {
++                DBGPRINT(RT_DEBUG_TRACE, ("Mesh do not support rt_ioctl_giwscan \n"));
++                        return NDIS_STATUS_FAILURE;
++        }
++
++        if (pAd->MeshTab.MeshOnly == TRUE)
++                return NDIS_STATUS_SUCCESS;
++#endif /* MESH_SUPPORT */
++
++#ifdef WPA_SUPPLICANT_SUPPORT
++        if ((pAd->StaCfg.wpa_supplicant_info.WpaSupplicantUP & 0x7F) == WPA_SUPPLICANT_ENABLE)
++        {
++                pAd->StaCfg.wpa_supplicant_info.WpaSupplicantScanCount = 0;
++        }
++#endif /* WPA_SUPPLICANT_SUPPORT */
++
++        pIoctlScan->BssNr = pAd->ScanTab.BssNr;
++        if (pIoctlScan->BssNr == 0)
++                return NDIS_STATUS_SUCCESS;
++
++        os_alloc_mem(NULL, (UCHAR **)&(pIoctlScan->pBssTable),
++                                pAd->ScanTab.BssNr * sizeof(RT_CMD_STA_IOCTL_BSS_TABLE));
++        if (pIoctlScan->pBssTable == NULL)
++        {
++                DBGPRINT(RT_DEBUG_ERROR, ("Allocate memory fail!\n"));
++                return NDIS_STATUS_FAILURE;
++        }
++
++        for(IdBss=0; IdBss<pAd->ScanTab.BssNr; IdBss++)
++        {
++                HT_CAP_INFO capInfo = pAd->ScanTab.BssEntry[IdBss].HtCapability.HtCapInfo;
++
++                pBssTable = pIoctlScan->pBssTable + IdBss;
++                pBssEntry = &pAd->ScanTab.BssEntry[IdBss];
++
++                memcpy(pBssTable->Bssid, pBssEntry->Bssid, ETH_ALEN);
++                pBssTable->Channel = pBssEntry->Channel;
++                pBssTable->BssType = pBssEntry->BssType;
++                pBssTable->HtCapabilityLen = pBssEntry->HtCapabilityLen;
++                memcpy(pBssTable->SupRate, pBssEntry->SupRate, 12);
++                pBssTable->SupRateLen = pBssEntry->SupRateLen;
++                memcpy(pBssTable->ExtRate, pBssEntry->ExtRate, 12);
++                pBssTable->ExtRateLen = pBssEntry->ExtRateLen;
++                pBssTable->SsidLen = pBssEntry->SsidLen;
++                memcpy(pBssTable->Ssid, pBssEntry->Ssid, 32);
++                pBssTable->CapabilityInfo = pBssEntry->CapabilityInfo;
++                pBssTable->ChannelWidth = capInfo.ChannelWidth;
++                pBssTable->ShortGIfor40 = capInfo.ShortGIfor40;
++                pBssTable->ShortGIfor20 = capInfo.ShortGIfor20;
++                pBssTable->MCSSet = pBssEntry->HtCapability.MCSSet[1];
++#if defined(CONFIG_STA_SUPPORT) || defined(APCLI_SUPPORT)				
++                pBssTable->WpaIeLen = pBssEntry->WpaIE.IELen;
++                pBssTable->pWpaIe = pBssEntry->WpaIE.IE;
++                pBssTable->RsnIeLen = pBssEntry->RsnIE.IELen;
++                pBssTable->pRsnIe = pBssEntry->RsnIE.IE;
++#ifdef CONFIG_STA_SUPPORT
++                pBssTable->WpsIeLen = pBssEntry->WpsIE.IELen;
++                pBssTable->pWpsIe = pBssEntry->WpsIE.IE;
++#endif /* CONFIG_STA_SUPPORT */
++#endif 
++                pBssTable->FlgIsPrivacyOn = CAP_IS_PRIVACY_ON(pBssEntry->CapabilityInfo);
++                cal_quality(&pBssTable->Signal, pBssEntry);
++        }
++
++        memcpy(pIoctlScan->MainSharedKey[0], pAd->SharedKey[BSS0][0].Key, 16);
++        memcpy(pIoctlScan->MainSharedKey[1], pAd->SharedKey[BSS0][1].Key, 16);
++        memcpy(pIoctlScan->MainSharedKey[2], pAd->SharedKey[BSS0][2].Key, 16);
++        memcpy(pIoctlScan->MainSharedKey[3], pAd->SharedKey[BSS0][3].Key, 16);
++
++        return NDIS_STATUS_SUCCESS;
++}
++
++int rt_ioctl_giwscan(struct net_device *dev,
++			struct iw_request_info *info,
++			struct iw_point *data, char *extra)
++{
++	VOID *pAd = NULL;
++	int i=0, status = 0;
++	PSTRING current_ev = extra, previous_ev = extra;
++	PSTRING end_buf;
++	PSTRING current_val;
++	STRING custom[MAX_CUSTOM_LEN] = {0};
++#ifndef IWEVGENIE
++	unsigned char idx;
++#endif /* IWEVGENIE */
++	struct iw_event iwe;
++	RT_CMD_STA_IOCTL_SCAN_TABLE IoctlScan, *pIoctlScan = &IoctlScan;
++
++	GET_PAD_FROM_NET_DEV(pAd, dev);
++
++	/*check if the interface is down */
++/*    if(!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE)) */
++/* because android will set scan and get scan when interface down */
++#ifndef ANDROID_SUPPORT
++	if (RTMP_DRIVER_IOCTL_SANITY_CHECK(pAd, NULL) != NDIS_STATUS_SUCCESS)
++    {
++       	DBGPRINT(RT_DEBUG_TRACE, ("INFO::Network is down!\n"));
++        return -ENETDOWN;
++	}
++#endif /* ANDROID_SUPPORT */
++
++
++	pIoctlScan->priv_flags = RT_DEV_PRIV_FLAGS_GET(dev);
++	pIoctlScan->pBssTable = NULL;
++
++#ifdef CONFIG_STA_SUPPORT
++	if (RTMP_STA_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_STA_SIOCGIWSCAN, 0,
++							pIoctlScan, 0,
++							RT_DEV_PRIV_FLAGS_GET(dev)) != NDIS_STATUS_SUCCESS)
++#else
++	if (RTMP_AP_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_AP_SIOCGIWSCAN, 0,
++                                                        pIoctlScan,
++                                                        RT_DEV_PRIV_FLAGS_GET(dev)) != NDIS_STATUS_SUCCESS)
++#endif
++	{
++		status = -EINVAL;
++		goto go_out;
++	}
++
++	if (pIoctlScan->BssNr == 0)
++	{
++		data->length = 0;
++		status = 0;
++		goto go_out;
++	}
++
++#if WIRELESS_EXT >= 17
++    if (data->length > 0)
++        end_buf = extra + data->length;
++    else
++        end_buf = extra + IW_SCAN_MAX_DATA;
++#else
++    end_buf = extra + IW_SCAN_MAX_DATA;
++#endif
++
++	for (i = 0; i < pIoctlScan->BssNr; i++) 
++	{
++		if (current_ev >= end_buf)
++        {
++#if WIRELESS_EXT >= 17
++			status = -E2BIG;
++			goto go_out;
++#else
++			break;
++#endif
++        }
++		
++		/*MAC address */
++		/*================================ */
++		memset(&iwe, 0, sizeof(iwe));
++		iwe.cmd = SIOCGIWAP;
++		iwe.u.ap_addr.sa_family = ARPHRD_ETHER;
++				memcpy(iwe.u.ap_addr.sa_data, &pIoctlScan->pBssTable[i].Bssid, ETH_ALEN);
++
++        previous_ev = current_ev;
++		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev,end_buf, &iwe, IW_EV_ADDR_LEN);
++        if (current_ev == previous_ev)
++        {
++#if WIRELESS_EXT >= 17
++            status = -E2BIG;
++			goto go_out;
++#else
++			break;
++#endif
++        }
++
++		/* 
++		Protocol:
++			it will show scanned AP's WirelessMode .
++			it might be
++					802.11a
++					802.11a/n
++					802.11g/n
++					802.11b/g/n
++					802.11g
++					802.11b/g
++		*/
++		memset(&iwe, 0, sizeof(iwe));
++		iwe.cmd = SIOCGIWNAME;
++
++
++	{
++		RT_CMD_STA_IOCTL_BSS_TABLE *pBssEntry=&pIoctlScan->pBssTable[i];
++		BOOLEAN isGonly=FALSE;
++		int rateCnt=0;
++
++		if (pBssEntry->Channel>14)
++		{
++			if (pBssEntry->HtCapabilityLen!=0)
++				strcpy(iwe.u.name,"802.11a/n");
++			else	
++				strcpy(iwe.u.name,"802.11a");
++		}
++		else
++		{
++			/*
++				if one of non B mode rate is set supported rate . it mean G only. 
++			*/
++			for (rateCnt=0;rateCnt<pBssEntry->SupRateLen;rateCnt++)
++			{									
++				/*
++					6Mbps(140) 9Mbps(146) and >=12Mbps(152) are supported rate , it mean G only. 
++				*/
++				if (pBssEntry->SupRate[rateCnt]==140 || pBssEntry->SupRate[rateCnt]==146 || pBssEntry->SupRate[rateCnt]>=152)
++					isGonly=TRUE;
++			}
++
++			for (rateCnt=0;rateCnt<pBssEntry->ExtRateLen;rateCnt++)
++			{
++				if (pBssEntry->ExtRate[rateCnt]==140 || pBssEntry->ExtRate[rateCnt]==146 || pBssEntry->ExtRate[rateCnt]>=152)
++					isGonly=TRUE;
++			}		
++			
++			
++			if (pBssEntry->HtCapabilityLen!=0)
++			{
++				if (isGonly==TRUE)
++					strcpy(iwe.u.name,"802.11g/n");
++				else
++					strcpy(iwe.u.name,"802.11b/g/n");
++			}
++			else
++			{
++				if (isGonly==TRUE)
++					strcpy(iwe.u.name,"802.11g");
++				else
++				{
++					if (pBssEntry->SupRateLen==4 && pBssEntry->ExtRateLen==0)
++						strcpy(iwe.u.name,"802.11b");
++					else
++						strcpy(iwe.u.name,"802.11b/g");		
++				}
++			}
++		}
++	}
++
++		previous_ev = current_ev;
++		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev,end_buf, &iwe, IW_EV_ADDR_LEN);
++		if (current_ev == previous_ev)
++		{
++#if WIRELESS_EXT >= 17
++	   		status = -E2BIG;
++			goto go_out;
++#else
++			break;
++#endif
++		}
++
++		/*ESSID */
++		/*================================ */
++		memset(&iwe, 0, sizeof(iwe));
++		iwe.cmd = SIOCGIWESSID;
++		iwe.u.data.length = pIoctlScan->pBssTable[i].SsidLen;
++		iwe.u.data.flags = 1;
++ 
++        previous_ev = current_ev;
++	current_ev = IWE_STREAM_ADD_POINT(info, current_ev,end_buf, &iwe, (PSTRING) pIoctlScan->pBssTable[i].Ssid);
++        if (current_ev == previous_ev)
++        {
++#if WIRELESS_EXT >= 17
++            status = -E2BIG;
++			goto go_out;
++#else
++			break;
++#endif
++        }
++		
++		/*Network Type */
++		/*================================ */
++		memset(&iwe, 0, sizeof(iwe));
++		iwe.cmd = SIOCGIWMODE;
++		if (pIoctlScan->pBssTable[i].BssType == Ndis802_11IBSS)
++		{
++			iwe.u.mode = IW_MODE_ADHOC;
++		}
++		else if (pIoctlScan->pBssTable[i].BssType == Ndis802_11Infrastructure)
++		{
++			iwe.u.mode = IW_MODE_INFRA;
++		}
++		else
++		{
++			iwe.u.mode = IW_MODE_AUTO;
++		}
++		iwe.len = IW_EV_UINT_LEN;
++
++        previous_ev = current_ev;
++		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev, end_buf, &iwe,  IW_EV_UINT_LEN);
++        if (current_ev == previous_ev)
++        {
++#if WIRELESS_EXT >= 17
++            status = -E2BIG;
++			goto go_out;
++#else
++			break;
++#endif
++        }
++
++		/*Channel and Frequency */
++		/*================================ */
++		memset(&iwe, 0, sizeof(iwe));
++		iwe.cmd = SIOCGIWFREQ;
++		{
++			UCHAR ch = pIoctlScan->pBssTable[i].Channel;
++			ULONG	m = 0;
++#ifdef CONFIG_STA_SUPPORT
++			RTMP_STA_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_CHID_2_FREQ, 0,
++								(VOID *)&m, ch, RT_DEV_PRIV_FLAGS_GET(dev));
++#else
++			MAP_CHANNEL_ID_TO_KHZ(ch, m);
++#endif /* CONFIG_STA_SUPPORT */
++			iwe.u.freq.m = m * 100;
++			iwe.u.freq.e = 1;
++			iwe.u.freq.i = 0;
++			previous_ev = current_ev;
++			current_ev = IWE_STREAM_ADD_EVENT(info, current_ev,end_buf, &iwe, IW_EV_FREQ_LEN);
++        		if (current_ev == previous_ev)
++	        	{
++#if WIRELESS_EXT >= 17
++	            		status = -E2BIG;
++				goto go_out;
++#else
++				break;
++#endif
++			}	    
++		}	    
++
++	/*Add quality statistics */
++        /*================================ */
++        memset(&iwe, 0, sizeof(iwe));
++    	iwe.cmd = IWEVQUAL;
++    	iwe.u.qual.level = 0;
++    	iwe.u.qual.noise = 0;
++	set_quality(&iwe.u.qual, /*&pIoctlScan->pBssTable[i].Signal*/ &pIoctlScan->pBssTable[i]);
++    	current_ev = IWE_STREAM_ADD_EVENT(info, current_ev, end_buf, &iwe, IW_EV_QUAL_LEN);
++	if (current_ev == previous_ev)
++		{
++#if WIRELESS_EXT >= 17
++	            status = -E2BIG;
++				goto go_out;
++#else
++			break;
++#endif
++		}
++		/*Encyption key */
++		/*================================ */
++		memset(&iwe, 0, sizeof(iwe));
++		iwe.cmd = SIOCGIWENCODE;
++		if (pIoctlScan->pBssTable[i].FlgIsPrivacyOn)
++			iwe.u.data.flags =IW_ENCODE_ENABLED | IW_ENCODE_NOKEY;
++		else
++			iwe.u.data.flags = IW_ENCODE_DISABLED;
++
++        previous_ev = current_ev;		
++        current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf,&iwe, (char *)pIoctlScan->MainSharedKey[(iwe.u.data.flags & IW_ENCODE_INDEX)-1]);
++        if (current_ev == previous_ev)
++        {
++#if WIRELESS_EXT >= 17
++            status = -E2BIG;
++			goto go_out;
++#else
++			break;
++#endif
++        }
++
++		/*Bit Rate */
++		/*================================ */
++		if (pIoctlScan->pBssTable[i].SupRateLen)
++        {
++            UCHAR tmpRate = pIoctlScan->pBssTable[i].SupRate[pIoctlScan->pBssTable[i].SupRateLen-1];
++			memset(&iwe, 0, sizeof(iwe));
++			iwe.cmd = SIOCGIWRATE;
++    		current_val = current_ev + IW_EV_LCP_LEN;            
++            if (tmpRate == 0x82)
++                iwe.u.bitrate.value =  1 * 1000000;
++            else if (tmpRate == 0x84)
++                iwe.u.bitrate.value =  2 * 1000000;
++            else if (tmpRate == 0x8B)
++                iwe.u.bitrate.value =  5.5 * 1000000;
++            else if (tmpRate == 0x96)
++                iwe.u.bitrate.value =  11 * 1000000;
++            else
++    		    iwe.u.bitrate.value =  (tmpRate/2) * 1000000;
++            
++			if (pIoctlScan->pBssTable[i].ExtRateLen)
++			{
++				UCHAR tmpSupRate =(pIoctlScan->pBssTable[i].SupRate[pIoctlScan->pBssTable[i].SupRateLen-1]& 0x7f);
++				UCHAR tmpExtRate =(pIoctlScan->pBssTable[i].ExtRate[pIoctlScan->pBssTable[i].ExtRateLen-1]& 0x7f);
++				iwe.u.bitrate.value = (tmpSupRate > tmpExtRate) ? (tmpSupRate)*500000 : (tmpExtRate)*500000;	
++			}
++
++			if (tmpRate == 0x6c && pIoctlScan->pBssTable[i].HtCapabilityLen > 0)
++			{
++				
++/*				HT_CAP_INFO capInfo = pIoctlScan->pBssTable[i].HtCapability.HtCapInfo; */
++				int shortGI = pIoctlScan->pBssTable[i].ChannelWidth ? pIoctlScan->pBssTable[i].ShortGIfor40 : pIoctlScan->pBssTable[i].ShortGIfor20;
++				//int maxMCS = pIoctlScan->pBssTable[i].MCSSet ?  15 : 7;
++				int maxMCS = 7;
++#if 1				
++				int rate_count = RT_RateSize/sizeof(__s32);
++				int rate_index = 12 + ((UCHAR)pIoctlScan->pBssTable[i].ChannelWidth * 24) +
++								((UCHAR)shortGI *48) + ((UCHAR)maxMCS);				
++				if (rate_index < 0)
++					rate_index = 0;
++				if (rate_index >= rate_count)
++					rate_index = rate_count-1;
++				iwe.u.bitrate.value	=  ralinkrate[rate_index] * 500000;
++#else
++
++				if (pIoctlScan->pBssTable[i].HtCapabilityLen > 0)
++					RtmpDrvRateGet(pAd, MODE_HTMIX, shortGI,
++                      pIoctlScan->pBssTable[i].ChannelWidth, maxMCS,
++                      newRateGetAntenna(maxMCS), &iwe.u.bitrate.value);
++#endif
++			}
++            
++			iwe.u.bitrate.disabled = 0;
++			current_val = IWE_STREAM_ADD_VALUE(info, current_ev,
++				current_val, end_buf, &iwe,
++    			IW_EV_PARAM_LEN);            
++
++        	if((current_val-current_ev)>IW_EV_LCP_LEN)
++            	current_ev = current_val;
++        	else
++        	{
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++        }
++        }
++
++#ifdef IWEVGENIE
++        /*WPA IE */
++		if (pIoctlScan->pBssTable[i].WpaIeLen > 0)
++        {
++			memset(&iwe, 0, sizeof(iwe));
++			memset(&custom[0], 0, MAX_CUSTOM_LEN);
++			memcpy(custom, &(pIoctlScan->pBssTable[i].pWpaIe[0]), 
++						   pIoctlScan->pBssTable[i].WpaIeLen);
++			iwe.cmd = IWEVGENIE;
++			iwe.u.data.length = pIoctlScan->pBssTable[i].WpaIeLen;
++			current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe, custom);
++			if (current_ev == previous_ev)
++			{
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++		}
++		}
++           
++		/*WPA2 IE */
++        if (pIoctlScan->pBssTable[i].RsnIeLen > 0)
++        {
++        	memset(&iwe, 0, sizeof(iwe));
++			memset(&custom[0], 0, MAX_CUSTOM_LEN);
++			memcpy(custom, &(pIoctlScan->pBssTable[i].pRsnIe[0]), 
++						   pIoctlScan->pBssTable[i].RsnIeLen);
++			iwe.cmd = IWEVGENIE;
++			iwe.u.data.length = pIoctlScan->pBssTable[i].RsnIeLen;
++			current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe, custom);
++			if (current_ev == previous_ev)
++			{
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++        }
++        }
++
++#ifdef CONFIG_STA_SUPPORT
++		/*WPS IE */
++		if (pIoctlScan->pBssTable[i].WpsIeLen > 0)
++        {
++        	memset(&iwe, 0, sizeof(iwe));
++			memset(&custom[0], 0, MAX_CUSTOM_LEN);
++			memcpy(custom, &(pIoctlScan->pBssTable[i].pWpsIe[0]), 
++						   pIoctlScan->pBssTable[i].WpsIeLen);
++			iwe.cmd = IWEVGENIE;
++			iwe.u.data.length = pIoctlScan->pBssTable[i].WpsIeLen;
++			current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe, custom);
++			if (current_ev == previous_ev)
++			{
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++        }
++        }
++
++#endif
++#else
++        /*WPA IE */
++		/*================================ */
++        if (pIoctlScan->pBssTable[i].WpaIeLen > 0)
++        {
++    		NdisZeroMemory(&iwe, sizeof(iwe));
++			memset(&custom[0], 0, MAX_CUSTOM_LEN);
++    		iwe.cmd = IWEVCUSTOM;
++            iwe.u.data.length = (pIoctlScan->pBssTable[i].WpaIeLen * 2) + 7;
++            NdisMoveMemory(custom, "wpa_ie=", 7);
++            for (idx = 0; idx < pIoctlScan->pBssTable[i].WpaIeLen; idx++)
++                sprintf(custom, "%s%02x", custom, pIoctlScan->pBssTable[i].pWpaIe[idx]);
++            previous_ev = current_ev;
++    		current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe,  custom);
++            if (current_ev == previous_ev)
++            {
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++        }
++        }
++
++        /*WPA2 IE */
++        if (pIoctlScan->pBssTable[i].RsnIeLen > 0)
++        {
++    		NdisZeroMemory(&iwe, sizeof(iwe));
++			memset(&custom[0], 0, MAX_CUSTOM_LEN);
++    		iwe.cmd = IWEVCUSTOM;
++            iwe.u.data.length = (pIoctlScan->pBssTable[i].RsnIeLen * 2) + 7;
++            NdisMoveMemory(custom, "rsn_ie=", 7);
++			for (idx = 0; idx < pIoctlScan->pBssTable[i].RsnIeLen; idx++)
++                sprintf(custom, "%s%02x", custom, pIoctlScan->pBssTable[i].pRsnIe[idx]);
++            previous_ev = current_ev;
++    		current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe,  custom);
++            if (current_ev == previous_ev)
++            {
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++        }
++        }
++
++#ifdef WSC_INCLUDED
++		/*WPS IE */
++		if (pIoctlScan->pBssTable[i].WpsIeLen > 0)
++        {
++    		NdisZeroMemory(&iwe, sizeof(iwe));
++			memset(&custom[0], 0, MAX_CUSTOM_LEN);
++    		iwe.cmd = IWEVCUSTOM;
++            iwe.u.data.length = (pIoctlScan->pBssTable[i].WpsIeLen * 2) + 7;
++            NdisMoveMemory(custom, "wps_ie=", 7);
++			for (idx = 0; idx < pIoctlScan->pBssTable[i].WpsIeLen; idx++)
++                sprintf(custom, "%s%02x", custom, pIoctlScan->pBssTable[i].pWpsIe[idx]);
++            previous_ev = current_ev;
++    		current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe,  custom);
++            if (current_ev == previous_ev)
++            {
++#if WIRELESS_EXT >= 17
++                status = -E2BIG;
++				goto go_out;
++#else
++			    break;
++#endif
++        }
++        }
++#endif /* WSC_INCLUDED */
++
++#endif /* IWEVGENIE */
++	}
++
++	data->length = current_ev - extra;
++/*    pAd->StaCfg.bScanReqIsFromWebUI = FALSE; */
++/*	DBGPRINT(RT_DEBUG_ERROR ,("===>rt_ioctl_giwscan. %d(%d) BSS returned, data->length = %d\n",i , pAd->ScanTab.BssNr, data->length)); */
++
++#ifdef CONFIG_STA_SUPPORT
++	RTMP_STA_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_STA_SCAN_END, 0,
++						NULL, data->length, RT_DEV_PRIV_FLAGS_GET(dev));
++#endif /* CONFIG_STA_SUPPORT */
++go_out:
++	if (pIoctlScan->pBssTable != NULL)
++		os_free_mem(NULL, pIoctlScan->pBssTable);
++
++	return status;
++}
++
++INT RtmpIoctl_rt_ioctl_giwencodeext(RTMP_ADAPTER *pAd, VOID *pData, ULONG Data)
++{
++        RT_CMD_STA_IOCTL_SECURITY *pIoctlSec = (RT_CMD_STA_IOCTL_SECURITY *)pData;
++        int idx;
++
++	POS_COOKIE	pObj = (POS_COOKIE) pAd->OS_Cookie;
++	NDIS_802_11_WEP_STATUS              WepStatus;
++	UCHAR ifIndex;
++	PMULTISSID_STRUCT	pMbss = NULL;
++	PAPCLI_STRUCT pApCliEntry = NULL;
++	UCHAR DefaultKeyId;
++	
++	ifIndex = pObj->ioctl_if;
++	if (pObj->ioctl_if_type == INT_APCLI)
++	{
++		pApCliEntry = &pAd->ApCfg.ApCliTab[ifIndex];
++		WepStatus = pApCliEntry-> WepStatus;
++		DefaultKeyId = pApCliEntry->DefaultKeyId;
++	}
++	else
++	{
++		pMbss = &pAd->ApCfg.MBSSID[ifIndex];	
++		WepStatus = pMbss-> WepStatus;
++		DefaultKeyId = pMbss->DefaultKeyId;
++	}
++        idx = pIoctlSec->KeyIdx;
++        if (idx)
++        {
++                if (idx < 1 || idx > 4)
++                {
++                        pIoctlSec->Status = RTMP_IO_EINVAL;
++                        return NDIS_STATUS_FAILURE;
++                }
++                idx--;
++
++                if ((WepStatus == Ndis802_11Encryption2Enabled) ||
++                        (WepStatus == Ndis802_11Encryption3Enabled))
++                {
++                        if (idx != DefaultKeyId)
++                        {
++                                pIoctlSec->Status = 0;
++                                pIoctlSec->length = 0;
++                                return NDIS_STATUS_FAILURE;
++                        }
++                }
++        }
++        else
++                idx = DefaultKeyId;
++
++        pIoctlSec->KeyIdx = idx + 1;
++
++        pIoctlSec->length = 0;
++        switch(WepStatus) {
++                case Ndis802_11WEPDisabled:
++                        pIoctlSec->Alg = RT_CMD_STA_IOCTL_SECURITY_ALG_NONE;
++                        pIoctlSec->flags |= RT_CMD_STA_IOCTL_SECURITY_DISABLED;
++                        break;
++                case Ndis802_11WEPEnabled:
++                        pIoctlSec->Alg = RT_CMD_STA_IOCTL_SECURITY_ALG_WEP;
++                        if (pAd->SharedKey[BSS0][idx].KeyLen > pIoctlSec->MaxKeyLen)
++                        {
++                                pIoctlSec->Status = RTMP_IO_E2BIG;
++                                return NDIS_STATUS_FAILURE;
++                        }
++                        else
++                        {
++                                pIoctlSec->length = pAd->SharedKey[BSS0][idx].KeyLen;
++                                pIoctlSec->pData = (PCHAR)&(pAd->SharedKey[BSS0][idx].Key[0]);
++                        }
++                        break;
++                case Ndis802_11Encryption2Enabled:
++                case Ndis802_11Encryption3Enabled:
++                        if (WepStatus == Ndis802_11Encryption2Enabled)
++                                pIoctlSec->Alg = RT_CMD_STA_IOCTL_SECURITY_ALG_TKIP;
++                        else
++                                pIoctlSec->Alg = RT_CMD_STA_IOCTL_SECURITY_ALG_CCMP;
++
++                        if (pIoctlSec->MaxKeyLen < 32)
++                        {
++                                pIoctlSec->Status = RTMP_IO_E2BIG;
++                                return NDIS_STATUS_FAILURE;
++                        }
++                        else
++                        {
++                                pIoctlSec->length = 32;
++#ifdef CONFIG_AP_SUPPORT
++				if (pObj->ioctl_if_type == INT_MAIN ||pObj->ioctl_if_type == INT_MBSSID )
++					pIoctlSec->pData = (PCHAR)&pAd->ApCfg.MBSSID[ifIndex].PMK[0];
++#ifdef APCLI_SUPPORT		
++				if (pObj->ioctl_if_type == INT_APCLI )
++					pIoctlSec->pData = (PCHAR)&pAd->ApCfg.ApCliTab[ifIndex].PMK[0];
++#endif /*APCLI_SUPPORT*/
++#endif /* CONFIG_AP_SUPPORT */                                
++
++#ifdef CONFIG_STA_SUPPORT
++					pIoctlSec->pData = (PCHAR)&pAd->StaCfg.PMK[0];
++#endif /* CONFIG_STA_SUPPORT */
++                       }
++                        break;
++                default:
++                        pIoctlSec->Status = RTMP_IO_EINVAL;
++                        return NDIS_STATUS_FAILURE;
++        }
++
++        return NDIS_STATUS_SUCCESS;
++}
++
++
++
+ 
+ INT ComputeChecksum(
+ 	IN UINT PIN)
+@@ -1370,6 +2139,10 @@
+ #endif /* CONFIG_AP_SUPPORT */
+ 
+ #ifdef CONFIG_AP_SUPPORT
++			pStats->level = RTMPMaxRssi(pAd, pAd->ApCfg.RssiSample.AvgRssi0,
++										pAd->ApCfg.RssiSample.AvgRssi1,
++										pAd->ApCfg.RssiSample.AvgRssi2);
++
+ 			pStats->noise = RTMPMaxRssi(pAd, pAd->ApCfg.RssiSample.AvgRssi0,
+ 										pAd->ApCfg.RssiSample.AvgRssi1,
+ 										pAd->ApCfg.RssiSample.AvgRssi2) -
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_info.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/cmm_info.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_info.c	2014-03-20 14:01:32.286614495 +0800
+@@ -3646,6 +3646,17 @@
+ }
+ 
+ #if defined (AP_SCAN_SUPPORT) || defined (CONFIG_STA_SUPPORT)
++VOID RTMPIoctlSetSiteSurvey(
++        IN      PRTMP_ADAPTER   pAdapter,
++        IN      RTMP_IOCTL_INPUT_STRUCT *wrq)
++{
++
++	NDIS_802_11_SSID Ssid;
++	NdisZeroMemory(&Ssid, sizeof(NDIS_802_11_SSID));
++
++	ApSiteSurvey(pAdapter, &Ssid, SCAN_ACTIVE, FALSE);
++}
++
+ VOID RTMPIoctlGetSiteSurvey(
+ 	IN	PRTMP_ADAPTER	pAdapter, 
+ 	IN	RTMP_IOCTL_INPUT_STRUCT	*wrq)
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/mlme.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/mlme.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/mlme.c	2014-03-20 14:01:32.298614495 +0800
+@@ -3668,13 +3668,17 @@
+ 		pBss->WscDPIDFromWpsAP = 0xFFFF;
+ #endif /* WSC_INCLUDED */
+ 
+-#ifdef CONFIG_STA_SUPPORT
++#if defined(CONFIG_STA_SUPPORT) || defined(APCLI_SUPPORT)
+ 		NdisZeroMemory(&pBss->WpaIE.IE[0], MAX_CUSTOM_LEN);
+ 		NdisZeroMemory(&pBss->RsnIE.IE[0], MAX_CUSTOM_LEN);
+-		NdisZeroMemory(&pBss->WpsIE.IE[0], MAX_CUSTOM_LEN);
+ 		pBss->WpaIE.IELen = 0;
+ 		pBss->RsnIE.IELen = 0;
++		
++#endif 
++
++#ifdef CONFIG_STA_SUPPORT
+ 		pBss->WpsIE.IELen = 0;
++		NdisZeroMemory(&pBss->WpsIE.IE[0], MAX_CUSTOM_LEN);		
+ #ifdef WAPI_SUPPORT
+ 		NdisZeroMemory(&pBss->WapiIE.IE[0], MAX_CUSTOM_LEN);
+ 		pBss->WapiIE.IELen = 0;
+@@ -3714,7 +3718,7 @@
+ #endif /* CONFIG_STA_SUPPORT */
+ 						break;
+ 					}
+-#ifdef CONFIG_STA_SUPPORT
++#if defined(CONFIG_STA_SUPPORT) || defined(APCLI_SUPPORT)
+ 					if (NdisEqualMemory(pEid->Octet, WPA_OUI, 4))
+ 					{
+ 						if ((pEid->Len + 2) > MAX_CUSTOM_LEN)
+@@ -3725,10 +3729,8 @@
+ 						pBss->WpaIE.IELen = pEid->Len + 2;
+ 						NdisMoveMemory(pBss->WpaIE.IE, pEid, pBss->WpaIE.IELen);
+ 					}
+-#endif /* CONFIG_STA_SUPPORT */
+ 					break;
+ 
+-#ifdef CONFIG_STA_SUPPORT
+ 				case IE_RSN:
+ 					if (NdisEqualMemory(pEid->Octet + 2, RSN_OUI, 3))
+ 					{
+@@ -3741,6 +3743,9 @@
+ 						NdisMoveMemory(pBss->RsnIE.IE, pEid, pBss->RsnIE.IELen);
+ 					}
+ 					break;
++#endif
++
++#ifdef CONFIG_STA_SUPPORT					
+ #ifdef WAPI_SUPPORT
+ 				case IE_WAPI:
+ 					if (NdisEqualMemory(pEid->Octet + 4, WAPI_OUI, 3))
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/mlme.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/mlme.h	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/mlme.h	2014-03-20 14:01:32.302614495 +0800
+@@ -1121,7 +1121,7 @@
+     UCHAR       EdcaUpdateCount;
+ } QOS_CAPABILITY_PARM, *PQOS_CAPABILITY_PARM;
+ 
+-#ifdef CONFIG_STA_SUPPORT
++#if defined(CONFIG_STA_SUPPORT) || defined(APCLI_SUPPORT)
+ typedef struct {
+     UCHAR       IELen;
+     UCHAR       IE[MAX_CUSTOM_LEN];
+@@ -1205,9 +1205,12 @@
+ #endif /* WSC_INCLUDED */
+ 
+ 
+-#ifdef CONFIG_STA_SUPPORT
++#if defined(CONFIG_STA_SUPPORT) || defined(APCLI_SUPPORT)
+     WPA_IE_     WpaIE;
+     WPA_IE_     RsnIE;
++#endif
++
++#ifdef CONFIG_STA_SUPPORT	
+ 	WPA_IE_ 	WpsIE;
+ #ifdef WAPI_SUPPORT
+ 	WPA_IE_     WapiIE;
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/os/rt_linux.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/os/rt_linux.h	2014-03-20 14:01:32.162614495 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/os/rt_linux.h	2014-03-20 14:01:32.302614495 +0800
+@@ -171,9 +171,7 @@
+ #endif /* RTMP_RBUS_SUPPORT */
+ #endif /* SINGLE_SKU_V2 */
+ 
+-#ifdef CONFIG_APSTA_MIXED_SUPPORT
+ extern	const struct iw_handler_def rt28xx_ap_iw_handler_def;
+-#endif /* CONFIG_APSTA_MIXED_SUPPORT */
+ 
+ /***********************************************************************************
+  *	Compiler related definitions
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/rtmp.h	2014-03-20 14:01:32.198614495 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h	2014-03-20 14:01:32.390614495 +0800
+@@ -3025,6 +3025,10 @@
+ #endif /* MAC_REPEATER_SUPPORT */
+ 	UCHAR LinkIdx;
+ 	PVOID pAd;
++
++	UCHAR ConnectState;
++	UCHAR FailReason;
++	ULONG   LastTriggerTime;
+ } APCLI_STRUCT, *PAPCLI_STRUCT;
+ 
+ typedef struct _AP_ADMIN_CONFIG {
+@@ -8956,6 +8960,11 @@
+ VOID RTMPIoctlGetSiteSurvey(
+ 	IN	PRTMP_ADAPTER	pAdapter, 
+ 	IN	RTMP_IOCTL_INPUT_STRUCT *wrq);
++
++VOID RTMPIoctlSetSiteSurvey(
++        IN      RTMP_ADAPTER *pAd,
++        IN      RTMP_IOCTL_INPUT_STRUCT *wrq);
++
+ #endif
+ 
+ #ifdef CONFIG_AP_SUPPORT
+@@ -9979,5 +9988,15 @@
+ 	IN UCHAR bw,
+ 	IN INT32 paValue);
+ #endif /* SINGLE_SKU_V2 */
++
++INT RtmpIoctl_rt_ioctl_giwencodeext(RTMP_ADAPTER *pAd, VOID *pData, ULONG Data);
++INT RtmpIoctl_rt_ioctl_giwscan(
++        IN      RTMP_ADAPTER                    *pAd,
++        IN      VOID                                    *pData,
++        IN      ULONG                                   Data);
++
++int rt_ioctl_giwscan(struct net_device *dev, struct iw_request_info *info,
++                        struct iw_point *data, char *extra);
++
+ #endif  /* __RTMP_H__ */
+ 
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp_cmd.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/rtmp_cmd.h	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp_cmd.h	2014-03-20 14:04:48.330614067 +0800
+@@ -166,7 +166,14 @@
+ 	CMD_RTPRIV_IOCTL_AP_SIOCGIWESSID,
+ 	CMD_RTPRIV_IOCTL_AP_SIOCGIWRATEQ,
+ 	CMD_RTPRIV_IOCTL_AP_SIOCSIWGENIE,
+-
++	CMD_RTPRIV_IOCTL_AP_SIOCGIWENCODEEXT, 
++	CMD_RTPRIV_IOCTL_AP_SIOCSIWSCAN,
++	CMD_RTPRIV_IOCTL_AP_SIOCGIWSCAN,
++	CMD_RTPRIV_IOCTL_CONNSTATUS,
++	CMD_RTPRIV_IOCTL_AP_SIOCGIWTXPOW,
++	CMD_RTPRIV_IOCTL_AP_GET_PHYMODE,
++	CMD_RTPRIV_IOCTL_AP_GET_BW,
++	CMD_RTPRIV_IOCTL_AP_GET_SHORTGI,
+ 	/* can not exceed 0x5000 */
+ } CMD_RTPRIV_IOCTL_AP;
+ 
+@@ -663,6 +670,7 @@
+ } RT_CMD_STA_IOCTL_NICK_NAME;
+ 
+ typedef struct __RT_CMD_STA_IOCTL_SECURITY {
++	struct wifi_dev *wdev;
+ 	INOUT CHAR *pData;
+ 	INOUT UINT16 length;
+ 	IN INT32 KeyIdx;
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/ap_ioctl.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/os/linux/ap_ioctl.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/ap_ioctl.c	2014-03-20 14:08:00.062614438 +0800
+@@ -31,6 +31,11 @@
+ #include "rt_os_net.h"
+ #include <linux/wireless.h>
+ 
++extern
++int rt_ioctl_giwscan(struct net_device *dev,
++                        struct iw_request_info *info,
++                        struct iw_point *data, char *extra);
++
+ struct iw_priv_args ap_privtab[] = {
+ { RTPRIV_IOCTL_SET, 
+ /* 1024 --> 1024 + 512 */
+@@ -81,21 +86,30 @@
+   "get_ba_table"},
+ { RTPRIV_IOCTL_STATISTICS,
+   IW_PRIV_TYPE_CHAR | 1024, IW_PRIV_TYPE_CHAR | 1024,
+-  "stat"}
++  "stat"},
++{ RTPRIV_IOCTL_GET_APCLI_CONNSTATUS,
++  IW_PRIV_TYPE_CHAR | 1024, IW_PRIV_TYPE_CHAR | 1024,
++  "Connstatus"}
++};
++
++static const iw_handler rt_ap_handler[]=
++{
++	[(SIOCGIWSCAN-SIOCSIWCOMMIT)] = (iw_handler) rt_ioctl_giwscan,
++//	[(SIOCSIWSCAN-SIOCSIWCOMMIT)] = (iw_handler) rt_ioctl_ap_siwscan,
+ };
+ 
+ 
+-#ifdef CONFIG_APSTA_MIXED_SUPPORT
+ const struct iw_handler_def rt28xx_ap_iw_handler_def =
+ {
++	.standard = (iw_handler *) rt_ap_handler,
+ #define	N(a)	(sizeof (a) / sizeof (a[0]))
++	.num_standard = sizeof(rt_ap_handler) / sizeof(iw_handler),
+ 	.private_args	= (struct iw_priv_args *) ap_privtab,
+ 	.num_private_args	= N(ap_privtab),
+ #if IW_HANDLER_VERSION >= 7
+ 	.get_wireless_stats = rt28xx_get_wireless_stats,
+ #endif 
+ };
+-#endif /* CONFIG_APSTA_MIXED_SUPPORT */
+ 
+ 
+ INT rt28xx_ap_ioctl(
+@@ -212,6 +226,8 @@
+ 			wrqin->u.freq.m = Channel; /*pAd->CommonCfg.Channel; */
+ 			wrqin->u.freq.e = 0;
+ 			wrqin->u.freq.i = 0;
++			DBGPRINT(RT_DEBUG_TRACE, ("IOCTL::SIOCGIWFREQ:(%d)\n", Channel));
++
+ 		}
+ 			break; 
+ 		case SIOCSIWFREQ: /*set channel/frequency (Hz) */
+@@ -238,7 +254,59 @@
+ 		case SIOCSIWRTS:  /*set RTS/CTS threshold (bytes) */
+ 		case SIOCGIWFRAG:  /*get fragmentation thr (bytes) */
+ 		case SIOCSIWFRAG:  /*set fragmentation thr (bytes) */
++			Status = RTMP_IO_EOPNOTSUPP;	
++			break;			
+ 		case SIOCGIWENCODE:  /*get encoding token & mode */
++		{
++			//printk("==> SIOCGIWENCODE\n");
++
++			RT_CMD_STA_IOCTL_SECURITY IoctlSec, *pIoctlSec = &IoctlSec;
++			int max_key_len;
++			struct iw_point *encoding = &wrqin->u.encoding;
++			
++			 max_key_len = encoding->length /*- sizeof(*ext)*/;
++			 if (max_key_len < 0)
++                	 {
++				Status = RTMP_IO_EOPNOTSUPP;
++			 	break;
++			 }
++			
++			 memset(pIoctlSec, 0, sizeof(RT_CMD_STA_IOCTL_SECURITY));
++			 pIoctlSec->KeyIdx = encoding->flags & IW_ENCODE_INDEX;
++			 pIoctlSec->MaxKeyLen = max_key_len;
++
++			if (RTMP_AP_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_AP_SIOCGIWENCODEEXT, 0,
++                                pIoctlSec, RT_DEV_PRIV_FLAGS_GET(net_dev)) != NDIS_STATUS_SUCCESS)
++        		{
++                		//ext->key_len = 0;
++                		//RT_CMD_STATUS_TRANSLATE(pIoctlSec->Status);
++                		//return pIoctlSec->Status;
++				Status = RTMP_IO_EOPNOTSUPP;
++				break;
++        		}
++
++			encoding->flags = pIoctlSec->KeyIdx;
++			encoding->length = pIoctlSec->length;
++
++			if (pIoctlSec->Alg == RT_CMD_STA_IOCTL_SECURITY_ALG_NONE)
++                		encoding->flags |= IW_ENCODE_ALG_NONE;
++        		else if (pIoctlSec->Alg == RT_CMD_STA_IOCTL_SECURITY_ALG_WEP)
++                		encoding->flags |= IW_ENCODE_ALG_WEP;
++        		else if (pIoctlSec->Alg == RT_CMD_STA_IOCTL_SECURITY_ALG_TKIP)
++                		encoding->flags |= IW_ENCODE_ALG_TKIP;
++        		else if (pIoctlSec->Alg == RT_CMD_STA_IOCTL_SECURITY_ALG_CCMP)
++                		encoding->flags |= IW_ENCODE_ALG_CCMP;
++
++        		if (pIoctlSec->flags & RT_CMD_STA_IOCTL_SECURITY_DISABLED)
++                		encoding->flags |= IW_ENCODE_DISABLED;
++
++			if (pIoctlSec->length && pIoctlSec->pData)
++			{
++				encoding->flags |= IW_ENCODE_ENABLED;
++				memcpy(encoding->pointer, pIoctlSec->pData, encoding->length);
++			}
++		}
++			break;			
+ 		case SIOCSIWENCODE:  /*set encoding token & mode */
+ 			Status = RTMP_IO_EOPNOTSUPP;
+ 			break;
+@@ -255,22 +323,95 @@
+ 			break;
+ 		case SIOCGIWMODE:  /*get operation mode */
+ 			wrqin->u.mode = IW_MODE_INFRA;   /*SoftAP always on INFRA mode. */
++			DBGPRINT(RT_DEBUG_TRACE,("ioctl SIOCGIWMODE=%d\n", wrqin->u.mode));			
+ 			break;
+ 		case SIOCSIWAP:  /*set access point MAC addresses */
+ 		case SIOCSIWMODE:  /*set operation mode */
+ 		case SIOCGIWSENS:   /*get sensitivity (dBm) */
+ 		case SIOCSIWSENS:	/*set sensitivity (dBm) */
++			break;	
+ 		case SIOCGIWPOWER:  /*get Power Management settings */
++		{
++			DBGPRINT(RT_DEBUG_ERROR,("SIOCGIWPOWER\n"));	
++                        break;		
++		}			
+ 		case SIOCSIWPOWER:  /*set Power Management settings */
++			break;
+ 		case SIOCGIWTXPOW:  /*get transmit power (dBm) */
++		{
++			//DBGPRINT(RT_DEBUG_ERROR,("SIOCGIWTXPOW\n"));	
++			int len;
++			UINT power;
++	              wrqin->u.txpower.value = 0;              
++                     wrqin->u.txpower.fixed = 1; 
++	              wrqin->u.txpower.disabled = 0; 
++                     wrqin->u.txpower.flags = IW_TXPOW_DBM; 
++
++			RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_AP_SIOCGIWTXPOW, 0,
++								&(power), RT_DEV_PRIV_FLAGS_GET(net_dev));		
++
++			wrqin->u.txpower.value = power;
++				//len = copy_to_user(wrqin->u.data.pointer, prange, sizeof(struct iw_range));
++                        break;		
++		}			
+ 		case SIOCSIWTXPOW:  /*set transmit power (dBm) */
+-		/*case SIOCGIWRANGE:	//Get range of parameters */
++			DBGPRINT(RT_DEBUG_ERROR,("SIOCSIWTXPOW\n"));	
++			break;		
++		case SIOCGIWSTATS:  /*get transmit power (dBm) */
++		{
++			DBGPRINT(RT_DEBUG_ERROR,("SIOCGIWSTATS\n"));		
++			struct iw_statistics *pStats;
++			RT_CMD_IW_STATS DrvIwStats, *pDrvIwStats = &DrvIwStats;
++			int len;
++
++			GET_PAD_FROM_NET_DEV(pAd, net_dev);	
++
++
++			pDrvIwStats->priv_flags = RT_DEV_PRIV_FLAGS_GET(net_dev);
++			pDrvIwStats->dev_addr = (PUCHAR)net_dev->dev_addr;
++
++			if (RTMP_DRIVER_IW_STATS_GET(pAd, pDrvIwStats) != NDIS_STATUS_SUCCESS)
++				return NULL;
++
++			pStats = (struct iw_statistics *)(pDrvIwStats->pStats);
++			pStats->status = 0; /* Status - device dependent for now */
++
++
++			pStats->qual.updated = 1;     /* Flags to know if updated */
++			pStats->qual.qual = pDrvIwStats->qual;
++			pStats->qual.level = pDrvIwStats->level;
++			pStats->qual.noise = pDrvIwStats->noise;
++			pStats->discard.nwid = 0;     /* Rx : Wrong nwid/essid */
++			pStats->miss.beacon = 0;      /* Missed beacons/superframe */
++			len = copy_to_user(wrqin->u.data.pointer, pStats, sizeof(struct iw_statistics));
++                        break;		
++		}				
+ 		case SIOCGIWRETRY:	/*get retry limits and lifetime */
+ 		case SIOCSIWRETRY:	/*set retry limits and lifetime */
+ 			Status = RTMP_IO_EOPNOTSUPP;
+ 			break;
+ 		case SIOCGIWRANGE:	/*Get range of parameters */
+ 		    {
++				UINT power;
++				int i,bw,shortGI;
++				UCHAR phymode;
++
++				INT OFDM_RateTable[] ={2,  4,   11,  22, 12, 18,   24,  36, 48, 72, 96, 108,};
++				INT HT20_LongGI[] ={13, 26,   39,  52,  78, 104, 117, 130, 26,  52,  78, 104, 156, 208, 234, 260,};
++				INT HT40_LongGI[] ={27, 54,   81, 108, 162, 216, 243, 270, 54, 108, 162, 216, 324, 432, 486, 540,};
++				INT HT20_ShortGI[] ={14, 29,   43,  57,  87, 115, 130, 144, 29, 59,   87, 115, 173, 230, 260, 288,};
++				INT HT40_ShortGI[] ={30, 60,   90, 120, 180, 240, 270, 300, 60, 120, 180, 240, 360, 480, 540, 600,};
++				//DBGPRINT(RT_DEBUG_ERROR,("SIOCGIWRANGE:\n"));
++
++				RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_AP_GET_PHYMODE, 0,
++												&(phymode), RT_DEV_PRIV_FLAGS_GET(net_dev));	
++
++				RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_AP_GET_BW, 0,
++												&(bw), RT_DEV_PRIV_FLAGS_GET(net_dev));
++
++				RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_AP_GET_SHORTGI, 0,
++												&(shortGI), RT_DEV_PRIV_FLAGS_GET(net_dev));				
++
+ /*				struct iw_range range; */
+ 				struct iw_range *prange = NULL;
+ 				UINT32 len;
+@@ -287,6 +428,8 @@
+ 				prange->we_version_compiled = WIRELESS_EXT;
+ 				prange->we_version_source = 14;
+ 
++				 prange->throughput = 27 * 1000 * 1000;
++				 
+ 				/*
+ 					what is correct max? This was not
+ 					documented exactly. At least
+@@ -295,7 +438,94 @@
+ 				prange->max_qual.qual = 100;
+ 				prange->max_qual.level = 0; /* dB */
+ 				prange->max_qual.noise = 0; /* dB */
+-				len = copy_to_user(wrq->u.data.pointer, prange, sizeof(struct iw_range));
++				prange->max_qual.updated = 7; 
++
++				prange->avg_qual.qual = 70;
++				prange->avg_qual.level = 0; 
++				 prange->avg_qual.noise = 0;
++				 prange->avg_qual.updated = 7;
++
++				if (phymode < 5)
++				{
++					prange->num_bitrates = 12;
++					 for (i = 0; i < prange->num_bitrates; i++)
++	                				 prange->bitrate[i] = (OFDM_RateTable[i]) *
++	                     			500000;
++				} 
++#ifdef DOT11_N_SUPPORT				
++				else {
++
++					if (bw == 0)
++					{
++						if (shortGI ==0 )
++						{
++							prange->num_bitrates = sizeof(HT20_LongGI)/sizeof(HT20_LongGI[0]);
++							 for (i = 0; i < prange->num_bitrates; i++)
++			                				 prange->bitrate[i] = (HT20_LongGI[i]) *
++			                     			500000;						
++						} else {
++							prange->num_bitrates = sizeof(HT20_ShortGI)/sizeof(HT20_ShortGI[0]);
++							 for (i = 0; i < prange->num_bitrates; i++)
++			                				 prange->bitrate[i] = (HT20_ShortGI[i]) *
++			                     			500000;						
++						}
++					} else {
++						if (shortGI ==0 )
++						{
++							prange->num_bitrates = sizeof(HT40_LongGI)/sizeof(HT40_LongGI[0]);
++							 for (i = 0; i < prange->num_bitrates; i++)
++			                				 prange->bitrate[i] = (HT40_LongGI[i]) *
++			                     			500000;						
++						} else {
++							prange->num_bitrates = sizeof(HT40_ShortGI)/sizeof(HT40_ShortGI[0]);
++							 for (i = 0; i < prange->num_bitrates; i++)
++			                				 prange->bitrate[i] = (HT40_ShortGI[i]) *
++			                     			500000;						
++						}
++					}
++
++				}
++				
++#endif				
++				   prange->max_rts = 2347;
++				    prange->min_frag = MIN_FRAG_THRESHOLD;
++				prange->max_frag = MAX_FRAG_THRESHOLD;	
++
++				  prange->encoding_size[0] = 5;
++        			 prange->encoding_size[1] = 13;
++         			prange->num_encoding_sizes = 2;
++         			prange->max_encoding_tokens = 4;
++
++				INT bg[] ={2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467, 2472,2477,2482,2487};
++			        i = 0;
++			        {
++			                 for (i = 1; i <14; i ++) {
++			 
++			                         prange->freq[i-1].i = i;
++			                         prange->freq[i-1].m = bg[i-1] * 100000;
++			                        prange->freq[i-1].e = 1;
++			                 }
++			         }		
++
++					prange->num_channels =13;
++					prange->num_frequency = 13;
++
++				 prange->event_capa[0] = (IW_EVENT_CAPA_K_0 |
++                                 IW_EVENT_CAPA_MASK(SIOCGIWTHRSPY) |
++                                 IW_EVENT_CAPA_MASK(SIOCGIWAP) |
++                                 IW_EVENT_CAPA_MASK(SIOCGIWSCAN));
++        			 prange->event_capa[1] = IW_EVENT_CAPA_K_1;
++
++				prange->enc_capa = IW_ENC_CAPA_WPA | IW_ENC_CAPA_WPA2 |
++                 			IW_ENC_CAPA_CIPHER_TKIP | IW_ENC_CAPA_CIPHER_CCMP;
++ 
++         			prange->scan_capa = IW_SCAN_CAPA_ESSID | IW_SCAN_CAPA_TYPE;
++
++ 				prange->num_txpower = 2;
++     				prange->txpower_capa = IW_TXPOW_DBM|IW_TXPOW_RANGE;
++				prange->txpower[0] = -20;
++				prange->txpower[0] = -90;	
++				len = copy_to_user(wrqin->u.data.pointer, prange, sizeof(struct iw_range));
+ 				os_free_mem(NULL, prange);
+ 		    }
+ 		    break;
+@@ -385,6 +615,11 @@
+ 			RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_STATISTICS, 0, NULL, 0);
+ 			break;
+ 
++		case RTPRIV_IOCTL_GET_APCLI_CONNSTATUS:
++			printk("-->RTPRIV_IOCTL_GET_APCLI_CONNSTATUS\n");
++			RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_CONNSTATUS, 0, NULL, 0);
++			break;
++			
+ #ifdef WSC_AP_SUPPORT
+ 		case RTPRIV_IOCTL_WSC_PROFILE:
+ 			RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_WSC_PROFILE, 0, NULL, 0);
+@@ -414,7 +649,16 @@
+ 			break;
+ #endif /* RTMP_RF_RW_SUPPORT */
+ #endif /* DBG */
++		case SIOCSIWSCAN:
++			printk("====> SIOCSIWSCAN: %d\n", RT_DEV_PRIV_FLAGS_GET(net_dev));
++			if (RTMP_AP_IoctlHandle(pAd, wrq, CMD_RTPRIV_IOCTL_AP_SIOCSIWSCAN, 0, 
++			          net_dev, pIoctlConfig->priv_flags) != NDIS_STATUS_SUCCESS)
++                        {
++                                Status = RTMP_IO_EOPNOTSUPP;
++                                break;
++                        }
+ 
++			break;
+ 		default:
+ /*			DBGPRINT(RT_DEBUG_ERROR, ("IOCTL::unknown IOCTL's cmd = 0x%08x\n", cmd)); */
+ 			Status = RTMP_IO_EOPNOTSUPP;
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/rt_main_dev.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/os/linux/rt_main_dev.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/rt_main_dev.c	2014-03-20 14:01:32.390614495 +0800
+@@ -321,7 +321,7 @@
+ /*	if (RT_DEV_PRIV_FLAGS_GET(net_dev) == INT_MAIN) */
+ 	if (RTMP_DRIVER_MAIN_INF_CHECK(pAd, RT_DEV_PRIV_FLAGS_GET(net_dev)) == NDIS_STATUS_SUCCESS)
+ 	{
+-#ifdef CONFIG_APSTA_MIXED_SUPPORT
++#if 1//def CONFIG_APSTA_MIXED_SUPPORT
+ 		if (OpMode == OPMODE_AP)
+ 			net_dev->wireless_handlers = (struct iw_handler_def *) &rt28xx_ap_iw_handler_def;
+ #endif /* CONFIG_APSTA_MIXED_SUPPORT */
+@@ -446,7 +446,7 @@
+ #endif /*WIRELESS_EXT >= 12 */
+ #endif /* CONFIG_STA_SUPPORT */
+ 
+-#ifdef CONFIG_APSTA_MIXED_SUPPORT
++#if 1//def CONFIG_APSTA_MIXED_SUPPORT
+ #if WIRELESS_EXT >= 12
+ 	if (OpMode == OPMODE_AP)
+ 	{
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/sta_ioctl.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/os/linux/sta_ioctl.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/sta_ioctl.c	2014-03-20 14:01:32.390614495 +0800
+@@ -45,7 +45,7 @@
+ #define WEP_LARGE_KEY_LEN 			(104/8)
+ 
+ #define GROUP_KEY_NO                4
+-
++#if 0
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)
+ #define IWE_STREAM_ADD_EVENT(_A, _B, _C, _D, _E)		iwe_stream_add_event(_A, _B, _C, _D, _E)
+ #define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)		iwe_stream_add_point(_A, _B, _C, _D, _E)
+@@ -55,6 +55,7 @@
+ #define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)		iwe_stream_add_point(_B, _C, _D, _E)
+ #define IWE_STREAM_ADD_VALUE(_A, _B, _C, _D, _E, _F)	iwe_stream_add_value(_B, _C, _D, _E, _F)
+ #endif
++#endif
+ 
+ extern UCHAR    CipherWpa2Template[];
+ 
+@@ -807,502 +808,7 @@
+ 	return Status;
+ }
+ 
+-int rt_ioctl_giwscan(struct net_device *dev,
+-			struct iw_request_info *info,
+-			struct iw_point *data, char *extra)
+-{
+-	VOID *pAd = NULL;
+-	int i=0, status = 0;
+-	PSTRING current_ev = extra, previous_ev = extra;
+-	PSTRING end_buf;
+-	PSTRING current_val;
+-	STRING custom[MAX_CUSTOM_LEN] = {0};
+-#ifndef IWEVGENIE
+-	unsigned char idx;
+-#endif /* IWEVGENIE */
+-	struct iw_event iwe;
+-	RT_CMD_STA_IOCTL_SCAN_TABLE IoctlScan, *pIoctlScan = &IoctlScan;
+-
+-	GET_PAD_FROM_NET_DEV(pAd, dev);
+-
+-	/*check if the interface is down */
+-/*    if(!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE)) */
+-/* because android will set scan and get scan when interface down */
+-#ifndef ANDROID_SUPPORT
+-	if (RTMP_DRIVER_IOCTL_SANITY_CHECK(pAd, NULL) != NDIS_STATUS_SUCCESS)
+-    {
+-       	DBGPRINT(RT_DEBUG_TRACE, ("INFO::Network is down!\n"));
+-        return -ENETDOWN;
+-	}
+-#endif /* ANDROID_SUPPORT */
+-
+-
+-
+-	pIoctlScan->priv_flags = RT_DEV_PRIV_FLAGS_GET(dev);
+-	pIoctlScan->pBssTable = NULL;
+-	if (RTMP_STA_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_STA_SIOCGIWSCAN, 0,
+-							pIoctlScan, 0,
+-							RT_DEV_PRIV_FLAGS_GET(dev)) != NDIS_STATUS_SUCCESS)
+-	{
+-		status = -EINVAL;
+-		goto go_out;
+-	}
+-
+-
+-	if (pIoctlScan->BssNr == 0)
+-	{
+-		data->length = 0;
+-		status = 0;
+-		goto go_out;
+-	}
+-
+-#if WIRELESS_EXT >= 17
+-    if (data->length > 0)
+-        end_buf = extra + data->length;
+-    else
+-        end_buf = extra + IW_SCAN_MAX_DATA;
+-#else
+-    end_buf = extra + IW_SCAN_MAX_DATA;
+-#endif
+-
+-	for (i = 0; i < pIoctlScan->BssNr; i++) 
+-	{
+-		if (current_ev >= end_buf)
+-        {
+-#if WIRELESS_EXT >= 17
+-			status = -E2BIG;
+-			goto go_out;
+-#else
+-			break;
+-#endif
+-        }
+-		
+-		/*MAC address */
+-		/*================================ */
+-		memset(&iwe, 0, sizeof(iwe));
+-		iwe.cmd = SIOCGIWAP;
+-		iwe.u.ap_addr.sa_family = ARPHRD_ETHER;
+-				memcpy(iwe.u.ap_addr.sa_data, &pIoctlScan->pBssTable[i].Bssid, ETH_ALEN);
+-
+-        previous_ev = current_ev;
+-		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev,end_buf, &iwe, IW_EV_ADDR_LEN);
+-        if (current_ev == previous_ev)
+-        {
+-#if WIRELESS_EXT >= 17
+-            status = -E2BIG;
+-			goto go_out;
+-#else
+-			break;
+-#endif
+-        }
+-
+-		/* 
+-		Protocol:
+-			it will show scanned AP's WirelessMode .
+-			it might be
+-					802.11a
+-					802.11a/n
+-					802.11g/n
+-					802.11b/g/n
+-					802.11g
+-					802.11b/g
+-		*/
+-		memset(&iwe, 0, sizeof(iwe));
+-		iwe.cmd = SIOCGIWNAME;
+-
+-
+-	{
+-		RT_CMD_STA_IOCTL_BSS_TABLE *pBssEntry=&pIoctlScan->pBssTable[i];
+-		BOOLEAN isGonly=FALSE;
+-		int rateCnt=0;
+-
+-		if (pBssEntry->Channel>14)
+-		{
+-			if (pBssEntry->HtCapabilityLen!=0)
+-				strcpy(iwe.u.name,"802.11a/n");
+-			else	
+-				strcpy(iwe.u.name,"802.11a");
+-		}
+-		else
+-		{
+-			/*
+-				if one of non B mode rate is set supported rate . it mean G only. 
+-			*/
+-			for (rateCnt=0;rateCnt<pBssEntry->SupRateLen;rateCnt++)
+-			{									
+-				/*
+-					6Mbps(140) 9Mbps(146) and >=12Mbps(152) are supported rate , it mean G only. 
+-				*/
+-				if (pBssEntry->SupRate[rateCnt]==140 || pBssEntry->SupRate[rateCnt]==146 || pBssEntry->SupRate[rateCnt]>=152)
+-					isGonly=TRUE;
+-			}
+-
+-			for (rateCnt=0;rateCnt<pBssEntry->ExtRateLen;rateCnt++)
+-			{
+-				if (pBssEntry->ExtRate[rateCnt]==140 || pBssEntry->ExtRate[rateCnt]==146 || pBssEntry->ExtRate[rateCnt]>=152)
+-					isGonly=TRUE;
+-			}		
+-			
+-			
+-			if (pBssEntry->HtCapabilityLen!=0)
+-			{
+-				if (isGonly==TRUE)
+-					strcpy(iwe.u.name,"802.11g/n");
+-				else
+-					strcpy(iwe.u.name,"802.11b/g/n");
+-			}
+-			else
+-			{
+-				if (isGonly==TRUE)
+-					strcpy(iwe.u.name,"802.11g");
+-				else
+-				{
+-					if (pBssEntry->SupRateLen==4 && pBssEntry->ExtRateLen==0)
+-						strcpy(iwe.u.name,"802.11b");
+-					else
+-						strcpy(iwe.u.name,"802.11b/g");		
+-				}
+-			}
+-		}
+-	}
+-
+-		previous_ev = current_ev;
+-		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev,end_buf, &iwe, IW_EV_ADDR_LEN);
+-		if (current_ev == previous_ev)
+-		{
+-#if WIRELESS_EXT >= 17
+-	   		status = -E2BIG;
+-			goto go_out;
+-#else
+-			break;
+-#endif
+-		}
+ 
+-		/*ESSID */
+-		/*================================ */
+-		memset(&iwe, 0, sizeof(iwe));
+-		iwe.cmd = SIOCGIWESSID;
+-		iwe.u.data.length = pIoctlScan->pBssTable[i].SsidLen;
+-		iwe.u.data.flags = 1;
+- 
+-        previous_ev = current_ev;
+-		current_ev = IWE_STREAM_ADD_POINT(info, current_ev,end_buf, &iwe, (PSTRING) pIoctlScan->pBssTable[i].Ssid);
+-        if (current_ev == previous_ev)
+-        {
+-#if WIRELESS_EXT >= 17
+-            status = -E2BIG;
+-			goto go_out;
+-#else
+-			break;
+-#endif
+-        }
+-		
+-		/*Network Type */
+-		/*================================ */
+-		memset(&iwe, 0, sizeof(iwe));
+-		iwe.cmd = SIOCGIWMODE;
+-		if (pIoctlScan->pBssTable[i].BssType == Ndis802_11IBSS)
+-		{
+-			iwe.u.mode = IW_MODE_ADHOC;
+-		}
+-		else if (pIoctlScan->pBssTable[i].BssType == Ndis802_11Infrastructure)
+-		{
+-			iwe.u.mode = IW_MODE_INFRA;
+-		}
+-		else
+-		{
+-			iwe.u.mode = IW_MODE_AUTO;
+-		}
+-		iwe.len = IW_EV_UINT_LEN;
+-
+-        previous_ev = current_ev;
+-		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev, end_buf, &iwe,  IW_EV_UINT_LEN);
+-        if (current_ev == previous_ev)
+-        {
+-#if WIRELESS_EXT >= 17
+-            status = -E2BIG;
+-			goto go_out;
+-#else
+-			break;
+-#endif
+-        }
+-
+-		/*Channel and Frequency */
+-		/*================================ */
+-		memset(&iwe, 0, sizeof(iwe));
+-		iwe.cmd = SIOCGIWFREQ;
+-		{
+-			UCHAR ch = pIoctlScan->pBssTable[i].Channel;
+-			ULONG	m = 0;
+-/*			MAP_CHANNEL_ID_TO_KHZ(ch, m); */
+-			RTMP_STA_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_CHID_2_FREQ, 0,
+-								(VOID *)&m, ch, RT_DEV_PRIV_FLAGS_GET(dev));
+-			iwe.u.freq.m = m * 100;
+-			iwe.u.freq.e = 1;
+-		iwe.u.freq.i = 0;
+-		previous_ev = current_ev;
+-		current_ev = IWE_STREAM_ADD_EVENT(info, current_ev,end_buf, &iwe, IW_EV_FREQ_LEN);
+-        if (current_ev == previous_ev)
+-	        {
+-#if WIRELESS_EXT >= 17
+-	            status = -E2BIG;
+-				goto go_out;
+-#else
+-				break;
+-#endif
+-	        }
+-		}	    
+-
+-        /*Add quality statistics */
+-        /*================================ */
+-        memset(&iwe, 0, sizeof(iwe));
+-    	iwe.cmd = IWEVQUAL;
+-    	iwe.u.qual.level = 0;
+-    	iwe.u.qual.noise = 0;
+-		set_quality(pAd, &iwe.u.qual, &pIoctlScan->pBssTable[i].Signal);
+-    	current_ev = IWE_STREAM_ADD_EVENT(info, current_ev, end_buf, &iwe, IW_EV_QUAL_LEN);
+-	if (current_ev == previous_ev)
+-		{
+-#if WIRELESS_EXT >= 17
+-	            status = -E2BIG;
+-				goto go_out;
+-#else
+-				break;
+-#endif
+-		}
+-
+-		/*Encyption key */
+-		/*================================ */
+-		memset(&iwe, 0, sizeof(iwe));
+-		iwe.cmd = SIOCGIWENCODE;
+-		if (pIoctlScan->pBssTable[i].FlgIsPrivacyOn)
+-			iwe.u.data.flags =IW_ENCODE_ENABLED | IW_ENCODE_NOKEY;
+-		else
+-			iwe.u.data.flags = IW_ENCODE_DISABLED;
+-
+-        previous_ev = current_ev;		
+-        current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf,&iwe, (char *)pIoctlScan->MainSharedKey[(iwe.u.data.flags & IW_ENCODE_INDEX)-1]);
+-        if (current_ev == previous_ev)
+-        {
+-#if WIRELESS_EXT >= 17
+-            status = -E2BIG;
+-			goto go_out;
+-#else
+-			break;
+-#endif
+-        }
+-
+-		/*Bit Rate */
+-		/*================================ */
+-		if (pIoctlScan->pBssTable[i].SupRateLen)
+-        {
+-            UCHAR tmpRate = pIoctlScan->pBssTable[i].SupRate[pIoctlScan->pBssTable[i].SupRateLen-1];
+-			memset(&iwe, 0, sizeof(iwe));
+-			iwe.cmd = SIOCGIWRATE;
+-    		current_val = current_ev + IW_EV_LCP_LEN;            
+-            if (tmpRate == 0x82)
+-                iwe.u.bitrate.value =  1 * 1000000;
+-            else if (tmpRate == 0x84)
+-                iwe.u.bitrate.value =  2 * 1000000;
+-            else if (tmpRate == 0x8B)
+-                iwe.u.bitrate.value =  5.5 * 1000000;
+-            else if (tmpRate == 0x96)
+-                iwe.u.bitrate.value =  11 * 1000000;
+-            else
+-    		    iwe.u.bitrate.value =  (tmpRate/2) * 1000000;
+-            
+-			if (pIoctlScan->pBssTable[i].ExtRateLen)
+-			{
+-				UCHAR tmpSupRate =(pIoctlScan->pBssTable[i].SupRate[pIoctlScan->pBssTable[i].SupRateLen-1]& 0x7f);
+-				UCHAR tmpExtRate =(pIoctlScan->pBssTable[i].ExtRate[pIoctlScan->pBssTable[i].ExtRateLen-1]& 0x7f);
+-				iwe.u.bitrate.value = (tmpSupRate > tmpExtRate) ? (tmpSupRate)*500000 : (tmpExtRate)*500000;	
+-			}
+-
+-			if (tmpRate == 0x6c && pIoctlScan->pBssTable[i].HtCapabilityLen > 0)
+-			{
+-				int rate_count = RT_RateSize/sizeof(__s32);
+-/*				HT_CAP_INFO capInfo = pIoctlScan->pBssTable[i].HtCapability.HtCapInfo; */
+-				int shortGI = pIoctlScan->pBssTable[i].ChannelWidth ? pIoctlScan->pBssTable[i].ShortGIfor40 : pIoctlScan->pBssTable[i].ShortGIfor20;
+-				int maxMCS = pIoctlScan->pBssTable[i].MCSSet ?  15 : 7;
+-				int rate_index = 12 + ((UCHAR)pIoctlScan->pBssTable[i].ChannelWidth * 24) +
+-								((UCHAR)shortGI *48) + ((UCHAR)maxMCS);
+-				if (rate_index < 0)
+-					rate_index = 0;
+-				if (rate_index >= rate_count)
+-					rate_index = rate_count-1;
+-				iwe.u.bitrate.value	=  ralinkrate[rate_index] * 500000;
+-			}
+-            
+-			iwe.u.bitrate.disabled = 0;
+-			current_val = IWE_STREAM_ADD_VALUE(info, current_ev,
+-				current_val, end_buf, &iwe,
+-    			IW_EV_PARAM_LEN);            
+-
+-        	if((current_val-current_ev)>IW_EV_LCP_LEN)
+-            	current_ev = current_val;
+-        	else
+-        	{
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-        	}
+-        }
+-            
+-#ifdef IWEVGENIE
+-        /*WPA IE */
+-		if (pIoctlScan->pBssTable[i].WpaIeLen > 0)
+-        {
+-			memset(&iwe, 0, sizeof(iwe));
+-			memset(&custom[0], 0, MAX_CUSTOM_LEN);
+-			memcpy(custom, &(pIoctlScan->pBssTable[i].pWpaIe[0]), 
+-						   pIoctlScan->pBssTable[i].WpaIeLen);
+-			iwe.cmd = IWEVGENIE;
+-			iwe.u.data.length = pIoctlScan->pBssTable[i].WpaIeLen;
+-			current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe, custom);
+-			if (current_ev == previous_ev)
+-			{
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-			}
+-		}
+-            
+-		/*WPA2 IE */
+-        if (pIoctlScan->pBssTable[i].RsnIeLen > 0)
+-        {
+-        	memset(&iwe, 0, sizeof(iwe));
+-			memset(&custom[0], 0, MAX_CUSTOM_LEN);
+-			memcpy(custom, &(pIoctlScan->pBssTable[i].pRsnIe[0]), 
+-						   pIoctlScan->pBssTable[i].RsnIeLen);
+-			iwe.cmd = IWEVGENIE;
+-			iwe.u.data.length = pIoctlScan->pBssTable[i].RsnIeLen;
+-			current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe, custom);
+-			if (current_ev == previous_ev)
+-			{
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-			}
+-        }
+-
+-		/*WPS IE */
+-		if (pIoctlScan->pBssTable[i].WpsIeLen > 0)
+-        {
+-        	memset(&iwe, 0, sizeof(iwe));
+-			memset(&custom[0], 0, MAX_CUSTOM_LEN);
+-			memcpy(custom, &(pIoctlScan->pBssTable[i].pWpsIe[0]), 
+-						   pIoctlScan->pBssTable[i].WpsIeLen);
+-			iwe.cmd = IWEVGENIE;
+-			iwe.u.data.length = pIoctlScan->pBssTable[i].WpsIeLen;
+-			current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe, custom);
+-			if (current_ev == previous_ev)
+-			{
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-			}
+-        }
+-#else
+-        /*WPA IE */
+-		/*================================ */
+-        if (pIoctlScan->pBssTable[i].WpaIeLen > 0)
+-        {
+-    		NdisZeroMemory(&iwe, sizeof(iwe));
+-			memset(&custom[0], 0, MAX_CUSTOM_LEN);
+-    		iwe.cmd = IWEVCUSTOM;
+-            iwe.u.data.length = (pIoctlScan->pBssTable[i].WpaIeLen * 2) + 7;
+-            NdisMoveMemory(custom, "wpa_ie=", 7);
+-            for (idx = 0; idx < pIoctlScan->pBssTable[i].WpaIeLen; idx++)
+-                sprintf(custom, "%s%02x", custom, pIoctlScan->pBssTable[i].pWpaIe[idx]);
+-            previous_ev = current_ev;
+-    		current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe,  custom);
+-            if (current_ev == previous_ev)
+-            {
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-            }
+-        }
+-
+-        /*WPA2 IE */
+-        if (pIoctlScan->pBssTable[i].RsnIeLen > 0)
+-        {
+-    		NdisZeroMemory(&iwe, sizeof(iwe));
+-			memset(&custom[0], 0, MAX_CUSTOM_LEN);
+-    		iwe.cmd = IWEVCUSTOM;
+-            iwe.u.data.length = (pIoctlScan->pBssTable[i].RsnIeLen * 2) + 7;
+-            NdisMoveMemory(custom, "rsn_ie=", 7);
+-			for (idx = 0; idx < pIoctlScan->pBssTable[i].RsnIeLen; idx++)
+-                sprintf(custom, "%s%02x", custom, pIoctlScan->pBssTable[i].pRsnIe[idx]);
+-            previous_ev = current_ev;
+-    		current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe,  custom);
+-            if (current_ev == previous_ev)
+-            {
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-            }
+-        }
+-
+-#ifdef WSC_INCLUDED
+-		/*WPS IE */
+-		if (pIoctlScan->pBssTable[i].WpsIeLen > 0)
+-        {
+-    		NdisZeroMemory(&iwe, sizeof(iwe));
+-			memset(&custom[0], 0, MAX_CUSTOM_LEN);
+-    		iwe.cmd = IWEVCUSTOM;
+-            iwe.u.data.length = (pIoctlScan->pBssTable[i].WpsIeLen * 2) + 7;
+-            NdisMoveMemory(custom, "wps_ie=", 7);
+-			for (idx = 0; idx < pIoctlScan->pBssTable[i].WpsIeLen; idx++)
+-                sprintf(custom, "%s%02x", custom, pIoctlScan->pBssTable[i].pWpsIe[idx]);
+-            previous_ev = current_ev;
+-    		current_ev = IWE_STREAM_ADD_POINT(info, current_ev, end_buf, &iwe,  custom);
+-            if (current_ev == previous_ev)
+-            {
+-#if WIRELESS_EXT >= 17
+-                status = -E2BIG;
+-				goto go_out;
+-#else
+-			    break;
+-#endif
+-            }
+-        }
+-#endif /* WSC_INCLUDED */
+-
+-#endif /* IWEVGENIE */
+-	}
+-
+-	data->length = current_ev - extra;
+-/*    pAd->StaCfg.bScanReqIsFromWebUI = FALSE; */
+-/*	DBGPRINT(RT_DEBUG_ERROR ,("===>rt_ioctl_giwscan. %d(%d) BSS returned, data->length = %d\n",i , pAd->ScanTab.BssNr, data->length)); */
+-
+-	RTMP_STA_IoctlHandle(pAd, NULL, CMD_RTPRIV_IOCTL_STA_SCAN_END, 0,
+-						NULL, data->length, RT_DEV_PRIV_FLAGS_GET(dev));
+-
+-go_out:
+-	if (pIoctlScan->pBssTable != NULL)
+-		os_free_mem(NULL, pIoctlScan->pBssTable);
+-
+-	return status;
+-}
+ #endif
+ 
+ int rt_ioctl_siwessid(struct net_device *dev,
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/sta/sta_cfg.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/sta/sta_cfg.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/sta/sta_cfg.c	2014-03-20 14:01:32.394614495 +0800
+@@ -7294,6 +7294,7 @@
+ Note:
+ ========================================================================
+ */
++#if 0
+ INT
+ RtmpIoctl_rt_ioctl_giwscan(
+ 	IN	RTMP_ADAPTER			*pAd,
+@@ -7367,7 +7368,7 @@
+ 
+ 	return NDIS_STATUS_SUCCESS;
+ }
+-
++#endif
+ 
+ /*
+ ========================================================================
+@@ -8320,7 +8321,7 @@
+ 	return NDIS_STATUS_SUCCESS;
+ }
+ 
+-
++#if 0
+ /*
+ ========================================================================
+ Routine Description:
+@@ -8417,7 +8418,7 @@
+ 
+ 	return NDIS_STATUS_SUCCESS;
+ }
+-
++#endif
+ 
+ /*
+ ========================================================================
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_apcli.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_apcli.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_apcli.c	2014-03-20 14:01:32.394614495 +0800
+@@ -430,8 +430,11 @@
+ 						pMacEntry->PortSecured = WPA_802_1X_PORT_NOT_SECURED;
+ 				else
+ #endif /*APCLI_WPA_SUPPLICANT_SUPPORT*/
+-
+-				pMacEntry->PortSecured = WPA_802_1X_PORT_SECURED;
++				{
++					pMacEntry->PortSecured = WPA_802_1X_PORT_SECURED;
++					pApCliEntry->ConnectState = APCLI_NOT_TRIGGER_CONNECT;
++					pApCliEntry->FailReason = 0;
++				}
+ #ifdef MAC_REPEATER_SUPPORT
+ 				if (CliIdx != 0xFF)
+ 					pAd->ApCfg.ApCliTab[ifIndex].RepeaterCli[CliIdx].CliConnectState = 2;
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_mlme.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_mlme.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_mlme.c	2014-03-20 14:01:32.398614495 +0800
+@@ -234,8 +234,39 @@
+ 				MlmeCalculateChannelQuality(pAd,
+ 					&pAd->MacTab.Content[pApCliEntry->MacTabWCID], Now32);
+ 			}
++
++			//woody 
++				if (pAd->ApCfg.ApCliTab[loop].ConnectState > APCLI_NOT_TRIGGER_CONNECT)
++				{
++					if (RTMP_TIME_AFTER(Now32, pAd->ApCfg.ApCliTab[loop].LastTriggerTime + (10*OS_HZ)))
++					{
++						switch(pAd->ApCfg.ApCliTab[loop].ConnectState)
++						{
++							case APCLI_START_PROBE:
++								pAd->ApCfg.ApCliTab[loop].FailReason=1;
++								break;
++							case APCLI_START_AUTH:
++								pAd->ApCfg.ApCliTab[loop].FailReason=2;
++								break;	
++							case APCLI_START_ASSOC:
++								pAd->ApCfg.ApCliTab[loop].FailReason=3;
++								break;	
++							case APCLI_START_4WAY:
++								pAd->ApCfg.ApCliTab[loop].FailReason=4;
++								break;	
++							default:	
++								pAd->ApCfg.ApCliTab[loop].FailReason=5;
++						}
++
++						pAd->ApCfg.ApCliTab[loop].ConnectState = APCLI_NOT_TRIGGER_CONNECT;
++					}
++					else
++						pAd->ApCfg.ApCliTab[loop].FailReason=0;
++				}
+ 		}
+ 	}
++
++
+ #endif /* APCLI_SUPPORT */
+ 
+ #ifdef DOT11_N_SUPPORT
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/apcli_assoc.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/apcli_assoc.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/apcli_assoc.c	2014-03-20 14:01:32.398614495 +0800
+@@ -602,6 +602,7 @@
+ #endif /* MAC_REPEATER_SUPPORT */
+ 		RTMPSetTimer(&pApCliEntry->ApCliMlmeAux.ApCliAssocTimer, Timeout);
+ 		*pCurrState = APCLI_ASSOC_WAIT_RSP;
++		pAd->ApCfg.ApCliTab[ifIndex].ConnectState = APCLI_START_ASSOC;
+ 	} 
+ 	else
+ 	{
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/apcli_auth.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/apcli_auth.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/apcli_auth.c	2014-03-20 14:01:32.398614495 +0800
+@@ -313,6 +313,8 @@
+ #endif /* MAC_REPEATER_SUPPORT */
+ 		RTMPSetTimer(&pAd->ApCfg.ApCliTab[ifIndex].ApCliMlmeAux.ApCliAuthTimer, AUTH_TIMEOUT);
+ 		*pCurrState = APCLI_AUTH_WAIT_SEQ2;
++
++		pAd->ApCfg.ApCliTab[ifIndex].ConnectState = APCLI_START_AUTH;
+ 	} 
+ 	else
+ 	{
+@@ -613,6 +615,7 @@
+ 			*pCurrState = APCLI_AUTH_REQ_IDLE;
+ 			MlmeEnqueue(pAd, APCLI_CTRL_STATE_MACHINE, APCLI_CTRL_AUTH_RSP,
+ 			sizeof(APCLI_CTRL_MSG_STRUCT), &ApCliCtrlMsg, ifIndex);
++			
+ 		}
+ 	} else
+ 	{
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/apcli_ctrl.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/apcli_ctrl.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/apcli_ctrl.c	2014-03-20 14:01:32.398614495 +0800
+@@ -679,7 +679,7 @@
+ #ifdef MAC_REPEATER_SUPPORT
+ 		ifIndex = (USHORT)(Elem->Priv);
+ #endif /* MAC_REPEATER_SUPPORT */
+-
++		pAd->ApCfg.ApCliTab[ifIndex].ConnectState = APCLI_RECE_AUTH;
+ 		MlmeEnqueue(pAd, APCLI_ASSOC_STATE_MACHINE, APCLI_MT2_MLME_ASSOC_REQ,
+ 			sizeof(MLME_ASSOC_REQ_STRUCT), &AssocReq, ifIndex);
+ 	} 
+@@ -990,6 +990,7 @@
+ 		if (ApCliLinkUp(pAd, ifIndex))
+ 		{
+ 			*pCurrState = APCLI_CTRL_CONNECTED;
++			pAd->ApCfg.ApCliTab[ifIndex].ConnectState = APCLI_RECE_ASSOC;
+ 		}
+ 		else
+ 		{
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_wpa.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/cmm_wpa.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_wpa.c	2014-03-20 14:01:32.398614495 +0800
+@@ -1073,6 +1073,8 @@
+ 			group_cipher = pAd->ApCfg.ApCliTab[IfIndex].GroupCipher;
+ 			rsnie_ptr = pAd->ApCfg.ApCliTab[IfIndex].RSN_IE;
+ 			rsnie_len = pAd->ApCfg.ApCliTab[IfIndex].RSNIE_Len;
++
++			pAd->ApCfg.ApCliTab[IfIndex].ConnectState = APCLI_START_4WAY;
+ 		}
+ #endif /* APCLI_SUPPORT */			
+ 	}
+@@ -1396,7 +1398,7 @@
+ 	USHORT ifIndex = (USHORT)(Elem->Priv);
+ 	UCHAR CliIdx = 0xFF;
+ #endif /* MAC_REPEATER_SUPPORT */
+-
++	UINT				IfIndex = 0;
+ 	DBGPRINT(RT_DEBUG_TRACE, ("===> PeerPairMsg3Action \n"));
+ 	
+ 	if ((!pEntry) || (!IS_ENTRY_CLIENT(pEntry) && !IS_ENTRY_APCLI(pEntry)))
+@@ -1411,7 +1413,7 @@
+ #ifdef APCLI_SUPPORT
+ 		if (IS_ENTRY_APCLI(pEntry))
+ 		{
+-			UINT				IfIndex = 0;
++
+ 		
+ 			IfIndex = pEntry->MatchAPCLITabIdx;
+ #ifdef MAC_REPEATER_SUPPORT
+@@ -1571,6 +1573,9 @@
+ 		IF_DEV_CONFIG_OPMODE_ON_AP(pAd)
+ 		{				
+ #ifdef APCLI_SUPPORT
++			IfIndex = pEntry->MatchAPCLITabIdx;
++			pAd->ApCfg.ApCliTab[IfIndex].ConnectState = APCLI_NOT_TRIGGER_CONNECT;
++			pAd->ApCfg.ApCliTab[IfIndex].FailReason = 0;
+ #ifdef APCLI_AUTO_CONNECT_SUPPORT
+ 			if((pAd->ApCfg.ApCliAutoConnectRunning == TRUE)
+ #ifdef MAC_REPEATER_SUPPORT
+@@ -2016,6 +2021,11 @@
+ 	IF_DEV_CONFIG_OPMODE_ON_AP(pAd)
+ 	{				
+ #ifdef APCLI_SUPPORT
++			UINT				IfIndex = 0;
++		
++			IfIndex = pEntry->MatchAPCLITabIdx;
++		pAd->ApCfg.ApCliTab[IfIndex].ConnectState = APCLI_NOT_TRIGGER_CONNECT;
++		pAd->ApCfg.ApCliTab[IfIndex].FailReason = 0;
+ #ifdef APCLI_AUTO_CONNECT_SUPPORT
+ 		if ((pAd->ApCfg.ApCliAutoConnectRunning == TRUE)
+ #ifdef MAC_REPEATER_SUPPORT
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/os/rt_os.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/os/rt_os.h	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/os/rt_os.h	2014-03-20 14:01:32.398614495 +0800
+@@ -107,6 +107,7 @@
+ #define RTPRIV_IOCTL_SHOW							(SIOCIWFIRSTPRIV + 0x11)
+ #define RTPRIV_IOCTL_WSC_PROFILE                    (SIOCIWFIRSTPRIV + 0x12)
+ #define RTPRIV_IOCTL_QUERY_BATABLE                  (SIOCIWFIRSTPRIV + 0x16)
++#define RTPRIV_IOCTL_GET_APCLI_CONNSTATUS   (SIOCIWFIRSTPRIV + 0x17)
+ #ifdef INF_AR9
+ #define RTPRIV_IOCTL_GET_AR9_SHOW   (SIOCIWFIRSTPRIV + 0x17)
+ #endif/* INF_AR9 */
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp_def.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/rtmp_def.h	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp_def.h	2014-03-20 14:01:32.402614495 +0800
+@@ -1211,6 +1211,16 @@
+ #define APCLI_CTRL_FUNC_SIZE              (APCLI_MAX_CTRL_STATE * APCLI_MAX_CTRL_MSG)
+ 
+ 
++/*woody*/
++#define APCLI_NOT_TRIGGER_CONNECT           0	/* merge NO_BSS,IBSS_IDLE,IBSS_ACTIVE and BSS in to 1 state */
++#define APCLI_START_PROBE                  1
++#define APCLI_START_AUTH                  2
++#define APCLI_RECE_AUTH                3
++#define APCLI_START_ASSOC                  4
++#define APCLI_RECE_ASSOC                 5
++#define APCLI_START_4WAY               6
++
++
+ #endif /* APCLI_SUPPORT */
+ 
+ #ifdef CONFIG_STA_SUPPORT
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/rt_linux.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/os/linux/rt_linux.c	2014-03-20 14:01:32.214614495 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/os/linux/rt_linux.c	2014-03-20 14:01:32.402614495 +0800
+@@ -858,7 +858,6 @@
+ }
+ #endif /* CONFIG_AP_SUPPORT */
+ 
+-#ifdef CONFIG_STA_SUPPORT
+ INT32 ralinkrate[] = {
+ 2, 4, 11, 22,		/* CCK */
+ 12, 18, 24, 36, 48, 72, 96, 108,	/* OFDM */
+@@ -874,9 +873,11 @@
+ /* 40MHz, 400ns GI, MCS: 0 ~ 15 */
+ 30, 60, 90, 120, 180, 240, 270, 300, 60, 120, 180, 240, 360, 480, 540, 600,
+ 90, 180, 270, 360, 540, 720, 810, 900};	/* 40MHz, 400ns GI, MCS: 16 ~ 23 */
+-
+ UINT32 RT_RateSize = sizeof (ralinkrate);
+ 
++#ifdef CONFIG_STA_SUPPORT
++
++
+ void send_monitor_packets(IN PNET_DEV pNetDev,
+ 			  IN PNDIS_PACKET pRxPacket,
+ 			  IN PHEADER_802_11 pHeader,
+@@ -1820,14 +1821,12 @@
+ #endif /*WIRELESS_EXT >= 12 */
+ #endif /* CONFIG_STA_SUPPORT */
+ 
+-#ifdef CONFIG_APSTA_MIXED_SUPPORT
+ #if WIRELESS_EXT >= 12
+ 		if (OpMode == OPMODE_AP) {
+ /*			pNetDev->wireless_handlers = &rt28xx_ap_iw_handler_def; */
+ 			pNetDev->wireless_handlers = pDevOpHook->iw_handler;
+ 		}
+ #endif /*WIRELESS_EXT >= 12 */
+-#endif /* CONFIG_APSTA_MIXED_SUPPORT */
+ 
+ 		/* copy the net device mac address to the net_device structure. */
+ 		NdisMoveMemory(pNetDev->dev_addr, &pDevOpHook->devAddr[0],
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/wsc.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/wsc.c	2013-10-10 17:37:38.000000000 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/wsc.c	2014-03-20 14:04:09.578614476 +0800
+@@ -11312,7 +11312,6 @@
+ 			/* Found device password ID*/
+ 			NdisMoveMemory(&DevicePasswordID, pData + 4, sizeof(DevicePasswordID));
+ 			DevicePasswordID = be2cpu16(DevicePasswordID);
+-			DBGPRINT(RT_DEBUG_TRACE, ("%s : DevicePasswordID = 0x%04x\n", __FUNCTION__, DevicePasswordID));
+ 			if (DevicePasswordID == DEV_PASS_ID_PBC)	/* Check for PBC value*/
+ 			{
+ 				WscPBC_DPID_FromSTA(pAd, Fr->Hdr.Addr2);

@@ -1,0 +1,30 @@
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_profile.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/cmm_profile.c
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_profile.c
+@@ -3287,10 +3287,10 @@ NDIS_STATUS	RTMPSetProfileParameters(
+ 			if (RTMPGetKeyParameter("AutoChannelSkipList", tmpbuf, 50, pBuffer, FALSE))
+ 			{		
+ 				pAd->ApCfg.AutoChannelSkipListNum = delimitcnt(tmpbuf, ";") + 1;
+-				if ( pAd->ApCfg.AutoChannelSkipListNum > 10 )
++				if ( pAd->ApCfg.AutoChannelSkipListNum > 24 )
+ 				{
+ 					DBGPRINT(RT_DEBUG_TRACE, ("Your no. of AutoChannelSkipList( %d ) is larger than 10 (boundary)\n",pAd->ApCfg.AutoChannelSkipListNum));
+-					pAd->ApCfg.AutoChannelSkipListNum = 10;
++					pAd->ApCfg.AutoChannelSkipListNum = 24;
+ 				}
+ 						
+ 				for (i = 0, macptr = rstrtok(tmpbuf,";"); macptr ; macptr = rstrtok(NULL,";"), i++)
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/rtmp.h
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h
+@@ -3086,7 +3086,7 @@ typedef struct _AP_ADMIN_CONFIG {
+ 	UCHAR AutoChannel_Channel;	/* channel number during Auto Channel Selection */
+ 	UCHAR current_channel_index;	/* current index of channel list */
+ 	UCHAR AutoChannelSkipListNum;	/* number of rejected channel list */
+-	UCHAR AutoChannelSkipList[10];
++	UCHAR AutoChannelSkipList[24];
+ 	UCHAR DtimCount;	/* 0.. DtimPeriod-1 */
+ 	UCHAR DtimPeriod;	/* default = 3 */
+ 	UCHAR ErpIeContent;

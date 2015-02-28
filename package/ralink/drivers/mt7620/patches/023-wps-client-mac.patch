@@ -1,0 +1,59 @@
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_cfg.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_cfg.c	2014-03-28 13:20:23.122532309 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_cfg.c	2014-03-28 13:26:51.910532263 +0800
+@@ -7293,11 +7293,13 @@
+ 					"\tWscConfStatus=%d\n"
+ 					"\tWscPinCode=%d\n"
+ 					"\tWscState=0x%x\n"
+-					"\tWscStatus=0x%x\n",
++					"\tWscStatus=0x%x\n"
++					"\tWscLatestMacAddr=%s\n",
+ 					pWscCtrl->WscConfMode, 
+ 					((pWscCtrl->WscMode == WSC_PIN_MODE) ? "PIN" : "PBC"),
+ 					pWscCtrl->WscConfStatus, pWscCtrl->WscEnrolleePinCode, 
+-					pWscCtrl->WscState, pWscCtrl->WscStatus);	
++					pWscCtrl->WscState, pWscCtrl->WscStatus,
++					PRINT_MAC(pAd->CommonCfg.LatestWSCMacAddr));	
+ 		}
+ #endif /* WSC_INCLUDED */
+ 
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/wsc.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/wsc.c	2014-03-28 13:20:23.214532310 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/wsc.c	2014-03-28 13:25:31.430532273 +0800
+@@ -7055,6 +7055,8 @@
+ 		}
+ #endif /* CONFIG_AP_SUPPORT */        
+ 	}
++
++	NdisZeroMemory(pAd->CommonCfg.LatestWSCMacAddr,MAC_ADDR_LEN);
+ }
+ 
+ USHORT WscGetAuthType(
+@@ -9050,9 +9052,11 @@
+     
+ #ifdef WSC_V2_SUPPORT
+ 	if (pWscControl->WscV2Info.bEnableWpsV2 && (OpMode & REGISTRAR_ACTION))
+-		NdisMoveMemory(pCredential->MacAddr, pWscControl->EntryAddr, 6);
++		NdisMoveMemory(pCredential->MacAddr, pWscControl->EntryAddr, MAC_ADDR_LEN);
+ #endif /* WSC_V2_SUPPORT */
+-    
++   
++	NdisMoveMemory(pAd->CommonCfg.LatestWSCMacAddr, pWscControl->EntryAddr, MAC_ADDR_LEN);
++ 
+     DBGPRINT(RT_DEBUG_TRACE, ("<----- WscCreateProfileFromCfg\n"));
+ 
+ }
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/include/rtmp.h	2014-03-28 13:20:23.138532312 +0800
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/include/rtmp.h	2014-03-28 13:27:49.658532256 +0800
+@@ -1777,6 +1777,7 @@
+ #ifdef WSC_INCLUDED
+ 	/* WSC hardware push button function 0811 */
+ 	UINT8 WscHdrPshBtnCheckCount;
++	UCHAR LatestWSCMacAddr[MAC_ADDR_LEN];
+ #endif				/* WSC_INCLUDED */
+ 
+ 

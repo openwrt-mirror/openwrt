@@ -1,0 +1,14 @@
+Index: mt7620-wifi2716_all_dpa_20130426/rt2860v2/include/iface/rtmp_rbs.h
+===================================================================
+--- mt7620-wifi2716_all_dpa_20130426.orig/rt2860v2/include/iface/rtmp_rbs.h
++++ mt7620-wifi2716_all_dpa_20130426/rt2860v2/include/iface/rtmp_rbs.h
+@@ -83,7 +83,8 @@
+ #endif /* CONFIG_RT2860V2_2850 */
+ 
+ #if defined (CONFIG_RALINK_RT6352)  || defined (CONFIG_RALINK_MT7620)
+-#define EEPROM_DEFAULT_FILE_PATH                     "/etc_ro/wlan/MT7620_AP_2T2R-4L_V15.BIN"
++// #define EEPROM_DEFAULT_FILE_PATH                     "/etc_ro/wlan/MT7620_AP_2T2R-4L_V15.BIN"
++#define EEPROM_DEFAULT_FILE_PATH                     "/lib/firmware/soc_wmac.eeprom"
+ #endif /* defined (CONFIG_RALINK_RT6352)  || defined (CONFIG_RALINK_MT7620) */
+ 
+ #ifndef EEPROM_DEFAULT_FILE_PATH

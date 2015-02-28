@@ -1,0 +1,90 @@
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_data.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/ap/ap_data.c
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/ap/ap_data.c
+@@ -5308,7 +5308,11 @@ NDIS_STATUS APInsertPsQueue(
+ 	else
+ #endif /* UAPSD_SUPPORT */
+ 	{
++        #if 0
+ 		if (pMacEntry->PsQueue.Number >= MAX_PACKETS_IN_PS_QUEUE)
++        #else
++        if ((pMacEntry->PsQueue.Number >= MAX_PACKETS_IN_PS_QUEUE) || (pAd->TxSwQueue[QueIdx].Number >= (pAd->TxSwQMaxLen+MAX_PACKETS_IN_PS_QUEUE)))
++        #endif
+ 		{
+ 			RELEASE_NDIS_PACKET(pAd, pPacket, NDIS_STATUS_FAILURE);			
+ 			return NDIS_STATUS_FAILURE;			
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_data.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/cmm_data.c
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/cmm_data.c
+@@ -2554,6 +2554,9 @@ MAC_TABLE_ENTRY *MacTableLookup(
+ {
+ 	ULONG HashIdx;
+ 	MAC_TABLE_ENTRY *pEntry = NULL;
++
++    //add protect
++    NdisAcquireSpinLock(&pAd->MacTabLock);
+ 	
+ 	HashIdx = MAC_ADDR_HASH_INDEX(pAddr);
+ 	pEntry = pAd->MacTab.Hash[HashIdx];
+@@ -2568,6 +2571,9 @@ MAC_TABLE_ENTRY *MacTableLookup(
+ 			pEntry = pEntry->pNext;
+ 	}
+ 
++    //add protect
++     NdisReleaseSpinLock(&pAd->MacTabLock);
++
+ 	return pEntry;
+ }
+ 
+@@ -3060,6 +3066,10 @@ MAC_TABLE_ENTRY *MacTableInsertEntry(
+ 		PWSC_PEER_ENTRY pWscPeerEntry = NULL;
+ #endif /* IWSC_SUPPORT */
+ 
++        #if 1 //add initial
++        pEntry->pNext=NULL;
++        #endif
++
+ 		HashIdx = MAC_ADDR_HASH_INDEX(pAddr);
+ 		if (pAd->MacTab.Hash[HashIdx] == NULL)
+ 		{
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/ps.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/ps.c
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/ps.c
+@@ -265,6 +265,15 @@ VOID RtmpHandleRxPsPoll(
+ /*                    (pAd->PortCfg.TxQueueSize + (MAX_PACKETS_IN_PS_QUEUE>>1))) */
+ 				{
+ 					pEntry = RemoveHeadQueue(&pMacEntry->PsQueue);
++#if 1 //ps patch
++                    if (pAd->TxSwQueue[QID_AC_BE].Number >= pAd->TxSwQMaxLen)
++                    {
++                        PNDIS_PACKET pPacket;
++                        pPacket = QUEUE_ENTRY_TO_PACKET(pEntry);
++                        RELEASE_NDIS_PACKET(pAd, pPacket, NDIS_STATUS_FAILURE);
++                        continue;
++                    }
++#endif
+ 					InsertTailQueueAc(pAd, pMacEntry, &pAd->TxSwQueue[QID_AC_BE], pEntry);
+ 				}
+ /*                else */
+Index: mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/uapsd.c
+===================================================================
+--- mt7620_wifi2716_all_dpa_20130426.orig/rt2860v2/common/uapsd.c
++++ mt7620_wifi2716_all_dpa_20130426/rt2860v2/common/uapsd.c
+@@ -514,8 +514,12 @@ VOID UAPSD_PacketEnqueue(
+ 
+ 	pQueUapsd = &(pEntry->UAPSDQueue[IdAc]);
+ 
+-	if (pQueUapsd->Number >= MAX_PACKETS_IN_UAPSD_QUEUE)
+-    	{
++    #if 0 //ps patch
++    if (pQueUapsd->Number >= MAX_PACKETS_IN_UAPSD_QUEUE)
++    #else
++    if ((pQueUapsd->Number >= MAX_PACKETS_IN_UAPSD_QUEUE) || (pAd->TxSwQueue[IdAc].Number >= (pAd->TxSwQMaxLen+MAX_PACKETS_IN_UAPSD_QUEUE)))
++    #endif
++    {
+ 	        /* too much queued pkts, free (discard) the tx packet */
+ 	        DBGPRINT(RT_DEBUG_TRACE,
+                  ("uapsd> many(%ld) WCID(%d) AC(%d)\n",
