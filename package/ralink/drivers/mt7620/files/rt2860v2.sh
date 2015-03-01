@@ -683,7 +683,7 @@ enable_rt2860v2() {
 					echo "#Encryption" >/tmp/wifi_encryption_${ifname}.dat
 					ifconfig $ifname down
 					iwpriv $ifname set ApCliEnable=0 
-					iwpriv $ifname set ApCliSsid=$ssid
+					iwpriv $ifname set ApCliSsid="$ssid"
 					config_get bssid $vif bssid 0
 					[ -z "$mode" ] && {
 					iwpriv $ifname set ApCliBssid=$bssid
