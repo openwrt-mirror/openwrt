@@ -1,0 +1,35 @@
+--- a/drivers/net/wireless/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/rt2x00/rt2800lib.c
+@@ -6635,8 +6635,15 @@
+ 	rt2800_bbp_write(rt2x00dev, 70, 0x05);
+ 	rt2800_bbp_write(rt2x00dev, 73, 0x18);
+ 	rt2800_bbp_write(rt2x00dev, 74, 0x0F);
+-	rt2800_bbp_write(rt2x00dev, 75, 0x60);
+-	rt2800_bbp_write(rt2x00dev, 76, 0x44);
++	if(rt2x00_has_cap_external_lna_bg(rt2x00dev)) {
++		rt2x00_err(rt2x00dev, "RF7620:BBP:Device has external LNA.\n");
++		rt2800_bbp_write(rt2x00dev, 75, 0x68);
++		rt2800_bbp_write(rt2x00dev, 76, 0x4C);
++		} else {
++		rt2x00_err(rt2x00dev, "RF7620:BBP:Device has internal LNA.\n");
++		rt2800_bbp_write(rt2x00dev, 75, 0x60);
++		rt2800_bbp_write(rt2x00dev, 76, 0x44);
++	}
+ 	rt2800_bbp_write(rt2x00dev, 77, 0x59);
+ 	rt2800_bbp_write(rt2x00dev, 78, 0x1E);
+ 	rt2800_bbp_write(rt2x00dev, 79, 0x1C);
+@@ -8154,11 +8161,11 @@
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 11, 0x53);
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 12, 0x22);
+ 	/* rt2800_rfcsr_write_chanreg(rt2x00dev, 13, 0x3D); */ /* fails */
+-	rt2800_rfcsr_write_chanreg(rt2x00dev, 14, 0x06);
++	rt2800_rfcsr_write_chanreg(rt2x00dev, 14, rt2x00_has_cap_external_lna_bg(rt2x00dev)?0x66:0x06);
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 15, 0x13);
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 16, 0x22);
+-	rt2800_rfcsr_write_chanreg(rt2x00dev, 17, 0x27);
+-	rt2800_rfcsr_write_chanreg(rt2x00dev, 18, 0x02);
++	rt2800_rfcsr_write_chanreg(rt2x00dev, 17, rt2x00_has_cap_external_lna_bg(rt2x00dev)?0x20:0x27);
++	rt2800_rfcsr_write_chanreg(rt2x00dev, 18, rt2x00_has_cap_external_lna_bg(rt2x00dev)?0x42:0x02);
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 19, 0xA7);
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 20, 0x01);
+ 	rt2800_rfcsr_write_chanreg(rt2x00dev, 21, 0x52);
