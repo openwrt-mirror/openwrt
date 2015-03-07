@@ -78,8 +78,9 @@ IWINFO_BACKENDS := \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl-mini),wl) \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl-mimo),wl) \
 	$(if $(CONFIG_PACKAGE_kmod-madwifi),madwifi) \
-	$(if $(CONFIG_PACKAGE_kmod-rt2860v2),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-mt7628),rt2860v2) \
 	$(if $(CONFIG_PACKAGE_kmod-mt7620),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-mt76x2e-epa),rt2860v2) \
 	$(if $(CONFIG_PACKAGE_kmod-cfg80211),nl80211)
 
 TARGET_CFLAGS += \
