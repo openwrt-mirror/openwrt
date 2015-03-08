@@ -8505,7 +8505,11 @@ static ssize_t
 ufsd_direct_IO(
     IN int                 rw,
     IN struct kiocb*       iocb,
+#if defined HAVE_DECL_BLOCKDEV_DIRECT_IO_V3 && HAVE_DECL_BLOCKDEV_DIRECT_IO_V3
+	IN struct iov_iter* iov,
+#else
     IN const struct iovec* iov,
+#endif
     IN loff_t              offset,
     IN unsigned long       nr_segs
     )
