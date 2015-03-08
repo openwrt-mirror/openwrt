@@ -8,7 +8,11 @@ set_usb_led() {
 }
 
 set_wifi_led() {
-	ucidef_set_led_netdev "wifi_led" "wifi" "$1" "wlan0"
+	if [ $(lsmod | grep -c "rt2860v2_ap") -gt 0 ] ; then
+		ucidef_set_led_netdev "wifi_led" "wifi" "$1" "ra0"
+	else
+		ucidef_set_led_netdev "wifi_led" "wifi" "$1" "wlan0"
+	fi
 }
 
 
