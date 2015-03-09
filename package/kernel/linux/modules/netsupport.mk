@@ -405,6 +405,22 @@ endef
 $(eval $(call KernelPackage,iptunnel))
 
 
+define KernelPackage/ipvti
+  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+  TITLE:=IP VTI (Virtual Tunnel Interface)
+  DEPENDS:=+kmod-iptunnel +kmod-iptunnel4 +kmod-ipsec4
+  KCONFIG:=CONFIG_NET_IPVTI
+  FILES:=$(LINUX_DIR)/net/ipv4/ip_vti.ko
+  AUTOLOAD:=$(call AutoLoad,33,ip_vti)
+endef
+
+define KernelPackage/ipvti/description
+ Kernel modules for IP VTI (Virtual Tunnel Interface)
+endef
+
+$(eval $(call KernelPackage,ipvti))
+
+
 define KernelPackage/iptunnel4
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=IPv4 tunneling
@@ -810,6 +826,7 @@ define KernelPackage/ax25
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=AX25 support
   KCONFIG:= \
+	CONFIG_HAMRADIO=y \
 	CONFIG_AX25 \
 	CONFIG_MKISS
   FILES:= \
