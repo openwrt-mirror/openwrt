@@ -937,7 +937,7 @@ endef
 
 define Device/firewrt
   DTS := FIREWRT
-  IMAGE_SIZE := $(ralink_default_fw_size_8M)
+  IMAGE_SIZE := $(ralink_default_fw_size_16M)
 endef
 
 #

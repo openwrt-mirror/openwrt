@@ -412,8 +412,7 @@ mynet_n600_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(devdat
 qihoo_c301_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15744k(firmware),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware_backup),1024k(privatedata)
 qihoo_c301_dual_flash_mtdlayout=mtdparts=flash:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),32256k(firmware),64k(radiocfg)
 qihoo_c301_flash2_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),15744k(firmware_backup),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware),1024k(privatedata)
-
-mynet_rext_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,7808k(firmware),64k(nvram)ro,64k(ART)ro,6848k@0x130000(filesystem)
+mynet_rext_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,7808k(firmware),64k(nvram)ro,64k(ART)ro
 zyx_nbg6716_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(env)ro,64k(RFdata)ro,-(nbu);ar934x-nfc:2048k(zyxel_rfsd),2048k(romd),1024k(header),2048k(kernel),-(ubi)
 
 
@@ -1341,7 +1340,7 @@ $(eval $(call SingleProfile,CameoAP99,64kraw,DIR615E4,dir-615-e4,DIR-615-E4,ttyS
 
 #$(eval $(call SingleProfile,CyberTANGZIP,64k,WRT160NL,wrt160nl,WRT160NL,ttyS0,115200,,1.00.01))
 
-#$(eval $(call SingleProfile,CyberTANLZMA,64k,MYNETREXT,mynet-rext,MYNET-REXT,ttyS0,115200,$$(mynet_rext_mtdlayout) root=31:4,1.00.01))
+#$(eval $(call SingleProfile,CyberTANLZMA,64k,MYNETREXT,mynet-rext,MYNET-REXT,ttyS0,115200,$$(mynet_rext_mtdlayout) root=31:2,1.00.01))
 
 #$(eval $(call SingleProfile,CameoAP94,64kraw,DIR825B1,dir-825-b1,DIR-825-B1,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
 #$(eval $(call SingleProfile,CameoAP94,64kraw,TEW673GRU,tew-673gru,TEW-673GRU,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-01,00AP94-AR7161-RT-080619-01))
