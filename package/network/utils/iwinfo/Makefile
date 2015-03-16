@@ -23,8 +23,9 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_PACKAGE_kmod-brcm-wl-mini \
 	CONFIG_PACKAGE_kmod-brcm-wl-mimo \
 	CONFIG_PACKAGE_kmod-madwifi \
-	CONFIG_PACKAGE_kmod-rt2860v2 \
+	CONFIG_PACKAGE_kmod-mt7628 \
 	CONFIG_PACKAGE_kmod-mt7620 \
+	CONFIG_PACKAGE_kmod-mt76x2e-epa \
 	CONFIG_PACKAGE_kmod-cfg80211
 
 include $(INCLUDE_DIR)/package.mk
