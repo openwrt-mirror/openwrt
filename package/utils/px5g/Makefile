@@ -19,7 +19,7 @@ define Package/px5g
   CATEGORY:=Utilities
   TITLE:=X.509 certificate generator (using PolarSSL)
   MAINTAINER:=Jo-Philipp Wich <jow@openwrt.org>
-  DEPENDS:=+libpolarssl
+  DEPENDS:=+SSP_SUPPORT:libssp +libpolarssl
 endef
 
 define Package/px5g/description
