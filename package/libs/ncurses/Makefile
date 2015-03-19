@@ -32,7 +32,7 @@ define Package/libncurses
   CATEGORY:=Libraries
   TITLE:=Terminal handling library
   URL:=http://www.gnu.org/software/ncurses/
-  DEPENDS:= +terminfo
+  DEPENDS:=+SSP_SUPPORT:libssp +terminfo
   VARIANT:=libncurses
 endef
 
@@ -49,6 +49,7 @@ define Package/libncursesw
   CATEGORY:=Libraries
   TITLE:=Terminal handling library (Unicode)
   URL:=http://www.gnu.org/software/ncurses/
+  DEPENDS:=+SSP_SUPPORT:libssp
   VARIANT:=libncursesw
 endef
 
