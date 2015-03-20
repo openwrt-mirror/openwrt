@@ -24,6 +24,7 @@ define Package/zlib
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Library implementing the deflate compression method
+  DEPENDS:=+SSP_SUPPORT:libssp
   URL:=http://www.zlib.net/
 endef
 
