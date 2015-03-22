@@ -31,7 +31,7 @@ define Package/lldpd
   SUBMENU:=Routing and Redirection
   TITLE:=Link Layer Discovery Protocol daemon
   URL:=https://github.com/vincentbernat/lldpd/wiki
-  DEPENDS:=+libevent2 +USE_EGLIBC:libbsd +LLDPD_WITH_JSON:libjson-c
+  DEPENDS:=+libevent2 +USE_GLIBC:libbsd +LLDPD_WITH_JSON:libjson-c
   USERID:=lldp=121:lldp=129
   MENU:=1
 endef
@@ -47,6 +47,14 @@ define Package/lldpd/description
 	CDP (Cisco Discovery Protocol).
 	The goal of LLDP is to provide an inter-vendor compatible mechanism to deliver
 	Link-Layer notifications to adjacent network devices.
+endef
+
+define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/liblldpctl.so* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/lldpctl.h $(1)/usr/include/lldpctl.h
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/lldp-const.h $(1)/usr/include/lldp-const.h
 endef
 
 define Package/lldpd/install

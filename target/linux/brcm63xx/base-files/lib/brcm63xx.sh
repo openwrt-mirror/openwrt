@@ -4,180 +4,268 @@
 #
 #
 
-board_name=""
-status_led=""
-status_led2=""
+board_id=""
 sys_mtd_part=""
-brcm63xx_has_reset_button=""
 ifname=""
 
-brcm63xx_detect() {
-	board_name=$(awk 'BEGIN{FS="[ \t:/]+"} /system type/ {print $4}' /proc/cpuinfo)
+brcm63xx_dt_detect() {
+	local board_name
 
-	if [ "$board_name" = "96358VW" ] && [ -n "$(swconfig dev eth1 help 2>/dev/null)" ]; then
-		board_name="DVAG3810BN"
-	fi
-
-	case "$board_name" in
-	963281TAN)
-		status_led="963281TAN::power"
-		ifname=eth0
+	case "$1" in
+	"ADB P.DG A4001N")
+		board_name="a4001n"
 		;;
-	963281T_TEF)
-		brcm63xx_has_reset_button="true"
-		status_led="A4001N1:green:power"
-		ifname=eth0
+	"ADB P.DG A4001N1")
+		board_name="a4001n1"
 		;;
-	96328avng)
-		status_led="96328avng::power"
-		ifname=eth0
+	"Alcatel RG100A")
+		board_name="rg100a"
 		;;
-	96328dg2x2)
-		brcm63xx_has_reset_button="true"
-		status_led="A4001N:green:power"
-		ifname="eth0"
+	"ASMAX AR 1004g")
+		board_name="ar100g"
 		;;
-	96328A-1241N)
-		brcm63xx_has_reset_button="true"
-		status_led="AR-5381u:green:power"
-		ifname=eth0
+	"Belkin F5D7633")
+		board_name="f5d7633"
 		;;
-	96328A-1441N1)
-		brcm63xx_has_reset_button="true"
-		status_led="AR-5387un:green:power"
-		ifname=eth0
+	"Broadcom 96348R reference board")
+		board_name="bcm96348r"
 		;;
-	96348GW)
-		status_led="96348GW:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth1
+	"Broadcom bcm963281TAN reference board")
+		board_name="bcm963281tan"
 		;;
-	96348GW-11)
-		status_led="96348GW-11:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth1
+	"Broadcom BCM96328avng reference board")
+		board_name="bcm6328avng"
 		;;
-	96358-502V)
-		status_led="spw303v:green:power+adsl"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Broadcom BCM96345GW2 reference board")
+		board_name="bcm96345gw2"
 		;;
-	96368M-1341N)
-		brcm63xx_has_reset_button="true"
-		status_led="VR-3025un:green:power"
-		ifname="eth0"
+	"Broadcom BCM96348GW-10 reference board")
+		board_name="bcm96348gw-10"
 		;;
-	96368M-1541N)
-		brcm63xx_has_reset_button="true"
-		status_led="VR-3025u:green:power"
-		ifname="eth0"
+	"Broadcom BCM96348GW-11 reference board")
+		board_name="bcm96348gw-11"
 		;;
-	96369R-1231N)
-		brcm63xx_has_reset_button="true"
-		status_led="WAP-5813n:green:power"
-		ifname="eth0"
+	"Broadcom BCM96348GW reference board")
+		board_name="bcm96358gw"
 		;;
-	AR1004G)
-		status_led="AR1004G:green:power"
-		brcm63xx_has_reset_button="true"
+	"Broadcom BCM96358VW reference board")
+		board_name="bcm96358vw"
 		;;
-	AW4139 |\
-	AW4339U)
-		status_led="dsl-274xb:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Broadcom BCM96358VW2 reference board")
+		board_name="bcm96358vw2"
 		;;
-	AW5200B)
-		status_led="dsl-275xb:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Broadcom BCM96368MVNgr reference board")
+		board_name="bcm96368mvngr"
 		;;
-	CPVA642)
-		status_led="CPVA642:green:power:"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Broadcom BCM96368MVWG reference board")
+		board_name="bcm96368mvwg"
 		;;
-	CT536_CT5621)
-		status_led="CT536_CT5621:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"BT Voyager V2500V")
+		board_name="v2500v"
 		;;
-	CVG834G_E15R3921)
-		status_led="CVG834G:green:power"
-		ifname=eth0
+	"Comtrend AR-5381u")
+		board_name="ar-5381u"
 		;;
-	D-4P-W)
-		status_led="D-4P-W:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Comtrend AR-5387un")
+		board_name="ar-5387un"
 		;;
-	"F@ST2504n")
-		status_led="fast2504n:green:ok"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Comtrend CT-5365")
+		board_name="ct-5365"
 		;;
-	'F@ST2704V2')
-		status_led="F@ST2704V2:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Comtrend CT-536+/CT-5621T")
+		board_name="ct-536p_5621t"
 		;;
-	GW6000)
-		brcm63xx_has_reset_button="true"
-		ifname=eth1
+	"Comtrend CT-6373")
+		board_name="ct-6373"
 		;;
-	GW6200)
-		status_led="GW6200:green:line1"
-		status_led2="GW6200:green:tel"
-		brcm63xx_has_reset_button="true"
-		ifname=eth1
+	"Comtrend VR-3025u")
+		board_name="vr-3025u"
 		;;
-	HW553)
-		status_led="HW553:blue:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Comtrend VR-3025un")
+		board_name="vr-3025un"
 		;;
-	HW556*)
-		status_led="HW556:red:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Comtrend WAP-5813n")
+		board_name="wap-5813n"
 		;;
-	HW6358GW_B)
-		status_led="HW520:green:net"
-		brcm63xx_has_reset_button="true"
-		ifname="eth0"
+	"Davolink DV-201AMR")
+		board_name="dv-201amr"
 		;;
-	NB6)
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"D-Link DSL-2640B rev B2")
+		board_name="dsl-2640b-b"
 		;;
-	P870HW-51a_v2)
-		brcm63xx_has_reset_button="true"
-		status_led="P870HW-51a:green:power"
-		ifname="eth0"
+	"D-Link DSL-2650U")
+		board_name="dsl-2650u"
 		;;
-	RTA770BW)
-		brcm63xx_has_reset_button="true"
-		status_led="RTA770BW:green:diag"
-		ifname=eth0
+	"D-Link DSL-2740B/DSL-2741B rev C2/3")
+		board_name="dsl-274xb-c"
 		;;
-	RTA770W)
-		brcm63xx_has_reset_button="true"
-		status_led="RTA770W:green:diag"
-		ifname=eth0
+	"D-Link DSL-2740B/DSL-2741B rev F1")
+		board_name="dsl-274xb-f"
 		;;
-	SPW500V)
-		status_led="SPW500V:green:power"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"D-Link DVA-G3810BN/TL")
+		board_name="dva-g3810bn"
 		;;
-	V2110)
-		status_led="V2110:power:green"
-		brcm63xx_has_reset_button="true"
-		ifname=eth0
+	"Dynalink RTA1025W")
+		board_name="rta1025w"
+		;;
+	"Dynalink RTA1320")
+		board_name="rta1320"
+		;;
+	"Huawei EchoLife HG520v")
+		board_name="hg520v"
+		;;
+	"Huawei EchoLife HG553")
+		board_name="hg553"
+		;;
+	"Huawei EchoLife HG556a (version A)")
+		board_name="hg556a_a"
+		;;
+	"Huawei EchoLife HG556a (version B)")
+		board_name="hg556a_b"
+		;;
+	"Huawei EchoLife HG556a (version C)")
+		board_name="hg556a_c"
+		;;
+	"Inventel Livebox 1")
+		board_name="livebox1"
+		;;
+	"Netgear CVG834G")
+		board_name="cvg834g"
+		;;
+	"Netgear DG834GT/PN")
+		board_name="dg834gt"
+		;;
+	"Netgear DGND3700v1/DGND3800B")
+		board_name="dgnd3700v1_dgnd3800b"
+		;;
+	"Pirelli A226G")
+		board_name="a226g"
+		;;
+	"Pirelli A226M")
+		board_name="a226m"
+		;;
+	"Pirelli A226M-FWB")
+		board_name="a226m-fwb"
+		;;
+	"Pirelli Alice Gate AGPF-S0")
+		board_name="agpf-s0"
+		;;
+	"Sagem F@ST2404")
+		board_name="fast2404"
+		;;
+	"Sagem F@ST2504n")
+		board_name="fast2504n"
+		;;
+	"Sagem F@ST2604")
+		board_name="fast2604"
+		;;
+	"Sagem F@ST2704V2")
+		board_name="fast2704v2"
+		;;
+	"SFR Neuf Box 4"*)
+		board_name="neufbox4"
+		;;
+	"SFR neufbox 6 (Sercomm)")
+		board_name="neufbox6"
+		;;
+	"T-Com Speedport W303 V")
+		board_name="spw303v"
+		;;
+	"T-Com Speedport W500 V")
+		board_name="spw500v"
+		;;
+	"TECOM GW6000")
+		board_name="g6000"
+		;;
+	"TECOM GW6200")
+		board_name="g6200"
+		;;
+	"Telsey CPVA642-type (CPA-ZNTE60T)")
+		board_name="cpva642"
+		;;
+	"TP-Link TD-W8900GB")
+		board_name="td-w8900gb"
+		;;
+	"USRobotics 9108")
+		board_name="usr9108"
+		;;
+	"Zyxel P870HW-51a v2")
+		board_name="p870hw-51a_v2"
 		;;
 	*)
+		board_name="unknown"
 		;;
 	esac
+
+	echo "$board_name"
 }
 
-brcm63xx_detect
+brcm63xx_legacy_detect() {
+	local board_name
+
+	case "$1" in
+	963268BU_P300)
+		board_name="bcm963268bu_p300"
+		;;
+	96338W2_E7T)
+		board_name="dsl-2640u"
+		;;
+	96348W3)
+		board_name="dg834g_v4"
+		;;
+	CPVA502+)
+		board_name="cpva502p"
+		;;
+	MAGIC)
+		board_name="magic"
+		;;
+	RTA770BW)
+		board_name="rta770bw"
+		;;
+	RTA770W)
+		board_name="rta770w"
+		;;
+	V2110)
+		board_name="v2110"
+		;;
+	V2500V_BB)
+		board_name="v2500v_bb"
+		;;
+	VW6339GU)
+		board_namge="vg50"
+		;;
+	*)
+		board_name="unknown"
+		;;
+	esac
+
+	echo "$board_name"
+}
+
+brcm63xx_detect() {
+	local board_name model
+
+	board_id=$(awk 'BEGIN{FS="[ \t:/]+"} /system type/ {print $4}' /proc/cpuinfo)
+
+	if [ -e /proc/device-tree ]; then
+		model=$(cat /proc/device-tree/model)
+		board_name=$(brcm63xx_dt_detect "$model")
+	else
+		model="Unknown bcm63xx board"
+		board_name=$(brcm63xx_legacy_detect "$board_id")
+	fi
+
+	[ -e "/tmp/sysinfo" ] || mkdir -p "/tmp/sysinfo"
+
+	echo "$board_name" > /tmp/sysinfo/board_name
+	echo "$model" > /tmp/sysinfo/model
+}
+
+brcm63xx_board_name() {
+	local name
+
+	[ -f /tmp/sysinfo/board_name ] && name=$(cat /tmp/sysinfo/board_name)
+	[ -n "$name" ] || name="unknown"
+
+	echo $name
+}

@@ -19,7 +19,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/perf
   SECTION:=devel
   CATEGORY:=Development
-  DEPENDS:= @USE_EGLIBC +libelf1 +libdw +libpthread +librt +binutils
+  DEPENDS:= @USE_GLIBC +libelf1 +libdw +libpthread +librt +binutils
   TITLE:=Linux performance monitoring tool
   VERSION:=$(LINUX_VERSION)-$(PKG_RELEASE)
   URL:=http://www.kernel.org
@@ -55,6 +55,7 @@ MAKE_FLAGS = \
 	LD="$(TARGET_CROSS)ld" \
 	CFLAGS="$(TARGET_CFLAGS) $(TARGET_CPPFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
+	WERROR=0 \
 	V=1 \
 	prefix=/usr
 

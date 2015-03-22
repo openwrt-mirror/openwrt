@@ -28,10 +28,12 @@ $valid_mk or die "Unsupported version of make found: $mk\n";
 my @feeds;
 my %build_packages;
 my %installed;
+my %installed_targets;
 my %feed_cache;
 
 my $feed_package = {};
 my $feed_src = {};
+my $feed_target = {};
 
 sub parse_config() {
 	my $line = 0;
@@ -98,7 +100,9 @@ sub update_index($)
 
 	system("$mk -s prepare-mk OPENWRT_BUILD= TMP_DIR=\"$ENV{TOPDIR}/feeds/$name.tmp\"");
 	system("$mk -s -f include/scan.mk IS_TTY=1 SCAN_TARGET=\"packageinfo\" SCAN_DIR=\"feeds/$name\" SCAN_NAME=\"package\" SCAN_DEPS=\"$ENV{TOPDIR}/include/package*.mk\" SCAN_DEPTH=5 SCAN_EXTRA=\"\" TMP_DIR=\"$ENV{TOPDIR}/feeds/$name.tmp\"");
+	system("$mk -s -f include/scan.mk IS_TTY=1 SCAN_TARGET=\"targetinfo\" SCAN_DIR=\"feeds/$name\" SCAN_NAME=\"target\" SCAN_DEPS=\"profiles/*.mk $ENV{TOPDIR}/include/target.mk\" SCAN_DEPTH=5 SCAN_EXTRA=\"\" SCAN_MAKEOPTS=\"TARGET_BUILD=1\" TMP_DIR=\"$ENV{TOPDIR}/feeds/$name.tmp\"");
 	system("ln -sf $name.tmp/.packageinfo ./feeds/$name.index");
+	system("ln -sf $name.tmp/.targetinfo ./feeds/$name.targetindex");
 
 	return 0;
 }
@@ -151,7 +155,7 @@ sub update_feed_via($$$$) {
 	my $name = shift;
 	my $src = shift;
 	my $relocate = shift;
-	
+
 	my $m = $update_method{$type};
 	my $localpath = "./feeds/$name";
 	my $safepath = $localpath;
@@ -173,8 +177,18 @@ sub update_feed_via($$$$) {
 	} else {
 		system("cd '$safepath'; $m->{'update'}") == 0 or return 1;
 	}
-	
+
 	return 0;
+}
+
+sub get_targets($) {
+	my $file = shift;
+	my @target = parse_target_metadata($file);
+	my %target;
+	foreach my $target (@target) {
+		$target{$target->{id}} = $target;
+	}
+	return %target
 }
 
 sub get_feed($) {
@@ -189,11 +203,14 @@ sub get_feed($) {
 			return;
 		};
 		parse_package_metadata($file) or return;
-		$feed_cache{$feed} = [ { %package }, { %srcpackage } ];
+		my %target = get_targets("./feeds/$feed.targetindex");
+
+		$feed_cache{$feed} = [ { %package }, { %srcpackage }, { %target } ];
 	}
 
 	$feed_package = $feed_cache{$feed}->[0];
 	$feed_src = $feed_cache{$feed}->[1];
+	$feed_target = $feed_cache{$feed}->[2];
 	return $feed_cache{$feed}->[0];
 }
 
@@ -202,6 +219,7 @@ sub get_installed() {
 	clear_packages();
 	parse_package_metadata("./tmp/.packageinfo");
 	%installed = %package;
+	%installed_targets = get_targets("./tmp/.targetinfo");
 }
 
 sub search_feed {
@@ -232,6 +250,26 @@ sub search_feed {
 			printf "\%-25s\t\%s\n", $pkg->{name}, $pkg->{title};
 		};
 	}
+
+	foreach my $name (sort { lc($a) cmp lc($b) } keys %$feed_target) {
+		my $target = $feed_target->{$name};
+		my $targetmatch = 1;
+
+		foreach my $substr (@substr) {
+			my $match;
+			foreach my $key (qw(id name description)) {
+				$target->{$key} and $substr and $target->{$key} =~ m/$substr/i and $match = 1;
+			}
+			$match or undef $targetmatch;
+		};
+		$targetmatch and do {
+			$display or do {
+				print "Search results in feed '$feed':\n";
+				$display = 1;
+			};
+			printf "TARGET: \%-17s\t\%s\n", $target->{id}, $target->{name};
+		};
+	}
 	return 0;
 }
 
@@ -253,6 +291,13 @@ sub list_feed {
 		next if $pkg->{vdepends};
 		if($pkg->{name}) {
 			printf "\%-32s\t\%s\n", $pkg->{name}, $pkg->{title};
+		}
+	}
+
+	foreach my $name (sort { lc($a) cmp lc($b) } keys %$feed_target) {
+		my $target = $feed_target->{$name};
+		if($target->{name}) {
+			printf "TARGET: \%-24s\t\%s\n", $target->{id}, $target->{name};
 		}
 	}
 
@@ -302,7 +347,7 @@ sub list {
 	return 0;
 }
 
-sub install_generic() {
+sub do_install_package($$) {
 	my $feed = shift;
 	my $pkg = shift;
 	my $path = $pkg->{makefile};
@@ -321,18 +366,29 @@ sub install_generic() {
 	return 0;
 }
 
-my %install_method = (
-	'src-svn' => \&install_generic,
-	'src-cpy' => \&install_generic,
-	'src-link' => \&install_generic,
-	'src-git' => \&install_generic,
-	'src-gitsvn' => \&install_generic,
-	'src-bzr' => \&install_generic,
-	'src-hg' => \&install_generic,
-	'src-darcs' => \&install_generic,
-);
+sub do_install_target($) {
+	my $target = shift;
+	my $path = $target->{makefile};
 
-my %feed;
+	if ($path) {
+		$path =~ s/\/Makefile$//;
+		my $name = $path;
+		$name =~ s/.*\///;
+		my $dest = "./target/linux/$name";
+
+		-e $dest and do {
+			warn "Path $dest already exists";
+			return 1;
+		};
+
+		system("ln -sf ../../$path ./target/linux/");
+	} else {
+		warn "Package is not valid\n";
+		return 1;
+	}
+
+	return 0;
+}
 
 sub lookup_package($$) {
 	my $feed = shift;
@@ -340,8 +396,20 @@ sub lookup_package($$) {
 
 	foreach my $feed ($feed, @feeds) {
 		next unless $feed->[1];
-		next unless $feed{$feed->[1]};
-		$feed{$feed->[1]}->{$package} and return $feed;
+		next unless $feed_cache{$feed->[1]};
+		$feed_cache{$feed->[1]}->[0]->{$package} and return $feed;
+	}
+	return;
+}
+
+sub lookup_target($$) {
+	my $feed = shift;
+	my $target = shift;
+
+	foreach my $feed ($feed, @feeds) {
+		next unless $feed->[1];
+		next unless $feed_cache{$feed->[1]};
+		$feed_cache{$feed->[1]}->[2]->{$target} and return $feed;
 	}
 	return;
 }
@@ -355,11 +423,32 @@ sub is_core_package($) {
 	return 0;
 }
 
+sub install_target {
+	my $feed = shift;
+	my $name = shift;
+
+	$feed = $feed_cache{$feed->[1]}->[2];
+	$feed or return 0;
+
+	my $target = $feed->{$name};
+	$target or return 0;
+
+	warn "Installing target '$name'\n";
+	return do_install_target($target);
+}
+
 sub install_package {
 	my $feed = shift;
 	my $name = shift;
 	my $force = shift;
 	my $ret = 0;
+
+	$feed = lookup_target($feed, $name);
+	$feed and do {
+		$installed_targets{$name} and return 0;
+		install_target($feed, $name);
+		return 0;
+	};
 
 	$feed = lookup_package($feed, $name);
 	$feed or do {
@@ -370,9 +459,9 @@ sub install_package {
 	};
 
 	# switch to the metadata for the selected feed
-	get_feed($feed->[1]);
+	my $cur = get_feed($feed->[1]);
 
-	my $pkg = $feed{$feed->[1]}->{$name} or return 1;
+	my $pkg = $cur->{$name} or return 1;
 	$pkg->{name} or do {
 		$installed{$name} and return 0;
 		# TODO: check if this is an alias package, maybe it's known by another name
@@ -404,12 +493,7 @@ sub install_package {
 		and warn "Overriding package '$src'\n"
 		or warn "Installing package '$src'\n";
 
-	$install_method{$type} or do {
-		warn "Unknown installation method: '$type'\n";
-		return 1;
-	};
-
-	&{$install_method{$type}}($feed, $pkg) == 0 or do {
+	do_install_package($feed, $pkg) == 0 or do {
 		warn "failed.\n";
 		return 1;
 	};
@@ -459,8 +543,8 @@ sub install {
 	get_installed();
 
 	foreach my $f (@feeds) {
-		# index all feeds
-		$feed{$f->[1]} = get_feed($f->[1]);
+		# fetch all feeds
+		get_feed($f->[1]);
 
 		# look up the preferred feed
 		$opts{p} and $f->[1] eq $opts{p} and $feed = $f;
@@ -497,6 +581,17 @@ sub install {
 	return $ret;
 }
 
+sub uninstall_target($) {
+	my $dir = shift;
+	my $name = $dir;
+	$name =~ s/.*\///g;
+
+	my $dest = readlink $dir;
+	return unless $dest =~ /..\/..\/feeds/;
+	warn "Uninstalling target '$name'\n";
+	unlink "$dir";
+}
+
 sub uninstall {
 	my %opts;
 	my $name;
@@ -511,6 +606,10 @@ sub uninstall {
 
 	if ($opts{a}) {
 		system("rm -rvf ./package/feeds");
+		foreach my $dir (glob "target/linux/*") {
+			next unless -l $dir;
+			uninstall_target($dir);
+		}
 		$uninstall = 1;
 	} else {
 		if($#ARGV == -1) {
@@ -519,6 +618,13 @@ sub uninstall {
 		}
 		get_installed();
 		while ($name = shift @ARGV) {
+			my $target = "target/linux/$name";
+			-l "$target" and do {
+				uninstall_target($target);
+				$uninstall = 1;
+				next;
+			};
+
 			my $pkg = $installed{$name};
 			$pkg or do {
 				warn "WARNING: $name not installed\n";
