@@ -65,7 +65,7 @@ static int fe_msg_level = -1;
 module_param_named(msg_level, fe_msg_level, int, 0);
 MODULE_PARM_DESC(msg_level, "Message level (-1=defaults,0=none,...,16=all)");
 
-static const u32 fe_reg_table_default[FE_REG_COUNT] = {
+static const u16 fe_reg_table_default[FE_REG_COUNT] = {
 	[FE_REG_PDMA_GLO_CFG] = FE_PDMA_GLO_CFG,
 	[FE_REG_PDMA_RST_CFG] = FE_PDMA_RST_CFG,
 	[FE_REG_DLY_INT_CFG] = FE_DLY_INT_CFG,
@@ -84,7 +84,7 @@ static const u32 fe_reg_table_default[FE_REG_COUNT] = {
 	[FE_REG_FE_RST_GL] = FE_FE_RST_GL,
 };
 
-static const u32 *fe_reg_table = fe_reg_table_default;
+static const u16 *fe_reg_table = fe_reg_table_default;
 
 struct fe_work_t {
 	int bitnr;
@@ -1486,9 +1486,9 @@ static int fe_probe(struct platform_device *pdev)
 
 	napi_weight = 32;
 	if (priv->flags & FE_FLAG_NAPI_WEIGHT) {
-		napi_weight *= 2;
-		priv->tx_ring_size *= 2;
-		priv->rx_ring_size *= 2;
+		napi_weight *= 4;
+		priv->tx_ring_size *= 4;
+		priv->rx_ring_size *= 4;
 	}
 	netif_napi_add(netdev, &priv->rx_napi, fe_poll, napi_weight);
 	fe_set_ethtool_ops(netdev);
