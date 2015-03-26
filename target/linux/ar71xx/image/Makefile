@@ -45,6 +45,26 @@ define Build/netgear-image
 	mv $@.new $@
 endef
 
+# combine kernel and rootfs into one image
+# -a align the rootfs start on an <align> bytes boundary
+# -j add jffs2 end-of-filesystem markers
+# -s strip padding from end of the image
+# -X reserve <size> bytes in the firmware image (hexval prefixed with 0x)
+define Build/mktplinkfw
+	$(STAGING_DIR_HOST)/bin/mktplinkfw \
+		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) -F $(TPLINK_FLASHLAYOUT) -N OpenWrt -V $(REVISION) \
+		-k $(word 1,$^) \
+		-r $@ \
+		-o $@.new \
+		-a $(call rootfs_align,$(FILESYSTEM)) \
+		$(if $(findstring sysupgrade,$1),-j -X 0x40000) \
+		$(if $(findstring factory,$1),-j -X 0x40000 -s) \
+		$(if $(findstring initramfs,$1),-s -c)
+	@mv $@.new $@
+endef
+
+DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT
+
 define Device/Default
   BOARDNAME :=
   DEVICE_PROFILE = $$(BOARDNAME)
@@ -111,6 +131,61 @@ $(Device/wndr3800)
 endef
 
 TARGET_DEVICES += wndr3700 wndr3700v2 wndr3800 wndr3800ch wndrmac wndrmacv2
+
+define Device/tplink
+  TPLINK_HWREV := 0x1
+  KERNEL := kernel-bin | patch-cmdline | lzma
+  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | mktplinkfw initramfs
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-rootfs | mktplinkfw sysupgrade
+  IMAGE/factory.bin := append-rootfs | mktplinkfw factory
+endef
+
+define Device/tplink-4mlzma
+$(Device/tplink)
+  TPLINK_FLASHLAYOUT := 4Mlzma
+  IMAGE_SIZE := 3904k
+endef
+
+define Device/tplink-8mlzma
+$(Device/tplink)
+  TPLINK_FLASHLAYOUT := 8Mlzma
+  IMAGE_SIZE := 8000k
+endef
+
+define Device/tl-wdr4300-v1
+$(Device/tplink-8mlzma)
+  BOARDNAME = TL-WDR4300
+  DEVICE_PROFILE = TLWDR4300
+  TPLINK_HWID := 0x43000001
+endef
+
+define Device/tl-wdr3500-v1
+$(Device/tl-wdr4300-v1)
+  BOARDNAME = TL-WDR3500
+  TPLINK_HWID := 0x35000001
+endef
+
+define Device/tl-wdr3600-v1
+$(Device/tl-wdr4300-v1)
+  TPLINK_HWID := 0x36000001
+endef
+
+define Device/tl-wdr4300-v1-il
+$(Device/tl-wdr4300-v1)
+  TPLINK_HWID := 0x43008001
+endef
+
+define Device/tl-wdr4310-v1
+$(Device/tl-wdr4300-v1)
+  TPLINK_HWID := 0x43100001
+endef
+
+define Device/mw4530r-v1
+$(Device/tl-wdr4300-v1)
+  TPLINK_HWID := 0x45300001
+endef
+TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-wdr4310-v1 mw4530r-v1
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
@@ -1424,13 +1499,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1041,tl-wr1041n-v2,TL-WR1041N
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2041NV1,tl-wr2041n-v1,TL-WR2041N-v1,ttyS0,115200,0x20410001,1,4Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR3500V1,tl-wdr3500-v1,TL-WDR3500,ttyS0,115200,0x35000001,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR3600V1,tl-wdr3600-v1,TL-WDR4300,ttyS0,115200,0x36000001,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4300V1,tl-wdr4300-v1,TL-WDR4300,ttyS0,115200,0x43000001,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4300V1IL,tl-wdr4300-v1-il,TL-WDR4300,ttyS0,115200,0x43008001,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4310V1,tl-wdr4310-v1,TL-WDR4300,ttyS0,115200,0x43100001,1,8Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4900V2,tl-wdr4900-v2,TL-WDR4900-v2,ttyS0,115200,0x49000002,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW4530RV1,mw4530r-v1,TL-WDR4300,ttyS0,115200,0x45300001,1,8Mlzma))
 
 $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
 

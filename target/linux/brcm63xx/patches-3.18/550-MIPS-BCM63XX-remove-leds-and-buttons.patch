@@ -132,7 +132,7 @@ Subject: [PATCH] MIPS: BCM63XX: remove leds and buttons
  };
  
  static struct board_info __initdata board_96338w2_e7t = {
-@@ -705,36 +610,6 @@ static struct board_info __initdata boar
+@@ -619,36 +524,6 @@ static struct board_info __initdata boar
  		.has_phy		= 1,
  		.use_internal_phy	= 1,
  	},
@@ -169,7 +169,7 @@ Subject: [PATCH] MIPS: BCM63XX: remove leds and buttons
  };
  
  static struct board_info __initdata board_96348gw_10 = {
-@@ -767,35 +642,6 @@ static struct board_info __initdata boar
+@@ -681,35 +556,6 @@ static struct board_info __initdata boar
  		.cs			= 2,
  		.ext_irq		= 2,
  	},
@@ -205,7 +205,7 @@ Subject: [PATCH] MIPS: BCM63XX: remove leds and buttons
  };
  
  static struct board_info __initdata board_96348gw_11 = {
-@@ -822,35 +668,6 @@ static struct board_info __initdata boar
+@@ -736,35 +582,6 @@ static struct board_info __initdata boar
  	.has_ohci0 = 1,
  	.has_pccard = 1,
  	.has_ehci0 = 1,
@@ -241,7 +241,7 @@ Subject: [PATCH] MIPS: BCM63XX: remove leds and buttons
  };
  
  
-@@ -974,35 +791,6 @@ static struct board_info __initdata boar
+@@ -888,35 +705,6 @@ static struct board_info __initdata boar
  		.ext_irq		= 2,
  		.cs			= 2,
  	},
@@ -277,7 +277,7 @@ Subject: [PATCH] MIPS: BCM63XX: remove leds and buttons
  };
  
  static struct board_info __initdata board_gw6200 = {
-@@ -1367,33 +1155,6 @@ static struct board_info __initdata boar
+@@ -1243,33 +1031,6 @@ static struct board_info __initdata boar
  	.has_ohci0 = 1,
  	.has_pccard = 1,
  	.has_ehci0 = 1,
@@ -311,7 +311,7 @@ Subject: [PATCH] MIPS: BCM63XX: remove leds and buttons
  };
  
  static struct board_info __initdata board_96358vw2 = {
-@@ -1421,29 +1182,6 @@ static struct board_info __initdata boar
+@@ -1297,29 +1058,6 @@ static struct board_info __initdata boar
  	.has_pccard = 1,
  	.has_ehci0 = 1,
  	.num_usbh_ports			= 2,
