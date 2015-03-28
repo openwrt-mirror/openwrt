@@ -10,11 +10,11 @@ ARCH:=arm
 BOARD:=gemini
 BOARDNAME:=Cortina Systems CS351x
 SUBTARGETS:=raidsonic wiligear
-FEATURES:=squashfs pci rtc broken
+FEATURES:=squashfs pci rtc
 CPU_TYPE:=fa526
-MAINTAINER:=Imre Kaloz <kaloz@openwrt.org>
+MAINTAINER:=Roman Yeryomin <roman@advem.lv>
 
-KERNEL_PATCHVER:=3.10
+KERNEL_PATCHVER:=3.18
 
 KERNELNAME:=zImage
 
