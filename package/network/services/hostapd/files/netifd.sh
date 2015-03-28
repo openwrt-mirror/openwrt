@@ -148,6 +148,11 @@ hostapd_common_add_bss_config() {
 	config_add_boolean wps_pushbutton wps_label ext_registrar wps_pbc_in_m1
 	config_add_string wps_device_type wps_device_name wps_manufacturer wps_pin
 
+	config_add_boolean ieee80211r pmk_r1_push
+	config_add_int r0_key_lifetime reassociation_deadline
+	config_add_string mobility_domain r1_key_holder
+	config_add_array r0kh r1kh
+
 	config_add_int ieee80211w_max_timeout ieee80211w_retry_timeout
 
 	config_add_string macfilter 'macfile:file'
@@ -169,7 +174,7 @@ hostapd_set_bss_options() {
 	wireless_vif_parse_encryption
 
 	local bss_conf
-	local wep_rekey wpa_group_rekey wpa_pair_rekey wpa_master_rekey
+	local wep_rekey wpa_group_rekey wpa_pair_rekey wpa_master_rekey wpa_key_mgmt
 
 	json_get_vars \
 		wep_rekey wpa_group_rekey wpa_pair_rekey wpa_master_rekey \
@@ -233,13 +238,14 @@ hostapd_set_bss_options() {
 				append bss_conf "wpa_psk_file=$wpa_psk_file" "$N"
 			}
 			wps_possible=1
+			append wpa_key_mgmt "WPA-PSK"
 		;;
 		eap)
 			json_get_vars \
 				auth_server auth_secret auth_port \
 				acct_server acct_secret acct_port \
 				dae_client dae_secret dae_port \
-				nasid ownip \
+				ownip \
 				eap_reauth_period dynamic_vlan \
 				vlan_naming vlan_tagged_interface \
 				vlan_bridge
@@ -273,11 +279,10 @@ hostapd_set_bss_options() {
 				append bss_conf "radius_das_client=$dae_client $dae_secret" "$N"
 			}
 
-			append bss_conf "nas_identifier=$nasid" "$N"
 			[ -n "$ownip" ] && append bss_conf "own_ip_addr=$ownip" "$N"
 			append bss_conf "eapol_key_index_workaround=1" "$N"
 			append bss_conf "ieee8021x=1" "$N"
-			append bss_conf "wpa_key_mgmt=WPA-EAP" "$N"
+			append wpa_key_mgmt "WPA-EAP"
 
 			[ -n "$dynamic_vlan" ] && {
 				append bss_conf "dynamic_vlan=$dynamic_vlan" "$N"
@@ -338,6 +343,42 @@ hostapd_set_bss_options() {
 		iapp_interface="$(uci_get_state network "$iapp_interface" ifname "$iapp_interface")"
 		[ -n "$iapp_interface" ] && append bss_conf "iapp_interface=$iapp_interface" "$N"
 	}
+
+	if [ "$wpa" -ge "1" ]; then
+		json_get_vars nasid ieee80211r
+		[ -n "$nasid" ] && append bss_conf "nas_identifier=$nasid" "$N"
+
+		if [ "$ieee80211r" -gt "0" ]; then
+			json_get_vars mobility_domain r0_key_lifetime r1_key_holder \
+			reassociation_deadline pmk_r1_push
+			json_get_values r0kh r0kh
+			json_get_values r1kh r1kh
+
+			set_default mobility_domain "4f57"
+			set_default r0_key_lifetime 10000
+			set_default r1_key_holder "00004f577274"
+			set_default reassociation_deadline 1000
+			set_default pmk_r1_push 0
+
+			append bss_conf "mobility_domain=$mobility_domain" "$N"
+			append bss_conf "r0_key_lifetime=$r0_key_lifetime" "$N"
+			append bss_conf "r1_key_holder=$r1_key_holder" "$N"
+			append bss_conf "reassociation_deadline=$reassociation_deadline" "$N"
+			append bss_conf "pmk_r1_push=$pmk_r1_push" "$N"
+
+			for kh in $r0kh; do
+				append bss_conf "r0kh=${kh//,/ }" "$N"
+			done
+			for kh in $r1kh; do
+				append bss_conf "r1kh=${kh//,/ }" "$N"
+			done
+
+			[ "$wpa_key_mgmt" != "${wpa_key_mgmt/EAP/}" ] && append wpa_key_mgmt "FT-EAP"
+			[ "$wpa_key_mgmt" != "${wpa_key_mgmt/PSK/}" ] && append wpa_key_mgmt "FT-PSK"
+		fi
+
+		[ -n "$wpa_key_mgmt" ] && append bss_conf "wpa_key_mgmt=$wpa_key_mgmt" "$N"
+	fi
 
 	if [ "$wpa" -ge "2" ]; then
 		if [ -n "$network_bridge" -a "$rsn_preauth" = 1 ]; then

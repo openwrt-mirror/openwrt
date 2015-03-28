@@ -1,7 +1,7 @@
 hostapd_set_bss_options() {
 	local var="$1"
 	local vif="$2"
-	local enc wep_rekey wpa_group_rekey wpa_pair_rekey wpa_master_rekey wps_possible
+	local enc wep_rekey wpa_group_rekey wpa_pair_rekey wpa_master_rekey wps_possible wpa_key_mgmt
 
 	config_get enc "$vif" encryption "none"
 	config_get wep_rekey        "$vif" wep_rekey        # 300
@@ -92,6 +92,7 @@ hostapd_set_bss_options() {
 			[ -n "$wpa_group_rekey"  ] && append "$var" "wpa_group_rekey=$wpa_group_rekey" "$N"
 			[ -n "$wpa_pair_rekey"   ] && append "$var" "wpa_ptk_rekey=$wpa_pair_rekey"    "$N"
 			[ -n "$wpa_master_rekey" ] && append "$var" "wpa_gmk_rekey=$wpa_master_rekey"  "$N"
+			append wpa_key_mgmt "WPA-PSK"
 		;;
 		*wpa*|*8021x*)
 			# required fields? formats?
@@ -129,13 +130,11 @@ hostapd_set_bss_options() {
 				append "$var" "radius_das_port=${dae_port:-3799}" "$N"
 				append "$var" "radius_das_client=$dae_client $dae_secret" "$N"
 			}
-			config_get nasid "$vif" nasid
 			config_get ownip "$vif" ownip
-			append "$var" "nas_identifier=$nasid" "$N"
 			append "$var" "own_ip_addr=$ownip" "$N"
 			append "$var" "eapol_key_index_workaround=1" "$N"
 			append "$var" "ieee8021x=1" "$N"
-			append "$var" "wpa_key_mgmt=WPA-EAP" "$N"
+			append wpa_key_mgmt "WPA-EAP"
 			[ -n "$wpa_group_rekey"  ] && append "$var" "wpa_group_rekey=$wpa_group_rekey" "$N"
 			[ -n "$wpa_pair_rekey"   ] && append "$var" "wpa_ptk_rekey=$wpa_pair_rekey"    "$N"
 			[ -n "$wpa_master_rekey" ] && append "$var" "wpa_gmk_rekey=$wpa_master_rekey"  "$N"
@@ -215,6 +214,42 @@ hostapd_set_bss_options() {
 	[ -n "$bridge" ] && append "$var" "bridge=$bridge" "$N"
 	[ -n "$ieee80211d" ] && append "$var" "ieee80211d=$ieee80211d" "$N"
 	[ -n "$iapp_interface" ] && append "$var" iapp_interface=$(uci_get_state network "$iapp_interface" ifname "$iapp_interface") "$N"
+
+	if [ "$wpa" -ge "1" ]
+	then
+		config_get nasid "$vif" nasid
+		[ -n "$nasid" ] && append "$var" "nas_identifier=$nasid" "$N"
+
+		config_get_bool ieee80211r "$vif" ieee80211r 0
+		if [ "$ieee80211r" -gt 0 ]
+		then
+			config_get mobility_domain "$vif" mobility_domain "4f57"
+			config_get r0_key_lifetime "$vif" r0_key_lifetime "10000"
+			config_get r1_key_holder "$vif" r1_key_holder "00004f577274"
+			config_get reassociation_deadline "$vif" reassociation_deadline "1000"
+			config_get r0kh "$vif" r0kh
+			config_get r1kh "$vif" r1kh
+			config_get_bool pmk_r1_push "$vif" pmk_r1_push 0
+
+			append "$var" "mobility_domain=$mobility_domain" "$N"
+			append "$var" "r0_key_lifetime=$r0_key_lifetime" "$N"
+			append "$var" "r1_key_holder=$r1_key_holder" "$N"
+			append "$var" "reassociation_deadline=$reassociation_deadline" "$N"
+			append "$var" "pmk_r1_push=$pmk_r1_push" "$N"
+
+			for kh in $r0kh; do
+				"$var" "r0kh=${kh//,/ }" "$N"
+			done
+			for kh in $r1kh; do
+				"$var" "r1kh=${kh//,/ }" "$N"
+			done
+
+			[ "$wpa_key_mgmt" != "${wpa_key_mgmt/EAP/}" ] && append wpa_key_mgmt "FT-EAP"
+			[ "$wpa_key_mgmt" != "${wpa_key_mgmt/PSK/}" ] && append wpa_key_mgmt "FT-PSK"
+		fi
+
+		[ -n "wpa_key_mgmt" ] && append "$var" "wpa_key_mgmt=$wpa_key_mgmt"
+	fi
 
 	if [ "$wpa" -ge "2" ]
 	then
