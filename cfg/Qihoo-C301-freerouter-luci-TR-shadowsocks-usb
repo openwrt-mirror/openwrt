@@ -4,7 +4,6 @@
 #
 CONFIG_MODULES=y
 CONFIG_HAVE_DOT_CONFIG=y
-# CONFIG_TARGET_ppc40x is not set
 # CONFIG_TARGET_ppc44x is not set
 # CONFIG_TARGET_realview is not set
 # CONFIG_TARGET_arm64 is not set
@@ -12,16 +11,13 @@ CONFIG_HAVE_DOT_CONFIG=y
 # CONFIG_TARGET_ath25 is not set
 CONFIG_TARGET_ar71xx=y
 # CONFIG_TARGET_at91 is not set
-# CONFIG_TARGET_avr32 is not set
 # CONFIG_TARGET_brcm2708 is not set
 # CONFIG_TARGET_bcm53xx is not set
 # CONFIG_TARGET_brcm47xx is not set
 # CONFIG_TARGET_brcm63xx is not set
 # CONFIG_TARGET_netlogic is not set
-# CONFIG_TARGET_cns21xx is not set
 # CONFIG_TARGET_cns3xxx is not set
 # CONFIG_TARGET_octeon is not set
-# CONFIG_TARGET_cobalt is not set
 # CONFIG_TARGET_gemini is not set
 # CONFIG_TARGET_mpc85xx is not set
 # CONFIG_TARGET_imx6 is not set
@@ -34,7 +30,6 @@ CONFIG_TARGET_ar71xx=y
 # CONFIG_TARGET_malta is not set
 # CONFIG_TARGET_mvebu is not set
 # CONFIG_TARGET_kirkwood is not set
-# CONFIG_TARGET_orion is not set
 # CONFIG_TARGET_rb532 is not set
 # CONFIG_TARGET_mcs814x is not set
 # CONFIG_TARGET_oxnas is not set
@@ -317,6 +312,7 @@ CONFIG_KERNEL_RELAY=y
 # CONFIG_KERNEL_CGROUPS is not set
 # CONFIG_KERNEL_NAMESPACES is not set
 # CONFIG_KERNEL_LXC_MISC is not set
+# CONFIG_KERNEL_SECCOMP_FILTER is not set
 # CONFIG_KERNEL_SECCOMP is not set
 
 #
@@ -1913,7 +1909,6 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_kmod-mt76 is not set
 # CONFIG_PACKAGE_kmod-mwifiex-pcie is not set
 # CONFIG_PACKAGE_kmod-mwl8k is not set
-# CONFIG_PACKAGE_kmod-mwlwifi is not set
 # CONFIG_PACKAGE_kmod-net-airo is not set
 # CONFIG_PACKAGE_kmod-net-hermes is not set
 # CONFIG_PACKAGE_kmod-net-hermes-pci is not set
@@ -2447,31 +2442,31 @@ CONFIG_PACKAGE_luci-base=y
 #
 # Translations
 #
-# CONFIG_LUCI_LANG_ca is not set
-# CONFIG_LUCI_LANG_cs is not set
-# CONFIG_LUCI_LANG_de is not set
-# CONFIG_LUCI_LANG_el is not set
-# CONFIG_LUCI_LANG_en is not set
-# CONFIG_LUCI_LANG_es is not set
-# CONFIG_LUCI_LANG_fr is not set
-# CONFIG_LUCI_LANG_he is not set
 # CONFIG_LUCI_LANG_hu is not set
-# CONFIG_LUCI_LANG_it is not set
-# CONFIG_LUCI_LANG_ja is not set
-# CONFIG_LUCI_LANG_ms is not set
-# CONFIG_LUCI_LANG_no is not set
-# CONFIG_LUCI_LANG_pl is not set
 # CONFIG_LUCI_LANG_pt is not set
-# CONFIG_LUCI_LANG_pt-br is not set
-# CONFIG_LUCI_LANG_ro is not set
-# CONFIG_LUCI_LANG_ru is not set
 # CONFIG_LUCI_LANG_sk is not set
-# CONFIG_LUCI_LANG_sv is not set
-# CONFIG_LUCI_LANG_tr is not set
+# CONFIG_LUCI_LANG_ro is not set
+# CONFIG_LUCI_LANG_en is not set
+# CONFIG_LUCI_LANG_pl is not set
 # CONFIG_LUCI_LANG_uk is not set
+# CONFIG_LUCI_LANG_ru is not set
 # CONFIG_LUCI_LANG_vi is not set
+# CONFIG_LUCI_LANG_he is not set
+# CONFIG_LUCI_LANG_no is not set
+# CONFIG_LUCI_LANG_pt-br is not set
+# CONFIG_LUCI_LANG_ms is not set
 CONFIG_LUCI_LANG_zh-cn=y
+# CONFIG_LUCI_LANG_de is not set
 # CONFIG_LUCI_LANG_zh-tw is not set
+# CONFIG_LUCI_LANG_tr is not set
+# CONFIG_LUCI_LANG_sv is not set
+# CONFIG_LUCI_LANG_ja is not set
+# CONFIG_LUCI_LANG_el is not set
+# CONFIG_LUCI_LANG_ca is not set
+# CONFIG_LUCI_LANG_es is not set
+# CONFIG_LUCI_LANG_cs is not set
+# CONFIG_LUCI_LANG_fr is not set
+# CONFIG_LUCI_LANG_it is not set
 CONFIG_PACKAGE_luci-mod-admin-full=y
 # CONFIG_PACKAGE_luci-mod-failsafe is not set
 # CONFIG_PACKAGE_luci-mod-freifunk is not set
@@ -2778,11 +2773,6 @@ CONFIG_PACKAGE_luci-i18n-transmission-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-upnp-vi is not set
 CONFIG_PACKAGE_luci-i18n-upnp-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-upnp-zh-tw is not set
-
-#
-# LuCI2
-#
-# CONFIG_PACKAGE_luci2 is not set
 
 #
 # Mail
@@ -3468,9 +3458,11 @@ CONFIG_PACKAGE_shadowsocks-libev-polarssl=y
 CONFIG_WPA_MSG_MIN_PRIORITY=3
 # CONFIG_DRIVER_WEXT_SUPPORT is not set
 CONFIG_DRIVER_11N_SUPPORT=y
+# CONFIG_PACKAGE_wpa-supplicant-mesh is not set
 # CONFIG_PACKAGE_wpa-supplicant-mini is not set
 # CONFIG_PACKAGE_wpa-supplicant-p2p is not set
 # CONFIG_PACKAGE_wpad is not set
+# CONFIG_PACKAGE_wpad-mesh is not set
 CONFIG_PACKAGE_wpad-mini=y
 # CONFIG_PACKAGE_wshaper is not set
 # CONFIG_PACKAGE_wwan is not set
@@ -3766,3 +3758,4 @@ CONFIG_PACKAGE_uboot-envtools=y
 # CONFIG_PACKAGE_xsltproc is not set
 # CONFIG_PACKAGE_xxd is not set
 # CONFIG_PACKAGE_zsh is not set
+CONFIG_OVERRIDE_PKGS="libnetfilter-cthelper libnetfilter-queue libnetfilter-cttimeout"
