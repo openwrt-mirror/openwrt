@@ -9,7 +9,7 @@ include $(INCLUDE_DIR)/feeds.mk
 
 # invoke ipkg-build with some default options
 IPKG_BUILD:= \
-  $(STAGING_DIR_HOST)/bin/ipkg-build -c -o 0 -g 0
+  $(SCRIPT_DIR)/ipkg-build -c -o 0 -g 0
 
 IPKG_STATE_DIR:=$(TARGET_DIR)/usr/lib/opkg
 
@@ -203,7 +203,7 @@ $(_endef)
 			echo ". \$$$${IPKG_INSTROOT}/lib/functions.sh"; \
 			echo "default_prerm \$$$$0 \$$$$@"; \
 		) > prerm; \
-		chmod 0755 prerm; \
+		chmod 0755 postinst prerm; \
 		$($(1)_COMMANDS) \
 	)
 

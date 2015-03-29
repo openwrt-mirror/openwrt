@@ -8,15 +8,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=e2fsprogs
-PKG_VERSION:=1.42.4
-PKG_MD5SUM:=b6e296f210d642361b7394437ff0f318
-PKG_RELEASE:=2
+PKG_VERSION:=1.42.12
+PKG_MD5SUM:=68255f51be017a93f2f6402fab06c2bf
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SF/e2fsprogs
 
 PKG_BUILD_DEPENDS:=util-linux
 PKG_INSTALL:=1
+
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -112,13 +114,13 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR)/util \
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/util \
 		BUILDCC="$(HOSTCC)" \
 		CFLAGS="" \
 		CPPFLAGS="" \
 		LDFLAGS="" \
 		subst
-	$(MAKE) -C $(PKG_BUILD_DIR) \
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
 		LDFLAGS=-Wl,--gc-sections \
 		BUILDCC="$(HOSTCC)" \
 		DESTDIR="$(PKG_INSTALL_DIR)" \

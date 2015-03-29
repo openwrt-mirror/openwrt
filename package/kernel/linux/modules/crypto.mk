@@ -262,10 +262,12 @@ define KernelPackage/crypto-aes
   $(call AddDepends/crypto)
 endef
 
-define KernelPackage/crypto-aes/x86
-  FILES+=$(LINUX_DIR)/arch/x86/crypto/aes-i586.ko
-  AUTOLOAD:=$(call AutoLoad,09,aes-i586)
-endef
+ifndef CONFIG_TARGET_x86_64
+  define KernelPackage/crypto-aes/x86
+    FILES+=$(LINUX_DIR)/arch/x86/crypto/aes-i586.ko
+    AUTOLOAD:=$(call AutoLoad,09,aes-i586)
+  endef
+endif
 
 $(eval $(call KernelPackage,crypto-aes))
 
@@ -305,7 +307,7 @@ $(eval $(call KernelPackage,crypto-cbc))
 
 define KernelPackage/crypto-ctr
   TITLE:=Counter Mode CryptoAPI module
-  DEPENDS:=+kmod-crypto-manager +kmod-crypto-seqiv
+  DEPENDS:=+kmod-crypto-manager +kmod-crypto-seqiv +kmod-crypto-iv
   KCONFIG:=CONFIG_CRYPTO_CTR
   FILES:=$(LINUX_DIR)/crypto/ctr.ko
   AUTOLOAD:=$(call AutoLoad,09,ctr)
@@ -313,6 +315,17 @@ define KernelPackage/crypto-ctr
 endef
 
 $(eval $(call KernelPackage,crypto-ctr))
+
+define KernelPackage/crypto-ccm
+ TITLE:=Support for Counter with CBC MAC (CCM)
+ DEPENDS:=+kmod-crypto-ctr +kmod-crypto-aead
+ KCONFIG:=CONFIG_CRYPTO_CCM
+ FILES:=$(LINUX_DIR)/crypto/ccm.ko
+ AUTOLOAD:=$(call AutoLoad,09,ccm)
+ $(call AddDepends/crypto)
+endef
+
+$(eval $(call KernelPackage,crypto-ccm))
 
 define KernelPackage/crypto-pcbc
   TITLE:=Propagating Cipher Block Chaining CryptoAPI module
@@ -530,9 +543,11 @@ define KernelPackage/crypto-misc
   $(call AddDepends/crypto)
 endef
 
-define KernelPackage/crypto-misc/x86
-  FILES+=$(LINUX_DIR)/arch/x86/crypto/twofish-i586.ko
-endef
+ifndef CONFIG_TARGET_x86_64
+  define KernelPackage/crypto-misc/x86
+    FILES+=$(LINUX_DIR)/arch/x86/crypto/twofish-i586.ko
+  endef
+endif
 
 $(eval $(call KernelPackage,crypto-misc))
 
