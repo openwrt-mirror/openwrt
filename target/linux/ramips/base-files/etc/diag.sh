@@ -230,6 +230,9 @@ get_status_led() {
 	y1s)
 		status_led="lenovo:blue:power"
 		;;
+	zte-q7)
+		status_led="zte:red:status"
+		;;
 	esac
 }
 
