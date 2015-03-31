@@ -6045,6 +6045,10 @@ STATIC_CONST struct file_operations ufsd_file_operations = {
 #if defined HAVE_STRUCT_FILE_OPERATIONS_AIO_WRITE && HAVE_STRUCT_FILE_OPERATIONS_AIO_WRITE
   .aio_write = ufsd_file_aio_write,
 #endif
+#if defined HAVE_STRUCT_FILE_OPERATIONS_RW_ITER && HAVE_STRUCT_FILE_OPERATIONS_RW_ITER
+  .read_iter = generic_file_read_iter,
+  .write_iter = generic_file_write_iter,
+#endif
 #ifndef UFSD_NO_USE_IOCTL
   .ioctl    = ufsd_ioctl,
 #endif
