@@ -9,18 +9,19 @@ include $(INCLUDE_DIR)/feeds.mk
 
 # invoke ipkg-build with some default options
 IPKG_BUILD:= \
-  $(STAGING_DIR_HOST)/bin/ipkg-build -c -o 0 -g 0
+  $(SCRIPT_DIR)/ipkg-build -c -o 0 -g 0
 
 IPKG_STATE_DIR:=$(TARGET_DIR)/usr/lib/opkg
 
 # 1: package name
 # 2: variable name
 # 3: variable suffix
+# 4: file is a script
 define BuildIPKGVariable
 ifdef Package/$(1)/$(2)
   $$(IPKG_$(1)) : VAR_$(2)$(3)=$$(Package/$(1)/$(2))
   $(call shexport,Package/$(1)/$(2))
-  $(1)_COMMANDS += echo "$$$$$$$$$(call shvar,Package/$(1)/$(2))" > $(2)$(3);
+  $(1)_COMMANDS += echo "$$$$$$$$$(call shvar,Package/$(1)/$(2))" > $(2)$(3); $(if $(4),chmod 0755 $(2)$(3);)
 endif
 endef
 
@@ -125,10 +126,10 @@ ifeq ($(DUMP),)
     $(FixupReverseDependencies)
 
     $(eval $(call BuildIPKGVariable,$(1),conffiles))
-    $(eval $(call BuildIPKGVariable,$(1),preinst))
-    $(eval $(call BuildIPKGVariable,$(1),postinst,-pkg))
-    $(eval $(call BuildIPKGVariable,$(1),prerm,-pkg))
-    $(eval $(call BuildIPKGVariable,$(1),postrm))
+    $(eval $(call BuildIPKGVariable,$(1),preinst,,1))
+    $(eval $(call BuildIPKGVariable,$(1),postinst,-pkg,1))
+    $(eval $(call BuildIPKGVariable,$(1),prerm,-pkg,1))
+    $(eval $(call BuildIPKGVariable,$(1),postrm,1))
 
     $(STAGING_DIR_ROOT)/stamp/.$(1)_installed: $(STAMP_BUILT)
 	rm -rf $(STAGING_DIR_ROOT)/tmp-$(1)
@@ -203,7 +204,7 @@ $(_endef)
 			echo ". \$$$${IPKG_INSTROOT}/lib/functions.sh"; \
 			echo "default_prerm \$$$$0 \$$$$@"; \
 		) > prerm; \
-		chmod 0755 prerm; \
+		chmod 0755 postinst prerm; \
 		$($(1)_COMMANDS) \
 	)
 

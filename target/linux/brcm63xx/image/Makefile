@@ -7,8 +7,9 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 
-LOADADDR = 0x80800000		# RAM start + 8MB
+LOADADDR = 0x80010000		# RAM start + 64K
 KERNEL_ENTRY = $(LOADADDR)	# Newer kernels add a jmp to the kernel_entry at the start of the binary
+LOADER_ENTRY = 0x80a00000	# RAM start + 10M, for relocate
 RAMSIZE = 0x02000000		# 32MB
 LZMA_TEXT_START = 0x81800000	# 32MB - 8MB
 
@@ -18,6 +19,12 @@ LOADER_MAKEOPTS= \
 		KERNEL_ENTRY=$(KERNEL_ENTRY) \
 		RAMSIZE=$(RAMSIZE) \
 		LZMA_TEXT_START=$(LZMA_TEXT_START) \
+
+RELOCATE_MAKEOPTS= \
+		CACHELINE_SIZE=16 \
+		KERNEL_ADDR=$(KERNEL_ENTRY) \
+		CROSS_COMPILE=$(TARGET_CROSS) \
+		LZMA_TEXT_START=$(LOADER_ENTRY)
 
 define rootfspad/jffs2-128k
 --align-rootfs
@@ -42,8 +49,8 @@ define Image/Build/CFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(3).lzma.cfe -f $(KDIR)/root.$(1) \
 		--output $(BIN_DIR)/openwrt-$(2)-$(1)-cfe.bin \
-		--boardid $(4) --chipid $(5) --entry $(KERNEL_ENTRY) \
-		--load-addr $(LOADADDR) --info1 "-$(call Image/LimitName16,$(2))" \
+		--boardid $(4) --chipid $(5) --entry $(LOADER_ENTRY) \
+		--load-addr $(LOADER_ENTRY) --info1 "-$(call Image/LimitName16,$(2))" \
 		$(call rootfspad/$(1)) \
 		--info2 $(1) $(6)
 endef
@@ -51,7 +58,7 @@ endef
 define Image/Build/OLDCFEDTB
 	# Generate the tagged image
 	$(TOPDIR)/scripts/brcmImage.pl -t -p \
-		-b $(4) -c $(5)	-e $(KERNEL_ENTRY) -a $(LOADADDR) \
+		-b $(4) -c $(5)	-e $(LOADER_ENTRY) -a $(LOADER_ENTRY) \
 		-k $(KDIR)/vmlinux-$(3).lzma.cfe -r $(KDIR)/root.$(1) \
 		-o $(BIN_DIR)/openwrt-$(2)-$(1)-cfe.bin $(6)
 endef
@@ -60,9 +67,9 @@ define Image/Build/SPW303VCFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(3).lzma.cfe -f $(KDIR)/root.$(1) \
 		--output $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
-		--boardid $(4) --chipid $(5) --entry $(KERNEL_ENTRY) \
+		--boardid $(4) --chipid $(5) --entry $(LOADER_ENTRY) \
 		$(call rootfspad/$(1)) \
-		--load-addr $(LOADADDR) $(6)
+		--load-addr $(LOADER_ENTRY) $(6)
 	# Fix up header
 	$(STAGING_DIR_HOST)/bin/spw303v -i $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
 		-o $(BIN_DIR)/openwrt-$(2)-$(1)-cfe-sysupgrade.bin
@@ -75,8 +82,8 @@ define Image/Build/ZYXCFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(3).lzma.cfe -f $(KDIR)/root.$(1) \
 		--output $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
-		--boardid $(4) --chipid $(5) --entry $(KERNEL_ENTRY) \
-		--load-addr $(LOADADDR) --info1 "-$(call Image/LimitName16,$(2))" \
+		--boardid $(4) --chipid $(5) --entry $(LOADER_ENTRY) \
+		--load-addr $(LOADER_ENTRY) --info1 "-$(call Image/LimitName16,$(2))" \
 		$(call rootfspad/$(1)) \
 		--info2 $(1) $(6)
 	# Fix up header
@@ -162,16 +169,27 @@ define Image/PrepareLoaderDTB
 endef
 
 define Image/PrepareCFELzmaKernel
+	# CFE only allows ~4 MiB for the uncompressed kernels, but uncompressed
+	# kernel might get larger than that, so let CFE unpack and load at a
+	# higher address and make the kernel relocate itself to the expected
+	# location.
+	( \
+		dd if=$(KDIR)/relocate/loader.bin bs=32 conv=sync && \
+		perl -e '@s = stat("$(KDIR)/vmlinux$(1)"); print pack("N", @s[7])' && \
+		cat $(KDIR)/vmlinux$(1) \
+	) > $(KDIR)/vmlinux-relocate$(1)
+
 	# CFE is a LZMA nazi! It took me hours to find out the parameters!
 	# Also I think lzma has a bug cause it generates different output depending on
 	# if you use stdin / stdout or not. Use files instead of stdio here, cause
 	# otherwise CFE will complain and not boot the image.
-	$(STAGING_DIR_HOST)/bin/lzma e -d22 -fb64 -a1 $(KDIR)/vmlinux$(1) $(KDIR)/vmlinux$(1).lzma.tmp
+	$(STAGING_DIR_HOST)/bin/lzma e -d22 -fb64 -a1 $(KDIR)/vmlinux-relocate$(1) $(KDIR)/vmlinux$(1).lzma.tmp
 
 	# Strip out the length, CFE doesn't like this
 	dd if=$(KDIR)/vmlinux$(1).lzma.tmp of=$(KDIR)/vmlinux$(1).lzma.cfe bs=5 count=1
 	dd if=$(KDIR)/vmlinux$(1).lzma.tmp of=$(KDIR)/vmlinux$(1).lzma.cfe ibs=13 obs=5 skip=1 seek=1 conv=notrunc
 	rm -f $(KDIR)/vmlinux$(1).lzma.tmp
+	rm -f $(KDIR)/vmlinux-relocate$(1)
 endef
 
 define Image/PrepareCFELzmaKernelDTB
@@ -182,12 +200,14 @@ define Image/PrepareCFELzmaKernelDTB
 endef
 
 define Image/Prepare
-	$(call Image/PrepareCFELzmaKernel,)
+	# build relocation code first
+	rm -rf $(KDIR)/relocate
+	$(CP) ../../generic/image/relocate $(KDIR)
+	$(MAKE) -C $(KDIR)/relocate $(RELOCATE_MAKEOPTS)
 
 	$(foreach board,$(sort $(TARGET_$(PROFILE)_DTBS)), $(call Image/PrepareCFELzmaKernelDTB,$(board)))
 
  ifeq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),y)
-	$(call Image/PrepareLoader,-initramfs,$(BIN_DIR),loader.elf)
 	$(foreach board,$(sort $(TARGET_$(PROFILE)_DTBS)), \
 		$(call Image/PrepareLoaderDTB,-initramfs,$(board),$(BIN_DIR),loader.elf))
  ifneq (,$(findstring cvg834g,$(TARGET_$(PROFILE)_DTBS)))
@@ -275,10 +295,16 @@ $(eval $(call ImageDTB,CFEDTB,RG100A,RG100A,rg100a,96358VW2,6358,--block-size 0x
 $(eval $(call ImageDTB,CFEDTB,AR1004G,AR1004G,ar1004g,96348GW-10,6348))
 # Belkin F5D7633
 $(eval $(call ImageDTB,CFEDTB,F5D7633,F5D7633,f5d7633,96348GW-10,6348,--block-size 0x20000 --image-offset 0x20000))
+# Broadcom BCM96318REF
+$(eval $(call ImageDTB,Dummy,BCM96318REF,BCM96318REF,bcm96318ref,96318REF,6318))
+# Broadcom BCM96318REF_P300
+$(eval $(call ImageDTB,Dummy,BCM96318REF_P300,BCM96318ref_P300,bcm96318ref_p300,96318REF_P300,6318))
 # Broadcom BCM963268BU_P300
 $(eval $(call ImageDTB,Dummy,BCM963268BU_P300,BCM963268BU_P300,bcm963268bu_p300,963268BU_P300,63268))
 # BT Home Hub 2.0 A
 $(eval $(call ImageDTB,CFEDTB,BTHOMEHUB2A,HomeHub2A,homehub2a,HOMEHUB2A,6358,--image-offset 0x20000 --block-size 0x20000))
+# BT Voyager V2110, V2110_AA, V2110_ROI
+$(eval $(call ImageDTB,CFEDTB,BTV2110,BTV2110,v2110,V2110,6348,--layoutver 5))
 # BT Voyager V2500V, V2500V_SIP_CLUB, V2500V_AA
 $(eval $(call ImageDTB,CFEDTB,BTV2500V,BTV2500V,v2500v-bb,V2500V_BB,6348,--layoutver 5))
 # Comtrend AR-5381u
@@ -310,6 +336,8 @@ $(eval $(call ImageDTB,CFEDTB,DSL274XB_C,DSL274XB-C3,dsl-274xb-c,AW4139,6358))
 # D-Link DSL-2740B/DSL-2741B, rev F1
 $(eval $(call ImageDTB,CFEDTB,DSL274XB_F,DSL274XB-F1-EU,dsl-274xb-f,AW4339U,6328,--signature2 "4.06.01.EUF1" --pad 4))
 $(eval $(call ImageDTB,CFEDTB,DSL274XB_F,DSL274XB-F1-AU,dsl-274xb-f,AW4339U,6328,--signature2 "4.06.01.AUF1" --pad 4))
+# D-Link DSL-2750B/DSL-2751, rev D1
+$(eval $(call ImageDTB,Dummy,DSL275XB_D,DSL275XB-D1,dsl-275xb-d,AW5200U,6318, --pad 4))
 # D-Link DVA-G3810BN/TL
 $(eval $(call ImageDTB,CFEDTB,DVAG3810BN,DVAG3810BN,dva-g3810bn_tl,96358VW,6358))
 # Davolink DV-201AMR
@@ -330,6 +358,8 @@ $(eval $(call ImageDTB,CFEDTB,HG553,HG553,hg553,HW553,6358,--rsa-signature "Echo
 $(eval $(call ImageDTB,CFEDTB,HG556a_AB,HG556a_A,hg556a-a,HW556,6358,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x10000 --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,HG556a_AB,HG556a_B,hg556a-b,HW556,6358,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x20000 --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,HG556a_C,HG556a_C,hg556a-c,HW556,6358,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x20000 --tag-version 8))
+# Inteno VG50
+$(eval $(call ImageDTB,Dummy,VG50,vg50,vg50,VW6339GU,63268))
 # Inventel Livebox 1
 $(eval $(call ImageDTB,RedBootDTB,Livebox,livebox,livebox-blue-5g))
 # Netgear CVG834G
