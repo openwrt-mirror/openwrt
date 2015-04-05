@@ -947,10 +947,12 @@ endef
 #
 
 Image/Build/Profile/MT7628=$(call BuildFirmware/Default4M/$(1),$(1),mt7628,MT7628)
+Image/Build/Profile/MT7628_4m=$(call BuildFirmware/Default4M/$(1),$(1),mt7628-4m,MT7628_4m)
 
 ifeq ($(SUBTARGET),mt7628)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/MT7628,$(1))
+	$(call Image/Build/Profile/MT7628_4m,$(1))
 endef
 endif
 
