@@ -468,7 +468,7 @@ define KernelPackage/wdt-omap
   DEPENDS:=@(TARGET_omap24xx||TARGET_omap35xx)
   KCONFIG:=CONFIG_OMAP_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/omap_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,omap_wdt.ko)
+  AUTOLOAD:=$(call AutoLoad,50,omap_wdt.ko,1)
 endef
 
 define KernelPackage/wdt-omap/description
@@ -484,7 +484,7 @@ define KernelPackage/wdt-orion
   DEPENDS:=@TARGET_orion||TARGET_kirkwood||TARGET_mvebu
   KCONFIG:=CONFIG_ORION_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/orion_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,orion_wdt)
+  AUTOLOAD:=$(call AutoLoad,50,orion_wdt,1)
 endef
 
 define KernelPackage/wdt-orion/description
@@ -500,7 +500,7 @@ define KernelPackage/booke-wdt
   DEPENDS:=@(TARGET_mpc85xx||TARGET_ppc40x||TARGET_ppc44x)
   KCONFIG:=CONFIG_BOOKE_WDT
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/booke_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,booke_wdt)
+  AUTOLOAD:=$(call AutoLoad,50,booke_wdt,1)
 endef
 
 define KernelPackage/booke-wdt/description
@@ -746,6 +746,7 @@ define KernelPackage/zram
 	CONFIG_ZRAM \
 	CONFIG_ZRAM_DEBUG=n \
 	CONFIG_PGTABLE_MAPPING=n \
+	CONFIG_ZSMALLOC_STAT=n \
 	CONFIG_ZRAM_LZ4_COMPRESS=y
   FILES:= \
 	$(LINUX_DIR)/drivers/staging/zsmalloc/zsmalloc.ko@lt3.14 \
@@ -962,3 +963,20 @@ define KernelPackage/gpio-beeper/description
 endef
 
 $(eval $(call KernelPackage,gpio-beeper))
+
+
+define KernelPackage/echo
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Line Echo Canceller
+  KCONFIG:=CONFIG_ECHO
+  FILES:=$(LINUX_DIR)/drivers/staging/echo/echo.ko@lt3.18 \
+	  $(LINUX_DIR)/drivers/misc/echo/echo.ko@ge3.18
+  AUTOLOAD:=$(call AutoLoad,50,echo)
+endef
+
+define KernelPackage/echo/description
+ This driver provides line echo cancelling support for mISDN and
+ DAHDI drivers
+endef
+
+$(eval $(call KernelPackage,echo))

@@ -353,7 +353,7 @@ define Device/ExportVar
   $(1) : $(2):=$$($(2))
 
 endef
-Device/Export = $(foreach var,$(DEVICE_VARS) KERNEL,$(call Device/ExportVar,$(1),$(var)))
+Device/Export = $(foreach var,$(DEVICE_VARS) KERNEL KERNEL_INITRAMFS FILESYSTEM,$(call Device/ExportVar,$(1),$(var)))
 
 define Device/Check
   _TARGET = $$(if $$(filter $(PROFILE),$$(PROFILES)),install,install-disabled)
@@ -378,6 +378,7 @@ define Device/Build/check_size
 endef
 
 define Device/Build/kernel
+  $(KDIR)/$$(KERNEL_NAME): image_prepare
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
   $(BIN_DIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_IMAGE)
 	cp $$^ $$@

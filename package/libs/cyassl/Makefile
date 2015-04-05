@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cyassl
 PKG_VERSION:=3.3.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).zip
 PKG_SOURCE_URL:=http://www.yassl.com/
@@ -40,6 +40,9 @@ TARGET_CFLAGS += $(FPIC)
 CONFIGURE_ARGS += \
 	--without-zlib \
 	--enable-singlethreaded \
+	--enable-opensslextra \
+	--enable-sni \
+	--enable-ecc \
 	--disable-examples
 
 define Build/InstallDev
