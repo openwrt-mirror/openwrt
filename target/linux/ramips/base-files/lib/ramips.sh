@@ -208,6 +208,9 @@ ramips_board_detect() {
 	*"Netgear WNCE2001")
 		name="wnce2001"
 		;;
+        *"Netprotection NP-A105003201")
+                name = "netprotection"
+                ;;
 	*"NexAira BC2")
 		name="bc2"
 		;;
