@@ -1,28 +1,20 @@
-CC?=gcc
-CFLAGS?=-Wall -g -D_GNU_SOURCE
-TARGETS=cpulimit
-LIBS=list.o process_iterator.o process_group.o
+###############################################################################
+# Gather all flags.
+#
+CFLAGS+=-DPOSIXLY_CORRECT -Wall -g
 
-UNAME := $(shell uname)
+TARGET=cpulimit-ng
 
-ifeq ($(UNAME), FreeBSD)
-LIBS+=-lkvm
-endif
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-all::	$(TARGETS) $(LIBS)
+SOURCES = $(wildcard *.c)
+OBJS = $(patsubst %.c,%.o, $(SOURCES))
 
-cpulimit:	cpulimit.c $(LIBS)
-	$(CC) -o cpulimit-ng cpulimit.c $(LIBS) $(CFLAGS)
+$(TARGET) : $(OBJS)
+	$(CC) `for X in $(OBJS) ; do echo "$$X"; done` -o $(TARGET) $(LIBS) $(LDFLAGS)
 
-process_iterator.o: process_iterator.c process_iterator.h
-	$(CC) -c process_iterator.c $(CFLAGS)
-
-list.o: list.c list.h
-	$(CC) -c list.c $(CFLAGS)
-
-process_group.o: process_group.c process_group.h process_iterator.o list.o
-	$(CC) -c process_group.c $(CFLAGS)
+all: $(TARGET)
 
 clean:
-	rm -f *~ *.o $(TARGETS)
-
+	rm -f *.o $(TARGET)

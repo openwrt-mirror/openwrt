@@ -20,7 +20,7 @@ include $(TOPDIR)/rules.mk
 
 # Name and release number of this package
 PKG_NAME:=cpulimit-ng
-PKG_VERSION:=1.2b
+PKG_VERSION:=1.2
 PKG_RELEASE:=1
 
 # This specifies the directory where we're going to build the program.
@@ -56,9 +56,7 @@ endef
 
 # We do not need to define Build/Configure or Build/Compile directives
 # The defaults are appropriate for compiling a simple program such as this one
-#define Build/Compile
-#	$(TARGET_CROSS)gcc $(CFLAGS) -o $(PKG_BUILD_DIR)/cpulimit-ng $(PKG_BUILD_DIR)/cpulimit.c
-#endef
+
 # Specify where and how to install the program. Since we only have one file,
 # the cpulimit-ng executable, install it by copying it to the /bin directory on
 # the router. The $(1) variable represents the root directory on the router running

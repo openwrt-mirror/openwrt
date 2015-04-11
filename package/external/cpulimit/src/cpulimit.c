@@ -1,9 +1,8 @@
 /**
  *
- * cpulimit - a cpu limiter for Linux
+ * cpulimit - a CPU limiter for Linux
  *
- * Copyright (C) 2012, by:  Gang Liu <gangban.lau@gmail.com>
- * Copyright (C) 2005-2008, by:  Angelo Marletta <marlonx80@hotmail.com>
+ * Copyright (C) 2005-2012, by:  Angelo Marletta <angelo dot marletta at gmail dot com> 
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,52 +18,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- **********************************************************************
+ **************************************************************
  *
  * This is a simple program to limit the cpu usage of a process
  * If you modify this code, send me a copy please
  *
- * Date:    30/8/2008
- * Version: 1.2 beta
- * Get the latest version at: http://cpulimit.sourceforge.net
- *
- * Changelog from 1.1:
- * - reorganization of the code, splitted in more source files
- * - cpu count detection, i.e. if you have 4 cpu, it is possible to limit up to 400%
- * - in order to avoid deadlocks, cpulimit now prevents to limit itself
- * - option --path eliminated, use --exe instead both for absolute path and file name
- * - call setpriority() just once in limit_process()
- * - no more segmentation fault when processes exit
- * - no more memory corruption when processes exit
- * - cpulimit exits if --lazy option is specified and the process terminates
- * - target process can be created on-fly given command line
- * - light and scalable algorithm for subprocesses detection and limitation
- * - mac os support
- * - minor enhancements and bugfixes
+ * Get the latest version at: http://github.com/opsengine/cpulimit
  *
  */
 
-#include <getopt.h>
 #include <stdio.h>
-#include <fcntl.h>
 #include <stdlib.h>
-#include <time.h>
 #include <unistd.h>
+#include <getopt.h>
+#include <time.h>
 #include <signal.h>
 #include <string.h>
-#include <dirent.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/resource.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 
-#include "process.h"
-#include "procutils.h"
+#include "process_group.h"
 #include "list.h"
+
+#ifdef HAVE_SYS_SYSINFO_H
+#include <sys/sysinfo.h>
+#endif
+
+#ifdef __APPLE__
+#include "memrchr.c"
+#endif
 
 //some useful macro
 #ifndef MIN
@@ -84,7 +72,7 @@
 /* GLOBAL VARIABLES */
 
 //the "family"
-struct process_family pf;
+struct process_group pgroup;
 //pid of cpulimit
 pid_t cpulimit_pid;
 //name of this program (maybe cpulimit...)
@@ -100,35 +88,19 @@ int verbose = 0;
 //lazy mode (exits if there is no process)
 int lazy = 0;
 
-static void *memrchr(const void *s, int c, size_t n)
-{
-	const unsigned char *start = (const unsigned char*)s;
-	const unsigned char *end = (const unsigned char*)s;
-
-	end+=n-1;
-
-	while(end>=start) {
-		if(*end==c)
-			return (void *)end;
-		else
-			end--;
-	}
-
-	return NULL;
-}
-
 //SIGINT and SIGTERM signal handler
 static void quit(int sig)
 {
 	//let all the processes continue if stopped
 	struct list_node *node = NULL;
-	for (node=pf.members.first; node!= NULL; node=node->next) {
-		struct process *p = (struct process*)(node->data);
-		kill(p->pid, SIGCONT);
-		process_close(p);
+	if (pgroup.proclist != NULL)
+	{
+		for (node = pgroup.proclist->first; node != NULL; node = node->next) {
+			struct process *p = (struct process*)(node->data);
+			kill(p->pid, SIGCONT);
+		}
+		close_process_group(&pgroup);
 	}
-	//free all the memory
-	cleanup_process_family(&pf);
 	//fix ^C little problem
 	printf("\r");
 	fflush(stdout);
@@ -148,7 +120,7 @@ static void print_usage(FILE *stream, int exit_code)
 	fprintf(stream, "      -l, --limit=N          percentage of cpu allowed from 0 to %d (required)\n", 100*NCPU);
 	fprintf(stream, "      -v, --verbose          show control statistics\n");
 	fprintf(stream, "      -z, --lazy             exit if there is no target process, or if it dies\n");
-	fprintf(stream, "      -i, --ignore-children  don't limit children processes\n");
+	fprintf(stream, "      -i, --include-children limit also the children processes\n");
 	fprintf(stream, "      -h, --help             display this help and exit\n");
 	fprintf(stream, "   TARGET must be exactly one of these:\n");
 	fprintf(stream, "      -p, --pid=N            pid of the process (implies -z)\n");
@@ -160,15 +132,9 @@ static void print_usage(FILE *stream, int exit_code)
 
 static void increase_priority() {
 	//find the best available nice value
-    errno = 0; // clear errno first
 	int old_priority = getpriority(PRIO_PROCESS, 0);
-    if (errno)
-    {
-        perror("getpriority failed");
-        return;
-    }
 	int priority = old_priority;
-	while (priority > MAX_PRIORITY && setpriority(PRIO_PROCESS, 0, priority-1) == 0) {
+	while (setpriority(PRIO_PROCESS, 0, priority-1) == 0 && priority>MAX_PRIORITY) {
 		priority--;	
 	}
 	if (priority != old_priority) {
@@ -181,33 +147,42 @@ static void increase_priority() {
 
 /* Get the number of CPUs */
 static int get_ncpu() {
-	int ncpu = -1;
+	int ncpu;
 #ifdef _SC_NPROCESSORS_ONLN
 	ncpu = sysconf(_SC_NPROCESSORS_ONLN);
 #elif defined __APPLE__
 	int mib[2] = {CTL_HW, HW_NCPU};
 	size_t len = sizeof(ncpu);
 	sysctl(mib, 2, &ncpu, &len, NULL, 0);
+#elif defined _GNU_SOURCE
+	ncpu = get_nprocs();
+#else
+	ncpu = -1;
 #endif
 	return ncpu;
 }
 
-#ifdef __linux__
-
-#include <sys/vfs.h>
-
-static int check_proc()
+int get_pid_max()
 {
-	struct statfs mnt;
-	if (statfs("/proc", &mnt) < 0)
-		return 0;
-	if (mnt.f_type!=0x9fa0)
-		return 0;
-	return 1;
-}
+#ifdef __linux__
+	//read /proc/sys/kernel/pid_max
+	static char buffer[1024];
+	FILE *fd = fopen("/proc/sys/kernel/pid_max", "r");
+	if (fd==NULL) return -1;
+	if (fgets(buffer, sizeof(buffer), fd)==NULL) {
+		fclose(fd);
+		return -1;
+	}
+	fclose(fd);
+	return atoi(buffer);
+#elif defined __FreeBSD__
+	return 99998;
+#elif defined __APPLE__
+	return 99998;
 #endif
+}
 
-void limit_process(pid_t pid, double limit, int ignore_children)
+void limit_process(pid_t pid, double limit, int include_children)
 {
 	//slice of the slot in which the process is allowed to run
 	struct timespec twork;
@@ -230,52 +205,20 @@ void limit_process(pid_t pid, double limit, int ignore_children)
 	int c = 0;
 
 	//get a better priority
-	//increase_priority();
+	increase_priority();
 	
 	//build the family
-	if (create_process_family(&pf, pid) == -1)
-    {
-        printf("create process family failed");
-        return ;
-    }
-	if (ignore_children) {
-		//delete any process with a different pid than the father
-        node = pf.members.first;
-		while (node!=NULL) {
-			struct process *proc = (struct process*)(node->data);
-			if (proc->pid != pid)
-            {
-				remove_process_from_family(&pf, proc->pid);
-                node = pf.members.first;
-                continue;
-            }
-            node = node->next;
-		}
-	}
-	
-	if (!ignore_children && verbose) printf("Members in the family owned by %d: %d\n", pf.father, pf.members.count);
+	init_process_group(&pgroup, pid, include_children);
+
+	if (verbose) printf("Members in the process group owned by %d: %d\n", pgroup.target_pid, pgroup.proclist->count);
 
 	//rate at which we are keeping active the processes (range 0-1)
 	//1 means that the process are using all the twork slice
 	double workingrate = -1;
 	while(1) {
-		if (!ignore_children && c%10==0) {
-			//update the process family (checks only for new members)
-			int new_children = update_process_family(&pf);
-			if (verbose && new_children) {
-				printf("%d new children processes detected (", new_children);
-				int j;
-				node = pf.members.last;
-				for (j=0; j<new_children; j++) {
-					printf("%d", ((struct process*)(node->data))->pid);
-					if (j<new_children-1) printf(" ");
-					node = node->previous;
-				}
-				printf(")\n");
-			}
-		}
+		update_process_group(&pgroup);
 
-		if (pf.members.count==0) {
+		if (pgroup.proclist->count==0) {
 			if (verbose) printf("No more processes.\n");
 			break;
 		}
@@ -285,28 +228,12 @@ void limit_process(pid_t pid, double limit, int ignore_children)
 		double pcpu = -1;
 
 		//estimate how much the controlled processes are using the cpu in the working interval
-        node = pf.members.first;
-		while (node!=NULL) {
+		for (node = pgroup.proclist->first; node != NULL; node = node->next) {
 			struct process *proc = (struct process*)(node->data);
-			if (proc->is_zombie) {
-				//process is zombie, remove it from family
-				fprintf(stderr,"Process %d is zombie!\n", proc->pid);
-				remove_process_from_family(&pf, proc->pid);
-                node = pf.members.first;
+			if (proc->cpu_usage < 0) {
 				continue;
 			}
-			if (process_monitor(proc) != 0) {
-				//process is dead, remove it from family
-				if (verbose) fprintf(stderr,"Process %d dead!\n", proc->pid);
-				remove_process_from_family(&pf, proc->pid);
-                node = pf.members.first;
-				continue;
-			}
-            node = node->next;
-			if (proc->cpu_usage<0) {
-				continue;
-			}
-			if (pcpu<0) pcpu = 0;
+			if (pcpu < 0) pcpu = 0;
 			pcpu += proc->cpu_usage;
 		}
 
@@ -315,68 +242,72 @@ void limit_process(pid_t pid, double limit, int ignore_children)
 			//it's the 1st cycle, initialize workingrate
 			pcpu = limit;
 			workingrate = limit;
-			twork.tv_nsec = TIME_SLOT*limit*1000;
+			twork.tv_nsec = TIME_SLOT * limit * 1000;
 		}
 		else {
 			//adjust workingrate
 			workingrate = MIN(workingrate / pcpu * limit, 1);
-			twork.tv_nsec = TIME_SLOT*1000*workingrate;
+			twork.tv_nsec = TIME_SLOT * 1000 * workingrate;
 		}
-		tsleep.tv_nsec = TIME_SLOT*1000-twork.tv_nsec;
+		tsleep.tv_nsec = TIME_SLOT * 1000 - twork.tv_nsec;
 
 		if (verbose) {
 			if (c%200==0)
 				printf("\n%%CPU\twork quantum\tsleep quantum\tactive rate\n");
 			if (c%10==0 && c>0)
-				printf("%0.2lf%%\t%6ld us\t%6ld us\t%0.2lf%%\n",pcpu*100,twork.tv_nsec/1000,tsleep.tv_nsec/1000,workingrate*100);
+				printf("%0.2lf%%\t%6ld us\t%6ld us\t%0.2lf%%\n", pcpu*100, twork.tv_nsec/1000, tsleep.tv_nsec/1000, workingrate*100);
 		}
 
 		//resume processes
-        node = pf.members.first;
-		while (node!=NULL) {
+		node = pgroup.proclist->first;
+		while (node != NULL)
+		{
+			struct list_node *next_node = node->next;
 			struct process *proc = (struct process*)(node->data);
-			if (kill(proc->pid,SIGCONT)!=0) {
+			if (kill(proc->pid,SIGCONT) != 0) {
 				//process is dead, remove it from family
-				if (verbose) fprintf(stderr,"Process %d dead!\n", proc->pid);
-				remove_process_from_family(&pf, proc->pid);
-                node = pf.members.first;
-                continue;
+				if (verbose) fprintf(stderr, "SIGCONT failed. Process %d dead!\n", proc->pid);
+				//remove process from group
+				delete_node(pgroup.proclist, node);
+				remove_process(&pgroup, proc->pid);
 			}
-            node=node->next;
+			node = next_node;
 		}
 
 		//now processes are free to run (same working slice for all)
 		gettimeofday(&startwork, NULL);
-		nanosleep(&twork,NULL);
+		nanosleep(&twork, NULL);
 		gettimeofday(&endwork, NULL);
-		workingtime = timediff(&endwork,&startwork);
+		workingtime = timediff(&endwork, &startwork);
 		
-		long delay = workingtime-twork.tv_nsec/1000;
+		long delay = workingtime - twork.tv_nsec/1000;
 		if (c>0 && delay>10000) {
 			//delay is too much! signal to user?
 			//fprintf(stderr, "%d %ld us\n", c, delay);
 		}
 
 		if (tsleep.tv_nsec>0) {
-			//stop only if tsleep>0, instead it's useless
-            node=pf.members.first;
-			while (node!=NULL) {
+			//stop processes only if tsleep>0
+			node = pgroup.proclist->first;
+			while (node != NULL)
+			{
+				struct list_node *next_node = node->next;
 				struct process *proc = (struct process*)(node->data);
 				if (kill(proc->pid,SIGSTOP)!=0) {
 					//process is dead, remove it from family
-					if (verbose) fprintf(stderr,"Process %d dead!\n", proc->pid);
-					remove_process_from_family(&pf, proc->pid);
-                    node=pf.members.first;
-                    continue;
+					if (verbose) fprintf(stderr, "SIGSTOP failed. Process %d dead!\n", proc->pid);
+					//remove process from group
+					delete_node(pgroup.proclist, node);
+					remove_process(&pgroup, proc->pid);
 				}
-                node=node->next;
+				node = next_node;
 			}
 			//now the processes are sleeping
 			nanosleep(&tsleep,NULL);
 		}
 		c++;
 	}
-	cleanup_process_family(&pf);
+	close_process_group(&pgroup);
 }
 
 int main(int argc, char **argv) {
@@ -387,11 +318,11 @@ int main(int argc, char **argv) {
 	int pid_ok = 0;
 	int limit_ok = 0;
 	pid_t pid = 0;
-	int ignore_children = 0;
+	int include_children = 0;
 
 	//get program name
-	char *p=(char*)memrchr(argv[0],(unsigned int)'/',strlen(argv[0]));
-	program_name = p==NULL?argv[0]:(p+1);
+	char *p = (char*)memrchr(argv[0], (unsigned int)'/', strlen(argv[0]));
+	program_name = p==NULL ? argv[0] : (p+1);
 	//get current pid
 	cpulimit_pid = getpid();
 	//get cpu count
@@ -409,7 +340,7 @@ int main(int argc, char **argv) {
 		{ "limit",      required_argument, NULL, 'l' },
 		{ "verbose",    no_argument,       NULL, 'v' },
 		{ "lazy",       no_argument,       NULL, 'z' },
-		{ "ignore-children", no_argument,  NULL, 'i' },
+		{ "include-children", no_argument,  NULL, 'i' },
 		{ "help",       no_argument,       NULL, 'h' },
 		{ 0,            0,                 0,     0  }
 	};
@@ -436,7 +367,7 @@ int main(int argc, char **argv) {
 				lazy = 1;
 				break;
 			case 'i':
-				ignore_children = 1;
+				include_children = 1;
 				break;
 			case 'h':
 				print_usage(stdout, 1);
@@ -451,12 +382,12 @@ int main(int argc, char **argv) {
 		}
 	} while(next_option != -1);
 
-	if (pid_ok && (pid<=1 || pid>=65536)) {
+	if (pid_ok && (pid <= 1 || pid >= get_pid_max())) {
 		fprintf(stderr,"Error: Invalid value for argument PID\n");
 		print_usage(stderr, 1);
 		exit(1);
 	}
-	if (pid!=0) {
+	if (pid != 0) {
 		lazy = 1;
 	}
 
@@ -465,14 +396,14 @@ int main(int argc, char **argv) {
 		print_usage(stderr, 1);
 		exit(1);
 	}
-	double limit = perclimit/100.0;
+	double limit = perclimit / 100.0;
 	if (limit<0 || limit >NCPU) {
 		fprintf(stderr,"Error: limit must be in the range 0-%d00\n", NCPU);
 		print_usage(stderr, 1);
 		exit(1);
 	}
 
-	int command_mode = optind<argc;
+	int command_mode = optind < argc;
 	if (exe_ok + pid_ok + command_mode == 0) {
 		fprintf(stderr,"Error: You must specify one target process, either by name, pid, or command line\n");
 		print_usage(stderr, 1);
@@ -492,19 +423,12 @@ int main(int argc, char **argv) {
 	//print the number of available cpu
 	if (verbose) printf("%d cpu detected\n", NCPU);
 
-#ifdef __linux__
-	if (!check_proc()) {
-		fprintf(stderr, "procfs is not mounted!\nAborting\n");
-		exit(-2);
-	}
-#endif
-
 	if (command_mode) {
 		int i;
 		//executable file
 		const char *cmd = argv[optind];
 		//command line arguments
-		char **cmd_args = (char**)malloc((argc-optind+1)*sizeof(char*));
+		char **cmd_args = (char**)malloc((argc-optind + 1) * sizeof(char*));
 		if (cmd_args==NULL) exit(2);
 		for (i=0; i<argc-optind; i++) {
 			cmd_args[i] = argv[i+optind];
@@ -523,8 +447,16 @@ int main(int argc, char **argv) {
 		if (child < 0) {
 			exit(EXIT_FAILURE);
 		}
-		else if (child > 0) {
+		else if (child == 0) {
+			//target process code
+			int ret = execvp(cmd, cmd_args);
+			//if we are here there was an error, show it
+			perror("Error");
+			exit(ret);
+		}
+		else {
 			//parent code
+			free(cmd_args);
 			int limiter = fork();
 			if (limiter < 0) {
 				exit(EXIT_FAILURE);
@@ -545,16 +477,9 @@ int main(int argc, char **argv) {
 			else {
 				//limiter code
 				if (verbose) printf("Limiting process %d\n",child);
-				limit_process(child, limit, ignore_children);
+				limit_process(child, limit, include_children);
 				exit(0);
 			}
-		}
-		else {
-			//target process code
-			int ret = execvp(cmd, cmd_args);
-			//if we are here there was an error, show it
-			perror("Error");
-			exit(ret);
 		}
 	}
 
@@ -563,7 +488,7 @@ int main(int argc, char **argv) {
 		pid_t ret = 0;
 		if (pid_ok) {
 			//search by pid
-			ret = look_for_process_by_pid(pid);
+			ret = find_process_by_pid(pid);
 			if (ret == 0) {
 				printf("No process found\n");
 			}
@@ -573,7 +498,7 @@ int main(int argc, char **argv) {
 		}
 		else {
 			//search by file or path name
-			ret = look_for_process_by_name(exe);
+			ret = find_process_by_name(exe);
 			if (ret == 0) {
 				printf("No process found\n");
 			}
@@ -586,12 +511,12 @@ int main(int argc, char **argv) {
 		}
 		if (ret > 0) {
 			if (ret == cpulimit_pid) {
-				printf("Process %d is cpulimit itself! Aborting to avoid deadlock\n", ret);
+				printf("Target process %d is cpulimit itself! Aborting because it makes no sense\n", ret);
 				exit(1);
 			}
 			printf("Process %d found\n", pid);
 			//control
-			limit_process(pid, limit, ignore_children);
+			limit_process(pid, limit, include_children);
 		}
 		if (lazy) break;
 		sleep(2);
