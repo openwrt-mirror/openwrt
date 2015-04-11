@@ -261,7 +261,7 @@ start()
 		if [ -n "$is_total123" ] || [ -n "$is_bdist123" ] || [ -n "$is_qos123" ]  ; then
 			bw_restore "$i" 1
 		else
-			bw_restore "$i" 1
+			bw_restore "$i" 0
 		fi
 	done
 
