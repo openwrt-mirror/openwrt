@@ -9,6 +9,9 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 include $(INCLUDE_DIR)/host.mk
 
+BOARDS:= \
+	imx23-olinuxino \
+	imx28-duckbill
 FAT32_BLOCK_SIZE=1024
 FAT32_BLOCKS=$(shell echo $$(($(CONFIG_MXS_SD_BOOT_PARTSIZE)*1024*1024/$(FAT32_BLOCK_SIZE))))
 
@@ -22,9 +25,14 @@ endef
 
 define Image/InstallKernel
 
-  ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_KERNEL),)
+  ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_ZIMAGE),)
 	mkdir -p $(TARGET_DIR)/boot
 	$(CP) $(LINUX_DIR)/arch/arm/boot/zImage $(TARGET_DIR)/boot/
+  endif
+
+  ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_UIMAGE),)
+	mkdir -p $(TARGET_DIR)/boot
+	cp $(KDIR)/uImage $(TARGET_DIR)/boot/
   endif
   
   ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB),)
@@ -67,6 +75,7 @@ endef
 define Image/Build
 	$(call Image/Build/$(1),$(1))
 	$(call Image/Build/Profile/$(PROFILE),$(1))
+	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 endef
 
 $(eval $(call BuildImage))
