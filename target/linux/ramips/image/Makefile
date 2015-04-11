@@ -895,7 +895,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/XIAOMI-MIWIFI-MINI,$(1))
 	$(call Image/Build/Profile/ZTE-Q7,$(1))
 	$(call Image/Build/Profile/ZBT-WA05,$(1))
-	$(call Image/Build/Profile/NETPROTECTION,$(1)))
+	$(call Image/Build/Profile/NETPROTECTION,$(1))
 	$(call Image/Build/Profile/ArcherC20i,$(1))
 endef
 endif
