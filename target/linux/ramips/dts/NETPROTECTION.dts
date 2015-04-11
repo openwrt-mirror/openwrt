@@ -3,7 +3,7 @@
 /include/ "mt7620n.dtsi"
 
 / {
-	compatible = "np-A105003201,netprotection", "ralink,mt7620n-soc";
+	compatible = "np-A105003201,netprotection,NETPROTECTION", "ralink,mt7620n-soc";
 	model = "Netprotection NP-A105003201";
 
 	chosen {
