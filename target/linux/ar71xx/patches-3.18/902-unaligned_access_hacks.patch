@@ -593,7 +593,7 @@
  
 --- a/net/sched/cls_u32.c
 +++ b/net/sched/cls_u32.c
-@@ -148,7 +148,7 @@ next_knode:
+@@ -151,7 +151,7 @@ next_knode:
  			data = skb_header_pointer(skb, toff, 4, &hdata);
  			if (!data)
  				goto out;
@@ -602,7 +602,7 @@
  				n = rcu_dereference_bh(n->next);
  				goto next_knode;
  			}
-@@ -201,8 +201,8 @@ check_terminal:
+@@ -204,8 +204,8 @@ check_terminal:
  						  &hdata);
  			if (!data)
  				goto out;

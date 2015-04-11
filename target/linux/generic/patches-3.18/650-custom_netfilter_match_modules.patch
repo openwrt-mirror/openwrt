@@ -1,6 +1,6 @@
---- linux.orig/net/ipv4/netfilter/Makefile	2015-02-11 15:01:12.000000000 +0800
-+++ linux.new/net/ipv4/netfilter/Makefile	2015-02-27 13:12:58.310542418 +0800
-@@ -53,6 +53,10 @@
+--- a/net/ipv4/netfilter/Makefile
++++ b/net/ipv4/netfilter/Makefile
+@@ -53,6 +53,10 @@ obj-$(CONFIG_IP_NF_RAW) += iptable_raw.o
  obj-$(CONFIG_IP_NF_SECURITY) += iptable_security.o
  
  # matches
@@ -11,8 +11,8 @@
  obj-$(CONFIG_IP_NF_MATCH_AH) += ipt_ah.o
  obj-$(CONFIG_IP_NF_MATCH_RPFILTER) += ipt_rpfilter.o
  
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_weburl.c	2015-02-27 13:12:54.821629451 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_weburl.c
 @@ -0,0 +1,398 @@
 +/*  weburl --	A netfilter module to match URLs in HTTP requests 
 + *  		This module can match using string match or regular expressions
@@ -412,8 +412,8 @@
 +module_init(init);
 +module_exit(fini);
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/bandwidth_deps/tree_map.h	2015-02-27 13:12:58.218544713 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/bandwidth_deps/tree_map.h
 @@ -0,0 +1,1093 @@
 +/*
 + * Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
@@ -1508,8 +1508,8 @@
 +}
 +
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/weburl_deps/regexp.c	2015-02-27 13:12:54.823629401 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/weburl_deps/regexp.c
 @@ -0,0 +1,1197 @@
 +/*
 + * regcomp and regexec -- regsub and regerror are elsewhere
@@ -2708,8 +2708,8 @@
 +#endif
 +
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/weburl_deps/regexp.h	2015-02-27 13:12:54.823629401 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/weburl_deps/regexp.h
 @@ -0,0 +1,41 @@
 +/*
 + * Definitions etc. for regexp(3) routines.
@@ -2752,8 +2752,8 @@
 +void regerror(char *s);
 +
 +#endif
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/weburl_deps/tree_map.h	2015-02-27 13:12:54.824629376 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/weburl_deps/tree_map.h
 @@ -0,0 +1,1084 @@
 +/*
 + * Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
@@ -3839,16 +3839,16 @@
 +}
 +
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/weburl_deps/regmagic.h	2015-02-27 13:12:54.824629376 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/weburl_deps/regmagic.h
 @@ -0,0 +1,5 @@
 +/*
 + * The first byte of the regexp internal "program" is actually this magic
 + * number; the start node begins in the second byte.
 + */
 +#define	MAGIC	0234
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/weburl_deps/regsub.c	2015-02-27 13:12:54.825629352 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/weburl_deps/regsub.c
 @@ -0,0 +1,95 @@
 +/*
 + * regsub
@@ -3945,8 +3945,8 @@
 +	}
 +	*dst++ = '\0';
 +}
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_bandwidth.mod.c	2015-02-27 13:12:58.226544513 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_bandwidth.mod.c
 @@ -0,0 +1,20 @@
 +#include <linux/module.h>
 +#include <linux/vermagic.h>
@@ -3968,8 +3968,8 @@
 +__attribute__((section(".modinfo"))) =
 +"depends=";
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_timerange.c	2015-02-27 13:12:57.679558158 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_timerange.c
 @@ -0,0 +1,142 @@
 +/*  timerange --	An iptables extension to match multiple timeranges within a week
 + *  			Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
@@ -4113,9 +4113,9 @@
 +module_init(init);
 +module_exit(fini);
 +
---- linux.orig/net/ipv4/netfilter/Kconfig	2015-02-11 15:01:12.000000000 +0800
-+++ linux.new/net/ipv4/netfilter/Kconfig	2015-02-27 13:12:58.892527900 +0800
-@@ -389,5 +389,25 @@
+--- a/net/ipv4/netfilter/Kconfig
++++ b/net/ipv4/netfilter/Kconfig
+@@ -389,5 +389,25 @@ config IP_NF_ARP_MANGLE
  
  endif # IP_NF_ARPTABLES
  
@@ -4141,8 +4141,8 @@
 +		This option enables bandwidth match support.
  endmenu
  
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_weburl.mod.c	2015-02-27 13:12:54.822629426 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_weburl.mod.c
 @@ -0,0 +1,20 @@
 +#include <linux/module.h>
 +#include <linux/vermagic.h>
@@ -4164,8 +4164,8 @@
 +__attribute__((section(".modinfo"))) =
 +"depends=";
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_timerange.mod.c	2015-02-27 13:12:57.687557959 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_timerange.mod.c
 @@ -0,0 +1,20 @@
 +#include <linux/module.h>
 +#include <linux/vermagic.h>
@@ -4187,8 +4187,8 @@
 +__attribute__((section(".modinfo"))) =
 +"depends=";
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/webmon_deps/tree_map.h	2015-02-27 13:12:57.107572427 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/webmon_deps/tree_map.h
 @@ -0,0 +1,1084 @@
 +/*
 + * Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
@@ -5274,8 +5274,8 @@
 +}
 +
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_bandwidth.c	2015-02-27 13:12:58.226544513 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_bandwidth.c
 @@ -0,0 +1,2501 @@
 +/*  bandwidth --	An iptables extension for bandwidth monitoring/control
 + *  			Can be used to efficiently monitor bandwidth and/or implement bandwidth quotas
@@ -7778,8 +7778,8 @@
 +module_init(init);
 +module_exit(fini);
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/net/ipv4/netfilter/ipt_webmon.c	2015-02-27 13:12:57.106572452 +0800
+--- /dev/null
++++ b/net/ipv4/netfilter/ipt_webmon.c
 @@ -0,0 +1,1191 @@
 +/*  webmon --	A netfilter module to match URLs in HTTP requests 
 + *  		This module can match using string match or regular expressions
@@ -8972,8 +8972,8 @@
 +module_exit(fini);
 +
 +
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/include/linux/netfilter_ipv4/ipt_weburl.h	2015-02-27 13:12:56.097597622 +0800
+--- /dev/null
++++ b/include/linux/netfilter_ipv4/ipt_weburl.h
 @@ -0,0 +1,45 @@
 +/*  weburl --	A netfilter module to match URLs in HTTP requests 
 + *  		This module can match using string match or regular expressions
@@ -9020,8 +9020,8 @@
 +	unsigned char invert;
 +};
 +#endif /*_IPT_WEBURL_H*/
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/include/linux/netfilter_ipv4/ipt_webmon.h	2015-02-27 13:12:57.131571828 +0800
+--- /dev/null
++++ b/include/linux/netfilter_ipv4/ipt_webmon.h
 @@ -0,0 +1,63 @@
 +/*  webmon --	A netfilter module to match URLs in HTTP requests 
 + *  		This module can match using string match or regular expressions
@@ -9086,8 +9086,8 @@
 +};
 +
 +#endif /*_IPT_WEBMON_H*/
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/include/linux/netfilter_ipv4/ipt_bandwidth.h	2015-02-27 13:12:58.292542867 +0800
+--- /dev/null
++++ b/include/linux/netfilter_ipv4/ipt_bandwidth.h
 @@ -0,0 +1,106 @@
 +/*  bandwidth --	An iptables extension for bandwidth monitoring/control
 + *  			Can be used to efficiently monitor bandwidth and/or implement bandwidth quotas
@@ -9195,8 +9195,8 @@
 +
 +};
 +#endif /*_IPT_BANDWIDTH_H*/
---- /dev/null	2015-02-27 10:08:25.147843159 +0800
-+++ linux.new/include/linux/netfilter_ipv4/ipt_timerange.h	2015-02-27 13:12:57.712557335 +0800
+--- /dev/null
++++ b/include/linux/netfilter_ipv4/ipt_timerange.h
 @@ -0,0 +1,43 @@
 +/*  timerange --	An iptables extension to match multiple timeranges within a week
 + *  			Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
