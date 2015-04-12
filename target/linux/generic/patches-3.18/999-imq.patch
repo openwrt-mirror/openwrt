@@ -138,7 +138,7 @@
  obj-$(CONFIG_MII) += mii.o
 --- /dev/null
 +++ b/drivers/net/imq.c
-@@ -0,0 +1,1368 @@
+@@ -0,0 +1,1350 @@
 +/*
 + *             Pseudo-driver for the intermediate queue device.
 + *
@@ -314,7 +314,7 @@
 +/*
 +static struct nf_hook_ops imq_ops[] = {
 +	{
-+	// imq_ingress_ipv4
++	// imq_ingress_ipv4 
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET,
@@ -326,7 +326,7 @@
 +#endif
 +	},
 +	{
-+	// imq_egress_ipv4
++	// imq_egress_ipv4 
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET,
@@ -339,7 +339,7 @@
 +	},
 +#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 +	{
-+	// imq_ingress_ipv6
++	// imq_ingress_ipv6 
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET6,
@@ -351,7 +351,7 @@
 +#endif
 +	},
 +	{
-+	// imq_egress_ipv6
++	// imq_egress_ipv6 
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET6,
@@ -929,7 +929,8 @@
 +	return retval;
 +}
 +
-+static unsigned int imq_nf_hook(unsigned int hook, struct sk_buff *pskb,
++static unsigned int imq_nf_hook(const struct nf_hook_ops *hook_ops,
++				struct sk_buff *pskb,
 +				const struct net_device *indev,
 +				const struct net_device *outdev,
 +				int (*okfn)(struct sk_buff *))
@@ -1021,20 +1022,19 @@
 +/*
 + * line is the line to be parsed -- it is not modified in any way
 + * max_pieces indicates number of pieces to return, if negative this is determined dynamically
-+ * include_remainder_at_max indicates whether the last piece, when max pieces are reached,
++ * include_remainder_at_max indicates whether the last piece, when max pieces are reached, 
 + * 	should be what it would normally be (0) or the entire remainder of the line (1)
 + * 	if max_pieces < 0 this parameter is ignored
 + *
 + *
 + * returns all non-separator pieces in a line
-+ * result is dynamically allocated, MUST be freed after call-- even if
++ * result is dynamically allocated, MUST be freed after call-- even if 
 + * line is empty (you still get a valid char** pointer to to a NULL char*)
 + */
-+char** split_on_separators(char* line, char* separators, int num_separators, int max_pieces, int
-+include_remainder_at_max, unsigned long *num_pieces)
++char** split_on_separators(char* line, char* separators, int num_separators, int max_pieces, int include_remainder_at_max, unsigned long *num_pieces)
 +{
 +	char** split;
-+
++	
 +	*num_pieces = 0;
 +	if(line != NULL)
 +	{
@@ -1045,16 +1045,14 @@
 +
 +		if(max_pieces < 0)
 +		{
-+			/* count number of separator characters in line -- this count + 1 is an
-+upperbound on number of pieces */
++			/* count number of separator characters in line -- this count + 1 is an upperbound on number of pieces */
 +			int separator_count = 0;
 +			int line_index;
 +			for(line_index = 0; line[line_index] != '\0'; line_index++)
 +			{
 +				int sep_index;
 +				int found = 0;
-+				for(sep_index =0; found == 0 && sep_index < num_separators;
-+sep_index++)
++				for(sep_index =0; found == 0 && sep_index < num_separators; sep_index++)
 +				{
 +					found = separators[sep_index] == line[line_index] ? 1 : 0;
 +				}
@@ -1093,26 +1091,23 @@
 +			while(	separator_found == 0 )
 +			{
 +				int sep_index;
-+				for(sep_index =0; separator_found == 0 && sep_index <
-+num_separators; sep_index++)
++				for(sep_index =0; separator_found == 0 && sep_index < num_separators; sep_index++)
 +				{
-+					separator_found = separators[sep_index] ==
-+start[first_separator_index] || start[first_separator_index] == '\0' ? 1 : 0;
++					separator_found = separators[sep_index] == start[first_separator_index] || start[first_separator_index] == '\0' ? 1 : 0;
 +				}
 +				if(separator_found == 0)
 +				{
 +					first_separator_index++;
 +				}
 +			}
-+
++			
 +			/* copy next piece to split array */
 +			if(first_separator_index > 0)
 +			{
 +				char* next_piece = NULL;
 +				if(split_index +1 < max_pieces || include_remainder_at_max <= 0)
 +				{
-+					next_piece =
-+(char*)kmalloc((first_separator_index+1)*sizeof(char), GFP_ATOMIC);
++					next_piece = (char*)kmalloc((first_separator_index+1)*sizeof(char), GFP_ATOMIC);
 +					memcpy(next_piece, start, first_separator_index);
 +					next_piece[first_separator_index] = '\0';
 +				}
@@ -1135,8 +1130,7 @@
 +				int sep_index;
 +				for(sep_index =0; sep_index < num_separators; sep_index++)
 +				{
-+					matches = matches == 1 || separators[sep_index] == start[0]
-+? 1 : 0;
++					matches = matches == 1 || separators[sep_index] == start[0] ? 1 : 0;
 +				}
 +				non_separator_found = matches==0 || start[0] == '\0' ? 1 : 0;
 +				if(non_separator_found == 0)
@@ -1213,25 +1207,21 @@
 +		printk("ERROR: must have same number of chains and tables\n");
 +		return -1;
 +	}
-+
++	
 +	/* we multiply by 2 here since we need hooks for both IPv4 and IPv6 */
-+	hook_list = (struct nf_hook_ops*)kmalloc(sizeof(struct nf_hook_ops)*((num_chains*2)+1),
-+GFP_ATOMIC);
-+
-+
++	hook_list = (struct nf_hook_ops*)kmalloc(sizeof(struct nf_hook_ops)*((num_chains*2)+1), GFP_ATOMIC); 
++	
++	
 +	for(hook_index=0; hook_index < num_chains; hook_index++)
 +	{
 +		char* chain = chain_list[hook_index];
 +		char* table = table_list[hook_index];
 +		int valid = 0;
-+		if(strcmp(chain, "PREROUTING") == 0 || strcmp(chain, "POSTROUTING") == 0 ||
-+strcmp(chain, "INPUT") == 0 || strcmp(chain, "FORWARD") == 0 || strcmp(chain, "OUTPUT") == 0)
++		if(strcmp(chain, "PREROUTING") == 0 || strcmp(chain, "POSTROUTING") == 0 || strcmp(chain, "INPUT") == 0 || strcmp(chain, "FORWARD") == 0 || strcmp(chain, "OUTPUT") == 0)
 +		{
-+			if( 	strcmp(table, "mangle") == 0 ||
-+				(strcmp(table, "nat") == 0 && strcmp(chain, "FORWARD") != 0 &&
-+strcmp(chain, "INPUT") != 0 ) ||
-+				(strcmp(table, "filter") == 0 && strcmp(chain, "PREROUTING") != 0 &&
-+strcmp(chain, "POSTROUTING") != 0 )
++			if( 	strcmp(table, "mangle") == 0 || 
++				(strcmp(table, "nat") == 0 && strcmp(chain, "FORWARD") != 0 && strcmp(chain, "INPUT") != 0 ) || 
++				(strcmp(table, "filter") == 0 && strcmp(chain, "PREROUTING") != 0 && strcmp(chain, "POSTROUTING") != 0 )
 +			  )
 +			{
 +				unsigned int chain_id = NF_INET_PRE_ROUTING;
@@ -1267,13 +1257,11 @@
 +				{
 +					table_id = NF_IP_PRI_MANGLE+1;
 +				}
-+				else if (strcmp(table, "nat") == 0 && strcmp(chain, "POSTROUTING")
-+== 0)
++				else if (strcmp(table, "nat") == 0 && strcmp(chain, "POSTROUTING") == 0)
 +				{
 +					table_id = NF_IP_PRI_NAT_SRC+1;
 +				}
-+				else if (strcmp(table, "nat") == 0 && strcmp(chain, "POSTROUTING")
-+!= 0)
++				else if (strcmp(table, "nat") == 0 && strcmp(chain, "POSTROUTING") != 0)
 +				{
 +					table_id = NF_IP_PRI_NAT_DST+1;
 +				}
@@ -1294,13 +1282,11 @@
 +					{
 +						table_id = NF_IP6_PRI_MANGLE+1;
 +					}
-+					else if (strcmp(table, "nat") == 0 && strcmp(chain,
-+"POSTROUTING") == 0)
++					else if (strcmp(table, "nat") == 0 && strcmp(chain, "POSTROUTING") == 0)
 +					{
 +						table_id = NF_IP6_PRI_NAT_SRC+1;
 +					}
-+					else if (strcmp(table, "nat") == 0 && strcmp(chain,
-+"POSTROUTING") != 0)
++					else if (strcmp(table, "nat") == 0 && strcmp(chain, "POSTROUTING") != 0)
 +					{
 +						table_id = NF_IP6_PRI_NAT_DST+1;
 +					}
@@ -1321,21 +1307,18 @@
 +
 +				if(err)
 +				{
-+					printk(KERN_INFO "\tError hooking IMQ after %s on %s\n",
-+table, chain);
++					printk(KERN_INFO "\tError hooking IMQ after %s on %s\n", table, chain);
 +				}
 +				else
 +				{
-+					printk(KERN_INFO "\tHooked IMQ after %s on %s\n", table,
-+chain);
++					printk(KERN_INFO "\tHooked IMQ after %s on %s\n", table, chain);
 +				}
 +
 +			}
 +		}
 +		if(valid == 0)
 +		{
-+			printk("ERROR: invalid chain/table at index %d (%s/%s)\n", hook_index,
-+chain, table);
++			printk("ERROR: invalid chain/table at index %d (%s/%s)\n", hook_index, chain, table);
 +		}
 +	}
 +	free_null_terminated_string_array(chain_list);
@@ -1361,7 +1344,7 @@
 +	struct net_device *dev;
 +	int ret;
 +
-+	dev = alloc_netdev_mq(0, "imq%d", imq_setup, numqueues);
++	dev = alloc_netdev_mq(0, "imq%d", NET_NAME_UNKNOWN, imq_setup, numqueues);
 +	if (!dev)
 +		return -ENOMEM;
 +
@@ -1465,7 +1448,7 @@
 +
 +	kfree(hook_list);
 +	hook_list_length = 0;
-+
++	
 +	/*
 +	nf_unregister_hooks(imq_ops, ARRAY_SIZE(imq_ops));
 +	nf_unregister_queue_imq_handler();
@@ -1501,8 +1484,7 @@
 +MODULE_PARM_DESC(hook_tables, "netfilter tables after which to insert hooks to IMQ");
 +
 +MODULE_AUTHOR("http://www.linuximq.net");
-+MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See http://www.linuximq.net/
-+for more information.");
++MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See http://www.linuximq.net/ for more information.");
 +
 +MODULE_LICENSE("GPL");
 +MODULE_ALIAS_RTNL_LINK("imq");
@@ -1981,7 +1963,7 @@
  				goto next_hook;
 --- /dev/null
 +++ b/net/netfilter/xt_IMQ.c
-@@ -0,0 +1,73 @@
+@@ -0,0 +1,72 @@
 +/*
 + * This target marks packets to be enqueued to an imq device
 + */
@@ -2049,8 +2031,7 @@
 +module_exit(imq_fini);
 +
 +MODULE_AUTHOR("http://www.linuximq.net");
-+MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See
-+https://github.com/imq/linuximq/wiki for more information.");
++MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See https://github.com/imq/linuximq/wiki for more information.");
 +MODULE_LICENSE("GPL");
 +MODULE_ALIAS("ipt_IMQ");
 +MODULE_ALIAS("ip6t_IMQ");
