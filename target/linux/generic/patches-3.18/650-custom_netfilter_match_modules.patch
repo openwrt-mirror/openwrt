@@ -2710,7 +2710,7 @@
 +
 --- /dev/null
 +++ b/net/ipv4/netfilter/weburl_deps/regexp.h
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,42 @@
 +/*
 + * Definitions etc. for regexp(3) routines.
 + *
@@ -2752,6 +2752,7 @@
 +void regerror(char *s);
 +
 +#endif
++
 --- /dev/null
 +++ b/net/ipv4/netfilter/weburl_deps/tree_map.h
 @@ -0,0 +1,1084 @@
@@ -3841,15 +3842,16 @@
 +
 --- /dev/null
 +++ b/net/ipv4/netfilter/weburl_deps/regmagic.h
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,6 @@
 +/*
 + * The first byte of the regexp internal "program" is actually this magic
 + * number; the start node begins in the second byte.
 + */
 +#define	MAGIC	0234
++
 --- /dev/null
 +++ b/net/ipv4/netfilter/weburl_deps/regsub.c
-@@ -0,0 +1,95 @@
+@@ -0,0 +1,96 @@
 +/*
 + * regsub
 + * @(#)regsub.c	1.3 of 2 April 86
@@ -3945,6 +3947,7 @@
 +	}
 +	*dst++ = '\0';
 +}
++
 --- /dev/null
 +++ b/net/ipv4/netfilter/ipt_bandwidth.mod.c
 @@ -0,0 +1,20 @@
@@ -8974,7 +8977,7 @@
 +
 --- /dev/null
 +++ b/include/linux/netfilter_ipv4/ipt_weburl.h
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,46 @@
 +/*  weburl --	A netfilter module to match URLs in HTTP requests 
 + *  		This module can match using string match or regular expressions
 + *  		Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
@@ -9020,9 +9023,10 @@
 +	unsigned char invert;
 +};
 +#endif /*_IPT_WEBURL_H*/
++
 --- /dev/null
 +++ b/include/linux/netfilter_ipv4/ipt_webmon.h
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,64 @@
 +/*  webmon --	A netfilter module to match URLs in HTTP requests 
 + *  		This module can match using string match or regular expressions
 + *  		Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
@@ -9086,9 +9090,10 @@
 +};
 +
 +#endif /*_IPT_WEBMON_H*/
++
 --- /dev/null
 +++ b/include/linux/netfilter_ipv4/ipt_bandwidth.h
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,107 @@
 +/*  bandwidth --	An iptables extension for bandwidth monitoring/control
 + *  			Can be used to efficiently monitor bandwidth and/or implement bandwidth quotas
 + *  			Can be queried using the iptbwctl userspace library
@@ -9195,9 +9200,10 @@
 +
 +};
 +#endif /*_IPT_BANDWIDTH_H*/
++
 --- /dev/null
 +++ b/include/linux/netfilter_ipv4/ipt_timerange.h
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,44 @@
 +/*  timerange --	An iptables extension to match multiple timeranges within a week
 + *  			Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
 + *
@@ -9241,3 +9247,4 @@
 +	unsigned char invert;
 +};
 +#endif /*_IPT_TIMERANGE_H*/
++
