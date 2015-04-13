@@ -19,9 +19,6 @@
 		gpio0: gpio@600 {
 			status = "okay";
 		};
-		gpio2: gpio@660 {
-			status = "okay";
-		};
 		gpio3: gpio@688 {
 			status = "okay";
 		};
@@ -92,15 +89,6 @@
 
 	pcie@10140000 {
 		status = "okay";
-
-		pcie-bridge {
-			mt76@0,0 {
-				reg = <0x0000 0 0 0 0>;
-				device_type = "pci";
-				mediatek,mtd-eeprom = <&factory 32768>;
-				mediatek,2ghz = <0>;
-			};
-		};
 	};
 
 	wmac@10180000 {
@@ -113,17 +101,12 @@
 				ralink,group = "uartf", "wled", "nd_sd";
 				ralink,function = "gpio";
 			};
-			pa {
-				ralink,group = "pa";
-				ralink,function = "pa";
-			};
 		};
 	};
 
 	ethernet@10100000 {
 		pinctrl-names = "default";
 		pinctrl-0 = <&ephy_pins>;
-		mtd-mac-address = <&factory 0x4>;
 		ralink,port-map = "llllw";
 	};
 	
@@ -142,19 +125,19 @@
 	gpio-leds {
 		compatible = "gpio-leds";
 		system {
-			label = "HC5761:green:system";
+			label = "hiwifi:blue:system";
 			gpios = <&gpio0 9 1>;
 		};
 		internet {
-			label = "HC5761:green:internet";
+			label = "hiwifi:blue:internet";
 			gpios = <&gpio0 11 1>;
 		};
 		wlan2p4 {
-			label = "HC5761:green:wlan-2p4";
+			label = "hiwifi:blue:wlan-2p4";
 			gpios = <&gpio3 0 1>;
 		};
 		wlan5p {
-			label = "HC5761:green:wlan-5p";
+			label = "hiwifi:blue:wlan-5p";
 			gpios = <&gpio0 7 1>;
 		};
 	};

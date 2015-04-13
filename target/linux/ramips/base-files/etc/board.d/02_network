@@ -292,7 +292,10 @@ ramips_setup_macs()
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		wan_mac=$(macaddr_add "$lan_mac" 4)
 		;;
-
+	hiwifi-hc5761)
+		lan_mac=$(mtd_get_mac_ascii bdinfo "Vfac_mac ")
+		wan_mac=$(macaddr_add "$lan_mac" 1)
+		;;
 	m3 |\
 	m4 |\
 	x5 |\
@@ -316,7 +319,6 @@ ramips_setup_macs()
 	psr-680w |\
 	sl-r7205 |\
 	y1 |\
-	hiwifi-hc5761 |\
 	y1s)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		lan_mac=$(macaddr_setbit_la "$lan_mac")
