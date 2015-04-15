@@ -9,10 +9,12 @@
  * any later version.
  */
 
+#include <byteswap.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -27,6 +29,7 @@
 
 #define TRX_MAGIC			0x30524448
 #define TRX_FLAGS_OFFSET		12
+#define TRX_MAX_PARTS			3
 
 struct trx_header {
 	uint32_t magic;
@@ -37,15 +40,9 @@ struct trx_header {
 	uint32_t offset[3];
 };
 
-enum mode {
-	MODE_UNKNOWN,
-	MODE_CHECK,
-};
-
-enum mode mode = MODE_UNKNOWN;
-
 char *trx_path;
 size_t trx_offset = 0;
+char *partition[TRX_MAX_PARTS] = {};
 
 /**************************************************
  * CRC32
@@ -133,13 +130,35 @@ uint32_t otrx_crc32(uint8_t *buf, size_t len) {
  * Check
  **************************************************/
 
-static int otrx_check() {
+static void otrx_check_parse_options(int argc, char **argv) {
+	int c;
+
+	while ((c = getopt(argc, argv, "o:")) != -1) {
+		switch (c) {
+		case 'o':
+			trx_offset = atoi(optarg);
+			break;
+		}
+	}
+}
+
+static int otrx_check(int argc, char **argv) {
 	FILE *trx;
 	struct trx_header hdr;
 	size_t bytes, length;
 	uint8_t *buf;
 	uint32_t crc32;
 	int err = 0;
+
+	if (argc < 3) {
+		fprintf(stderr, "No TRX file passed\n");
+		err = -EINVAL;
+		goto out;
+	}
+	trx_path = argv[2];
+
+	optind = 3;
+	otrx_check_parse_options(argc, argv);
 
 	trx = fopen(trx_path, "r");
 	if (!trx) {
@@ -163,9 +182,15 @@ static int otrx_check() {
 	}
 
 	length = le32_to_cpu(hdr.length);
+	if (length < sizeof(hdr)) {
+		fprintf(stderr, "Length read from TRX too low (%zu B)\n", length);
+		err = -EINVAL;
+		goto err_close;
+	}
+
 	buf = malloc(length);
 	if (!buf) {
-		fprintf(stderr, "Couldn't alloc %d B buffer\n", length);
+		fprintf(stderr, "Couldn't alloc %zd B buffer\n", length);
 		err =  -ENOMEM;
 		goto err_close;
 	}
@@ -173,7 +198,7 @@ static int otrx_check() {
 	fseek(trx, trx_offset, SEEK_SET);
 	bytes = fread(buf, 1, length, trx);
 	if (bytes != length) {
-		fprintf(stderr, "Couldn't read %d B of data from %s\n", length, trx_path);
+		fprintf(stderr, "Couldn't read %zd B of data from %s\n", length, trx_path);
 		err =  -ENOMEM;
 		goto err_free_buf;
 	}
@@ -196,42 +221,349 @@ out:
 }
 
 /**************************************************
- * Start
+ * Create
  **************************************************/
 
-static void parse_options(int argc, char **argv) {
+static void otrx_create_parse_options(int argc, char **argv) {
+}
+
+static ssize_t otrx_create_append_file(FILE *trx, const char *in_path) {
+	FILE *in;
+	size_t bytes;
+	ssize_t length = 0;
+	uint8_t buf[128];
+
+	in = fopen(in_path, "r");
+	if (!in) {
+		fprintf(stderr, "Couldn't open %s\n", in_path);
+		return -EACCES;
+	}
+
+	while ((bytes = fread(buf, 1, sizeof(buf), in)) > 0) {
+		if (fwrite(buf, 1, bytes, trx) != bytes) {
+			fprintf(stderr, "Couldn't write %zu B to %s\n", bytes, trx_path);
+			length = -EIO;
+			break;
+		}
+		length += bytes;
+	}
+
+	fclose(in);
+
+	return length;
+}
+
+static ssize_t otrx_create_append_zeros(FILE *trx, size_t length) {
+	uint8_t *buf;
+
+	buf = malloc(length);
+	if (!buf)
+		return -ENOMEM;
+	memset(buf, 0, length);
+
+	if (fwrite(buf, 1, length, trx) != length) {
+		fprintf(stderr, "Couldn't write %zu B to %s\n", length, trx_path);
+		return -EIO;
+	}
+
+	return length;
+}
+
+static ssize_t otrx_create_align(FILE *trx, size_t curr_offset, size_t alignment) {
+	if (curr_offset & (alignment - 1)) {
+		size_t length = alignment - (curr_offset % alignment);
+		return otrx_create_append_zeros(trx, length);
+	}
+
+	return 0;
+}
+
+static int otrx_create_write_hdr(FILE *trx, struct trx_header *hdr) {
+	size_t bytes, length;
+	uint8_t *buf;
+	uint32_t crc32;
+
+	hdr->magic = cpu_to_le32(TRX_MAGIC);
+	hdr->version = 1;
+
+	fseek(trx, 0, SEEK_SET);
+	bytes = fwrite(hdr, 1, sizeof(struct trx_header), trx);
+	if (bytes != sizeof(struct trx_header)) {
+		fprintf(stderr, "Couldn't write TRX header to %s\n", trx_path);
+		return -EIO;
+	}
+
+	length = le32_to_cpu(hdr->length);
+
+	buf = malloc(length);
+	if (!buf) {
+		fprintf(stderr, "Couldn't alloc %zu B buffer\n", length);
+		return -ENOMEM;
+	}
+
+	fseek(trx, 0, SEEK_SET);
+	bytes = fread(buf, 1, length, trx);
+	if (bytes != length) {
+		fprintf(stderr, "Couldn't read %zu B of data from %s\n", length, trx_path);
+		return -ENOMEM;
+	}
+
+	crc32 = otrx_crc32(buf + TRX_FLAGS_OFFSET, length - TRX_FLAGS_OFFSET);
+	hdr->crc32 = cpu_to_le32(crc32);
+
+	fseek(trx, 0, SEEK_SET);
+	bytes = fwrite(hdr, 1, sizeof(struct trx_header), trx);
+	if (bytes != sizeof(struct trx_header)) {
+		fprintf(stderr, "Couldn't write TRX header to %s\n", trx_path);
+		return -EIO;
+	}
+
+	return 0;
+}
+
+static int otrx_create(int argc, char **argv) {
+	FILE *trx;
+	struct trx_header hdr = {};
+	ssize_t sbytes;
+	size_t curr_idx = 0;
+	size_t curr_offset = sizeof(hdr);
+	int c;
+	int err = 0;
+
+	if (argc < 3) {
+		fprintf(stderr, "No TRX file passed\n");
+		err = -EINVAL;
+		goto out;
+	}
+	trx_path = argv[2];
+
+	optind = 3;
+	otrx_create_parse_options(argc, argv);
+
+	trx = fopen(trx_path, "w+");
+	if (!trx) {
+		fprintf(stderr, "Couldn't open %s\n", trx_path);
+		err = -EACCES;
+		goto out;
+	}
+	fseek(trx, curr_offset, SEEK_SET);
+
+	optind = 3;
+	while ((c = getopt(argc, argv, "f:b:")) != -1) {
+		switch (c) {
+		case 'f':
+			if (curr_idx >= TRX_MAX_PARTS) {
+				err = -ENOSPC;
+				fprintf(stderr, "Reached TRX partitions limit, no place for %s\n", optarg);
+				goto err_close;
+			}
+
+			sbytes = otrx_create_append_file(trx, optarg);
+			if (sbytes < 0) {
+				fprintf(stderr, "Failed to append file %s\n", optarg);
+			} else {
+				hdr.offset[curr_idx++] = curr_offset;
+				curr_offset += sbytes;
+			}
+
+			sbytes = otrx_create_align(trx, curr_offset, 4);
+			if (sbytes < 0)
+				fprintf(stderr, "Failed to append zeros\n");
+			else
+				curr_offset += sbytes;
+
+			break;
+		case 'b':
+			sbytes = strtol(optarg, NULL, 0) - curr_offset;
+			if (sbytes < 0) {
+				fprintf(stderr, "Current TRX length is 0x%zx, can't pad it with zeros to 0x%lx\n", curr_offset, strtol(optarg, NULL, 0));
+			} else {
+				sbytes = otrx_create_append_zeros(trx, sbytes);
+				if (sbytes < 0)
+					fprintf(stderr, "Failed to append zeros\n");
+				else
+					curr_offset += sbytes;
+			}
+			break;
+		}
+		if (err)
+			break;
+	}
+
+	hdr.length = curr_offset;
+	otrx_create_write_hdr(trx, &hdr);
+err_close:
+	fclose(trx);
+out:
+	return err;
+}
+
+/**************************************************
+ * Extract
+ **************************************************/
+
+static void otrx_extract_parse_options(int argc, char **argv) {
 	int c;
 
-	while ((c = getopt(argc, argv, "c:o:")) != -1) {
+	while ((c = getopt(argc, argv, "c:e:o:1:2:3:")) != -1) {
 		switch (c) {
-		case 'c':
-			mode = MODE_CHECK;
-			trx_path = optarg;
-			break;
 		case 'o':
 			trx_offset = atoi(optarg);
+			break;
+		case '1':
+			partition[0] = optarg;
+			break;
+		case '2':
+			partition[1] = optarg;
+			break;
+		case '3':
+			partition[2] = optarg;
 			break;
 		}
 	}
 }
 
+static int otrx_extract_copy(FILE *trx, size_t offset, size_t length, char *out_path) {
+	FILE *out;
+	size_t bytes;
+	uint8_t *buf;
+	int err = 0;
+
+	out = fopen(out_path, "w");
+	if (!out) {
+		fprintf(stderr, "Couldn't open %s\n", out_path);
+		err = -EACCES;
+		goto out;
+	}
+
+	buf = malloc(length);
+	if (!buf) {
+		fprintf(stderr, "Couldn't alloc %zu B buffer\n", length);
+		err =  -ENOMEM;
+		goto err_close;
+	}
+
+	fseek(trx, offset, SEEK_SET);
+	bytes = fread(buf, 1, length, trx);
+	if (bytes != length) {
+		fprintf(stderr, "Couldn't read %zu B of data from %s\n", length, trx_path);
+		err =  -ENOMEM;
+		goto err_free_buf;
+	};
+
+	bytes = fwrite(buf, 1, length, out);
+	if (bytes != length) {
+		fprintf(stderr, "Couldn't write %zu B to %s\n", length, out_path);
+		err =  -ENOMEM;
+		goto err_free_buf;
+	}
+
+	printf("Extracted 0x%zx bytes into %s\n", length, out_path);
+
+err_free_buf:
+	free(buf);
+err_close:
+	fclose(out);
+out:
+	return err;
+}
+
+static int otrx_extract(int argc, char **argv) {
+	FILE *trx;
+	struct trx_header hdr;
+	size_t bytes;
+	int i;
+	int err = 0;
+
+	if (argc < 3) {
+		fprintf(stderr, "No TRX file passed\n");
+		err = -EINVAL;
+		goto out;
+	}
+	trx_path = argv[2];
+
+	optind = 3;
+	otrx_extract_parse_options(argc, argv);
+
+	trx = fopen(trx_path, "r");
+	if (!trx) {
+		fprintf(stderr, "Couldn't open %s\n", trx_path);
+		err = -EACCES;
+		goto out;
+	}
+
+	fseek(trx, trx_offset, SEEK_SET);
+	bytes = fread(&hdr, 1, sizeof(hdr), trx);
+	if (bytes != sizeof(hdr)) {
+		fprintf(stderr, "Couldn't read %s header\n", trx_path);
+		err =  -EIO;
+		goto err_close;
+	}
+
+	if (le32_to_cpu(hdr.magic) != TRX_MAGIC) {
+		fprintf(stderr, "Invalid TRX magic: 0x%08x\n", le32_to_cpu(hdr.magic));
+		err =  -EINVAL;
+		goto err_close;
+	}
+
+	for (i = 0; i < TRX_MAX_PARTS; i++) {
+		size_t length;
+
+		if (!partition[i])
+			continue;
+		if (!hdr.offset[i]) {
+			printf("TRX doesn't contain partition %d, can't extract %s\n", i + 1, partition[i]);
+			continue;
+		}
+
+		if (i + 1 >= TRX_MAX_PARTS || !hdr.offset[i + 1])
+			length = le32_to_cpu(hdr.length) - le32_to_cpu(hdr.offset[i]);
+		else
+			length = le32_to_cpu(hdr.offset[i + 1]) - le32_to_cpu(hdr.offset[i]);
+
+		otrx_extract_copy(trx, trx_offset + le32_to_cpu(hdr.offset[i]), length, partition[i]);
+	}
+
+err_close:
+	fclose(trx);
+out:
+	return err;
+}
+
+/**************************************************
+ * Start
+ **************************************************/
+
 static void usage() {
 	printf("Usage:\n");
 	printf("\n");
 	printf("Checking TRX file:\n");
-	printf("\t-c file\t\tcheck if file is a valid TRX\n");
-	printf("\t-o offset\toffset of TRX data in file (default: 0)\n");
+	printf("\totrx check <file> [options]\tcheck if file is a valid TRX\n");
+	printf("\t-o offset\t\t\toffset of TRX data in file (default: 0)\n");
+	printf("\n");
+	printf("Creating new TRX file:\n");
+	printf("\totrx create <file> [options] [partitions]\n");
+	printf("\t-f file\t\t\t\t[partition] start new partition with content copied from file\n");
+	printf("\t-b offset\t\t\t[partition] append zeros to partition till reaching absolute offset\n");
+	printf("\n");
+	printf("Extracting from TRX file:\n");
+	printf("\totrx extract <file> [options]\textract partitions from TRX file\n");
+	printf("\t-o offset\t\t\toffset of TRX data in file (default: 0)\n");
+	printf("\t-1 file\t\t\t\tfile to extract 1st partition to (optional)\n");
+	printf("\t-2 file\t\t\t\tfile to extract 2nd partition to (optional)\n");
+	printf("\t-3 file\t\t\t\tfile to extract 3rd partition to (optional)\n");
 }
 
 int main(int argc, char **argv) {
-	parse_options(argc, argv);
-
-	switch (mode) {
-	case MODE_CHECK:
-		return otrx_check();
-	default:
-		usage();
+	if (argc > 1) {
+		if (!strcmp(argv[1], "check"))
+			return otrx_check(argc, argv);
+		else if (!strcmp(argv[1], "create"))
+			return otrx_create(argc, argv);
+		else if (!strcmp(argv[1], "extract"))
+			return otrx_extract(argc, argv);
 	}
 
+	usage();
 	return 0;
 }

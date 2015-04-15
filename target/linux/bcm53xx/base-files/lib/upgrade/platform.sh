@@ -79,7 +79,7 @@ platform_check_image() {
 				error=1
 			}
 
-			if ! otrx -c "$1" -o "$header_len"; then
+			if ! otrx check "$1" -o "$header_len"; then
 				echo "No valid TRX firmware in the CHK image"
 				error=1
 			fi
@@ -94,13 +94,13 @@ platform_check_image() {
 				error=1
 			}
 
-			if ! otrx -c "$1" -o 32; then
+			if ! otrx check "$1" -o 32; then
 				echo "No valid TRX firmware in the CyberTAN image"
 				error=1
 			fi
 		;;
 		"trx")
-			if ! otrx -c "$1"; then
+			if ! otrx check "$1"; then
 				echo "Invalid (corrupted?) TRX firmware"
 				error=1
 			fi
@@ -114,44 +114,74 @@ platform_check_image() {
 	return $error
 }
 
-# Extract TRX and use stadard upgrade method
-platform_do_upgrade_chk() {
+platform_extract_trx_from_chk() {
 	local header_len=$((0x$(get_magic_long_at "$1" 4)))
-	local trx="/tmp/$1.trx"
 
-	dd if="$1" of="$trx" bs=$header_len skip=1
-	shift
-	platform_do_upgrade_trx "$trx" "$@"
+	dd if="$1" of="$2" bs=$header_len skip=1
 }
 
-# Extract TRX and use stadard upgrade method
-platform_do_upgrade_cybertan() {
-	local trx="/tmp/$1.trx"
-
-	dd if="$1" of="$trx" bs=32 skip=1
-	shift
-	platform_do_upgrade_trx "$trx" "$@"
+platform_extract_trx_from_cybertan() {
+	dd if="$1" of="$2" bs=32 skip=1
 }
 
-platform_do_upgrade_trx() {
-	local flash_type=$(platform_flash_type)
+platform_pre_upgrade() {
+	local file_type=$(platform_identify "$1")
+	local dir="/tmp/sysupgrade-bcm53xx"
+	local trx="$1"
 
-	case "$flash_type" in
-		"serial")
-			default_do_upgrade "$@"
-		;;
-		"nand")
-			echo "Firmware upgrade on NAND devices is REALLY unsupported."
-		;;
+	[ "$(platform_flash_type)" != "nand" ] && return
+
+	# Extract trx
+	case "$file_type" in
+		"chk")		trx="/tmp/$1.trx"; platform_extract_trx_from_chk "$1" "$trx";;
+		"cybertan")	trx="/tmp/$1.trx"; platform_extract_trx_from_cybertan "$1" "$trx";;
 	esac
+
+	# Extract partitions from trx
+	rm -fR $dir
+	mkdir -p $dir
+	otrx extract "$trx" \
+		-1 $dir/kernel \
+		-2 $dir/root
+
+	# Firmwares without UBI image should be flashed "normally"
+	local root_type=$(identify $dir/root)
+	[ "$root_type" != "ubi" ] && return
+
+	echo "Provided firmware contains kernel and UBI image, but flashing it is unsupported yet"
+	exit 1
+
+	# Prepare TRX file with just a kernel that will replace current one
+	local linux_length=$(grep "\"linux\"" /proc/mtd | sed "s/mtd[0-9]*:[ \t]*\([^ \t]*\).*/\1/")
+	[ -z "$linux_length" ] && {
+		echo "Unable to find \"linux\" partition size"
+		exit 1
+	}
+	linux_length=$((0x$linux_length + 28))
+	rm -f /tmp/null.bin
+	rm -f /tmp/kernel.trx
+	touch /tmp/null.bin
+	otrx create /tmp/kernel.trx \
+		-f $dir/kernel -b $linux_length \
+		-f /tmp/null.bin
+
+	# Flash
+	mtd write /tmp/kernel.trx firmware
 }
 
 platform_do_upgrade() {
 	local file_type=$(platform_identify "$1")
+	local trx="$1"
+
+	[ "$(platform_flash_type)" == "nand" ] && {
+		echo "Flashing firmware without UBI for rootfs. All erase counters will be lost."
+	}
 
 	case "$file_type" in
-		"chk")		platform_do_upgrade_chk "$ARGV";;
-		"cybertan")	platform_do_upgrade_cybertan "$ARGV";;
-		*)		platform_do_upgrade_trx "$ARGV";;
+		"chk")		trx="/tmp/$1.trx"; platform_extract_trx_from_chk "$1" "$trx";;
+		"cybertan")	trx="/tmp/$1.trx"; platform_extract_trx_from_cybertan "$1" "$trx";;
 	esac
+
+	shift
+	default_do_upgrade "$trx" "$@"
 }

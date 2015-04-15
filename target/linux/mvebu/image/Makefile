@@ -14,16 +14,12 @@ JFFS2_BLOCKSIZE = 128k
 KDIR_TMP:=$(KDIR)/tmp
 
 
-UIMAGE:=$(BIN_DIR)/$(IMG_PREFIX)-uImage
-
 define Image/Build/DTB
 	cp $(KDIR)/zImage$(2) $(KDIR)/zImage$(2)-$(1);
 	cat $(DTS_DIR)/$(1).dtb >> $(KDIR)/zImage$(2)-$(1);
 	$(call Image/BuildKernel/MkuImage, \
 		none, $(LOADADDR), $(LOADADDR), \
 		$(KDIR)/zImage$(2)-$(1), $(KDIR)/uImage$(2)-$(1))
-# The next line will be dropped, migrate your board to use a single firmware file
-	cp $(KDIR)/uImage$(2)-$(1) $(UIMAGE)$(2)-$(1);
 endef
 
 # $(1): Profile Name
@@ -46,12 +42,11 @@ define NANDProfile
 
   define Image/Build/Profile/$(1)/Initramfs
 	$(call Image/Build/DTB,$(2),-initramfs)
+	cp $(KDIR)/uImage-initramfs-$(2) $(BIN_DIR)/$(IMG_PREFIX)-$(2)-initramfs
   endef
 
   define Image/Build/Profile/$(1)/squashfs
 	$(call Image/Build/UbinizeImage,$(2),,squashfs, -p $(3) -m $(4) $(if $(5),-s $(5)) $(if $(6),-O $(6)))
-# The next line will be dropped, migrate your board to use a single firmware file
-	cp $(KDIR)/$$(IMG_PREFIX)-$(2)-squashfs-ubinized.bin $(BIN_DIR)
   endef
 
   PROFILES_LIST += $(1)
@@ -137,7 +132,7 @@ $(eval $(call NANDProfile,XP-DB,armada-xp-db,512KiB,4096))
 $(eval $(call NANDProfile,XP-GP,armada-xp-gp,512KiB,4096))
 
 # Boards with NAND, with subpages
-$(eval $(call NANDProfile,Mamba,armada-xp-mamba,128KiB,2048,512,2048))
+$(eval $(call NANDProfile,Mamba,armada-xp-linksys-mamba,128KiB,2048,512,2048))
 
 # Boards with large NOR, where we want to use UBI
 $(eval $(call UBINORProfile,OpenBlocks-AX-3-4,armada-xp-openblocks-ax3-4,128KiB))
@@ -145,14 +140,34 @@ $(eval $(call UBINORProfile,OpenBlocks-AX-3-4,armada-xp-openblocks-ax3-4,128KiB)
 # Boards with small NOR, where UBI doesn't make sense
 $(eval $(call NORProfile,385-RD,armada-385-rd,256KiB))
 
+###
+### Linksys
+###
+
+# Mamba: Linksys WRT1900AC
 define Image/Build/Profile/Mamba/squashfs
-	$(call Image/Build/UbinizeImage,armada-xp-mamba,,squashfs, -p 128KiB -m 2048 -s 512 -O 2048)
+	$(call Image/Build/UbinizeImage,armada-xp-linksys-mamba,,squashfs, -p 128KiB -m 2048 -s 512 -O 2048)
 	( \
-		dd if=$(KDIR)/uImage-armada-xp-mamba bs=3072k conv=sync; \
-		dd if=$(KDIR)/$(IMG_PREFIX)-armada-xp-mamba-squashfs-ubinized.bin \
+		dd if=$(KDIR)/uImage-armada-xp-linksys-mamba bs=3072k conv=sync; \
+		dd if=$(KDIR)/$(IMG_PREFIX)-armada-xp-linksys-mamba-squashfs-ubinized.bin \
 		bs=2048 conv=sync; \
-	) > $(BIN_DIR)/$(IMG_PREFIX)-armada-xp-mamba-squashfs-factory.img
+	) > $(BIN_DIR)/$(IMG_PREFIX)-armada-xp-linksys-mamba-squashfs-factory.img
 endef
+
+###
+### Marvell
+###
+
+# Marvell Armada 385 Access Point Development board (DB-88F6820-AP)
+define Image/Build/Profile/385-DB-AP/squashfs
+	$(call Image/Build/UbinizeImage,armada-385-db-ap,,squashfs, -p 256KiB -m 4096)
+	( \
+		dd if=$(KDIR)/uImage-armada-385-db-ap bs=8M conv=sync; \
+		dd if=$(KDIR)/$(IMG_PREFIX)-armada-385-db-ap-squashfs-ubinized.bin \
+		bs=4096 conv=sync; \
+	) > $(BIN_DIR)/$(IMG_PREFIX)-armada-385-db-ap-squashfs-factory.img
+endef
+
 
 # The Default profile should build everything
 $(eval $(call MultiProfile,Default,$(PROFILES_LIST)))
@@ -170,8 +185,6 @@ endef
 
 define Image/Build
 	$(call Image/Build/$(1))
-# The next line will be dropped, migrate your board to use a single firmware file
-	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 	$(call Image/Build/Profile/$(PROFILE)/BuildSysupgrade,$(1))
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(call Image/Build/Profile/$(PROFILE)/Initramfs)
