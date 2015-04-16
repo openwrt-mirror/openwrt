@@ -35,6 +35,11 @@ define Package/webmon-gargoyle/description
 endef
 
 
+define Package/webmon-gargoyle/conffiles
+/etc/config/webmon_gargoyle
+endef
+
+
 define Build/Prepare
 endef
 

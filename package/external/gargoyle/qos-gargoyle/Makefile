@@ -15,12 +15,16 @@ define Package/qos-gargoyle
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=A set of QoS scripts designed for use with Gargoyle Web Interface
-	DEPENDS:=+tc +ip-full +kmod-sched +iptables-mod-filter +iptables-mod-ipopt  +iptables-mod-imq +gargoyle-firewall-util
+	DEPENDS:=+tc +ip-full +kmod-sched +iptables-mod-filter +iptables-mod-ipopt +iptables-mod-imq +gargoyle-firewall-util
 	MAINTAINER:=Eric Bishop <eric@gargoyle-router.com>
 endef
 
 define Package/qos-gargoyle/description
 	A set of QoS scripts designed for use with Gargoyle Web Interface
+endef
+
+define Package/qos-gargoyle/conffiles
+/etc/config/qos_gargoyle
 endef
 
 define Build/Prepare
