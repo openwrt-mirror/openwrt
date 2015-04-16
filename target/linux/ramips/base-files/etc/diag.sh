@@ -223,9 +223,9 @@ get_status_led() {
 	hg255d)
 		status_led="hg255d:power"
 		;;
-  hiwifi-hc5761)
-    status_led="HC5761:green:system"
-    ;;
+	hiwifi-hc5761)
+		status_led="hiwifi:blue:system"
+	;;
 	y1 | \
 	y1s)
 		status_led="lenovo:blue:power"
