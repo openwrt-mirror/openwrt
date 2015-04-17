@@ -92,7 +92,7 @@
 	};
 
 	wmac@10180000 {
-		ralink,mtd-eeprom = <&factory 0>;
+		ralink,eeprom = "hiwifi_wlan24_caldata.eeprom";
 	};
 
 	pinctrl {
