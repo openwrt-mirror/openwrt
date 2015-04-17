@@ -293,7 +293,21 @@ ramips_setup_macs()
 		wan_mac=$(macaddr_add "$lan_mac" 4)
 		;;
 	hiwifi-hc5761)
-		lan_mac=$(mtd_get_mac_ascii bdinfo "Vfac_mac ")
+		local part
+		local mac_dirty
+
+		part=$(find_mtd_part "bdinfo")
+		if [ -z "$part" ]; then
+			echo "hiwifi_get_mac: partition bdinfo not found!" >&2
+			return
+		fi
+
+		mac_dirty=$(strings "$part" | sed -n 's/^'"Vfac_mac "'=//p')
+
+		# "canonicalize" mac
+		[ -n "$mac_dirty" ] && {
+				lan_mac=$(macaddr_canonicalize "$mac_dirty")
+		}
 		wan_mac=$(macaddr_add "$lan_mac" 1)
 		;;
 	m3 |\
