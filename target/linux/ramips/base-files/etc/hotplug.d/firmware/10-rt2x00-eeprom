@@ -40,17 +40,16 @@ hiwifi_get_mac()
 {
 	local part
 	local mac_dirty
-
 	part=$(find_mtd_part "bdinfo")
 	if [ -z "$part" ]; then
-		echo "hiwifi_get_mac: partition $mtdname not found!" >&2
+		echo "hiwifi_get_mac: partition bdinfo not found!" >&2
 		return
 	fi
-
 	mac_dirty=$(strings "$part" | sed -n 's/^'"Vfac_mac "'=//p')
-
 	# "canonicalize" mac
-	[ -n "$mac_dirty" ] && macaddr_canonicalize "$mac_dirty"
+	[ -n "$mac_dirty" ] && {
+		macaddr_canonicalize "$mac_dirty"
+	}
 }
 
 FW="/lib/firmware/$FIRMWARE"
@@ -74,6 +73,7 @@ case "$FIRMWARE" in
 		hiwifi_eeprom_extract "factory" 0 $(hiwifi_get_mac)
 		;;
 	esac
+	;;
 "rt2x00pci_1_0.eeprom")
 	case $board in
 	cy-swr1100)
