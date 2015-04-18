@@ -381,6 +381,7 @@ mc-mac1200r|\
 mynet-n600 |\
 oolite |\
 qihoo-c301 |\
+tl-wr2041n-v1 |\
 rb-750 |\
 rb-751 |\
 tew-632brp |\
@@ -397,12 +398,6 @@ whr-g301n |\
 whr-hp-g300n |\
 whr-hp-gn |\
 wzr-hp-ag300h)
-	ucidef_set_interfaces_lan_wan "eth0" "eth1"
-	ucidef_add_switch "switch0" "1" "1"
-	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
-	;;
-
-tl-wr2041n-v1)
 	ucidef_set_interfaces_lan_wan "eth0" "eth1"
 	ucidef_add_switch "switch0" "1" "1"
 	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"

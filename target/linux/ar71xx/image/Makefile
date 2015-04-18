@@ -156,6 +156,13 @@ $(Device/tplink)
   IMAGE_SIZE := 8000k
 endef
 
+define Device/tl-wr2041n-v1
+$(Device/tplink-4mlzma)
+  BOARDNAME = TL-WR2041N-v1
+  DEVICE_PROFILE = TLWR2041NV1
+  TPLINK_HWID := 0x20410001
+endef
+
 define Device/tl-wdr4300-v1
 $(Device/tplink-8mlzma)
   BOARDNAME = TL-WDR4300
@@ -188,7 +195,7 @@ define Device/mw4530r-v1
 $(Device/tl-wdr4300-v1)
   TPLINK_HWID := 0x45300001
 endef
-TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-wdr4310-v1 mw4530r-v1
+TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wr2041n-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-wdr4310-v1 mw4530r-v1
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
@@ -1500,7 +1507,6 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR941NV5,tl-wr941nd-v5,TL-WR941
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR941NV6,tl-wr941nd-v6,TL-WDR3500,ttyS0,115200,0x09410006,1,4Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1041,tl-wr1041n-v2,TL-WR1041N-v2,ttyS0,115200,0x10410002,1,4Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2041NV1,tl-wr2041n-v1,TL-WR2041N-v1,ttyS0,115200,0x20410001,1,4Mlzma))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4900V2,tl-wdr4900-v2,TL-WDR4900-v2,ttyS0,115200,0x49000002,1,8Mlzma))
 
