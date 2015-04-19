@@ -552,7 +552,14 @@ define Device/tl-wr882n-v1
     TPLINK_HWID := 0x08820001
 endef
 
-TARGET_DEVICES += tl-wr941nd-v7 tl-wdr3320-v2 tl-wr882n-v1
+define Device/tl-wdr6300-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WDR6300
+    DEVICE_PROFILE := TLWDR6300
+    TPLINK_HWID := 0x63000002
+endef
+
+TARGET_DEVICES += tl-wr941nd-v7 tl-wdr3320-v2 tl-wr882n-v1 tl-wdr6300-v2
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
