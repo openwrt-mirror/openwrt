@@ -1,5 +1,8 @@
 #!/bin/sh
 
+. /lib/functions.sh
+. /lib/functions/system.sh
+
 rt2x00_eeprom_die() {
 	echo "rt2x00 eeprom: " "$*"
 	exit 1
@@ -10,8 +13,6 @@ rt2x00_eeprom_extract() {
 	local offset=$2
 	local count=$3
 	local mtd
-
-	. /lib/functions.sh
 
 	mtd=$(find_mtd_part $part)
 	[ -n "$mtd" ] || \
@@ -26,8 +27,6 @@ hiwifi_eeprom_extract() {
 	local offset=$2
 	local mac_addr=$3
 	local mtd
-
-	. /lib/functions.sh
 
 	mtd=$(find_mtd_part $part)
 	[ -n "$mtd" ] || exit 1
