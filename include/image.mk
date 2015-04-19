@@ -381,6 +381,7 @@ define Device/Build/check_size
 endef
 
 define Device/Build/kernel
+  _KERNEL_IMAGES += $(KDIR)/$$(KERNEL_NAME)
   $(KDIR)/$$(KERNEL_NAME): image_prepare
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
   $(BIN_DIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_IMAGE)
@@ -455,6 +456,9 @@ define BuildImage
 
   $(foreach device,$(TARGET_DEVICES),$(call Device,$(device)))
   $(foreach fs,$(TARGET_FILESYSTEMS) $(fs-subtypes-y),$(call BuildImage/mkfs,$(fs)))
+
+  $$(sort $$(_KERNEL_IMAGES)):
+	@touch $$@
 
   install: kernel_prepare
 	$(foreach fs,$(TARGET_FILESYSTEMS),
