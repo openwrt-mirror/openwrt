@@ -141,7 +141,10 @@ platform_pre_upgrade() {
 
 	# Firmwares without UBI image should be flashed "normally"
 	local root_type=$(identify $dir/root)
-	[ "$root_type" != "ubi" ] && return
+	[ "$root_type" != "ubi" ] && {
+		echo "Provided firmware doesn't use UBI for rootfs."
+		return
+	}
 
 	# Prepare TRX file with just a kernel that will replace current one
 	local linux_length=$(grep "\"linux\"" /proc/mtd | sed "s/mtd[0-9]*:[ \t]*\([^ \t]*\).*/\1/")
@@ -149,12 +152,17 @@ platform_pre_upgrade() {
 		echo "Unable to find \"linux\" partition size"
 		exit 1
 	}
-	linux_length=$((0x$linux_length + 28))
+	linux_length=$((0x$linux_length))
+	local kernel_length=$(wc -c $dir/kernel | cut -d ' ' -f 1)
+	[ $kernel_length -gt $linux_length ] && {
+		echo "New kernel doesn't fit \"linux\" partition."
+		return
+	}
 	rm -f /tmp/null.bin
 	rm -f /tmp/kernel.trx
 	touch /tmp/null.bin
 	otrx create /tmp/kernel.trx \
-		-f $dir/kernel -b $linux_length \
+		-f $dir/kernel -b $(($linux_length + 28)) \
 		-f /tmp/null.bin
 
 	# Prepare UBI image (drop unwanted extra blocks)
@@ -174,7 +182,7 @@ platform_do_upgrade() {
 	local trx="$1"
 
 	[ "$(platform_flash_type)" == "nand" ] && {
-		echo "Flashing firmware without UBI for rootfs. All erase counters will be lost."
+		echo "Writing whole image to NAND flash. All erase counters will be lost."
 	}
 
 	case "$file_type" in
