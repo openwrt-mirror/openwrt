@@ -186,9 +186,8 @@ static void __init om5p_an_setup(void)
 	ath79_init_mac(mac, art, 0x02);
 	ath79_register_wmac(art + OM5P_WMAC_CALDATA_OFFSET, mac);
 
-	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_RGMII_GMAC0 |
-				   AR934X_ETH_CFG_RXD_DELAY |
-				   AR934X_ETH_CFG_RDV_DELAY);
+	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_RGMII_GMAC0);
+	ath79_setup_ar934x_eth_rx_delay(2, 2);
 	ath79_register_mdio(0, 0x0);
 	ath79_register_mdio(1, 0x0);
 
@@ -202,7 +201,7 @@ static void __init om5p_an_setup(void)
 	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_RGMII;
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
 	ath79_eth0_data.phy_mask = BIT(7);
-	ath79_eth0_pll_data.pll_1000 = 0x1a000000;
+	ath79_eth0_pll_data.pll_1000 = 0x02000000;
 	ath79_eth0_pll_data.pll_100 = 0x00000101;
 	ath79_eth0_pll_data.pll_10 = 0x00001313;
 	ath79_register_eth(0);

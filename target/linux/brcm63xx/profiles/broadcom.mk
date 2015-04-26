@@ -24,10 +24,19 @@ endef
 $(eval $(call Profile,BCM96318REF_P300))
 
 define Profile/BCM963268BU_P300
-  NAME:=Broadcom BCM96328BU_P300 reference board
+  NAME:=Broadcom BCM963268BU_P300 reference board
   PACKAGES:= kmod-usb-ohci kmod-usb2 kmod-bcm63xx-udc
 endef
 define Profile/BCM963268BU_P300/Description
-  Package set optimized for the Broadcom BCM963268BU_P300 reference boar.
+  Package set optimized for the Broadcom BCM963268BU_P300 reference board.
 endef
 $(eval $(call Profile,BCM963268BU_P300))
+
+define Profile/BCM963269BHR
+  NAME:=Broadcom BCM963269BHR reference board
+  PACKAGES:= kmod-usb-ohci kmod-usb2 kmod-bcm63xx-udc
+endef
+define Profile/BCM963269BHR/Description
+  Package set optimized for the Broadcom BCM963269BHR reference board.
+endef
+$(eval $(call Profile,BCM963269BHR))
