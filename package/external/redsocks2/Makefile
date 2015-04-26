@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=redsocks2
-PKG_VERSION:=0.60-15da7ff18e
+PKG_VERSION:=0.60-03123cc63c
 PKG_RELEASE:=1
-PKG_REV:=15da7ff18ec582b20f8c13027a2b60c22ecc67c3
+PKG_REV:=03123cc63c1c5c17459c9fe557fbb8ebacd14a70
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -66,8 +66,10 @@ define Package/redsocks2/install
 	$(INSTALL_DATA) ./files/redsocks2.config $(1)/etc/config/redsocks2
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/redsocks2.init $(1)/etc/init.d/redsocks2
+	$(INSTALL_DIR) $(1)/usr/share/redsocks2
+	$(INSTALL_DATA) ./files/redsocks2.include $(1)/usr/share/redsocks2/firewall.include
 	$(INSTALL_DIR) $(1)/etc/redsocks2
-	$(INSTALL_DATA) ./files/redsocks2.template $(1)/etc/redsocks2/config.template
+	$(INSTALL_DATA) ./files/redsocks2.example $(1)/etc/redsocks2/config.example
 endef
 
 Package/redsocks2-openssl/install = $(Package/redsocks2/install)
