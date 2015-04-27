@@ -69,6 +69,7 @@
 
 u_char  packet[MAXPACKET];
 int pingflags, options;
+bool use_names;
 
 #define DEAMON (pingflags & BACKGROUND)
 
