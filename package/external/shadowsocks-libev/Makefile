@@ -46,7 +46,7 @@ Package/shadowsocks-libev-polarssl = $(call Package/shadowsocks-libev/Default,po
 Package/shadowsocks-libev-spec-polarssl = $(call Package/shadowsocks-libev/Default,polarssl,(PolarSSL),+libpolarssl +resolveip +libsodium)
 
 define Package/shadowsocks-libev/description
-Shadowsocks-libev is a lightweight secured scoks5 proxy for embedded devices and low end boxes.
+Shadowsocks-libev is a lightweight secured socks5 proxy for embedded devices and low end boxes.
 endef
 
 Package/shadowsocks-libev-spec/description = $(Package/shadowsocks-libev/description)
