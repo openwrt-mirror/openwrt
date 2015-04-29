@@ -55,6 +55,24 @@ endef
 Package/redsocks2-openssl/conffiles = $(Package/redsocks2/conffiles)
 Package/redsocks2-polarssl/conffiles = $(Package/redsocks2/conffiles)
 
+define Package/redsocks2/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	uci -q batch <<-EOF >/dev/null
+		delete firewall.redsocks2
+		set firewall.redsocks2=include
+		set firewall.redsocks2.type=script
+		set firewall.redsocks2.path=/usr/share/redsocks2/firewall.include
+		set firewall.redsocks2.reload=1
+		commit firewall
+EOF
+fi
+exit 0
+endef
+
+Package/redsocks2-openssl/postinst = $(Package/redsocks2/postinst)
+Package/redsocks2-polarssl/postinst = $(Package/redsocks2/postinst)
+
 ifeq ($(BUILD_VARIANT),polarssl)
 	MAKE_FLAGS += USE_CRYPTO_POLARSSL=true
 endif
