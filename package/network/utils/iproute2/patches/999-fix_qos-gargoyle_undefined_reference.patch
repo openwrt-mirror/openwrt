@@ -1,0 +1,10 @@
+--- a/tc/tc_util.c	2015-04-13 23:55:11.000000000 +0800
++++ b/tc/tc_util.c	2015-04-30 20:04:40.049001894 +0800
+@@ -130,6 +130,7 @@ ok:
+ 
+ int print_tc_classid(char *buf, int len, __u32 h)
+ {
++	bool use_names;
+ 	char handle[40] = {};
+ 
+ 	if (h == TC_H_ROOT)
