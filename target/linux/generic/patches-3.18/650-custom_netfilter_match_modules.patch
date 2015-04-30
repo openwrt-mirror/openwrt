@@ -2,7 +2,7 @@
 +++ b/net/ipv4/netfilter/Makefile
 @@ -53,6 +53,10 @@ obj-$(CONFIG_IP_NF_RAW) += iptable_raw.o
  obj-$(CONFIG_IP_NF_SECURITY) += iptable_security.o
- 
+
  # matches
 +obj-$(CONFIG_IP_NF_MATCH_BANDWIDTH) += ipt_bandwidth.o
 +obj-$(CONFIG_IP_NF_MATCH_TIMERANGE) += ipt_timerange.o
@@ -10,17 +10,17 @@
 +obj-$(CONFIG_IP_NF_MATCH_WEBURL) += ipt_weburl.o
  obj-$(CONFIG_IP_NF_MATCH_AH) += ipt_ah.o
  obj-$(CONFIG_IP_NF_MATCH_RPFILTER) += ipt_rpfilter.o
- 
+
 --- /dev/null
 +++ b/net/ipv4/netfilter/ipt_weburl.c
 @@ -0,0 +1,398 @@
-+/*  weburl --	A netfilter module to match URLs in HTTP requests 
++/*  weburl --	A netfilter module to match URLs in HTTP requests
 + *  		This module can match using string match or regular expressions
 + *  		Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
 + *
 + *
 + *  Copyright © 2008-2010 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your
@@ -87,7 +87,7 @@
 +	size_t len;
 +
 +
-+	if ((c = *find++) != '\0') 
++	if ((c = *find++) != '\0')
 +	{
 +		len = strlen(find);
 +		do
@@ -157,7 +157,7 @@
 +
 +int http_match(const struct ipt_weburl_info* info, const unsigned char* packet_data, int packet_length)
 +{
-+	int test = 0; 
++	int test = 0;
 +	
 +	/* first test if we're dealing with a web page request */
 +	if(strnicmp((char*)packet_data, "GET ", 4) == 0 || strnicmp(  (char*)packet_data, "POST ", 5) == 0 || strnicmp((char*)packet_data, "HEAD ", 5) == 0)
@@ -181,7 +181,7 @@
 +			path_start_index++;
 +		}
 +		path_end_index= (int)(strstr( (char*)(packet_data+path_start_index), " ") -  (char*)packet_data);
-+		if(path_end_index > 0) 
++		if(path_end_index > 0)
 +		{
 +			int path_length = path_end_index-path_start_index;
 +			path_length = path_length < 625 ? path_length : 624; /* prevent overflow */
@@ -220,11 +220,11 @@
 +			}
 +			
 +			host_end_index = 0;
-+			while(	host_match[host_end_index] != '\n' && 
-+				host_match[host_end_index] != '\r' && 
-+				host_match[host_end_index] != ' ' && 
-+				host_match[host_end_index] != ':' && 
-+				((char*)host_match - (char*)packet_data)+host_end_index < last_header_index 
++			while(	host_match[host_end_index] != '\n' &&
++				host_match[host_end_index] != '\r' &&
++				host_match[host_end_index] != ' ' &&
++				host_match[host_end_index] != ':' &&
++				((char*)host_match - (char*)packet_data)+host_end_index < last_header_index
 +				)
 +			{
 +				host_end_index++;
@@ -309,8 +309,8 @@
 +		}		
 +
 +
-+		/* 
-+		 * If invert flag is set, return true if this IS a web request, but it didn't match 
++		/*
++		 * If invert flag is set, return true if this IS a web request, but it didn't match
 +		 * Always return false for non-web requests
 +		 */
 +		test = info->invert ? !test : test;
@@ -382,7 +382,7 @@
 +}
 +
 +
-+static struct xt_match weburl_match  __read_mostly  = 
++static struct xt_match weburl_match  __read_mostly  =
 +{
 +	.name		= "weburl",
 +	.match		= &match,
@@ -417,7 +417,7 @@
 @@ -0,0 +1,1093 @@
 +/*
 + * Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + * This work 'as-is' we provide.
 + * No warranty, express or implied.
 + * We've done our best,
@@ -438,9 +438,9 @@
 + *
 + *  Basically, this library contains a bunch of utilities
 + *  that I find useful.  I'm sure other libraries exist
-+ *  that are just as good or better, but I like these tools 
++ *  that are just as good or better, but I like these tools
 + *  because I personally wrote them, so I know their quirks.
-+ *  (i.e. I know where the bodies are buried).  I want to 
++ *  (i.e. I know where the bodies are buried).  I want to
 + *  make sure that I can re-use these utilities for whatever
 + *  code I may want to write in the future be it
 + *  proprietary or open-source, so I've put them under
@@ -483,12 +483,12 @@
 +	unsigned long key;
 +	void* value;
 +	
-+	signed char balance; 
++	signed char balance;
 +	struct long_tree_map_node* left;
 +	struct long_tree_map_node* right;
 +} long_map_node;
 +
-+typedef struct 
++typedef struct
 +{
 +	long_map_node* root;
 +	unsigned long num_elements;
@@ -525,7 +525,7 @@
 +void* get_string_map_element_with_hashed_key(string_map* map, unsigned long hashed_key);
 +void* set_string_map_element(string_map* map, const char* key, void* value);
 +void* remove_string_map_element(string_map* map, const char* key);
-+char** get_string_map_keys(string_map* map, unsigned long* num_keys_returned); 
++char** get_string_map_keys(string_map* map, unsigned long* num_keys_returned);
 +void** get_string_map_values(string_map* map, unsigned long* num_values_returned);
 +void** destroy_string_map(string_map* map, int destruction_type, unsigned long* num_destroyed);
 +void apply_to_every_string_map_value(string_map* map, void (*apply_func)(char* key, void* value));
@@ -539,8 +539,8 @@
 +#define DESTROY_MODE_IGNORE_VALUES	22
 +
 +
-+/* 
-+ * for convenience & backwards compatibility alias _string_map_ functions to 
++/*
++ * for convenience & backwards compatibility alias _string_map_ functions to
 + *  _map_ functions since string map is used more often than long map
 + */
 +#define initialize_map		initialize_string_map
@@ -571,7 +571,7 @@
 +static void rotate_left (long_map_node** parent);
 +
 +/* internal for string map */
-+typedef struct 
++typedef struct
 +{
 +	char* key;
 +	void* value;
@@ -708,7 +708,7 @@
 +		void** long_values = get_sorted_long_map_values( &(map->lm),  &list_length);
 +		unsigned long key_index;
 +		/*list_length will be 0 on malloc failure in get_sorted_long_map_values, so this code shouldn't seg fault if that happens */
-+		for(key_index = 0; key_index < list_length; key_index++) 
++		for(key_index = 0; key_index < list_length; key_index++)
 +		{
 +			str_keys[key_index] = strdup( ((string_map_key_value*)(long_values[key_index]))->key);
 +			if(str_keys[key_index] == NULL) /* deal with malloc failure */
@@ -1025,7 +1025,7 @@
 +				}
 +				next_parent->node_ptr = key < remove_parent->key ? &(remove_parent->left) : &(remove_parent->right);
 +				next_parent->previous = parent_list;
-+				next_parent->previous->direction = key < remove_parent->key ? -1 : 1; 
++				next_parent->previous->direction = key < remove_parent->key ? -1 : 1;
 +				parent_list = next_parent;
 +				
 +				
@@ -1174,7 +1174,7 @@
 +			
 +
 +
-+			/* 
++			/*
 +			 * since we found a value to remove, decrease number of elements in map
 +			 *  set return value to the deleted node's value and free the node
 +			 */
@@ -1367,7 +1367,7 @@
 +static signed char rebalance (long_map_node** n, signed char direction, signed char update_op)
 +{
 +	/*
-+	printf( "original: key = %ld, balance = %d, update_op=%d, direction=%d\n", (*n)->key, (*n)->balance, update_op, direction); 
++	printf( "original: key = %ld, balance = %d, update_op=%d, direction=%d\n", (*n)->key, (*n)->balance, update_op, direction);
 +	*/
 +
 +	(*n)->balance = (*n)->balance + (update_op*direction);
@@ -1484,8 +1484,8 @@
 +
 +
 +/***************************************************************************
-+ * This algorithm was created for the sdbm database library (a public-domain 
-+ * reimplementation of ndbm) and seems to work relatively well in 
++ * This algorithm was created for the sdbm database library (a public-domain
++ * reimplementation of ndbm) and seems to work relatively well in
 + * scrambling bits
 + *
 + *
@@ -2758,7 +2758,7 @@
 @@ -0,0 +1,1084 @@
 +/*
 + * Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + * This work 'as-is' we provide.
 + * No warranty, express or implied.
 + * We've done our best,
@@ -2779,9 +2779,9 @@
 + *
 + *  Basically, this library contains a bunch of utilities
 + *  that I find useful.  I'm sure other libraries exist
-+ *  that are just as good or better, but I like these tools 
++ *  that are just as good or better, but I like these tools
 + *  because I personally wrote them, so I know their quirks.
-+ *  (i.e. I know where the bodies are buried).  I want to 
++ *  (i.e. I know where the bodies are buried).  I want to
 + *  make sure that I can re-use these utilities for whatever
 + *  code I may want to write in the future be it
 + *  proprietary or open-source, so I've put them under
@@ -2824,12 +2824,12 @@
 +	unsigned long key;
 +	void* value;
 +	
-+	signed char balance; 
++	signed char balance;
 +	struct long_tree_map_node* left;
 +	struct long_tree_map_node* right;
 +} long_map_node;
 +
-+typedef struct 
++typedef struct
 +{
 +	long_map_node* root;
 +	unsigned long num_elements;
@@ -2865,7 +2865,7 @@
 +void* get_string_map_element(string_map* map, const char* key);
 +void* set_string_map_element(string_map* map, const char* key, void* value);
 +void* remove_string_map_element(string_map* map, const char* key);
-+char** get_string_map_keys(string_map* map, unsigned long* num_keys_returned); 
++char** get_string_map_keys(string_map* map, unsigned long* num_keys_returned);
 +void** get_string_map_values(string_map* map, unsigned long* num_values_returned);
 +void** destroy_string_map(string_map* map, int destruction_type, unsigned long* num_destroyed);
 +void apply_to_every_string_map_value(string_map* map, void (*apply_func)(char* key, void* value));
@@ -2879,8 +2879,8 @@
 +#define DESTROY_MODE_IGNORE_VALUES	22
 +
 +
-+/* 
-+ * for convenience & backwards compatibility alias _string_map_ functions to 
++/*
++ * for convenience & backwards compatibility alias _string_map_ functions to
 + *  _map_ functions since string map is used more often than long map
 + */
 +#define initialize_map		initialize_string_map
@@ -2911,7 +2911,7 @@
 +static void rotate_left (long_map_node** parent);
 +
 +/* internal for string map */
-+typedef struct 
++typedef struct
 +{
 +	char* key;
 +	void* value;
@@ -3040,7 +3040,7 @@
 +		void** long_values = get_sorted_long_map_values( &(map->lm),  &list_length);
 +		unsigned long key_index;
 +		/*list_length will be 0 on malloc failure in get_sorted_long_map_values, so this code shouldn't seg fault if that happens */
-+		for(key_index = 0; key_index < list_length; key_index++) 
++		for(key_index = 0; key_index < list_length; key_index++)
 +		{
 +			str_keys[key_index] = strdup( ((string_map_key_value*)(long_values[key_index]))->key);
 +			if(str_keys[key_index] == NULL) /* deal with malloc failure */
@@ -3357,7 +3357,7 @@
 +				}
 +				next_parent->node_ptr = key < remove_parent->key ? &(remove_parent->left) : &(remove_parent->right);
 +				next_parent->previous = parent_list;
-+				next_parent->previous->direction = key < remove_parent->key ? -1 : 1; 
++				next_parent->previous->direction = key < remove_parent->key ? -1 : 1;
 +				parent_list = next_parent;
 +				
 +				
@@ -3506,7 +3506,7 @@
 +			
 +
 +
-+			/* 
++			/*
 +			 * since we found a value to remove, decrease number of elements in map
 +			 *  set return value to the deleted node's value and free the node
 +			 */
@@ -3699,7 +3699,7 @@
 +static signed char rebalance (long_map_node** n, signed char direction, signed char update_op)
 +{
 +	/*
-+	printf( "original: key = %ld, balance = %d, update_op=%d, direction=%d\n", (*n)->key, (*n)->balance, update_op, direction); 
++	printf( "original: key = %ld, balance = %d, update_op=%d, direction=%d\n", (*n)->key, (*n)->balance, update_op, direction);
 +	*/
 +
 +	(*n)->balance = (*n)->balance + (update_op*direction);
@@ -3816,8 +3816,8 @@
 +
 +
 +/***************************************************************************
-+ * This algorithm was created for the sdbm database library (a public-domain 
-+ * reimplementation of ndbm) and seems to work relatively well in 
++ * This algorithm was created for the sdbm database library (a public-domain
++ * reimplementation of ndbm) and seems to work relatively well in
 + * scrambling bits
 + *
 + *
@@ -3979,7 +3979,7 @@
 + *
 + *
 + *  Copyright © 2009-2010 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your
@@ -4093,7 +4093,7 @@
 +}
 +
 +
-+static struct xt_match timerange_match  __read_mostly = 
++static struct xt_match timerange_match  __read_mostly =
 +{
 +	.name		= "timerange",
 +	.match		= &match,
@@ -4119,9 +4119,9 @@
 --- a/net/ipv4/netfilter/Kconfig
 +++ b/net/ipv4/netfilter/Kconfig
 @@ -389,5 +389,25 @@ config IP_NF_ARP_MANGLE
- 
+
  endif # IP_NF_ARPTABLES
- 
+
 +config IP_NF_MATCH_WEBURL
 +	tristate "weburl match support"
 +	depends on IP_NF_IPTABLES
@@ -4143,7 +4143,7 @@
 +	help
 +		This option enables bandwidth match support.
  endmenu
- 
+
 --- /dev/null
 +++ b/net/ipv4/netfilter/ipt_weburl.mod.c
 @@ -0,0 +1,20 @@
@@ -4195,7 +4195,7 @@
 @@ -0,0 +1,1084 @@
 +/*
 + * Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + * This work 'as-is' we provide.
 + * No warranty, express or implied.
 + * We've done our best,
@@ -4216,9 +4216,9 @@
 + *
 + *  Basically, this library contains a bunch of utilities
 + *  that I find useful.  I'm sure other libraries exist
-+ *  that are just as good or better, but I like these tools 
++ *  that are just as good or better, but I like these tools
 + *  because I personally wrote them, so I know their quirks.
-+ *  (i.e. I know where the bodies are buried).  I want to 
++ *  (i.e. I know where the bodies are buried).  I want to
 + *  make sure that I can re-use these utilities for whatever
 + *  code I may want to write in the future be it
 + *  proprietary or open-source, so I've put them under
@@ -4261,12 +4261,12 @@
 +	unsigned long key;
 +	void* value;
 +	
-+	signed char balance; 
++	signed char balance;
 +	struct long_tree_map_node* left;
 +	struct long_tree_map_node* right;
 +} long_map_node;
 +
-+typedef struct 
++typedef struct
 +{
 +	long_map_node* root;
 +	unsigned long num_elements;
@@ -4302,7 +4302,7 @@
 +void* get_string_map_element(string_map* map, const char* key);
 +void* set_string_map_element(string_map* map, const char* key, void* value);
 +void* remove_string_map_element(string_map* map, const char* key);
-+char** get_string_map_keys(string_map* map, unsigned long* num_keys_returned); 
++char** get_string_map_keys(string_map* map, unsigned long* num_keys_returned);
 +void** get_string_map_values(string_map* map, unsigned long* num_values_returned);
 +void** destroy_string_map(string_map* map, int destruction_type, unsigned long* num_destroyed);
 +void apply_to_every_string_map_value(string_map* map, void (*apply_func)(char* key, void* value));
@@ -4316,8 +4316,8 @@
 +#define DESTROY_MODE_IGNORE_VALUES	22
 +
 +
-+/* 
-+ * for convenience & backwards compatibility alias _string_map_ functions to 
++/*
++ * for convenience & backwards compatibility alias _string_map_ functions to
 + *  _map_ functions since string map is used more often than long map
 + */
 +#define initialize_map		initialize_string_map
@@ -4348,7 +4348,7 @@
 +static void rotate_left (long_map_node** parent);
 +
 +/* internal for string map */
-+typedef struct 
++typedef struct
 +{
 +	char* key;
 +	void* value;
@@ -4477,7 +4477,7 @@
 +		void** long_values = get_sorted_long_map_values( &(map->lm),  &list_length);
 +		unsigned long key_index;
 +		/*list_length will be 0 on malloc failure in get_sorted_long_map_values, so this code shouldn't seg fault if that happens */
-+		for(key_index = 0; key_index < list_length; key_index++) 
++		for(key_index = 0; key_index < list_length; key_index++)
 +		{
 +			str_keys[key_index] = strdup( ((string_map_key_value*)(long_values[key_index]))->key);
 +			if(str_keys[key_index] == NULL) /* deal with malloc failure */
@@ -4794,7 +4794,7 @@
 +				}
 +				next_parent->node_ptr = key < remove_parent->key ? &(remove_parent->left) : &(remove_parent->right);
 +				next_parent->previous = parent_list;
-+				next_parent->previous->direction = key < remove_parent->key ? -1 : 1; 
++				next_parent->previous->direction = key < remove_parent->key ? -1 : 1;
 +				parent_list = next_parent;
 +				
 +				
@@ -4943,7 +4943,7 @@
 +			
 +
 +
-+			/* 
++			/*
 +			 * since we found a value to remove, decrease number of elements in map
 +			 *  set return value to the deleted node's value and free the node
 +			 */
@@ -5136,7 +5136,7 @@
 +static signed char rebalance (long_map_node** n, signed char direction, signed char update_op)
 +{
 +	/*
-+	printf( "original: key = %ld, balance = %d, update_op=%d, direction=%d\n", (*n)->key, (*n)->balance, update_op, direction); 
++	printf( "original: key = %ld, balance = %d, update_op=%d, direction=%d\n", (*n)->key, (*n)->balance, update_op, direction);
 +	*/
 +
 +	(*n)->balance = (*n)->balance + (update_op*direction);
@@ -5253,8 +5253,8 @@
 +
 +
 +/***************************************************************************
-+ * This algorithm was created for the sdbm database library (a public-domain 
-+ * reimplementation of ndbm) and seems to work relatively well in 
++ * This algorithm was created for the sdbm database library (a public-domain
++ * reimplementation of ndbm) and seems to work relatively well in
 + * scrambling bits
 + *
 + *
@@ -5312,7 +5312,7 @@
 +
 +#include <linux/time.h>
 +
-+#include <linux/semaphore.h> 
++#include <linux/semaphore.h>
 +
 +
 +#include "bandwidth_deps/tree_map.h"
@@ -5331,11 +5331,11 @@
 +MODULE_AUTHOR("Eric Bishop");
 +MODULE_DESCRIPTION("Match bandwidth used, designed for use with Gargoyle web interface (www.gargoyle-router.com)");
 +
-+/* 
-+ * WARNING: accessing the sys_tz variable takes FOREVER, and kills performance 
-+ * keep a local variable that gets updated from the extern variable 
++/*
++ * WARNING: accessing the sys_tz variable takes FOREVER, and kills performance
++ * keep a local variable that gets updated from the extern variable
 + */
-+extern struct timezone sys_tz; 
++extern struct timezone sys_tz;
 +static int local_minutes_west;
 +static int local_seconds_west;
 +static time_t last_local_mw_update;
@@ -5371,10 +5371,10 @@
 +static unsigned char set_in_progress = 0;
 +static char set_id[BANDWIDTH_MAX_ID_LENGTH] = "";
 +
-+/* 
++/*
 + * function prototypes
 + *
-+ * (prototypes only provided for 
++ * (prototypes only provided for
 + * functions not part of iptables API)
 + *
 +*/
@@ -5477,8 +5477,8 @@
 +	else
 +	{
 +		
-+		/* 
-+		 * reconstruct new history without newest nodes, to represent data as it was 
++		/*
++		 * reconstruct new history without newest nodes, to represent data as it was
 +		 * last time the current time was set to the interval to which we just jumped back
 +		 */
 +		uint32_t next_old_index;
@@ -5516,7 +5516,7 @@
 +		}
 +
 +		/* update next_reset variable from previous_reset variable which we've already set */
-+		backwards_adjust_iam->info->next_reset = get_next_reset_time(backwards_adjust_iam->info, backwards_adjust_iam->info->previous_reset, backwards_adjust_iam->info->previous_reset); 
++		backwards_adjust_iam->info->next_reset = get_next_reset_time(backwards_adjust_iam->info, backwards_adjust_iam->info->previous_reset, backwards_adjust_iam->info->previous_reset);
 +		
 +
 +
@@ -5535,8 +5535,8 @@
 +			backwards_adjust_iam->info->combined_bw = (uint64_t*)(old_history->history_data + old_history->current_index);
 +		}
 +		
-+		/* 
-+		 * free new history  (which was just temporary) 
++		/*
++		 * free new history  (which was just temporary)
 +		 * note that we don't need to free history_data from new_history
 +		 * we freed the history_data from old history, and set that to the history_data from new_history
 +		 * so, this cleanup has already been handled
@@ -5665,7 +5665,7 @@
 +		{
 +			/*
 +			 * history hasn't really been initialized -- there's only one, current time point.
-+			 * we only know what's in the current accumulator in info. Just adjust previous reset time and make sure it's valid 
++			 * we only know what's in the current accumulator in info. Just adjust previous reset time and make sure it's valid
 +			 */
 +			shift_timezone_iam->info->previous_reset = previous_reset > shift_timezone_info_previous_reset + timezone_adj ? previous_reset : shift_timezone_info_previous_reset + timezone_adj;
 +		}
@@ -5812,13 +5812,13 @@
 +		/* adjust number of non-zero nodes */
 +		if(history->num_nodes == history->max_nodes)
 +		{
-+			uint32_t first_index =  (history->current_index+1) % history->max_nodes; 
++			uint32_t first_index =  (history->current_index+1) % history->max_nodes;
 +			if( (history->history_data)[first_index] > 0)
 +			{
 +				history->non_zero_nodes = history->non_zero_nodes -1;
 +			}
 +		}
-+		if( (history->history_data)[history->current_index] > 0 ) 
++		if( (history->history_data)[history->current_index] > 0 )
 +		{
 +			history->non_zero_nodes = history->non_zero_nodes + 1;
 +		}
@@ -5913,7 +5913,7 @@
 +	bw_history* bh = (bw_history*)value;
 +	bh->first_start = 0;
 +	bh->first_end = 0;
-+	bh->last_end = 0; 
++	bh->last_end = 0;
 +	bh->num_nodes = 1;
 +	bh->non_zero_nodes = 1;
 +	bh->current_index = 0;
@@ -5994,18 +5994,18 @@
 +		clear_ip_history_map = iam->ip_history_map;
 +		
 +
-+		/* 
++		/*
 +		 * at most update as many times as we have intervals to save -- prevents
-+		 * rediculously long loop if interval length is 2 seconds and time was 
++		 * rediculously long loop if interval length is 2 seconds and time was
 +		 * reset to 5 years in the future
 +		 */
 +		num_updates = 0;
 +		while(info->next_reset <= now && num_updates < info->num_intervals_to_save)
 +		{
 +			do_reset_delete_ips = initialize_long_map();
-+			/* 
-+			 * don't check for malloc failure here -- we 
-+			 * include tests for whether do_reset_delete_ips 
++			/*
++			 * don't check for malloc failure here -- we
++			 * include tests for whether do_reset_delete_ips
 +			 * is null below (reset should still be able to procede)
 +			 */
 +
@@ -6026,7 +6026,7 @@
 +				/* only clear ips if this is the last iteration of this update */
 +				if(info->next_reset >= now)
 +				{
-+					/* 
++					/*
 +					 * no need to reset iam->info->combined_bw if it gets deleted here.
 +					 * below, at end of function it will get set to NULL if it gets wiped
 +					 */
@@ -6048,7 +6048,7 @@
 +		do_reset_interval_start = 0;
 +		do_reset_interval_end = 0;
 +
-+		/* 
++		/*
 +		 * test if we've cycled past all existing data -- if so wipe all existing histories
 +		 * and set previous reset time to now, and compute next reset time from
 +		 * current time
@@ -6067,7 +6067,7 @@
 +	info->current_bandwidth = 0;
 +}
 +
-+/* 
++/*
 + * set max bandwidth to be max possible using 63 of the
 + * 64 bits in our record.  In some systems uint64_t is treated
 + * like signed, so to prevent errors, use only 63 bits
@@ -6093,7 +6093,7 @@
 +
 +/*
 + * Shamelessly yoinked from xt_time.c
-+ * "That is so amazingly amazing, I think I'd like to steal it." 
++ * "That is so amazingly amazing, I think I'd like to steal it."
 + *      -- Zaphod Beeblebrox
 + */
 +
@@ -6224,7 +6224,7 @@
 +				year--;
 +			}
 +			year_day = days_since_epoch - days_since_epoch_for_each_year_start[year_index];
-+			if (is_leap(year)) 
++			if (is_leap(year))
 +			{
 +				month_start_days = (u_int16_t*)days_since_leapyear;
 +			}
@@ -6436,13 +6436,13 @@
 +
 +	
 +
-+	/* 
-+	 * BEFORE we lock, check for timezone shift 
++	/*
++	 * BEFORE we lock, check for timezone shift
 +	 * this will almost always be be very,very quick,
 +	 * but in the event there IS a shift this
-+	 * function will lock both kernel update spinlock 
-+	 * and userspace i/o semaphore,  and do a lot of 
-+	 * number crunching so we shouldn't 
++	 * function will lock both kernel update spinlock
++	 * and userspace i/o semaphore,  and do a lot of
++	 * number crunching so we shouldn't
 +	 * already be locked.
 +	 */
 +	now = get_seconds();
@@ -6659,7 +6659,7 @@
 +#define ERROR_BUFFER_TOO_SHORT 2
 +#define ERROR_NO_HISTORY 3
 +#define ERROR_UNKNOWN 4
-+typedef struct get_req_struct 
++typedef struct get_req_struct
 +{
 +	uint32_t ip;
 +	uint32_t next_ip_index;
@@ -6670,27 +6670,27 @@
 +static unsigned long* output_ip_list = NULL;
 +static unsigned long output_ip_list_length = 0;
 +
-+static char add_ip_block(	uint32_t ip, 
++static char add_ip_block(	uint32_t ip,
 +			unsigned char full_history_requested,
 +			info_and_maps* iam,
-+			unsigned char* output_buffer, 
-+			uint32_t* current_output_index, 
-+			uint32_t buffer_length 
++			unsigned char* output_buffer,
++			uint32_t* current_output_index,
++			uint32_t buffer_length
 +			);
 +static void parse_get_request(unsigned char* request_buffer, get_request* parsed_request);
 +static int handle_get_failure(int ret_value, int unlock_user_sem, int unlock_bandwidth_spin, unsigned char error_code, unsigned char* out_buffer, unsigned char* free_buffer );
 +
 +
-+/* 
-+ * returns whether we succeeded in adding ip block, 0= success, 
++/*
++ * returns whether we succeeded in adding ip block, 0= success,
 + * otherwise error code of problem that we found
 + */
-+static char add_ip_block(	uint32_t ip, 
++static char add_ip_block(	uint32_t ip,
 +				unsigned char full_history_requested,
 +				info_and_maps* iam,
-+				unsigned char* output_buffer, 
-+				uint32_t* current_output_index, 
-+				uint32_t output_buffer_length 
++				unsigned char* output_buffer,
++				uint32_t* current_output_index,
++				uint32_t output_buffer_length
 +				)
 +{
 +	#ifdef BANDWIDTH_DEBUG
@@ -6824,15 +6824,15 @@
 +		{
 +			*( (uint64_t*)(output_buffer + *current_output_index) ) = *bw;
 +		}
-+		*current_output_index = *current_output_index + 8; 
++		*current_output_index = *current_output_index + 8;
 +	}
 +	return ERROR_NONE;
 +}
 +
 +
 +
-+/* 
-+ * convenience method for cleaning crap up after failed malloc or other 
++/*
++ * convenience method for cleaning crap up after failed malloc or other
 + * error that we can't recover  from in get function
 + */
 +static int handle_get_failure(int ret_value, int unlock_user_sem, int unlock_bandwidth_spin, unsigned char error_code, unsigned char* out_buffer, unsigned char* free_buffer )
@@ -6844,8 +6844,8 @@
 +	return ret_value;
 +}
 +
-+/* 
-+ * request structure: 
++/*
++ * request structure:
 + * bytes 1:4 is ip (uint32_t)
 + * bytes 4:8 is the next ip index (uint32_t)
 + * byte  9   is whether to return full history or just current usage (unsigned char)
@@ -6920,9 +6920,9 @@
 +	
 +	
 +	
-+	/* 
++	/*
 +	 * retrieve data for this id and verify all variables are properly defined, just to be sure
-+	 * this is a kernel module -- it pays to be paranoid! 
++	 * this is a kernel module -- it pays to be paranoid!
 +	 */
 +	spin_lock_bh(&bandwidth_lock);
 +	
@@ -6975,9 +6975,9 @@
 +
 +
 +	/*
-+	// values only reset when a packet hits a rule, so 
++	// values only reset when a packet hits a rule, so
 +	// reset may have expired without data being reset.
-+	// So, test if we need to reset values to zero 
++	// So, test if we need to reset values to zero
 +	*/
 +	if(iam->info->reset_interval != BANDWIDTH_NEVER)
 +	{
@@ -7002,7 +7002,7 @@
 +	 * byte  30    : reset_is_constant_interval (helps deal with DST shifts in userspace)
 +	 * remaining bytes contain blocks of ip data
 +	 * format is dependent on whether history was queried
-+	 * 
++	 *
 +	 * if history was NOT queried we have
 +	 * bytes 1-4 : ip
 +	 * bytes 5-12 : bandwidth
@@ -7015,7 +7015,7 @@
 +	 * bytes 4-8 : history_length number of history values (including current)
 +	 * bytes 9-16 : first start
 +	 * bytes 17-24 : first end
-+	 * bytes 25-32 : recent end 
++	 * bytes 25-32 : recent end
 +	 * 33 onward : list of 64 bit integers of length history_length
 +	 *
 +	 */
@@ -7034,12 +7034,12 @@
 +	current_output_index = 30;
 +	if(query.ip != 0)
 +	{
-+		*error = add_ip_block(	query.ip, 
++		*error = add_ip_block(	query.ip,
 +					query.return_history,
 +					iam,
-+					buffer, 
-+					&current_output_index, 
-+					*len 
++					buffer,
++					&current_output_index,
++					*len
 +					);
 +
 +		*total_ips = *error == 0;
@@ -7056,11 +7056,11 @@
 +		while(*error == ERROR_NONE && next_index < output_ip_list_length)
 +		{
 +			uint32_t next_ip = output_ip_list[next_index];
-+			*error = add_ip_block(	next_ip, 
++			*error = add_ip_block(	next_ip,
 +						query.return_history,
 +						iam,
-+						buffer, 
-+						&current_output_index, 
++						buffer,
++						&current_output_index,
 +						*len
 +						);
 +			if(*error == ERROR_NONE)
@@ -7128,7 +7128,7 @@
 +
 +static void parse_set_header(unsigned char* input_buffer, set_header* header)
 +{
-+	/* 
++	/*
 +	 * set header structure:
 +	 * bytes 1-4   :  total_ips being set in this and subsequent requests
 +	 * bytes 5-8   :  next_ip_index, first ip being set in this set command
@@ -7169,10 +7169,10 @@
 +}
 +static void set_single_ip_data(unsigned char history_included, info_and_maps* iam, unsigned char* buffer, uint32_t* buffer_index, time_t now)
 +{
-+	/* 
-+	 * note that times stored within the module are adjusted so they are equal to seconds 
-+	 * since unix epoch that corrosponds to the UTC wall-clock time (timezone offset 0) 
-+	 * that is equal to the wall-clock time in the current time-zone.  Incoming values must 
++	/*
++	 * note that times stored within the module are adjusted so they are equal to seconds
++	 * since unix epoch that corrosponds to the UTC wall-clock time (timezone offset 0)
++	 * that is equal to the wall-clock time in the current time-zone.  Incoming values must
 +	 * be adjusted similarly
 +	 */
 +	uint32_t ip = *( (uint32_t*)(buffer + *buffer_index) );
@@ -7226,7 +7226,7 @@
 +					initialize_map_entries_for_ip(iam, ip, next_bw);
 +					history = get_long_map_element(iam->ip_history_map, (unsigned long)ip);
 +				}
-+				else if(next_end < now) /* if this is most recent node, don't do update since last node is current bandwidth */ 
++				else if(next_end < now) /* if this is most recent node, don't do update since last node is current bandwidth */
 +				{
 +					update_history(history, next_start, next_end, iam->info);
 +					(history->history_data)[ history->current_index ] = next_bw;
@@ -7240,7 +7240,7 @@
 +						/* do history reset */
 +						history->first_start = 0;
 +						history->first_end = 0;
-+						history->last_end = 0; 
++						history->last_end = 0;
 +						history->num_nodes = 1;
 +						history->non_zero_nodes = 1;
 +						history->current_index = 0;
@@ -7343,9 +7343,9 @@
 +	
 +	
 +	
-+	/* 
++	/*
 +	 * retrieve data for this id and verify all variables are properly defined, just to be sure
-+	 * this is a kernel module -- it pays to be paranoid! 
++	 * this is a kernel module -- it pays to be paranoid!
 +	 */
 +	spin_lock_bh(&bandwidth_lock);
 +	
@@ -7364,8 +7364,8 @@
 +		return handle_set_failure(0, 1, 1, buffer);
 +	}
 +
-+	/* 
-+	 * during set unconditionally set combined_bw to NULL 
++	/*
++	 * during set unconditionally set combined_bw to NULL
 +	 * if combined data (ip=0) exists after set exits cleanly, we will restore it
 +	 */
 +	iam->info->combined_bw = NULL;
@@ -7402,14 +7402,14 @@
 +		}
 +	}
 +
-+	/* 
++	/*
 +	 * last_backup parameter is only relevant for case where we are not setting history
 +	 * and when we don't have a constant interval length or a specified reset_time (since in this case start time gets reset when rule is inserted and there is therefore no constant end)
 +	 * If num_intervals_to_save =0 and is_constant_interval=0, check it.  If it's nonzero (0=ignore) and invalid, return.
 +	 */
 +	if(header.last_backup > 0 && iam->info->num_intervals_to_save == 0 && (iam->info->reset_is_constant_interval == 0 || iam->info->reset_time != 0) )
 +	{
-+		time_t adjusted_last_backup_time = header.last_backup - (60 * local_minutes_west); 
++		time_t adjusted_last_backup_time = header.last_backup - (60 * local_minutes_west);
 +		time_t next_reset_of_last_backup = get_next_reset_time(iam->info, adjusted_last_backup_time, adjusted_last_backup_time);
 +		if(next_reset_of_last_backup != iam->info->next_reset)
 +		{
@@ -7419,7 +7419,7 @@
 +
 +
 +	/*
-+	 * iterate over each ip block in buffer, 
++	 * iterate over each ip block in buffer,
 +	 * loading data into necessary kerenel-space data structures
 +	*/
 +	buffer_index = (3*4) + 1 + 1 + 8 + BANDWIDTH_MAX_ID_LENGTH;
@@ -7514,7 +7514,7 @@
 +			iam = (info_and_maps*)get_string_map_element(id_map, info->id);
 +			if(iam != NULL)
 +			{
-+				printk("ipt_bandwidth: error, \"%s\" is a duplicate id\n", info->id); 
++				printk("ipt_bandwidth: error, \"%s\" is a duplicate id\n", info->id);
 +				spin_unlock_bh(&bandwidth_lock);
 +				up(&userspace_lock);
 +				return 0;
@@ -7536,16 +7536,16 @@
 +				{
 +					info->next_reset = get_next_reset_time(info, now, now);
 +					master_info->next_reset = info->next_reset;
-+					/* 
-+					 * if we specify last backup time, check that next reset is consistent, 
-+					 * otherwise reset current_bandwidth to 0 
-+					 * 
++					/*
++					 * if we specify last backup time, check that next reset is consistent,
++					 * otherwise reset current_bandwidth to 0
++					 *
 +					 * only applies to combined type -- otherwise we need to handle setting bandwidth
 +					 * through userspace library
 +					 */
 +					if(info->last_backup_time != 0 && info->type == BANDWIDTH_COMBINED)
 +					{
-+						time_t adjusted_last_backup_time = info->last_backup_time - (60 * local_minutes_west); 
++						time_t adjusted_last_backup_time = info->last_backup_time - (60 * local_minutes_west);
 +						time_t next_reset_of_last_backup = get_next_reset_time(info, adjusted_last_backup_time, adjusted_last_backup_time);
 +						if(next_reset_of_last_backup != info->next_reset)
 +						{
@@ -7670,7 +7670,7 @@
 +				histories_to_free = (bw_history**)destroy_long_map(iam->ip_history_map, DESTROY_MODE_RETURN_VALUES, &num_destroyed);
 +				
 +				/* num_destroyed will be 0 if histories_to_free is null after malloc failure, so this is safe */
-+				for(history_index = 0; history_index < num_destroyed; history_index++) 
++				for(history_index = 0; history_index < num_destroyed; history_index++)
 +				{
 +					bw_history* h = histories_to_free[history_index];
 +					if(h != NULL)
@@ -7700,7 +7700,7 @@
 +	#endif
 +}
 +
-+static struct nf_sockopt_ops ipt_bandwidth_sockopts = 
++static struct nf_sockopt_ops ipt_bandwidth_sockopts =
 +{
 +	.pf = PF_INET,
 +	.set_optmin = BANDWIDTH_SET,
@@ -7712,7 +7712,7 @@
 +};
 +
 +
-+static struct xt_match bandwidth_match __read_mostly = 
++static struct xt_match bandwidth_match __read_mostly =
 +{
 +	.name		= "bandwidth",
 +	.match		= &match,
@@ -7784,13 +7784,13 @@
 --- /dev/null
 +++ b/net/ipv4/netfilter/ipt_webmon.c
 @@ -0,0 +1,1191 @@
-+/*  webmon --	A netfilter module to match URLs in HTTP requests 
++/*  webmon --	A netfilter module to match URLs in HTTP requests
 + *  		This module can match using string match or regular expressions
 + *  		Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
 + *
 + *
 + *  Copyright © 2008-2011 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your
@@ -7993,7 +7993,7 @@
 +	size_t len;
 +
 +
-+	if ((c = *find++) != '\0') 
++	if ((c = *find++) != '\0')
 +	{
 +		len = strlen(find);
 +		do
@@ -8021,7 +8021,7 @@
 +      	return ((char *)s);
 +}
 +
-+/* NOTE: This is not quite real edit distance -- all differences are assumed to be in one contiguous block 
++/* NOTE: This is not quite real edit distance -- all differences are assumed to be in one contiguous block
 + *       If differences are not in a contiguous block computed edit distance will be greater than real edit distance.
 + *       Edit distance computed here is an upper bound on real edit distance.
 + */
@@ -8061,13 +8061,13 @@
 +/*
 + * line is the line to be parsed -- it is not modified in any way
 + * max_pieces indicates number of pieces to return, if negative this is determined dynamically
-+ * include_remainder_at_max indicates whether the last piece, when max pieces are reached, 
++ * include_remainder_at_max indicates whether the last piece, when max pieces are reached,
 + * 	should be what it would normally be (0) or the entire remainder of the line (1)
 + * 	if max_pieces < 0 this parameter is ignored
 + *
 + *
 + * returns all non-separator pieces in a line
-+ * result is dynamically allocated, MUST be freed after call-- even if 
++ * result is dynamically allocated, MUST be freed after call-- even if
 + * line is empty (you still get a valid char** pointer to to a NULL char*)
 + */
 +char** split_on_separators(char* line, char* separators, int num_separators, int max_pieces, int include_remainder_at_max, unsigned long *num_pieces)
@@ -8225,7 +8225,7 @@
 +		path_start_index++;
 +	}
 +	path_end_index= (int)(strstr( (char*)(packet_data+path_start_index), " ") -  (char*)packet_data);
-+	if(path_end_index > 0) 
++	if(path_end_index > 0)
 +	{
 +		int path_length = path_end_index-path_start_index;
 +		path_length = path_length < 625 ? path_length : 624; /* prevent overflow */
@@ -8268,11 +8268,11 @@
 +		}
 +		
 +		domain_end_index = 0;
-+		while(	domain_match[domain_end_index] != '\n' && 
-+			domain_match[domain_end_index] != '\r' && 
-+			domain_match[domain_end_index] != ' ' && 
-+			domain_match[domain_end_index] != ':' && 
-+			((char*)domain_match - (char*)packet_data)+domain_end_index < last_header_index 
++		while(	domain_match[domain_end_index] != '\n' &&
++			domain_match[domain_end_index] != '\r' &&
++			domain_match[domain_end_index] != ' ' &&
++			domain_match[domain_end_index] != ':' &&
++			((char*)domain_match - (char*)packet_data)+domain_end_index < last_header_index
 +			)
 +		{
 +			domain_end_index++;
@@ -8413,7 +8413,7 @@
 +	spin_lock_bh(&webmon_lock);
 +	copy_from_user(buffer, user, len);
 +
-+	if(len > 1 + sizeof(uint32_t)) 
++	if(len > 1 + sizeof(uint32_t))
 +	{
 +		unsigned char type = buffer[0];
 +		uint32_t max_queue_length = *((uint32_t*)(buffer+1));
@@ -8512,7 +8512,7 @@
 +	
 +	return 1;
 +}
-+static struct nf_sockopt_ops ipt_webmon_sockopts = 
++static struct nf_sockopt_ops ipt_webmon_sockopts =
 +{
 +	.pf         = PF_INET,
 +	.set_optmin = WEBMON_SET,
@@ -8895,7 +8895,7 @@
 +
 +}
 +
-+static struct xt_match webmon_match __read_mostly  = 
++static struct xt_match webmon_match __read_mostly  =
 +{
 +
 +	.name		= "webmon",
@@ -8978,13 +8978,13 @@
 --- /dev/null
 +++ b/include/linux/netfilter_ipv4/ipt_weburl.h
 @@ -0,0 +1,46 @@
-+/*  weburl --	A netfilter module to match URLs in HTTP requests 
++/*  weburl --	A netfilter module to match URLs in HTTP requests
 + *  		This module can match using string match or regular expressions
 + *  		Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
 + *
 + *
 + *  Copyright © 2008 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your
@@ -9027,13 +9027,13 @@
 --- /dev/null
 +++ b/include/linux/netfilter_ipv4/ipt_webmon.h
 @@ -0,0 +1,64 @@
-+/*  webmon --	A netfilter module to match URLs in HTTP requests 
++/*  webmon --	A netfilter module to match URLs in HTTP requests
 + *  		This module can match using string match or regular expressions
 + *  		Originally designed for use with Gargoyle router firmware (gargoyle-router.com)
 + *
 + *
 + *  Copyright © 2008-2010 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your
@@ -9101,7 +9101,7 @@
 + *
 + *
 + *  Copyright © 2009 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your
@@ -9166,7 +9166,7 @@
 +#define BANDWIDTH_MAX_ID_LENGTH		  50
 +
 +/* 4 bytes for total number of entries, 100 entries of 12 bytes each, + 1 byte indicating whether all have been dumped */
-+#define BANDWIDTH_QUERY_LENGTH		1205 
++#define BANDWIDTH_QUERY_LENGTH		1205
 +#define BANDWIDTH_ENTRY_LENGTH		  12
 +
 +
@@ -9209,7 +9209,7 @@
 + *
 + *
 + *  Copyright © 2009 by Eric Bishop <eric@gargoyle-router.com>
-+ * 
++ *
 + *  This file is free software: you may copy, redistribute and/or modify it
 + *  under the terms of the GNU General Public License as published by the
 + *  Free Software Foundation, either version 2 of the License, or (at your

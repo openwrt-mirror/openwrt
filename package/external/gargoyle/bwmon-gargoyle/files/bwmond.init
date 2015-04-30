@@ -250,7 +250,8 @@ start()
 	echo "0 0,4,8,12,16,20 * * * $backup_script" >> "$tmp_cron"
 	
 	mkdir -p "$backup_script_dir"
-	echo "#!/bin/sh" > "$backup_script"
+	echo "#!/bin/sh"          > "$backup_script"
+	echo "touch /etc/banner" >> "$backup_script"
 	chmod 700 "$backup_script"
 	
 

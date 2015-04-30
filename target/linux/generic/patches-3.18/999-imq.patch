@@ -314,7 +314,7 @@
 +/*
 +static struct nf_hook_ops imq_ops[] = {
 +	{
-+	// imq_ingress_ipv4 
++	// imq_ingress_ipv4
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET,
@@ -326,7 +326,7 @@
 +#endif
 +	},
 +	{
-+	// imq_egress_ipv4 
++	// imq_egress_ipv4
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET,
@@ -339,7 +339,7 @@
 +	},
 +#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 +	{
-+	// imq_ingress_ipv6 
++	// imq_ingress_ipv6
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET6,
@@ -351,7 +351,7 @@
 +#endif
 +	},
 +	{
-+	// imq_egress_ipv6 
++	// imq_egress_ipv6
 +		.hook		= imq_nf_hook,
 +		.owner		= THIS_MODULE,
 +		.pf		= PF_INET6,
@@ -1022,13 +1022,13 @@
 +/*
 + * line is the line to be parsed -- it is not modified in any way
 + * max_pieces indicates number of pieces to return, if negative this is determined dynamically
-+ * include_remainder_at_max indicates whether the last piece, when max pieces are reached, 
++ * include_remainder_at_max indicates whether the last piece, when max pieces are reached,
 + * 	should be what it would normally be (0) or the entire remainder of the line (1)
 + * 	if max_pieces < 0 this parameter is ignored
 + *
 + *
 + * returns all non-separator pieces in a line
-+ * result is dynamically allocated, MUST be freed after call-- even if 
++ * result is dynamically allocated, MUST be freed after call-- even if
 + * line is empty (you still get a valid char** pointer to to a NULL char*)
 + */
 +char** split_on_separators(char* line, char* separators, int num_separators, int max_pieces, int include_remainder_at_max, unsigned long *num_pieces)
@@ -1209,7 +1209,7 @@
 +	}
 +	
 +	/* we multiply by 2 here since we need hooks for both IPv4 and IPv6 */
-+	hook_list = (struct nf_hook_ops*)kmalloc(sizeof(struct nf_hook_ops)*((num_chains*2)+1), GFP_ATOMIC); 
++	hook_list = (struct nf_hook_ops*)kmalloc(sizeof(struct nf_hook_ops)*((num_chains*2)+1), GFP_ATOMIC);
 +	
 +	
 +	for(hook_index=0; hook_index < num_chains; hook_index++)
@@ -1219,8 +1219,8 @@
 +		int valid = 0;
 +		if(strcmp(chain, "PREROUTING") == 0 || strcmp(chain, "POSTROUTING") == 0 || strcmp(chain, "INPUT") == 0 || strcmp(chain, "FORWARD") == 0 || strcmp(chain, "OUTPUT") == 0)
 +		{
-+			if( 	strcmp(table, "mangle") == 0 || 
-+				(strcmp(table, "nat") == 0 && strcmp(chain, "FORWARD") != 0 && strcmp(chain, "INPUT") != 0 ) || 
++			if( 	strcmp(table, "mangle") == 0 ||
++				(strcmp(table, "nat") == 0 && strcmp(chain, "FORWARD") != 0 && strcmp(chain, "INPUT") != 0 ) ||
 +				(strcmp(table, "filter") == 0 && strcmp(chain, "PREROUTING") != 0 && strcmp(chain, "POSTROUTING") != 0 )
 +			  )
 +			{
