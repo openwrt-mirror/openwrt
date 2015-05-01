@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_BRANCH:=trunk
 PKG_SOURCE_URL:=https://svn.ntop.org/svn/ntop/trunk/n2n/n2n_v2
-PKG_REV:=9215
+PKG_REV:=9337
 
 PKG_NAME:=n2n_v2
 PKG_VERSION:=$(PKG_REV)
