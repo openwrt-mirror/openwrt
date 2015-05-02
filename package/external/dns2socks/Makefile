@@ -25,6 +25,10 @@ define Build/Compile
 endef
 
 define Package/dns2socks/install
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DATA) ./files/dns2socks.config $(1)/etc/config/dns2socks
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/dns2socks.init $(1)/etc/init.d/dns2socks
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dns2socks $(1)/usr/bin
 endef

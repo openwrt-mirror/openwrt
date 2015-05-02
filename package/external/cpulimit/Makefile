@@ -14,9 +14,9 @@ PKG_REV:=fd48ecf5a123ddaf5dd02d7928f975db719975bb
 include $(INCLUDE_DIR)/package.mk
 
 define Package/cpulimit
-  CATEGORY:=Utilities
-  TITLE:=cpulimit
-  URL:=https://github.com/opsengine/cpulimit.git
+	CATEGORY:=Utilities
+	TITLE:=cpulimit
+	URL:=https://github.com/opsengine/cpulimit.git
 endef
 
 define Build/Prepare
@@ -25,6 +25,10 @@ define Build/Prepare
 endef
 
 define Package/cpulimit/install
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DATA) ./files/cpulimit.config $(1)/etc/config/cpulimit
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/cpulimit.init $(1)/etc/init.d/cpulimit
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cpulimit $(1)/usr/bin
 endef
