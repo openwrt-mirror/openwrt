@@ -3389,7 +3389,7 @@ CONFIG_PACKAGE_ShadowVPN=y
 # CONFIG_PACKAGE_batctl is not set
 # CONFIG_PACKAGE_bmon is not set
 # CONFIG_PACKAGE_bwm-ng is not set
-CONFIG_PACKAGE_bwmon-gargoyle=y
+# CONFIG_PACKAGE_bwmon-gargoyle is not set
 # CONFIG_PACKAGE_chat is not set
 # CONFIG_PACKAGE_cshark is not set
 # CONFIG_PACKAGE_dhcpcd is not set
