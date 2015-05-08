@@ -149,6 +149,7 @@ static uint32_t rootfs_align;
 static struct file_info boot_info;
 static int combined;
 static int strip_padding;
+static int ignore_size;
 static int add_jffs2_eof;
 static unsigned char jffs2_eof_mark[4] = {0xde, 0xad, 0xc0, 0xde};
 static uint32_t fw_max_len;
@@ -507,6 +508,7 @@ static void usage(int status)
 "  -R <offset>     overwrite rootfs offset with <offset> (hexval prefixed with 0x)\n"
 "  -o <file>       write output to the file <file>\n"
 "  -s              strip padding from the end of the image\n"
+"  -S              ignore firmware size limit (only for combined images)\n"
 "  -j              add jffs2 end-of-filesystem markers\n"
 "  -N <vendor>     set image vendor to <vendor>\n"
 "  -V <version>    set image version to <version>\n"
@@ -651,8 +653,13 @@ static int check_options(void)
 	if (combined) {
 		if (kernel_info.file_size >
 		    fw_max_len - sizeof(struct fw_header)) {
-			ERR("kernel image is too big");
-			return -1;
+			if (!ignore_size) {
+				ERR("kernel image is too big");
+				return -1;
+			}
+			layout->fw_max_len = sizeof(struct fw_header) +
+					     kernel_info.file_size +
+					     reserved_space;
 		}
 	} else {
 		if (rootfs_info.file_name == NULL) {
@@ -1087,7 +1094,7 @@ int main(int argc, char *argv[])
 	while ( 1 ) {
 		int c;
 
-		c = getopt(argc, argv, "a:B:H:E:F:L:V:N:W:ci:k:r:R:o:xX:hsjv:");
+		c = getopt(argc, argv, "a:B:H:E:F:L:V:N:W:ci:k:r:R:o:xX:hsSjv:");
 		if (c == -1)
 			break;
 
@@ -1139,6 +1146,9 @@ int main(int argc, char *argv[])
 			break;
 		case 's':
 			strip_padding = 1;
+			break;
+		case 'S':
+			ignore_size = 1;
 			break;
 		case 'i':
 			inspect_info.file_name = optarg;
