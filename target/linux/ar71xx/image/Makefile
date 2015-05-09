@@ -58,12 +58,7 @@ define Build/mktplinkfw
 		-o $@.new \
 		-j -X 0x40000 \
 		-a $(call rootfs_align,$(FILESYSTEM)) \
-<<<<<<< HEAD
-		$(if $(findstring sysupgrade,$1),-s)
-	-@mv $@.new $@
-=======
 		$(if $(findstring sysupgrade,$1),-s) && mv $@.new $@ || rm -f $@
->>>>>>> 61cb36cd7a6f2b887f44b8de3a13db8f0d07f1cd
 endef
 
 # -c combined image
