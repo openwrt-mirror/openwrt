@@ -360,11 +360,14 @@ endef
 
 define Device/Check
   _TARGET = $$(if $$(filter $(PROFILE),$$(PROFILES)),install,install-disabled)
+  _COMPILE_TARGET = $$(if $(if $(IB),,$(CONFIG_IB)$$(filter $(PROFILE),$$(PROFILES))),compile,compile-disabled)
 endef
 
+ifndef IB
 define Device/Build/initramfs
   $$(_TARGET): $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE)
 
+  $(KDIR)/$$(KERNEL_NAME)-initramfs: image_prepare
   $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_INITRAMFS_IMAGE)
 	cp $$^ $$@
 
@@ -372,12 +375,21 @@ define Device/Build/initramfs
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL_INITRAMFS))
 endef
+endif
 
 define Device/Build/check_size
 	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
 		echo "WARNING: Image file $@ is too big"; \
 		rm -f $@; \
 	}
+endef
+
+define Device/Build/compile
+  $$(_COMPILE_TARGET): $(KDIR)/$(1)
+  $(eval $(call Device/Export,$(KDIR)/$(1)))
+  $(KDIR)/$(1):
+	$$(call concat_cmd,$(COMPILE/$(1)))
+
 endef
 
 define Device/Build/kernel
@@ -411,6 +423,9 @@ endef
 define Device/Build
   $(if $(CONFIG_TARGET_ROOTFS_INITRAMFS),$(call Device/Build/initramfs,$(1)))
   $(call Device/Build/kernel,$(1))
+
+  $$(eval $$(foreach compile,$$(COMPILE), \
+    $$(call Device/Build/compile,$$(compile),$(1))))
 
   $$(eval $$(foreach image,$$(IMAGES), \
     $$(foreach fs,$$(filter $(TARGET_FILESYSTEMS),$$(FILESYSTEMS)), \
