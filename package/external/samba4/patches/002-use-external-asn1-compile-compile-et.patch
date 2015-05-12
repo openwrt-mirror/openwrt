@@ -1,0 +1,31 @@
+--- a/source4/heimdal_build/wscript_build
++++ b/source4/heimdal_build/wscript_build
+@@ -920,6 +920,8 @@
+         install=False
+     )
+     bld.env['ASN1_COMPILE'] = os.path.join(bld.env['BUILD_DIRECTORY'], 'asn1_compile')
++else:
++    bld.env['ASN1_COMPILE'] = 'asn1_compile'
+ 
+ 
+ if not bld.CONFIG_SET('USING_SYSTEM_COMPILE_ET'):
+@@ -934,6 +936,8 @@
+         install=False
+         )
+     bld.env['COMPILE_ET'] = os.path.join(bld.env['BUILD_DIRECTORY'], 'compile_et')
++else:
++    bld.env['COMPILE_ET'] = 'compile_et'
+ 
+ HEIMDAL_BINARY('samba4kinit',
+     'kuser/kinit.c',
+--- a/source4/heimdal_build/wscript_configure
++++ b/source4/heimdal_build/wscript_configure
+@@ -167,6 +167,8 @@
+ conf.define('HAVE_KRB5_PRINCIPAL_SET_REALM', 1)
+ conf.define('HAVE_KRB5_PRINCIPAL_GET_TYPE', 1)
+ conf.define('HAVE_KRB5_WARNX', 1)
++conf.define('USING_SYSTEM_ASN1_COMPILE', 1)
++conf.define('USING_SYSTEM_COMPILE_ET', 1)
+ 
+ heimdal_includedirs = []
+ heimdal_libdirs = []

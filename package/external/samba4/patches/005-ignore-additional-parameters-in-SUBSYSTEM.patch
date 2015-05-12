@@ -1,0 +1,22 @@
+--- a/buildtools/wafsamba/wafsamba.py
++++ b/buildtools/wafsamba/wafsamba.py
+@@ -544,6 +544,19 @@
+                     subdir=None,
+                     hide_symbols=False,
+                     allow_warnings=True,
++                    vnum='',
++                    pc_files='',
++                    private_library='',
++                    abi_match='',
++                    abi_directory='',
++                    grouping_library='',
++                    allow_undefined_symbols='',
++                    manpages='',
++                    realname='',
++                    install='',
++                    keep_underscore='',
++                    link_name='',
++                    install_path='',
+                     pyext=False,
+                     pyembed=False):
+     '''define a Samba subsystem'''

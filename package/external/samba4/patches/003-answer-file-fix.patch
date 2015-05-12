@@ -1,0 +1,11 @@
+--- a/wscript_configure_system_mitkrb5
++++ b/wscript_configure_system_mitkrb5
+@@ -247,7 +247,7 @@
+        ''',
+     'HAVE_WRFILE_KEYTAB',
+     headers='krb5.h', lib='krb5', execute=True,
+-    msg="Checking whether the WRFILE:-keytab is supported");
++    msg="Checking whether the WRFILE-keytab is supported");
+ # Check for KRB5_DEPRECATED handling
+ conf.CHECK_CODE('''#define KRB5_DEPRECATED 1
+        #include <krb5.h>''',
