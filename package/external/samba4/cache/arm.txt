@@ -29,10 +29,8 @@ Checking whether POSIX capabilities are available: OK
 Checking for ftruncate extend: OK
 vfs_fileid checking for statfs() and struct statfs.f_fsid: OK
 getcwd takes a NULL argument: OK
-Checking uname sysname type: "Linux"
 Checking value of NSIG: "65"
 Checking value of _NSIG: "65"
 Checking value of SIGRTMAX: "64"
 Checking value of SIGRTMIN: "34"
-Checking uname version type: "#1 Tue Nov 1 12:34:56 UTC 2013"
-Checking uname release type: "3.18.1"
+Checking whether the WRFILE-keytab is supported: OK

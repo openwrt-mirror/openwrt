@@ -19,12 +19,12 @@ PKG_SOURCE_URL:=http://ftp.samba.org/pub/samba \
 	http://ftp.samba.org/pub/samba/old-versions
 PKG_SOURCE:=samba-$(PKG_VERSION).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/samba-$(PKG_VERSION)
-PKG_MD5SUM:=
+PKG_MD5SUM:=614b4c7b9bbc70cff4cb56956f565741
 
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=COPYING
 
-PKG_BUILD_DEPENDS:=heimdal/host python
+PKG_BUILD_DEPENDS:=python
 
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
@@ -38,11 +38,11 @@ PKG_BUILD_BIN:=$(PKG_BUILD_DIR)/$(MAKE_PATH)/bin
 define Package/samba4-server
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=Samba $(PKG_VERSION) SMB/CIFS server with ADS support
+  TITLE:=Samba $(PKG_VERSION) SMB/CIFS server
   URL:=http://www.samba.org/
   VARIANT:=samba4-server
   DEPENDS:=BROKEN
-  #DEPENDS:=+USE_EGLIBC:librt +libpopt +libuuid +libopenldap-sasl +libiconv +libacl +libreadline +libaio +libtirpc +wsdd
+  #DEPENDS:=+USE_EGLIBC:librt +libpopt +libiconv +libreadline
 endef
 
 define Package/samba4-client
@@ -51,7 +51,7 @@ define Package/samba4-client
   TITLE:=Samba $(PKG_VERSION) SMB/CIFS client
   URL:=http://www.samba.org/
   DEPENDS:=BROKEN
-  #DEPENDS:=+libreadline +libncurses +libopenldap-sals +libaio +zlib
+  #DEPENDS:=+libreadline +libncurses +zlib
 endef
 
 define Package/samba4-server/config
@@ -71,7 +71,6 @@ endef
 
 TARGET_CFLAGS += \
 	-DMAX_DEBUG_LEVEL=$(CONFIG_PACKAGE_SAMBA4_MAX_DEBUG_LEVEL) \
-	-I$(STAGING_DIR)/usr/include/krb5 \
 	-DACTIVE_DIRECTORY \
 	-DDFS_SUPPORT \
 	-DNETLOGON_SUPPORT \
@@ -81,10 +80,9 @@ TARGET_CFLAGS += \
 	-ffunction-sections -fdata-sections
 
 CONFIGURE_VARS += \
-	PYTHON_CONFIG="$(STAGING_DIR)/usr/bin/python-config" \
+	PYTHON_CONFIG="$(STAGING_DIR_HOST)/bin/python-config" \
 	python_LDFLAGS="" \
-	python_LIBDIR="" \
-	KRB5_CONFIG="$(STAGING_DIR)/usr/bin/krb5-config"
+	python_LIBDIR=""
 
 SAMBA4_CONFIGURE_ARGS = \
 	--disable-rpath \
@@ -106,65 +104,31 @@ SAMBA4_CONFIGURE_ARGS = \
 	--with-piddir=/var/run \
 	--with-privatedir=/etc/samba \
 	--with-sendfile-support \
-	--with-aio-support \
+	--without-aio-support \
 	--without-cluster-support \
 	--without-pam \
 	--without-winbind \
 	--without-dnsupdate \
-	--with-ads \
-	--with-ldap \
+	--without-ads \
+	--without-ldap \
+	--without-ad-dc \
 	--with-libiconv=$(STAGING_DIR)/usr/lib/libiconv \
-	--with-acl-support \
-	--with-quotas \
+	--without-acl-support \
+	--without-quotas \
 	--with-syslog \
-	--with-system-mitkrb5 \
+	--without-systemd \
+	--nopyo \
+	--nopyc \
 	--with-shared-modules=pdb_tdbsam,pdb_wbc_sam,idmap_nss,nss_info_template,vfs \
-	--with-static-modules=vfs_default,vfs_dirsort,vfs_posixacl \
+	--with-static-modules=vfs_default,vfs_dirsort,auth_wbc,auth_domain \
 	--bundled-libraries='!asn1_compile,!compile_et'
 
 #	--builtin-libraries= \
 
 
-CROSS = " \
-	\nChecking simple C program: OK \
-	\nrpath library support: OK \
-	\n-Wl,--version-script support: OK \
-	\nChecking getconf LFS_CFLAGS: NO \
-	\nChecking for large file support without additional flags: OK \
-	\nChecking for -D_LARGE_FILES: OK \
-	\nChecking correct behavior of strtoll: NO \
-	\nChecking for working strptime: OK \
-	\nChecking for C99 vsnprintf: OK \
-	\nChecking for HAVE_SHARED_MMAP: OK \
-	\nChecking for HAVE_MREMAP: OK \
-	\nChecking for HAVE_INCOHERENT_MMAP: NO \
-	\nChecking for HAVE_SECURE_MKSTEMP: OK \
-	\nChecking for HAVE_IFACE_GETIFADDRS: OK \
-	\nChecking for kernel change notify support: OK \
-	\nChecking for Linux kernel oplocks: OK \
-	\nChecking for kernel share modes: OK \
-	\nChecking if can we convert from CP850 to UCS-2LE: OK \
-	\nChecking if can we convert from UTF-8 to UCS-2LE: OK \
-	\nChecking whether we can use Linux thread-specific credentials with 32-bit system calls: OK \
-	\nChecking whether we can use Linux thread-specific credentials: OK \
-	\nChecking whether setreuid is available: OK \
-	\nChecking whether setresuid is available: OK \
-	\nChecking whether seteuid is available: OK \
-	\nChecking whether fcntl locking is available: OK \
-	\nChecking for the maximum value of the 'time_t' type: OK \
-	\nChecking whether the realpath function allows a NULL argument: OK \
-	\nChecking whether POSIX capabilities are available: OK \
-	\nChecking for ftruncate extend: OK \
-	\nvfs_fileid checking for statfs() and struct statfs.f_fsid: OK \
-	\ngetcwd takes a NULL argument: OK \
-	\nChecking value of NSIG: \"65\" \
-	\nChecking value of _NSIG: \"65\" \
-	\nChecking value of SIGRTMAX: \"64\" \
-	\nChecking value of SIGRTMIN: \"34\" \
-	\nChecking whether the WRFILE-keytab is supported: OK \
-	\n"
 
-# Checking uname version type: "#1 Tue Nov 1 12:34:56 UTC 2013" ?? host or target device's version type
+
+# Checking uname version type: "#1 Tue Nov 1 12:34:56 UTC 2013" ... target device's version type
 # current is host's version type.
 #	@echo 'Target: $(TARGETID)'; \
 #	 echo 'Target-Board: $(BOARD)'; \
@@ -174,24 +138,45 @@ CROSS = " \
 #	 echo 'Target-Arch-Packages: $(if $(ARCH_PACKAGES),$(ARCH_PACKAGES),$(BOARD))'; \
 #	 echo 'Target-Features: $(FEATURES)'; \
 #	 echo 'Target-Depends: $(DEPENDS)'; \
-#	 echo 'Target-Optimization: $(if $(CFLAGS),$(CFLAGS),$(DEFAULT_CFLAGS))'; \
 #	 echo 'CPU-Type: $(CPU_TYPE)$(if $(CPU_SUBTYPE),+$(CPU_SUBTYPE))'; \
 #	 echo 'Linux-Version: $(LINUX_VERSION)'; \
-#	 echo 'Linux-Release: $(LINUX_RELEASE)'; \
 #	 echo 'Linux-Kernel-Arch: $(LINUX_KARCH)'; 
+####
+# Checking uname version type: \"$(shell uname -v 2>&1)\"
+# \nChecking uname machine type: \"$(ARCH)\"
 ####
 #	HOSTCFLAGS="$(HOST_CFLAGS) -Wall -Wmissing-prototypes -Wstrict-prototypes" \
 #	CROSS_COMPILE="$(KERNEL_CROSS)" \             <<<<<<<<<<<-------???
 #	ARCH="$(LINUX_KARCH)" \                       <<<<<<<<<<<-------???
 #	KBUILD_HAVE_NLS=no \
 #	CONFIG_SHELL="$(BASH)" 
+### https://wiki.python.org/moin/Python20FrequentlyAskedQuestions
+# Q. I get an error in pyport.h: LONG_BIT definition appears wrong for platform (bad gcc config?). When I remove the #error directive it builds fine.
+#A. You must be using Red Hat 7.0. It comes with a broken compiler. GCC 2.96 was never intended for distribution. You will need to update your glibc to version 2.2 (see http://www.redhat.com/support/errata/RHBA-2000-079.html for more information). I used the up2date command to install the new glibc.
+###  python 2.7 STAGING_DIR_HOST pyport.h remove error
+#//#if LONG_BIT != 8 * SIZEOF_LONG
+#/* 04-Oct-2000 LONG_BIT is apparently (mis)defined as 64 on some recent
+# * 32-bit platforms using gcc.  We try to catch that here at compile-time
+# * rather than waiting for integer multiplication to trigger bogus
+# * overflows.
+# */
+#//#error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
+#//#endif
+#
+#
+###########
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./cache/$(ARCH).txt $(PKG_BUILD_DIR)/cache.txt
+	$(call Build/Prepare/Default)
+endef
 
 define Build/Configure
 	(cd $(PKG_BUILD_DIR); \
-		echo -e >cache.txt $(CROSS) " \
+		echo -e >>cache.txt " \
 			\nChecking uname release type: \"$(LINUX_VERSION)\" \
-			\nChecking uname machine type: \"$(ARCH)\" \
-			\nChecking uname version type: \"$(shell uname -v 2>&1)\" \
+			\nChecking uname machine type: \"$(LINUX_KARCH)\" \
+			\nChecking uname version type: \"#1 Tue Nov 1 12:34:56 UTC 2013\" \
 			\nChecking uname sysname type: \"Linux\" \
 			\n" ; \
 		$(CONFIGURE_VARS) \
@@ -214,8 +199,6 @@ define Package/samba4-server/install
 	$(LN) ../sbin/$(PKG_NAME)_multicall $(1)/usr/bin/smbcacls
 	$(LN) ../sbin/$(PKG_NAME)_multicall $(1)/usr/bin/nmblookup
 	$(LN) ../sbin/$(PKG_NAME)_multicall $(1)/usr/bin/testparm
-	$(INSTALL_DIR) $(1)/etc/openldap/schema
-	$(CP) $(PKG_BUILD_DIR)/examples/LDAP/samba.schema $(1)/etc/openldap/schema
 	$(INSTALL_DIR) $(1)/etc/samba
 	$(LN) /var/etc/secrets.tdb $(1)/etc/samba/secrets.tdb
 	$(LN) /var/etc/schannel_store.tdb $(1)/etc/samba/schannel_store.tdb
