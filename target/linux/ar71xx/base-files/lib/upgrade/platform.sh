@@ -224,9 +224,11 @@ platform_check_image() {
 	loco-m-xw | \
 	nanostation-m | \
 	rocket-m | \
+	rocket-m-xw | \
 	nanostation-m-xw | \
 	rw2458n | \
 	wndap360 | \
+	wpj344 | \
 	wzr-hp-g300nh2 | \
 	wzr-hp-g300nh | \
 	wzr-hp-g450h | \
@@ -444,6 +446,19 @@ platform_check_image() {
 
 	echo "Sysupgrade is not yet supported on $board."
 	return 1
+}
+
+platform_pre_upgrade() {
+	local board=$(ar71xx_board_name)
+
+	case "$board" in
+	nbg6716 | \
+	r6100 | \
+	wndr3700v4 | \
+	wndr4300 )
+		nand_do_upgrade "$1"
+		;;
+	esac
 }
 
 platform_do_upgrade() {

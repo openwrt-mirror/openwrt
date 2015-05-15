@@ -14,6 +14,10 @@ define Image/Prepare
 	echo -ne '\xde\xad\xc0\xde' > $(KDIR)/fs_mark
 	$(call prepare_generic_squashfs,$(KDIR)/fs_mark)
 
+	# For UBI we want only one extra block
+	rm -f $(KDIR)/ubi_mark
+	echo -ne '\xde\xad\xc0\xde' > $(KDIR)/ubi_mark
+
 	$(CP) ./ubinize.cfg $(KDIR)
 endef
 
@@ -30,13 +34,24 @@ define Build/mkfs/squashfs
 	( cd $(KDIR); $(STAGING_DIR_HOST)/bin/ubinize -p 128KiB -m 2048 -o $(KDIR)/root-block-0x20000-min-0x800.ubi ubinize.cfg )
 endef
 
+define Build/trx-serial
+	$(STAGING_DIR_HOST)/bin/trx \
+		-o $@ \
+		-f $(word 1,$^) -a 1024 \
+		-f $(KDIR)/root.squashfs -a 0x10000 -A $(KDIR)/fs_mark
+endef
+
 define Build/trx-nand
+	# kernel: always use 4 MiB (-28 B or TRX header) to allow upgrades even
+	#	  if it grows up between releases
+	# root: UBI with one extra block containing UBI mark to trigger erasing
+	#	rest of partition
 	$(STAGING_DIR_HOST)/bin/trx \
 		-o $@ \
 		-m 33554432 \
-		-f $(word 1,$^) \
-		-a 0x20000 -f $(KDIR)/root-block-0x20000-min-0x800.ubi \
-		-a 0x20000 -A $(KDIR)/fs_mark
+		-f $(word 1,$^) -a 0x20000 -b 0x400000 \
+		-f $(KDIR)/root-block-0x20000-min-0x800.ubi \
+		-A $(KDIR)/ubi_mark -a 0x20000
 endef
 
 define Build/netgear-chk
@@ -80,10 +95,16 @@ define Device/netgear-r8000
   BOARD_ID := U12H315T00_NETGEAR
 endef
 
+define Device/smartrg-sr400ac
+  IMAGES := trx
+  IMAGE/trx := trx-serial
+endef
+
 TARGET_DEVICES += \
 	asus-rt-ac56u asus-rt-ac68u asus-rt-ac87u asus-rt-n18u \
-	netgear-r6250 netgear-r6300-v2 netgear-r8000 \
 	buffalo-wzr-1750dhp buffalo-wzr-600dhp2 buffalo-wzr-900dhp \
-	buffalo-wxr-1900dhp
+	buffalo-wxr-1900dhp \
+	netgear-r6250 netgear-r6300-v2 netgear-r8000 \
+	smartrg-sr400ac
 
 $(eval $(call BuildImage))

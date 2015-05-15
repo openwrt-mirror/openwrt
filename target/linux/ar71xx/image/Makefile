@@ -13,7 +13,7 @@ JFFS2_BLOCKSIZE = 64k 128k 256k
 
 KERNEL_LOADADDR = 0x80060000
 
-DEVICE_VARS += NETGEAR_KERNEL_MAGIC NETGEAR_BOARD NETGEAR_ID CMDLINE CONSOLE IMAGE_SIZE
+DEVICE_VARS += NETGEAR_KERNEL_MAGIC NETGEAR_BOARD NETGEAR_ID CMDLINE CONSOLE IMAGE_SIZE BOARDNAME LOADER_FLASH_OFFS
 
 define Build/netgear-squashfs
 	rm -rf $@.fs $@.squashfs
@@ -51,15 +51,14 @@ endef
 # -s strip padding from end of the image
 # -X reserve <size> bytes in the firmware image (hexval prefixed with 0x)
 define Build/mktplinkfw
-	$(STAGING_DIR_HOST)/bin/mktplinkfw \
+	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
 		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) -F $(TPLINK_FLASHLAYOUT) -N OpenWrt -V $(REVISION) \
 		-k $(word 1,$^) \
 		-r $@ \
 		-o $@.new \
 		-j -X 0x40000 \
 		-a $(call rootfs_align,$(FILESYSTEM)) \
-		$(if $(findstring sysupgrade,$1),-s)
-	@mv $@.new $@
+		$(if $(findstring sysupgrade,$1),-s) && mv $@.new $@ || rm -f $@
 endef
 
 # -c combined image
@@ -68,9 +67,39 @@ define Build/mktplinkfw-initramfs
 		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) -F $(TPLINK_FLASHLAYOUT) -N OpenWrt -V $(REVISION) \
 		-k $@ \
 		-o $@.new \
-		-s \
+		-s -S \
 		-c
 	@mv $@.new $@
+endef
+
+define Build/loader-common
+	rm -rf $@.src
+	$(MAKE) -C lzma-loader \
+		PKG_BUILD_DIR="$@.src" \
+		TARGET_DIR="$(dir $@)" LOADER_NAME="$(notdir $@)" \
+		KERNEL_CMDLINE="$(CMDLINE)" BOARD="$(BOARDNAME)" \
+		LZMA_TEXT_START=0x80a00000 LOADADDR=0x80060000 \
+		$(1) compile loader.gz
+	mv "$@.gz" "$@"
+	rm -rf $@.src
+endef
+
+define Build/loader-okli-compile
+	$(call Build/loader-common,FLASH_OFFS=$(LOADER_FLASH_OFFS) FLASH_MAX=0)
+endef
+
+define Build/loader-kernel
+	$(call Build/loader-common,LOADER_DATA="$@")
+endef
+
+define Build/loader-okli
+	dd if=$(KDIR)/loader-$(1).gz bs=7680 conv=sync of="$@.new"
+	cat "$@" >> "$@.new"
+	mv "$@.new" "$@"
+endef
+
+define Build/copy-file
+	cat "$(1)" > "$@"
 endef
 
 DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT
@@ -86,6 +115,7 @@ define Device/Default
   CONSOLE = ttyS0,115200
   CMDLINE = $$(if $$(BOARDNAME),board=$$(BOARDNAME)) $$(if $$(MTDPARTS),mtdparts=$$(MTDPARTS)) $$(if $$(CONSOLE),console=$$(CONSOLE))
   KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma
+  COMPILE :=
   IMAGES := sysupgrade.bin
   IMAGE/sysupgrade.bin = append-kernel $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
 endef
@@ -154,6 +184,27 @@ define Device/tplink
   IMAGE/factory.bin := append-rootfs | mktplinkfw factory
 endef
 
+define Device/tplink-nolzma
+$(Device/tplink)
+  LOADER_FLASH_OFFS := 0x22000
+  COMPILE := loader-$(1).gz
+  COMPILE/loader-$(1).gz := loader-okli-compile
+  KERNEL := copy-file $(KDIR)/vmlinux.bin.lzma | uImage lzma -M 0x4f4b4c49 | loader-okli $(1)
+  KERNEL_INITRAMFS := copy-file $(KDIR)/vmlinux-initramfs.bin.lzma | loader-kernel | mktplinkfw-initramfs
+endef
+
+define Device/tplink-4m
+$(Device/tplink-nolzma)
+  TPLINK_FLASHLAYOUT := 4M
+  IMAGE_SIZE := 3904k
+endef
+
+define Device/tplink-8m
+$(Device/tplink-nolzma)
+  TPLINK_FLASHLAYOUT := 8M
+  IMAGE_SIZE := 7936k
+endef
+
 define Device/tplink-4mlzma
 $(Device/tplink)
   TPLINK_FLASHLAYOUT := 4Mlzma
@@ -209,23 +260,24 @@ TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-
 define Device/archer-c5
     $(Device/tplink-16mlzma)
     BOARDNAME := ARCHER-C5
-    DEVICE_PROFILE := ARCHERC5
+    DEVICE_PROFILE := ARCHERC7
     TPLINK_HWID := 0xc5000001
 endef
 
 define Device/archer-c7-v1
     $(Device/tplink-8mlzma)
     BOARDNAME := ARCHER-C7
-    DEVICE_PROFILE := ARCHERC7V1
+    DEVICE_PROFILE := ARCHERC7
     TPLINK_HWID := 0x75000001
 endef
 
 define Device/archer-c7-v2
     $(Device/tplink-16mlzma)
     BOARDNAME := ARCHER-C7
-    DEVICE_PROFILE := ARCHERC7V2
+    DEVICE_PROFILE := ARCHERC7
     TPLINK_HWID := 0xc7000002
 endef
+TARGET_DEVICES += archer-c5 archer-c7-v1 archer-c7-v2
 
 define Device/el-m150
     $(Device/tplink-8mlzma)
@@ -242,11 +294,12 @@ define Device/el-mini
     TPLINK_HWID := 0x01530001
     CONSOLE := ttyATH0,115200
 endef
+TARGET_DEVICES += el-m150 el-mini
 
 define Device/gl-inet-6408A-v1
     $(Device/tplink-8mlzma)
     BOARDNAME := GL-INET
-    DEVICE_PROFILE := GLINET6408A
+    DEVICE_PROFILE := GLINET
     TPLINK_HWID := 0x08000001
     CONSOLE := ttyATH0,115200
 endef
@@ -254,10 +307,11 @@ endef
 define Device/gl-inet-6416A-v1
     $(Device/tplink-16mlzma)
     BOARDNAME := GL-INET
-    DEVICE_PROFILE := GLINET6416A
+    DEVICE_PROFILE := GLINET
     TPLINK_HWID := 0x08000001
     CONSOLE := ttyATH0,115200
 endef
+TARGET_DEVICES += gl-inet-6408A-v1 gl-inet-6416A-v1
 
 define Device/mc-mac1200r
     $(Device/tplink-8mlzma)
@@ -265,6 +319,7 @@ define Device/mc-mac1200r
     DEVICE_PROFILE := MAC1200R
     TPLINK_HWID := 0x12000001
 endef
+TARGET_DEVICES += mc-mac1200r
 
 define Device/tl-mr10u-v1
     $(Device/tplink-4mlzma)
@@ -277,7 +332,7 @@ endef
 define Device/tl-mr11u-v1
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-MR11U
-    DEVICE_PROFILE := TLMR11UV1
+    DEVICE_PROFILE := TLMR11U
     TPLINK_HWID := 0x00110101
     CONSOLE := ttyATH0,115200
 endef
@@ -285,7 +340,7 @@ endef
 define Device/tl-mr11u-v2
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-MR11U
-    DEVICE_PROFILE := TLMR11UV2
+    DEVICE_PROFILE := TLMR11U
     TPLINK_HWID := 0x00110102
     CONSOLE := ttyATH0,115200
 endef
@@ -305,6 +360,7 @@ define Device/tl-mr13u-v1
     TPLINK_HWID := 0x00130101
     CONSOLE := ttyATH0,115200
 endef
+TARGET_DEVICES += tl-mr10u-v1 tl-mr11u-v1 tl-mr11u-v2 tl-mr12u-v1 tl-mr13u-v1
 
 define Device/tl-mr3020-v1
     $(Device/tplink-4mlzma)
@@ -317,7 +373,7 @@ endef
 define Device/tl-mr3040-v1
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-MR3040
-    DEVICE_PROFILE := TLMR3040V1
+    DEVICE_PROFILE := TLMR3040
     TPLINK_HWID := 0x30400001
     CONSOLE := ttyATH0,115200
 endef
@@ -325,7 +381,7 @@ endef
 define Device/tl-mr3040-v2
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-MR3040-v2
-    DEVICE_PROFILE := TLMR3040V2
+    DEVICE_PROFILE := TLMR3040
     TPLINK_HWID := 0x30400002
     CONSOLE := ttyATH0,115200
 endef
@@ -341,25 +397,10 @@ endef
 define Device/tl-mr3420-v2
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-MR3420-v2
-    DEVICE_PROFILE := TLMR3420V2
+    DEVICE_PROFILE := TLMR3420
     TPLINK_HWID := 0x34200002
 endef
-
-define Device/tl-wa701nd-v2
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WA701ND-v2
-    DEVICE_PROFILE := TLWA701NV2
-    TPLINK_HWID := 0x07010002
-    CONSOLE := ttyATH0,115200
-endef
-
-define Device/tl-wa7210n-v2
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WA7210N-v2
-    DEVICE_PROFILE := TLWA7210NV2
-    TPLINK_HWID := 0x72100002
-    CONSOLE := ttyATH0,115200
-endef
+TARGET_DEVICES += tl-mr3020-v1 tl-mr3040-v1 tl-mr3040-v2 tl-mr3220-v2 tl-mr3420-v2
 
 define Device/tl-wr703n-v1
     $(Device/tplink-4mlzma)
@@ -371,7 +412,15 @@ endef
 
 define Device/tl-wr710n-v1
     $(Device/tplink-8mlzma)
-    BOARDNAME := TL-WR710N
+    BOARDNAME := TL-WR710NV1
+    DEVICE_PROFILE := TLWR710
+    TPLINK_HWID := 0x07100001
+    CONSOLE := ttyATH0,115200
+endef
+
+define Device/tl-wr710n-v2
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR710NV2
     DEVICE_PROFILE := TLWR710
     TPLINK_HWID := 0x07100001
     CONSOLE := ttyATH0,115200
@@ -380,23 +429,38 @@ endef
 define Device/tl-wr720n-v3
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WR720N-v3
-    DEVICE_PROFILE := TLWR720NV3
+    DEVICE_PROFILE := TLWR720
     TPLINK_HWID := 0x07200103
     CONSOLE := ttyATH0,115200
 endef
+TARGET_DEVICES += tl-wr703n-v1 tl-wr710n-v1 tl-wr710n-v2 tl-wr720n-v3
 
 define Device/tl-wr740n-v4
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WR741ND-v4
-    DEVICE_PROFILE := TLWR740NV4
+    DEVICE_PROFILE := TLWR740
     TPLINK_HWID := 0x07400004
     CONSOLE := ttyATH0,115200
+endef
+
+define Device/tl-wr741nd-v1
+    $(Device/tplink-4m)
+    BOARDNAME := TL-WR741ND
+    DEVICE_PROFILE := TLWR741
+    TPLINK_HWID := 0x07410001
+endef
+
+define Device/tl-wr741nd-v2
+    $(Device/tplink-4m)
+    BOARDNAME := TL-WR741ND
+    DEVICE_PROFILE := TLWR741
+    TPLINK_HWID := 0x07410001
 endef
 
 define Device/tl-wr741nd-v4
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WR741ND-v4
-    DEVICE_PROFILE := TLWR741NV4
+    DEVICE_PROFILE := TLWR741
     TPLINK_HWID := 0x07410004
     CONSOLE := ttyATH0,115200
 endef
@@ -404,8 +468,84 @@ endef
 define Device/tl-wr743nd-v2
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WR741ND-v4
-    DEVICE_PROFILE := TLWR743NV2
+    DEVICE_PROFILE := TLWR743
     TPLINK_HWID := 0x07430002
+    CONSOLE := ttyATH0,115200
+endef
+TARGET_DEVICES += tl-wr740n-v4 tl-wr741nd-v1 tl-wr741nd-v2 tl-wr741nd-v4 tl-wr743nd-v2
+
+define Device/tl-wr841n-v8
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR841N-v8
+    DEVICE_PROFILE := TLWR841
+    TPLINK_HWID := 0x08410008
+endef
+
+define Device/tl-wr841n-v9
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR841N-v9
+    DEVICE_PROFILE := TLWR841
+    TPLINK_HWID := 0x08410009
+endef
+
+define Device/tl-wr842n-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR842N-v2
+    DEVICE_PROFILE := TLWR842
+    TPLINK_HWID := 0x8420002
+endef
+
+define Device/tl-wr843nd-v1
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR841N-v8
+    DEVICE_PROFILE := TLWR843
+    TPLINK_HWID := 0x08430001
+endef
+
+define Device/tl-wr847n-v8
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR841N-v8
+    DEVICE_PROFILE := TLWR841
+    TPLINK_HWID := 0x08470008
+endef
+TARGET_DEVICES += tl-wr841n-v8 tl-wr841n-v9 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
+
+define Device/tl-wr941nd-v5
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR941ND-v5
+    DEVICE_PROFILE := TLWR941
+    TPLINK_HWID := 0x09410005
+endef
+
+define Device/tl-wr941nd-v6
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WDR3500
+    DEVICE_PROFILE := TLWR941
+    TPLINK_HWID := 0x09410006
+endef
+TARGET_DEVICES += tl-wr941nd-v5 tl-wr941nd-v6
+
+define Device/tl-wr1041n-v2
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WR1041N-v2
+    DEVICE_PROFILE := TLWR1041
+    TPLINK_HWID := 0x10410002
+endef
+TARGET_DEVICES += tl-wr1041n-v2
+
+define Device/tl-wdr4900-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WDR4900-v2
+    DEVICE_PROFILE := TLWDR4900V2
+    TPLINK_HWID := 0x49000002
+endef
+TARGET_DEVICES += tl-wdr4900-v2
+
+define Device/tl-wa701nd-v2
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WA701ND-v2
+    DEVICE_PROFILE := TLWA701
+    TPLINK_HWID := 0x07010002
     CONSOLE := ttyATH0,115200
 endef
 
@@ -415,54 +555,20 @@ define Device/tl-wa750re-v1
     DEVICE_PROFILE := TLWA750
     TPLINK_HWID := 0x07500001
 endef
+TARGET_DEVICES += tl-wa701nd-v2 tl-wa750re-v1
 
-define Device/tl-wr841n-v8
+define Device/tl-wa801nd-v2
     $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WR841N-v8
-    DEVICE_PROFILE := TLWR841NV8
-    TPLINK_HWID := 0x08410008
+    BOARDNAME := TL-WA801ND-v2
+    DEVICE_PROFILE := TLWA801
+    TPLINK_HWID := 0x08010002
 endef
 
 define Device/tl-wa830re-v2
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WA830RE-v2
-    DEVICE_PROFILE := TLWA830RV2
+    DEVICE_PROFILE := TLWA830
     TPLINK_HWID := 0x08300002
-endef
-
-define Device/tl-wr841n-v9
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WR841N-v9
-    DEVICE_PROFILE := TLWR841NV9
-    TPLINK_HWID := 0x08410009
-endef
-
-define Device/tl-wr847n-v8
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WR841N-v8
-    DEVICE_PROFILE := TLWR847NV8
-    TPLINK_HWID := 0x08470008
-endef
-
-define Device/tl-wr842n-v2
-    $(Device/tplink-8mlzma)
-    BOARDNAME := TL-WR842N-v2
-    DEVICE_PROFILE := TLWR842V2
-    TPLINK_HWID := 0x8420002
-endef
-
-define Device/tl-wr843nd-v1
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WR841N-v8
-    DEVICE_PROFILE := TLWR843NV1
-    TPLINK_HWID := 0x08430001
-endef
-
-define Device/tl-wa801nd-v2
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WA801ND-v2
-    DEVICE_PROFILE := TLWA801NV2
-    TPLINK_HWID := 0x08010002
 endef
 
 define Device/tl-wa850re-v1
@@ -478,41 +584,24 @@ define Device/tl-wa860re-v1
     DEVICE_PROFILE := TLWA860
     TPLINK_HWID := 0x08600001
 endef
+TARGET_DEVICES += tl-wa801nd-v2 tl-wa830re-v2 tl-wa850re-v1 tl-wa860re-v1
 
 define Device/tl-wa901nd-v3
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WA901ND-v3
-    DEVICE_PROFILE := TLWA901NV3
+    DEVICE_PROFILE := TLWA901
     TPLINK_HWID := 0x09010003
 endef
+TARGET_DEVICES += tl-wa901nd-v3
 
-define Device/tl-wr941nd-v5
+define Device/tl-wa7210n-v2
     $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WR941ND-v5
-    DEVICE_PROFILE := TLWR941NV5
-    TPLINK_HWID := 0x09410005
+    BOARDNAME := TL-WA7210N-v2
+    DEVICE_PROFILE := TLWA7210
+    TPLINK_HWID := 0x72100002
+    CONSOLE := ttyATH0,115200
 endef
-
-define Device/tl-wr941nd-v6
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WDR3500
-    DEVICE_PROFILE := TLWR941NV6
-    TPLINK_HWID := 0x09410006
-endef
-
-define Device/tl-wr1041n-v2
-    $(Device/tplink-4mlzma)
-    BOARDNAME := TL-WR1041N-v2
-    DEVICE_PROFILE := TLWR1041
-    TPLINK_HWID := 0x10410002
-endef
-
-define Device/tl-wdr4900-v2
-    $(Device/tplink-8mlzma)
-    BOARDNAME := TL-WDR4900-v2
-    DEVICE_PROFILE := TLWDR4900V2
-    TPLINK_HWID := 0x49000002
-endef
+TARGET_DEVICES += tl-wa7210n-v2
 
 define Device/smart-300
     $(Device/tplink-8mlzma)
@@ -520,6 +609,7 @@ define Device/smart-300
     DEVICE_PROFILE := SMART-300
     TPLINK_HWID := 0x93410001
 endef
+TARGET_DEVICES += smart-300
 
 define Device/oolite
     $(Device/tplink-16mlzma)
@@ -528,8 +618,7 @@ define Device/oolite
     TPLINK_HWID := 0x3C000101
     CONSOLE := ttyATH0,115200
 endef
-
-TARGET_DEVICES += archer-c5 archer-c7-v1 archer-c7-v2 el-m150 el-mini gl-inet-6408A-v1 gl-inet-6416A-v1 mc-mac1200r tl-mr10u-v1 tl-mr11u-v1 tl-mr11u-v2 tl-mr12u-v1 tl-mr13u-v1 tl-mr3020-v1 tl-mr3040-v1 tl-mr3040-v2 tl-mr3220-v2 tl-mr3420-v2 tl-wa701nd-v2 tl-wa7210n-v2 tl-wr703n-v1 tl-wr710n-v1 tl-wr720n-v3 tl-wr740n-v4 tl-wr741nd-v4 tl-wr743nd-v2 tl-wa750re-v1 tl-wr841n-v8 tl-wa830re-v2 tl-wr841n-v9 tl-wr847n-v8 tl-wr842n-v2 tl-wr843nd-v1 tl-wa801nd-v2 tl-wa850re-v1 tl-wa860re-v1 tl-wa901nd-v3 tl-wr941nd-v5 tl-wr941nd-v6 tl-wr1041n-v2 tl-wr2543-v1 tl-wdr4900-v2 smart-300 oolite
+TARGET_DEVICES += oolite
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
@@ -804,7 +893,7 @@ cameo_ap94_mtdlayout_fat=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,7808k(firmw
 esr900_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),13248k(rootfs),1024k(manufacture)ro,64k(backup)ro,320k(storage)ro,64k(caldata)ro,14656k@0x40000(firmware)
 esr1750_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),13248k(rootfs),1024k(manufacture)ro,64k(backup)ro,320k(storage)ro,64k(caldata)ro,14656k@0x40000(firmware)
 ew-dorin_mtdlayout_4M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),3712k(firmware),64k(art)
-ew-dorin_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),16000k(firmware),64k(art)
+ew-dorin_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),16000k(firmware),64k(art)ro
 f9k1115v2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),14464k(rootfs),1408k(kernel),64k(nvram)ro,64k(envram)ro,64k(art)ro,15872k@0x50000(firmware)
 dlrtdev_mtdlayout=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,6208k(firmware),64k(caldata)ro,640k(certs),960k(unknown)ro,64k@0x7f0000(caldata_copy)
 dlrtdev_mtdlayout_fat=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,7168k(firmware),640k(certs),64k(caldata)ro,64k@0x660000(caldata_orig),6208k@0x50000(firmware_orig)
@@ -817,6 +906,7 @@ uap_pro_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1536k(kernel)
 ubdev_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7488k(firmware),64k(certs),256k(cfg)ro,64k(EEPROM)ro
 whrhpg300n_mtdlayout=mtdparts=spi0.0:248k(u-boot)ro,8k(u-boot-env)ro,3712k(firmware),64k(art)ro
 wlr8100_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),14080k(rootfs),192k(unknown)ro,64k(art)ro,384k(unknown2)ro,15488k@0x40000(firmware)
+wpj344_mtdlayout_16M=mtdparts=spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
 wpj558_mtdlayout_16M=mtdparts=spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
 wndap360_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1728k(kernel),6016k(rootfs),64k(nvram)ro,64k(art)ro,7744k@0x50000(firmware)
 wnr2200_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7808k(firmware),64k(art)ro
@@ -1689,6 +1779,7 @@ $(eval $(call SingleProfile,AthLzma,64k,HORNETUBx2,hornet-ub-x2,HORNET-UB,ttyATH
 $(eval $(call SingleProfile,AthLzma,64k,PB92,pb92,PB92,ttyS0,115200,$$(pb92_mtdlayout),KRuImage))
 $(eval $(call SingleProfile,AthLzma,64k,TUBE2H16M,tube2h-16M,TUBE2H,ttyATH0,115200,$$(alfa_mtdlayout_16M),KRuImage,65536))
 $(eval $(call SingleProfile,AthLzma,64k,WLR8100,wlr8100,WLR8100,ttyS0,115200,$$(wlr8100_mtdlayout),KRuImage))
+$(eval $(call SingleProfile,AthLzma,64k,WPJ344_16M,wpj344-16M,WPJ344,ttyS0,115200,$$(wpj344_mtdlayout_16M),KRuImage,65536))
 $(eval $(call SingleProfile,AthLzma,64k,WPJ558_16M,wpj558-16M,WPJ558,ttyS0,115200,$$(wpj558_mtdlayout_16M),KRuImage,65536))
 
 $(eval $(call SingleProfile,Belkin,64k,F9K1115V2,f9k1115v2,F9K1115V2,ttyS0,115200,$$(f9k1115v2_mtdlayout),BR-6679BAC))
@@ -1784,8 +1875,6 @@ $(eval $(call SingleProfile,TPLINK,64kraw,TLWA901NV1,tl-wa901nd-v1,TL-WA901ND,tt
 $(eval $(call SingleProfile,TPLINK,64kraw,TLWA901NV2,tl-wa901nd-v2,TL-WA901ND-v2,ttyS0,115200,0x09010002,1,4M))
 $(eval $(call SingleProfile,TPLINK,64kraw,TLWR740NV1,tl-wr740n-v1,TL-WR741ND,ttyS0,115200,0x07400001,1,4M))
 $(eval $(call SingleProfile,TPLINK,64kraw,TLWR740NV3,tl-wr740n-v3,TL-WR741ND,ttyS0,115200,0x07400003,1,4M))
-$(eval $(call SingleProfile,TPLINK,64kraw,TLWR741NV1,tl-wr741nd-v1,TL-WR741ND,ttyS0,115200,0x07410001,1,4M))
-$(eval $(call SingleProfile,TPLINK,64kraw,TLWR741NV2,tl-wr741nd-v2,TL-WR741ND,ttyS0,115200,0x07410001,1,4M))
 $(eval $(call SingleProfile,TPLINK,64kraw,TLWR743NV1,tl-wr743nd-v1,TL-WR741ND,ttyS0,115200,0x07430001,1,4M))
 $(eval $(call SingleProfile,TPLINK,64kraw,TLWR841NV3,tl-wr841nd-v3,TL-WR941ND,ttyS0,115200,0x08410003,3,4M))
 $(eval $(call SingleProfile,TPLINK,64kraw,TLWR841NV5,tl-wr841nd-v5,TL-WR741ND,ttyS0,115200,0x08410005,1,4M))
@@ -1814,6 +1903,7 @@ $(eval $(call SingleProfile,UBNTXM,64kraw,RW2458N,rw2458n,RW2458N,ttyS0,115200,X
 $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTAIRROUTER,ubnt-airrouter,UBNT-AR,ttyS0,115200,XM,XM,ar7240))
 $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTBULLETM,ubnt-bullet-m,UBNT-BM,ttyS0,115200,XM,XM,ar7240))
 $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTROCKETM,ubnt-rocket-m,UBNT-RM,ttyS0,115200,XM,XM,ar7240))
+$(eval $(call SingleProfile,UBNTXM,64kraw,UBNTROCKETMXW,ubnt-rocket-m-xw,UBNT-RM-XW,ttyS0,115200,XM,XW,ar934x))
 $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTNANOM,ubnt-nano-m,UBNT-NM,ttyS0,115200,XM,XM,ar7240))
 $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTUNIFI,ubnt-unifi,UBNT-UF,ttyS0,115200,XM,BZ,ar7240))
 $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTUNIFIOUTDOOR,ubnt-unifi-outdoor,UBNT-U20,ttyS0,115200,XM,BZ,ar7240))
@@ -1842,38 +1932,32 @@ $(eval $(call SingleProfile,ZyXEL,64k,NBG_460N_550N_550NH,nbg460n_550n_550nh,NBG
 
 $(eval $(call MultiProfile,AP121,AP121_2M AP121_4M))
 $(eval $(call MultiProfile,AP136,AP136_010 AP136_020))
-$(eval $(call MultiProfile,ARCHERC7, ARCHERC5 ARCHERC7V1 ARCHERC7V2))
 $(eval $(call MultiProfile,EWDORIN, EWDORINAP EWDORINRT EWDORIN16M))
 $(eval $(call MultiProfile,OPENMESH,OM2P OM5P MR600 MR900))
-$(eval $(call MultiProfile,GLINET,GLINET6408A GLINET6416A))
 $(eval $(call MultiProfile,TEW652BRP,TEW652BRP_FW TEW652BRP_RECOVERY))
-$(eval $(call MultiProfile,TLMR11U,TLMR11UV1 TLMR11UV2))
-$(eval $(call MultiProfile,TLMR3040,TLMR3040V1 TLMR3040V2))
-$(eval $(call MultiProfile,TLMR3220,TLMR3220V1 TLMR3220V2))
-$(eval $(call MultiProfile,TLMR3420,TLMR3420V1 TLMR3420V2))
-$(eval $(call MultiProfile,TLWA701,TLWA701NV1 TLWA701NV2))
-$(eval $(call MultiProfile,TLWA7210,TLWA7210NV2))
+$(eval $(call MultiProfile,TLMR3220,TLMR3220V1))
+$(eval $(call MultiProfile,TLMR3420,TLMR3420V1))
+$(eval $(call MultiProfile,TLWA701,TLWA701NV1))
 $(eval $(call MultiProfile,TLWA730RE,TLWA730REV1))
-$(eval $(call MultiProfile,TLWA801,TLWA801NV1 TLWA801NV2))
-$(eval $(call MultiProfile,TLWA830,TLWA830RV1 TLWA830RV2))
-$(eval $(call MultiProfile,TLWA901,TLWA901NV1 TLWA901NV2 TLWA901NV3))
+$(eval $(call MultiProfile,TLWA801,TLWA801NV1))
+$(eval $(call MultiProfile,TLWA830,TLWA830RV1))
+$(eval $(call MultiProfile,TLWA901,TLWA901NV1 TLWA901NV2))
 $(eval $(call MultiProfile,TLWA7510,TLWA7510NV1))
-$(eval $(call MultiProfile,TLWR720,TLWR720NV3))
-$(eval $(call MultiProfile,TLWR740,TLWR740NV1 TLWR740NV3 TLWR740NV4))
-$(eval $(call MultiProfile,TLWR741,TLWR741NV1 TLWR741NV2 TLWR741NV4))
-$(eval $(call MultiProfile,TLWR743,TLWR743NV1 TLWR743NV2))
-$(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8 TLWR841NV9 TLWR847NV8))
-$(eval $(call MultiProfile,TLWR842,TLWR842V1 TLWR842V2))
-$(eval $(call MultiProfile,TLWR843,TLWR843NV1))
-$(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4 TLWR941NV5 TLWR941NV6))
+$(eval $(call MultiProfile,TLWR740,TLWR740NV1 TLWR740NV3))
+$(eval $(call MultiProfile,TLWR741,TLWR741NV1 TLWR741NV2))
+$(eval $(call MultiProfile,TLWR743,TLWR743NV1))
+$(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7))
+$(eval $(call MultiProfile,TLWR842,TLWR842V1))
+$(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4))
 $(eval $(call MultiProfile,TLWR1043,TLWR1043V1 TLWR1043V2))
 $(eval $(call MultiProfile,TLWDR4300,TLWDR3500V1 TLWDR3600V1 TLWDR4300V1 TLWDR4300V1IL TLWDR4310V1 MW4530RV1))
 $(eval $(call MultiProfile,TUBE2H,TUBE2H8M TUBE2H16M))
-$(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTNANOM UBNTNANOMXW UBNTLOCOXW UBNTUNIFI UBNTUNIFIOUTDOOR UBNTUNIFIOUTDOORPLUS UAPPRO UBNTAIRGW))
+$(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTROCKETMXW UBNTNANOM UBNTNANOMXW UBNTLOCOXW UBNTUNIFI UBNTUNIFIOUTDOOR UBNTUNIFIOUTDOORPLUS UAPPRO UBNTAIRGW))
 $(eval $(call MultiProfile,WNR612V2,REALWNR612V2 N150R))
 $(eval $(call MultiProfile,WNR1000V2,REALWNR1000V2 WNR1000V2_VC))
 $(eval $(call MultiProfile,WP543,WP543_2M WP543_4M WP543_8M WP543_16M))
 $(eval $(call MultiProfile,WPE72,WPE72_4M WPE72_8M WPE72_16M))
+$(eval $(call MultiProfile,WPJ344,WPJ344_16M))
 $(eval $(call MultiProfile,WPJ558,WPJ558_16M))
 
 $(eval $(call MultiProfile,Minimal,$(SINGLE_PROFILES)))

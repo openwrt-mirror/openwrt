@@ -590,23 +590,22 @@ mac80211_setup_vif() {
 
 	case "$mode" in
 		mesh)
-			for var in $MP_CONFIG_INT $MP_CONFIG_BOOL $MP_CONFIG_STRING; do
-				json_get_var mp_val "$var"
-				[ -n "$mp_val" ] && iw dev "$ifname" set mesh_param "$var" "$mp_val"
-			done
-
-			# authsae
+			# authsae or wpa_supplicant
 			json_get_vars key
 			if [ -n "$key" ]; then
 				if [ -e "/lib/wifi/authsae.sh" ]; then
 					. /lib/wifi/authsae.sh
 					authsae_start_interface || failed=1
 				else
-					wireless_setup_vif_failed AUTHSAE_NOT_INSTALLED
-					json_select ..
-					return
+					wireless_vif_parse_encryption
+					mac80211_setup_supplicant || failed=1
 				fi
 			fi
+
+			for var in $MP_CONFIG_INT $MP_CONFIG_BOOL $MP_CONFIG_STRING; do
+				json_get_var mp_val "$var"
+				[ -n "$mp_val" ] && iw dev "$ifname" set mesh_param "$var" "$mp_val"
+			done
 		;;
 		adhoc)
 			wireless_vif_parse_encryption

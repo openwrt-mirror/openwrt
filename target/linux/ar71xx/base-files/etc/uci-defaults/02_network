@@ -318,6 +318,7 @@ rb-912uag-2hpnd |\
 rb-912uag-5hpnd |\
 rb-sxt2n |\
 rb-sxt5n |\
+rocket-m-xw |\
 tl-mr10u |\
 tl-mr11u |\
 tl-mr12u |\
@@ -358,6 +359,13 @@ tl-wr710n |\
 tl-wr720n-v3|\
 wpe72)
 	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+	;;
+
+wpj344)
+	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0t 3"
+	ucidef_add_switch_vlan "switch0" "2" "0t 2"
 	;;
 
 wpj558)

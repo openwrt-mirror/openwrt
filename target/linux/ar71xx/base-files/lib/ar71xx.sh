@@ -621,6 +621,9 @@ ar71xx_board_detect() {
 	*"Rocket M")
 		name="rocket-m"
 		;;
+	*"Rocket M XW")
+		name="rocket-m-xw"
+		;;
 	*RouterStation)
 		name="routerstation"
 		;;
@@ -800,6 +803,9 @@ ar71xx_board_detect() {
 		;;
 	*WPE72)
 		name="wpe72"
+		;;
+	*WPJ344)
+		name="wpj344"
 		;;
 	*WPJ558)
 		name="wpj558"
