@@ -7,9 +7,21 @@
 
 board_config_update
 
-ucidef_set_interface_loopback
+board=$(cat /proc/device-tree/compatible | tr '\0' '\t' | cut -f 1)
+case "$board" in
+asus,rt-ac87u)
+	ifname=eth1
+	;;
+netgear,r8000)
+	ifname=eth2
+	;;
+*)
+	ifname=eth0
+	;;
+esac
 
-ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+ucidef_set_interface_loopback
+ucidef_set_interfaces_lan_wan "$ifname.1" "$ifname.2"
 ucidef_add_switch "switch0" "1" "1"
 
 # NVRAM entries may contain unsorted ports, e.g. Netgear R6250 uses
@@ -23,6 +35,10 @@ if echo "$vlan1ports" | egrep -q "^1 2 3 4 5" && \
    echo "$vlan2ports" | egrep -q "^0 5"; then
 	ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 5t"
 	ucidef_add_switch_vlan "switch0" "2" "0 5t"
+elif echo "$vlan1ports" | egrep -q "^1 2 3 5 7" && \
+     echo "$vlan2ports" | egrep -q "^0 7"; then
+	ucidef_add_switch_vlan "switch0" "1" "1 2 3 5 7t"
+	ucidef_add_switch_vlan "switch0" "2" "0 7t"
 elif echo "$vlan1ports" | egrep -q "^0 1 2 3 5 7 8" && \
      echo "$vlan2ports" | egrep -q "^4 8"; then
 	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5 7 8t"
