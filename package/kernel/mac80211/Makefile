@@ -1864,8 +1864,8 @@ ifeq ($(CONFIG_ATH10K_STA_FW),y)
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 else
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/firmware-4.bin_10.2.4.45 \
-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin
+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.1/firmware-2.bin_10.1.467.2-1 \
+		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 endif
 endef
 
