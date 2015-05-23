@@ -45,7 +45,8 @@ set_state() {
 	ar1004g)
 		status_led="AR1004G:green:power"
 		;;
-	dsl-274xb-c)
+	dsl-274xb-c|\
+	dsl-274xb-f)
 		status_led="dsl-274xb:green:power"
 		;;
 	dsl-275xb-d)
@@ -88,6 +89,9 @@ set_state() {
 		;;
 	hg520)
 		status_led="HW520:green:net"
+		;;
+	hg655b)
+		status_led="HW65x:green:power"
 		;;
 	p870hw-51a_v2)
 		status_led="P870HW-51a:green:power"
