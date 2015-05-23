@@ -1,0 +1,6 @@
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+# Note: fan_ctrl is mvebu-specific to control CPU fan, don't remove it.
+#       let's get rid of cron.
+/sbin/fan_ctrl.sh &
+exit 0
