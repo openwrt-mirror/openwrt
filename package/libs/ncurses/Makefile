@@ -82,6 +82,12 @@ HOST_CONFIGURE_ARGS += \
 	--without-tests \
 	--without-curses-h
 
+HOST_CONFIGURE_VARS = \
+        CC="$(HOSTCC)" \
+        CFLAGS="$(HOST_CFLAGS)" \
+        CPPFLAGS="$(HOST_CPPFLAGS) -P" \
+        LDFLAGS="$(HOST_LDFLAGS)" \
+        SHELL="$(SHELL)"
 
 ifeq ($(HOST_OS),FreeBSD)
 	CONFIGURE_ARGS +=
