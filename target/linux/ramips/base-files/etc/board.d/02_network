@@ -61,7 +61,8 @@ ramips_setup_interfaces()
 		;;
 
 	3g-6200nl | \
-	mlw221)
+	mlw221 | \
+	mr-102n)
 		ucidef_set_interface_lan "eth0.2"
 		;;
 	mlwg2)
@@ -106,6 +107,12 @@ ramips_setup_interfaces()
 		ucidef_set_interface_lan "eth0.1"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 6t"
+		;;
+
+	cf-wr800n)
+		ucidef_set_interface_lan "eth0.1"
+		ucidef_add_switch "switch0" "1" "1"
+		ucidef_add_switch_vlan "switch0" "1" "4 6t"
 		;;
 
 	cy-swr1100)

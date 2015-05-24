@@ -33,6 +33,7 @@ platform_check_image() {
 	bc2 | \
 	broadway | \
 	carambola | \
+	cf-wr800n | \
 	d105 | \
 	dap-1350 | \
 	dcs-930 | \
@@ -66,6 +67,7 @@ platform_check_image() {
 	mofi3500-3gn | \
 	mpr-a1 | \
 	mpr-a2 | \
+	mr-102n | \
 	mzk-w300nh2 | \
 	nbg-419n | \
 	nw718 | \

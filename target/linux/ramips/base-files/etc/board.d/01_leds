@@ -73,6 +73,10 @@ case $board in
 	br6524n)
 		set_wifi_led "edimax:blue:wlan"
 		;;
+	cf-wr800n)
+		ucidef_set_led_netdev "lan" "lan" "comfast:white:ethernet" eth0.1
+		set_wifi_led "comfast:white:wifi"
+		;;
 	cy-swr1100)
 		ucidef_set_led_default "wps" "WPS" "samsung:blue:wps" "0"
 		set_usb_led "samsung:blue:usb"
@@ -140,6 +144,10 @@ case $board in
 		;;
 	mpr-a2)
 		set_wifi_led "hame:blue:system"
+		;;
+	mr-102n)
+		set_wifi_led "mr-102n:green:wlan"
+		set_usb_led "mr-102n:green:usb"
 		;;
 	mzk-w300nh2)
 		set_wifi_led "mzkw300nh2:amber:wlan"

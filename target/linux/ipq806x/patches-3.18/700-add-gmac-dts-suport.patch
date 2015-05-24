@@ -42,7 +42,7 @@
  		};
  
  		gsbi@16300000 {
-@@ -92,6 +118,7 @@
+@@ -89,6 +115,7 @@
  					#size-cells = <1>;
  					spi-max-frequency = <50000000>;
  					reg = <0>;
@@ -50,7 +50,7 @@
  
  					partition@0 {
  						label = "lowlevel_init";
-@@ -166,5 +193,66 @@
+@@ -163,5 +190,66 @@
  			pinctrl-0 = <&pcie2_pins>;
  			pinctrl-names = "default";
  		};
@@ -119,15 +119,15 @@
  };
 --- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
 +++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/mfd/qcom-rpm.h>
  #include <dt-bindings/soc/qcom,gsbi.h>
  #include <dt-bindings/reset/qcom,gcc-ipq806x.h>
 +#include <dt-bindings/interrupt-controller/arm-gic.h>
  
  / {
  	model = "Qualcomm IPQ8064";
-@@ -513,5 +514,42 @@
+@@ -637,5 +638,42 @@
  				dr_mode = "host";
  			};
  		};
