@@ -218,7 +218,6 @@ CONFIG_USE_UCLIBCXX=y
 CONFIG_PKG_CC_STACKPROTECTOR_NONE=y
 CONFIG_KERNEL_CC_STACKPROTECTOR_NONE=y
 # CONFIG_KERNEL_CC_STACKPROTECTOR_REGULAR is not set
-# CONFIG_KERNEL_CC_STACKPROTECTOR_STRONG is not set
 CONFIG_PKG_FORTIFY_SOURCE_NONE=y
 # CONFIG_PKG_FORTIFY_SOURCE_1 is not set
 # CONFIG_PKG_FORTIFY_SOURCE_2 is not set
@@ -258,8 +257,8 @@ CONFIG_BINUTILS_VERSION="linaro"
 # Compiler
 #
 # CONFIG_GCC_USE_VERSION_4_6_LINARO is not set
-# CONFIG_GCC_USE_VERSION_4_8_LINARO is not set
-CONFIG_GCC_USE_VERSION_4_9_LINARO=y
+CONFIG_GCC_USE_VERSION_4_8_LINARO=y
+# CONFIG_GCC_USE_VERSION_4_9_LINARO is not set
 # CONFIG_GCC_USE_GRAPHITE is not set
 CONFIG_EXTRA_GCC_CONFIG_OPTIONS=""
 # CONFIG_SSP_SUPPORT is not set
@@ -324,9 +323,9 @@ CONFIG_EGLIBC_OPTION_POSIX_WIDE_CHAR_DEVICE_IO=y
 CONFIG_GDB=y
 # CONFIG_INSIGHT is not set
 CONFIG_USE_GLIBC=y
-CONFIG_GCC_VERSION_4_9_LINARO=y
-CONFIG_GCC_VERSION="4.9-linaro"
-CONFIG_GCC_VERSION_4_9=y
+CONFIG_GCC_VERSION_4_8_LINARO=y
+CONFIG_GCC_VERSION="4.8-linaro"
+CONFIG_GCC_VERSION_4_8=y
 CONFIG_GLIBC_VERSION="2.19"
 CONFIG_EGLIBC_VERSION_2_19=y
 CONFIG_GLIBC_REVISION="25243"
@@ -2300,15 +2299,15 @@ CONFIG_LIBCURL_PROXY=y
 # CONFIG_LIBCURL_VERBOSE is not set
 # CONFIG_PACKAGE_libdaemon is not set
 # CONFIG_PACKAGE_libdaq is not set
-# CONFIG_PACKAGE_libdb47 is not set
+CONFIG_PACKAGE_libdb47=y
 # CONFIG_PACKAGE_libdb47xx is not set
 # CONFIG_PACKAGE_libdbi is not set
+# CONFIG_PACKAGE_libdbus is not set
+# CONFIG_PACKAGE_libdevmapper is not set
 # CONFIG_PACKAGE_libdmapsharing is not set
 # CONFIG_PACKAGE_libdnet is not set
 # CONFIG_PACKAGE_libeibclient is not set
 # CONFIG_PACKAGE_libelf1 is not set
-# CONFIG_PACKAGE_libdbus is not set
-# CONFIG_PACKAGE_libdevmapper is not set
 CONFIG_PACKAGE_libericstools=y
 # CONFIG_PACKAGE_libesmtp is not set
 # CONFIG_PACKAGE_libev is not set
@@ -2411,6 +2410,7 @@ CONFIG_PACKAGE_libogg=y
 # CONFIG_PACKAGE_libowfat is not set
 # CONFIG_PACKAGE_libp11 is not set
 # CONFIG_PACKAGE_libpam is not set
+CONFIG_PACKAGE_libpam-db=y
 # CONFIG_PACKAGE_libpcap is not set
 CONFIG_PACKAGE_libpcre=y
 # CONFIG_PACKAGE_libpcre16 is not set
@@ -2592,6 +2592,7 @@ CONFIG_PACKAGE_luci-app-firewall=y
 # CONFIG_PACKAGE_luci-app-hd-idle is not set
 # CONFIG_PACKAGE_luci-app-hnet is not set
 # CONFIG_PACKAGE_luci-app-lxc is not set
+# CONFIG_PACKAGE_luci-app-macvlan is not set
 # CONFIG_PACKAGE_luci-app-meshwizard is not set
 CONFIG_PACKAGE_luci-app-minidlna=y
 # CONFIG_PACKAGE_luci-app-mjpg-streamer is not set
@@ -2634,6 +2635,7 @@ CONFIG_PACKAGE_luci-app-upnp=y
 # CONFIG_PACKAGE_luci-app-vnstat is not set
 # CONFIG_PACKAGE_luci-app-voice-core is not set
 # CONFIG_PACKAGE_luci-app-voice-diag is not set
+CONFIG_PACKAGE_luci-app-vsftpd=y
 # CONFIG_PACKAGE_luci-app-watchcat is not set
 CONFIG_PACKAGE_luci-app-webshell=y
 # CONFIG_PACKAGE_luci-app-wol is not set
@@ -2885,6 +2887,7 @@ CONFIG_PACKAGE_luci-i18n-upnp-en=y
 # CONFIG_PACKAGE_luci-i18n-upnp-vi is not set
 CONFIG_PACKAGE_luci-i18n-upnp-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-upnp-zh-tw is not set
+CONFIG_PACKAGE_luci-i18n-vsftpd-zh-cn=y
 
 #
 # Mail
@@ -2987,6 +2990,7 @@ CONFIG_PACKAGE_curl=y
 # CONFIG_PACKAGE_rsync is not set
 # CONFIG_PACKAGE_rsyncd is not set
 # CONFIG_PACKAGE_vsftpd is not set
+CONFIG_PACKAGE_vsftpd-pam=y
 # CONFIG_PACKAGE_vsftpd-tls is not set
 CONFIG_PACKAGE_wget=y
 # CONFIG_PACKAGE_wget-nossl is not set
@@ -3333,8 +3337,6 @@ CONFIG_OCSERV_SECCOMP=y
 CONFIG_OCSERV_PROTOBUF=y
 CONFIG_OCSERV_HTTP_PARSER=y
 # CONFIG_PACKAGE_openconnect is not set
-# CONFIG_OPENCONNECT_GNUTLS is not set
-# CONFIG_OPENCONNECT_OPENSSL is not set
 # CONFIG_PACKAGE_opennhrp is not set
 # CONFIG_PACKAGE_openvpn-easy-rsa is not set
 # CONFIG_PACKAGE_openvpn-nossl is not set
@@ -3816,6 +3818,18 @@ CONFIG_PACKAGE_cpulimit=y
 # CONFIG_PACKAGE_cpulimit-ng is not set
 # CONFIG_PACKAGE_cryptsetup is not set
 # CONFIG_PACKAGE_cryptsetup-openssl is not set
+CONFIG_PACKAGE_db47-util=y
+CONFIG_DB47_ARCHIVE=y
+CONFIG_DB47_CHECKPOINT=y
+CONFIG_DB47_DEADLOCK=y
+CONFIG_DB47_DUMP=y
+CONFIG_DB47_HOTBACKUP=y
+CONFIG_DB47_LOAD=y
+CONFIG_DB47_PRINTLOG=y
+CONFIG_DB47_RECOVER=y
+CONFIG_DB47_STAT=y
+CONFIG_DB47_UPGRADE=y
+CONFIG_DB47_VERIFY=y
 # CONFIG_PACKAGE_dbus is not set
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
@@ -3883,6 +3897,7 @@ CONFIG_PACKAGE_openssl-util=y
 # CONFIG_PACKAGE_owipcalc is not set
 # CONFIG_PACKAGE_pciutils is not set
 # CONFIG_PACKAGE_pcscd is not set
+# CONFIG_PACKAGE_pps-tools is not set
 CONFIG_PACKAGE_procd-nand=y
 # CONFIG_PACKAGE_procd-nand-firstboot is not set
 # CONFIG_PACKAGE_procps is not set
