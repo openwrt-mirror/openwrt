@@ -2451,7 +2451,7 @@ CONFIG_LIBSODIUM_MINIMAL=y
 # CONFIG_PACKAGE_libspeexdsp is not set
 # CONFIG_PACKAGE_libssh is not set
 # CONFIG_PACKAGE_libssh2 is not set
-# CONFIG_PACKAGE_libstoken is not set
+CONFIG_PACKAGE_libstoken=y
 # CONFIG_PACKAGE_libtasn1 is not set
 # CONFIG_PACKAGE_libtheora is not set
 # CONFIG_PACKAGE_libtiff is not set
@@ -2601,7 +2601,7 @@ CONFIG_PACKAGE_luci-app-minidlna=y
 # CONFIG_PACKAGE_luci-app-mwan3 is not set
 CONFIG_PACKAGE_luci-app-n2n_v2=y
 # CONFIG_PACKAGE_luci-app-ntpc is not set
-CONFIG_PACKAGE_luci-app-ocserv=y
+# CONFIG_PACKAGE_luci-app-ocserv is not set
 # CONFIG_PACKAGE_luci-app-olsr is not set
 # CONFIG_PACKAGE_luci-app-olsr-services is not set
 # CONFIG_PACKAGE_luci-app-olsr-viz is not set
@@ -2654,7 +2654,7 @@ CONFIG_PACKAGE_luci-theme-bootstrap=y
 #
 # CONFIG_PACKAGE_luci-proto-3g is not set
 CONFIG_PACKAGE_luci-proto-ipv6=y
-# CONFIG_PACKAGE_luci-proto-openconnect is not set
+CONFIG_PACKAGE_luci-proto-openconnect=y
 CONFIG_PACKAGE_luci-proto-ppp=y
 # CONFIG_PACKAGE_luci-proto-relay is not set
 
@@ -3327,16 +3327,15 @@ CONFIG_PACKAGE_tc=y
 # CONFIG_PACKAGE_fastd is not set
 # CONFIG_PACKAGE_ipsec-tools is not set
 CONFIG_PACKAGE_n2n_v2=y
-CONFIG_PACKAGE_ocserv=y
+# CONFIG_PACKAGE_ocserv is not set
+CONFIG_PACKAGE_openconnect=y
 
 #
 # Configuration
 #
-# CONFIG_OCSERV_PAM is not set
-CONFIG_OCSERV_SECCOMP=y
-CONFIG_OCSERV_PROTOBUF=y
-CONFIG_OCSERV_HTTP_PARSER=y
-# CONFIG_PACKAGE_openconnect is not set
+CONFIG_OPENCONNECT_GNUTLS=y
+# CONFIG_OPENCONNECT_OPENSSL is not set
+CONFIG_OPENCONNECT_STOKEN=y
 # CONFIG_PACKAGE_opennhrp is not set
 # CONFIG_PACKAGE_openvpn-easy-rsa is not set
 # CONFIG_PACKAGE_openvpn-nossl is not set
