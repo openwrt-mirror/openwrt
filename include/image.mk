@@ -322,7 +322,7 @@ endef
 
 define Build/check-size
 	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
-		echo "WARNING: Image file $@ is too big"; \
+		echo "WARNING: Image file $@ is too big" >&2; \
 		rm -f $@; \
 	}
 endef
@@ -379,7 +379,7 @@ endif
 
 define Device/Build/check_size
 	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
-		echo "WARNING: Image file $@ is too big"; \
+		echo "WARNING: Image file $@ is too big" >&2; \
 		rm -f $@; \
 	}
 endef
