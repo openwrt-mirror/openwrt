@@ -132,14 +132,18 @@ endif
 
 PACKAGE_SUBDIRS=.
 ifneq ($(CONFIG_PER_FEED_REPO),)
-  PACKAGE_SUBDIRS=base $(FEEDS_ENABLED)
+  ifneq ($(CONFIG_PER_FEED_REPO_ADD_DISABLED),)
+    PACKAGE_SUBDIRS=base $(FEEDS_AVAILABLE)
+  else
+    PACKAGE_SUBDIRS=base $(FEEDS_ENABLED)
+  endif
 endif
 
 $(curdir)/index: FORCE
 	@echo Generating package index...
 	@for d in $(PACKAGE_SUBDIRS); do ( \
-		[ -d $(PACKAGE_DIR)/$$d ] && \
-			cd $(PACKAGE_DIR)/$$d || continue; \
+		mkdir -p $(PACKAGE_DIR)/$$d; \
+		cd $(PACKAGE_DIR)/$$d || continue; \
 		$(SCRIPT_DIR)/ipkg-make-index.sh . 2>&1 > Packages && \
 			gzip -9c Packages > Packages.gz; \
 	); done
