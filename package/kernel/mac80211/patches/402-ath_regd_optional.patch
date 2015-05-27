@@ -47,7 +47,7 @@
  
 --- a/drivers/net/wireless/ath/Kconfig
 +++ b/drivers/net/wireless/ath/Kconfig
-@@ -21,6 +21,9 @@ menuconfig ATH_CARDS
+@@ -22,6 +22,9 @@ menuconfig ATH_CARDS
  
  if ATH_CARDS
  
@@ -59,7 +59,7 @@
  	---help---
 --- a/.local-symbols
 +++ b/.local-symbols
-@@ -116,6 +116,7 @@ RTL8187_LEDS=
+@@ -89,6 +89,7 @@ RTL8187_LEDS=
  ATH_COMMON=
  ATH_CARDS=
  ATH_DEBUG=

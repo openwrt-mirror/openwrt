@@ -1,6 +1,6 @@
 #!/bin/sh
 # 6in4.sh - IPv6-in-IPv4 tunnel backend
-# Copyright (c) 2010-2014 OpenWrt.org
+# Copyright (c) 2010-2015 OpenWrt.org
 
 [ -n "$INCLUDE_ONLY" ] || {
 	. /lib/functions.sh
@@ -9,13 +9,26 @@
 	init_proto "$@"
 }
 
+proto_6in4_update() {
+	sh -c '
+		local timeout=5
+
+		(while [ $((timeout--)) -gt 0 ]; do
+			sleep 1
+			kill -0 $$ || exit 0
+		done; kill -9 $$) 2>/dev/null &
+
+		exec "$@"
+	' "$1" "$@"
+}
+
 proto_6in4_setup() {
 	local cfg="$1"
 	local iface="$2"
 	local link="6in4-$cfg"
 
-	local mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey sourcerouting
-	json_get_vars mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey sourcerouting
+	local mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey
+	json_get_vars mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey
 
 	[ -z "$peeraddr" ] && {
 		proto_notify_error "$cfg" "MISSING_ADDRESS"
@@ -23,7 +36,7 @@ proto_6in4_setup() {
 		return
 	}
 
-	( proto_add_host_dependency "$cfg" 0.0.0.0 )
+	( proto_add_host_dependency "$cfg" "$peeraddr" )
 
 	[ -z "$ipaddr" ] && {
 		local wanif
@@ -35,21 +48,17 @@ proto_6in4_setup() {
 
 	proto_init_update "$link" 1
 
-	local source=""
-	[ "$sourcerouting" != "0" ] && source="::/128"
-	proto_add_ipv6_route "::" 0 "" "" "" "$source"
-
 	[ -n "$ip6addr" ] && {
 		local local6="${ip6addr%%/*}"
 		local mask6="${ip6addr##*/}"
 		[[ "$local6" = "$mask6" ]] && mask6=
 		proto_add_ipv6_address "$local6" "$mask6"
-		[ "$sourcerouting" != "0" ] && proto_add_ipv6_route "::" 0 "" "" "" "$local6/$mask6"
+		proto_add_ipv6_route "::" 0 "" "" "" "$local6/$mask6"
 	}
 
 	[ -n "$ip6prefix" ] && {
 		proto_add_ipv6_prefix "$ip6prefix"
-		[ "$sourcerouting" != "0" ] && proto_add_ipv6_route "::" 0 "" "" "" "$ip6prefix"
+		proto_add_ipv6_route "::" 0 "" "" "" "$ip6prefix"
 	}
 
 	proto_add_tunnel
@@ -68,7 +77,7 @@ proto_6in4_setup() {
 
 		local http="http"
 		local urlget="wget"
-		local urlget_opts="-qO/dev/stdout"
+		local urlget_opts="-qO-"
 		local ca_path="${SSL_CERT_DIR-/etc/ssl/certs}"
 
 		if [ -n "$(which curl)" ]; then
@@ -82,7 +91,7 @@ proto_6in4_setup() {
 		if [ "$http" = "http" ] &&
 			wget --version 2>&1 | grep -qF "+https"; then
 			urlget="wget"
-			urlget_opts="-qO/dev/stdout --ca-directory=$ca_path"
+			urlget_opts="-qO- --ca-directory=$ca_path"
 			http="https"
 		fi
 		[ "$http" = "https" -a -z "$(find $ca_path -name "*.0" 2>/dev/null)" ] && {
@@ -97,13 +106,20 @@ proto_6in4_setup() {
 		local try=0
 		local max=3
 
-		while [ $((++try)) -le $max ]; do
-			( exec $urlget $urlget_opts "$url" | logger -t "$link" ) &
-			local pid=$!
-			( sleep 20; kill $pid 2>/dev/null ) &
-			wait $pid && break
-			sleep 20;
-		done
+		(
+			set -o pipefail
+			while [ $((++try)) -le $max ]; do
+				if proto_6in4_update $urlget $urlget_opts "$url" 2>&1 | \
+					sed -e 's,^Killed$,timeout,' -e "s,^,update $try/$max: ," | \
+					logger -t "$link";
+				then
+					logger -t "$link" "updated"
+					return 0
+				fi
+				sleep 5
+			done
+			logger -t "$link" "update failed"
+		)
 	}
 }
 
@@ -126,7 +142,6 @@ proto_6in4_init_config() {
 	proto_config_add_int "mtu"
 	proto_config_add_int "ttl"
 	proto_config_add_string "tos"
-	proto_config_add_boolean "sourcerouting"
 }
 
 [ -n "$INCLUDE_ONLY" ] || {

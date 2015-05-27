@@ -34,7 +34,7 @@ get_status_led() {
 	aw-nr580)
 		status_led="aw-nr580:green:ready"
 		;;
-	bullet-m | rocket-m | nano-m | nanostation-m | nanostation-m-xw | loco-m-xw)
+	bullet-m | rocket-m | rocket-m-xw | nano-m | nanostation-m | nanostation-m-xw | loco-m-xw)
 		status_led="ubnt:green:link4"
 		;;
 	bxu2000n-2-a1)
@@ -80,6 +80,12 @@ get_status_led() {
 	el-m150)
 		status_led="easylink:green:system"
 		;;
+	ew-dorin | ew-dorin-router)
+		status_led="dorin:green:status"
+		;;
+	f9k1115v2)
+		status_led="belkin:blue:status"
+		;;
 	gl-inet)
 		status_led="gl-connect:green:lan"
 		;;
@@ -92,7 +98,8 @@ get_status_led() {
 	hiwifi-hc6361)
 		status_led="hiwifi:blue:system"
 		;;
-	hornet-ub)
+	hornet-ub | \
+	hornet-ub-x2)
 		status_led="alfa:blue:wps"
 		;;
 	ja76pf | \
@@ -101,6 +108,15 @@ get_status_led() {
 		;;
 	ls-sr71)
 		status_led="ubnt:green:d22"
+		;;
+	mc-mac1200r)
+		status_led="mercury:green:system"
+		;;
+	mr12)
+		status_led="mr12:green:power"
+		;;
+	mr16)
+		status_led="mr16:green:power"
 		;;
 	mr600)
 		status_led="mr600:orange:power"
@@ -127,7 +143,7 @@ get_status_led() {
 		status_led="nbg460n:green:power"
 		;;
 	nbg6716)
-		status_led="nbg6716:white:power"
+		status_led="zyxel:white:power"
 		;;
 	om2p | \
 	om2pv2 | \
@@ -136,7 +152,8 @@ get_status_led() {
 	om2p-lc)
 		status_led="om2p:blue:power"
 		;;
-	om5p)
+	om5p | \
+	om5p-an)
 		status_led="om5p:blue:power"
 		;;
 	pb44)
@@ -154,6 +171,7 @@ get_status_led() {
 		status_led="rb750:green:act"
 		;;
 	rb-911g-2hpnd|\
+	rb-911g-5hpacd|\
 	rb-911g-5hpnd|\
 	rb-912uag-2hpnd|\
 	rb-912uag-5hpnd)
@@ -207,6 +225,7 @@ get_status_led() {
 	tl-mr3220-v2 | \
 	tl-mr3420 | \
 	tl-mr3420-v2 | \
+	tl-wa701nd-v2 | \
 	tl-wa801nd-v2 | \
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
@@ -222,13 +241,15 @@ get_status_led() {
 	tl-wr841n-v8 | \
 	tl-wa830re-v2 | \
 	tl-wr842n-v2 | \
-	tl-wr941nd)
+	tl-wr941nd | \
+	tl-wr941nd-v5)
 		status_led="tp-link:green:system"
 		;;
 	archer-c5 | \
 	archer-c7 | \
 	tl-wdr4900-v2 | \
 	tl-mr10u | \
+	tl-mr12u | \
 	tl-mr13u | \
 	tl-wdr4300 | \
 	tl-wr703n | \
@@ -250,6 +271,9 @@ get_status_led() {
 		;;
 	uap-pro)
 		status_led="ubnt:white:dome"
+		;;
+	unifi-outdoor-plus)
+		status_led="ubnt:white:front"
 		;;
 	airgateway)
 		status_led="ubnt:white:status"
@@ -274,11 +298,18 @@ get_status_led() {
 	wndr4300 | \
 	wnr2000 | \
 	wnr2200 |\
-	wnr612-v2)
+	wnr612-v2 |\
+	wnr1000-v2)
 		status_led="netgear:green:power"
 		;;
 	wp543)
 		status_led="wp543:green:diag"
+		;;
+	wpj344)
+		status_led="wpj344:green:status"
+		;;
+	wpj558)
+		status_led="wpj558:green:sig3"
 		;;
 	wrt400n)
 		status_led="wrt400n:blue:wps"
@@ -304,6 +335,9 @@ set_state() {
 		;;
 	failsafe)
 		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
 		status_led_on

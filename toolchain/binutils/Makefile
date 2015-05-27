@@ -10,21 +10,12 @@ PKG_NAME:=binutils
 PKG_VERSION:=$(call qstrip,$(CONFIG_BINUTILS_VERSION))
 BIN_VERSION:=$(PKG_VERSION)
 
-ifeq ($(findstring linaro, $(CONFIG_BINUTILS_VERSION)),linaro)
-  PKG_SOURCE_URL:=https://releases.linaro.org/14.09/components/toolchain/binutils-linaro/
-  PKG_REV:=2.24.0-2014.09
-  PKG_SOURCE:=$(PKG_NAME)-linaro-$(PKG_REV).tar.xz
-  PKG_MD5SUM:=8f9b2b2e049d59b1b86ce9657802a353
-  BINUTILS_DIR:=$(PKG_NAME)-linaro-$(PKG_REV)
-  HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(BINUTILS_DIR)
-else
-  PKG_SOURCE_URL:=@GNU/binutils/
-  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-
-  ifeq ($(PKG_VERSION),2.20.1)
-    PKG_MD5SUM:=9cdfb9d6ec0578c166d3beae5e15c4e5
-  endif
-endif
+PKG_SOURCE_URL:=https://releases.linaro.org/14.09/components/toolchain/binutils-linaro/
+PKG_REV:=2.24.0-2014.09
+PKG_SOURCE:=$(PKG_NAME)-linaro-$(PKG_REV).tar.xz
+PKG_MD5SUM:=8f9b2b2e049d59b1b86ce9657802a353
+BINUTILS_DIR:=$(PKG_NAME)-linaro-$(PKG_REV)
+HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(BINUTILS_DIR)
 
 HOST_BUILD_PARALLEL:=1
 
@@ -41,6 +32,7 @@ BINUTILS_CONFIGURE:= \
 		--host=$(GNU_HOST_NAME) \
 		--target=$(REAL_GNU_TARGET_NAME) \
 		--with-sysroot=$(TOOLCHAIN_DIR) \
+		--enable-plugins \
 		--disable-multilib \
 		--disable-werror \
 		--disable-nls \
@@ -83,9 +75,11 @@ define Host/Install
 	$(MAKE) -C $(HOST_BUILD_DIR) \
 		prefix=$(TOOLCHAIN_DIR)/initial \
 		install
+	$(MAKE) -C $(HOST_BUILD_DIR) \
+		prefix=$(TOOLCHAIN_DIR) \
+		install
 	$(call FixupLibdir,$(TOOLCHAIN_DIR)/initial)
 	$(RM) $(TOOLCHAIN_DIR)/initial/lib/libiberty.a
-	$(CP) $(TOOLCHAIN_DIR)/initial/. $(TOOLCHAIN_DIR)/
 	$(CP) $(TOOLCHAIN_DIR)/bin/$(REAL_GNU_TARGET_NAME)-readelf $(REAL_STAGING_DIR_HOST)/bin/readelf
 endef
 

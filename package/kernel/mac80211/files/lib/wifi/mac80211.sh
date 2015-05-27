@@ -86,7 +86,8 @@ detect_mac80211() {
 		iw phy "$dev" info | grep -q '2412 MHz' || { mode_band="a"; channel="36"; }
 
 		vht_cap=$(iw phy "$dev" info | grep -c 'VHT Capabilities')
-		[ "$vht_cap" -gt 0 ] && {
+		cap_5ghz=$(iw phy "$dev" info | grep -c "Band 2")
+		[ "$vht_cap" -gt 0 -a "$cap_5ghz" -gt 0 ] && {
 			mode_band="a";
 			channel="36"
 			htmode="VHT80"
@@ -94,8 +95,12 @@ detect_mac80211() {
 
 		[ -n $htmode ] && append ht_capab "	option htmode	$htmode" "$N"
 
-		if [ -x /usr/bin/readlink ]; then
+		if [ -x /usr/bin/readlink -a -h /sys/class/ieee80211/${dev} ]; then
 			path="$(readlink -f /sys/class/ieee80211/${dev}/device)"
+		else
+			path=""
+		fi
+		if [ -n "$path" ]; then
 			path="${path##/sys/devices/}"
 			dev_id="	option path	'$path'"
 		else

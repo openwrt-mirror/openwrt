@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2014 OpenWrt.org
+# Copyright (C) 2013-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=firewall
-PKG_VERSION:=2014-09-19
+PKG_VERSION:=2015-05-26
 PKG_RELEASE:=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://nbd.name/firewall3.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=50e97c52e75bdfd325cf20d43b32d294ff84d92f
+PKG_SOURCE_VERSION:=980b7859bbd1db1e5e46422fccccbce38f9809ab
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_MAINTAINER:=Jo-Philipp Wich <jow@openwrt.org>
 PKG_LICENSE:=ISC
@@ -37,11 +37,6 @@ endef
 define Package/firewall/conffiles
 /etc/config/firewall
 /etc/firewall.user
-endef
-
-define Build/Configure
-	$(foreach file,$(wildcard $(STAGING_DIR)/usr/lib/iptables/libext*.a),$(CP) $(file) $(PKG_BUILD_DIR)/$(notdir $(file));)
-	$(call Build/Configure/Default)
 endef
 
 TARGET_CFLAGS += -ffunction-sections -fdata-sections

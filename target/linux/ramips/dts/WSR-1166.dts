@@ -4,9 +4,10 @@
 
 / {
 	compatible = "ralink,mt7621-eval-board", "ralink,mt7621-soc";
-	model = "Buffalo WSR-1166";
+	model = "Buffalo WSR-1166DHP";
 
 	memory@0 {
+		device_type = "memory";
 		reg = <0x0 0x8000000>;
 	};
 
@@ -46,12 +47,12 @@
 
 				partition@50000 {
 					label = "firmware";
-					reg = <0x50000 0x6b0000>;
+					reg = <0x50000 0xf90000>;
 				};
 
-				partition@f700000 {
-					label = "usercfg";
-					reg = <0x700000 0x100000>;
+				partition@fe00000 {
+					label = "board_data";
+					reg = <0xfe0000 0x10000>;
 				};
 			};
 		};
@@ -90,7 +91,7 @@
 		};
 		power {
 			label = "buffalo:green:power";
-			gpios = <&gpio0 14 1>;
+			gpios = <&gpio1 14 1>;
 		};
 		diag {
 			label = "buffalo:orange:diag";
@@ -145,5 +146,27 @@
 	gpio_poweroff {
 		compatible = "gpio-poweroff";
 		gpios = <&gpio0 0 1>;
+	};
+
+	pcie@1e140000 {
+		status = "okay";
+
+		pcie0 {
+			mt76@0,0 {
+				reg = <0x0000 0 0 0 0>;
+				device_type = "pci";
+				mediatek,mtd-eeprom = <&factory 0x8000>;
+				mediatek,2ghz = <0>;
+			};
+		};
+
+		pcie1 {
+			mt76@1,0 {
+				reg = <0x0000 0 0 0 0>;
+				device_type = "pci";
+				mediatek,mtd-eeprom = <&factory 0x0000>;
+				mediatek,5ghz = <0>;
+			};
+		};
 	};
 };

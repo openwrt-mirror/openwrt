@@ -1,11 +1,11 @@
-# 
+#
 # Copyright (C) 2006 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
 
-PKG_DEFAULT_DEPENDS = +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread
+PKG_DEFAULT_DEPENDS = +libc +SSP_SUPPORT:libssp +USE_GLIBC:librt +USE_GLIBC:libpthread
 
 ifneq ($(PKG_NAME),toolchain)
   PKG_FIXUP_DEPENDS = $(if $(filter kmod-%,$(1)),$(2),$(PKG_DEFAULT_DEPENDS) $(filter-out $(PKG_DEFAULT_DEPENDS),$(2)))
@@ -67,7 +67,11 @@ ifneq ($(strip $(PKG_UNPACK)),)
 endif
 
 EXTRA_CXXFLAGS = $(EXTRA_CFLAGS)
-DISABLE_NLS:=--disable-nls
+ifeq ($(CONFIG_BUILD_NLS),y)
+    DISABLE_NLS:=
+else
+    DISABLE_NLS:=--disable-nls
+endif
 
 CONFIGURE_PREFIX:=/usr
 CONFIGURE_ARGS = \

@@ -9,8 +9,11 @@ get_status_led() {
 	3g-6200n)
 		status_led="edimax:green:power"
 		;;
-	3g300m | w150m)
+	3g150b | 3g300m | w150m)
 		status_led="tenda:blue:ap"
+		;;
+	ai-br100)
+		status_led="aigale:blue:wlan"
 		;;
 	ar670w)
 		status_led="ar670w:green:power"
@@ -32,6 +35,9 @@ get_status_led() {
 		;;
 	br6425 | br-6475nd)
 		status_led="edimax:green:power"
+		;;
+	cf-wr800n)
+		status_led="comfast:white:wps"
 		;;
 	cy-swr1100)
 		status_led="samsung:blue:wps"
@@ -70,11 +76,14 @@ get_status_led() {
 		status_led="hlk-rm04:red:power"
 		;;
 	ht-tm02)
-		status_led="ht-tm02:white:status"
+		status_led="ht-tm02:blue:wlan"
 		;;
 	all0239-3g|\
 	hw550-3g)
 		status_led="hw550-3g:green:status"
+		;;
+	m2m)
+		status_led="m2m:blue:wifi"
 		;;
 	m3)
 		status_led="m3:blue:status"
@@ -82,8 +91,9 @@ get_status_led() {
 	m4)
 		status_led="m4:blue:status"
 		;;
-	mlw221)
-		status_led="kingston:blue:status"
+	mlw221|\
+	mlwg2)
+		status_led="kingston:blue:system"
 		;;
 	mofi3500-3gn)
 		status_led="mofi3500-3gn:green:status"
@@ -93,6 +103,9 @@ get_status_led() {
 		;;
 	mpr-a2)
 		status_led="hame:red:power"
+		;;
+	mr-102n)
+		status_led="mr-102n:amber:status"
 		;;
 	nbg-419n)
 		status_led="nbg-419n:green:power"
@@ -119,7 +132,7 @@ get_status_led() {
 	rt-n10-plus)
 		status_led="asus:green:wps"
 		;;
-	rt-n56u | wl-330n | wl-330n3g)
+	rt-n14u | rt-n56u | wl-330n | wl-330n3g)
 		status_led="asus:blue:power"
 		;;
 	rut5xx)
@@ -161,6 +174,9 @@ get_status_led() {
 	wli-tx4-ag300n)
 		status_led="buffalo:blue:power"
 		;;
+	wzr-agl300nh)
+		status_led="buffalo:green:router"
+		;;
 	wl-351)
 		status_led="wl-351:amber:power"
 		;;
@@ -180,7 +196,7 @@ get_status_led() {
 	nexx-wt1520)
 		status_led="nexx-wt1520:white:power"
 		;;
-	nexx-wt3020)
+	wt3020)
 		status_led="nexx:blue:power"
 		;;
 	mzk-w300nh2)
@@ -201,6 +217,9 @@ get_status_led() {
 	xdxrn502j)
 		status_led="xdxrn502j:green:power"
 		;;
+	xiaomi-mini)
+		status_led="xiaomi:red:status"
+		;;
 	f7c027)
 		status_led="belkin:orange:status"
 		;;
@@ -210,6 +229,9 @@ get_status_led() {
 	y1 | \
 	y1s)
 		status_led="lenovo:blue:power"
+		;;
+	zte-q7)
+		status_led="zte:red:status"
 		;;
 	esac
 }
@@ -223,6 +245,9 @@ set_state() {
 		;;
 	failsafe)
 		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
 		status_led_on

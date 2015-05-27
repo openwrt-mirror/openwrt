@@ -85,6 +85,7 @@ static int decrypt_file(void)
 
 	memset(&ep, '\0', sizeof(ep));
 	ep.key = (unsigned char *) crypt_key;
+	ep.longstate = longstate;
 
 	err = decrypt_buf(&ep, buf, src_len);
 	if (err) {
@@ -238,7 +239,7 @@ int main(int argc, char *argv[])
 	while ( 1 ) {
 		int c;
 
-		c = getopt(argc, argv, "adi:m:o:hp:v:k:r:s:");
+		c = getopt(argc, argv, "adi:m:o:hlp:v:k:r:s:");
 		if (c == -1)
 			break;
 

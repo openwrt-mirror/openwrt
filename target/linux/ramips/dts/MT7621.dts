@@ -7,6 +7,7 @@
 	model = "Mediatek MT7621 evaluation board";
 
 	memory@0 {
+		device_type = "memory";
 		reg = <0x0 0x2000000>;
 	};
 
@@ -16,5 +17,18 @@
 
 	sdhci@10130000 {
 		status = "okay";
+	};
+
+	xhci@1E1C0000 {
+		status = "okay";
+	};
+
+	pinctrl {
+		state_default: pinctrl0 {
+			gpio {
+				ralink,group = "i2c", "uart2", "uart3", "rgmii2", "sdhci";
+				ralink,function = "gpio";
+			};
+		};
 	};
 };

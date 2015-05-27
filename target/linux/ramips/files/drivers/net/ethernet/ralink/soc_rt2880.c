@@ -22,7 +22,6 @@
 #include "ralink_soc_eth.h"
 #include "mdio_rt2880.h"
 
-#define SYSC_REG_RESET_CTRL		0x034
 #define RT2880_RESET_FE			BIT(18)
 
 static void rt2880_init_data(struct fe_soc_data *data,
@@ -39,7 +38,7 @@ static void rt2880_init_data(struct fe_soc_data *data,
 
 void rt2880_fe_reset(void)
 {
-	rt_sysc_w32(RT2880_RESET_FE, SYSC_REG_RESET_CTRL);
+	fe_reset(RT2880_RESET_FE);
 }
 
 static int rt2880_fwd_config(struct fe_priv *priv)
@@ -58,15 +57,14 @@ static int rt2880_fwd_config(struct fe_priv *priv)
 }
 
 struct fe_soc_data rt2880_data = {
-	.mac = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 },
 	.init_data = rt2880_init_data,
 	.reset_fe = rt2880_fe_reset,
 	.fwd_config = rt2880_fwd_config,
 	.pdma_glo_cfg = FE_PDMA_SIZE_8DWORDS,
 	.checksum_bit = RX_DMA_L4VALID,
-	.tx_udf_bit = TX_DMA_UDF,
-	.rx_dly_int = FE_RX_DLY_INT,
-	.tx_dly_int = FE_TX_DLY_INT,
+	.rx_int = FE_RX_DONE_INT,
+	.tx_int = FE_TX_DONE_INT,
+	.status_int = FE_CNT_GDM_AF,
 	.mdio_read = rt2880_mdio_read,
 	.mdio_write = rt2880_mdio_write,
 	.mdio_adjust_link = rt2880_mdio_link_adjust,

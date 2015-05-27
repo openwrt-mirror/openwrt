@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=samba
-PKG_VERSION:=3.6.24
-PKG_RELEASE:=1
+PKG_VERSION:=3.6.25
+PKG_RELEASE:=3
 
 PKG_SOURCE_URL:=http://ftp.samba.org/pub/samba \
 	http://ftp.samba.org/pub/samba/stable
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_MD5SUM:=d98425c0c2b73e08f048d31ffc727fb0
+PKG_MD5SUM:=76da2fa64edd94a0188531e7ecb27c4e
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=COPYING
@@ -35,7 +35,7 @@ define Package/samba36-server
   CATEGORY:=Network
   TITLE:=Samba 3.6 SMB/CIFS server
   URL:=http://www.samba.org/
-  DEPENDS:=+USE_EGLIBC:librt
+  DEPENDS:=+USE_GLIBC:librt
 endef
 
 define Package/samba36-client
@@ -123,9 +123,14 @@ CONFIGURE_ARGS += \
 
 MAKE_FLAGS += DYNEXP= PICFLAG= MODULES=
 
+define Package/samba36-server/conffiles
+/etc/config/samba
+/etc/samba/smb.conf.template
+endef
+
 define Package/samba36-server/install
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_DATA) ./files/samba.config $(1)/etc/config/samba
+	$(INSTALL_CONF) ./files/samba.config $(1)/etc/config/samba
 	$(INSTALL_DIR) $(1)/etc/samba
 	$(INSTALL_DATA) ./files/smb.conf.template $(1)/etc/samba
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/codepages/lowcase.dat $(1)/etc/samba

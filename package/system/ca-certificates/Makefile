@@ -10,7 +10,6 @@ PKG_NAME:=ca-certificates
 PKG_VERSION:=20141019
 
 PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.xz
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=http://ftp.debian.org/debian/pool/main/c/ca-certificates
 PKG_MD5SUM:=f619282081c8bfc65ea64c37fa5285ed
 
@@ -41,7 +40,7 @@ define Package/ca-certificates/install
 		while [ -h "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ]; do \
 			let "SUFFIX += 1" ; \
 		done ; \
-		ln -s "$$$$CERTFILE" "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ; \
+		$(LN) "$$$$CERTFILE" "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ; \
 	done
 endef
 

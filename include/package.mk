@@ -15,6 +15,12 @@ PKG_MD5SUM ?= unknown
 PKG_BUILD_PARALLEL ?=
 PKG_USE_MIPS16 ?= 1
 PKG_CHECK_FORMAT_SECURITY ?= 1
+PKG_CC_STACKPROTECTOR_REGULAR ?= 1
+PKG_CC_STACKPROTECTOR_STRONG ?= 1
+PKG_FORTIFY_SOURCE_1 ?= 1
+PKG_FORTIFY_SOURCE_2 ?= 1
+PKG_RELRO_PARTIAL ?= 1
+PKG_RELRO_FULL ?= 1
 
 ifneq ($(CONFIG_PKG_BUILD_USE_JOBSERVER),)
   MAKE_J:=$(if $(MAKE_JOBSERVER),$(MAKE_JOBSERVER) -j)
@@ -37,6 +43,36 @@ endif
 ifdef CONFIG_PKG_CHECK_FORMAT_SECURITY
   ifeq ($(strip $(PKG_CHECK_FORMAT_SECURITY)),1)
     TARGET_CFLAGS += -Wformat -Werror=format-security
+  endif
+endif
+ifdef CONFIG_PKG_CC_STACKPROTECTOR_REGULAR
+  ifeq ($(strip $(PKG_CC_STACKPROTECTOR_REGULAR)),1)
+    TARGET_CFLAGS += -fstack-protector
+  endif
+endif
+ifdef CONFIG_PKG_CC_STACKPROTECTOR_STRONG
+  ifeq ($(strip $(PKG_CC_STACKPROTECTOR_STRONG)),1)
+    TARGET_CFLAGS += -fstack-protector-strong
+  endif
+endif
+ifdef CONFIG_PKG_FORTIFY_SOURCE_1
+  ifeq ($(strip $(PKG_FORTIFY_SOURCE_1)),1)
+    TARGET_CFLAGS += -D_FORTIFY_SOURCE=1
+  endif
+endif
+ifdef CONFIG_PKG_FORTIFY_SOURCE_2
+  ifeq ($(strip $(PKG_FORTIFY_SOURCE_2)),1)
+    TARGET_CFLAGS += -D_FORTIFY_SOURCE=2
+  endif
+endif
+ifdef CONFIG_PKG_RELRO_PARTIAL
+  ifeq ($(strip $(PKG_RELRO_PARTIAL)),1)
+    TARGET_CFLAGS += -Wl,-z,relro
+  endif
+endif
+ifdef CONFIG_PKG_RELRO_FULL
+  ifeq ($(strip $(PKG_RELRO_FULL)),1)
+    TARGET_CFLAGS += -Wl,-z,now -Wl,-z,relro
   endif
 endif
 
@@ -62,12 +98,23 @@ ifneq ($(PREV_STAMP_PREPARED),)
 else
   STAMP_PREPARED=$(PKG_BUILD_DIR)/.prepared$(if $(QUILT)$(DUMP),,_$(shell $(call find_md5,${CURDIR} $(PKG_FILE_DEPENDS),))$(call confvar,$(PKG_PREPARED_DEPENDS)))
 endif
-STAMP_CONFIGURED:=$(PKG_BUILD_DIR)/.configured$(if $(DUMP),,_$(call confvar,$(PKG_CONFIG_DEPENDS)))
+STAMP_CONFIGURED=$(PKG_BUILD_DIR)/.configured$(if $(DUMP),,_$(call confvar,$(PKG_CONFIG_DEPENDS)))
 STAMP_CONFIGURED_WILDCARD=$(patsubst %_$(call confvar,$(PKG_CONFIG_DEPENDS)),%_*,$(STAMP_CONFIGURED))
 STAMP_BUILT:=$(PKG_BUILD_DIR)/.built
-STAMP_INSTALLED:=$(STAGING_DIR)/stamp/.$(PKG_NAME)_installed
+STAMP_INSTALLED:=$(STAGING_DIR)/stamp/.$(PKG_NAME)$(if $(BUILD_VARIANT),.$(BUILD_VARIANT),)_installed
 
 STAGING_FILES_LIST:=$(PKG_NAME)$(if $(BUILD_VARIANT),.$(BUILD_VARIANT),).list
+
+define CleanStaging
+	rm -f $(STAMP_INSTALLED)
+	@-(\
+		cd "$(STAGING_DIR)"; \
+		if [ -f packages/$(STAGING_FILES_LIST) ]; then \
+			cat packages/$(STAGING_FILES_LIST) | xargs -r rm -f 2>/dev/null; \
+		fi; \
+	)
+endef
+
 ifneq ($(if $(CONFIG_SRC_TREE_OVERRIDE),$(wildcard ./git-src)),)
   USE_GIT_TREE:=1
   QUILT:=1
@@ -91,11 +138,11 @@ include $(INCLUDE_DIR)/package-bin.mk
 include $(INCLUDE_DIR)/autotools.mk
 
 override MAKEFLAGS=
-CONFIG_SITE:=$(INCLUDE_DIR)/site/$(REAL_GNU_TARGET_NAME)
+CONFIG_SITE:=$(INCLUDE_DIR)/site/$(ARCH)
 CUR_MAKEFILE:=$(filter-out Makefile,$(firstword $(MAKEFILE_LIST)))
 SUBMAKE:=$(NO_TRACE_MAKE) $(if $(CUR_MAKEFILE),-f $(CUR_MAKEFILE))
 PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig:$(STAGING_DIR)/usr/share/pkgconfig
-unexport QUIET
+unexport QUIET CONFIG_SITE
 
 ifeq ($(DUMP)$(filter prereq clean refresh update,$(MAKECMDGOALS)),)
   ifneq ($(if $(QUILT),,$(CONFIG_AUTOREBUILD)),)
@@ -166,6 +213,7 @@ define Build/DefaultTargets
 
   $(call Build/Exports,$(STAMP_CONFIGURED))
   $(STAMP_CONFIGURED): $(STAMP_PREPARED)
+	$(CleanStaging)
 	$(foreach hook,$(Hooks/Configure/Pre),$(call $(hook))$(sep))
 	$(Build/Configure)
 	$(foreach hook,$(Hooks/Configure/Post),$(call $(hook))$(sep))
@@ -183,7 +231,6 @@ define Build/DefaultTargets
 
   $(STAMP_INSTALLED) : export PATH=$$(TARGET_PATH_PKG)
   $(STAMP_INSTALLED): $(STAMP_BUILT)
-	$(SUBMAKE) -j1 clean-staging
 	rm -rf $(TMP_DIR)/stage-$(PKG_NAME)
 	mkdir -p $(TMP_DIR)/stage-$(PKG_NAME)/host $(STAGING_DIR)/packages $(STAGING_DIR_HOST)/packages
 	$(foreach hook,$(Hooks/InstallDev/Pre),\
@@ -294,16 +341,9 @@ prepare:
 configure:
 compile: prepare-package-install
 install: compile
-clean-staging: FORCE
-	rm -f $(STAMP_INSTALLED)
-	@-(\
-		cd "$(STAGING_DIR)"; \
-		if [ -f packages/$(STAGING_FILES_LIST) ]; then \
-			cat packages/$(STAGING_FILES_LIST) | xargs -r rm -f 2>/dev/null; \
-		fi; \
-	)
 
-clean: clean-staging FORCE
+clean: FORCE
+	$(CleanStaging)
 	$(call Build/UninstallDev,$(STAGING_DIR),$(STAGING_DIR_HOST))
 	$(Build/Clean)
 	rm -f $(STAGING_DIR)/packages/$(STAGING_FILES_LIST) $(STAGING_DIR_HOST)/packages/$(STAGING_FILES_LIST)
@@ -311,6 +351,6 @@ clean: clean-staging FORCE
 
 dist:
 	$(Build/Dist)
-   
+
 distcheck:
-	$(Build/DistCheck) 
+	$(Build/DistCheck)

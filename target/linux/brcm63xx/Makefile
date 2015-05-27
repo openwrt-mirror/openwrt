@@ -11,12 +11,12 @@ BOARD:=brcm63xx
 BOARDNAME:=Broadcom BCM63xx
 SUBTARGETS:=generic smp
 FEATURES:=squashfs usb atm pci pcmcia usbgadget
-KERNEL_PATCHVER:=3.14
-MAINTAINER:=Florian Fainelli <florian@openwrt.org>
+KERNEL_PATCHVER:=3.18
+MAINTAINER:=Jonas Gorski <jogo@openwrt.org>
 
 include $(INCLUDE_DIR)/target.mk
 
-DEFAULT_PACKAGES += swconfig kmod-input-gpio-keys-polled kmod-button-hotplug
+DEFAULT_PACKAGES += swconfig kmod-gpio-button-hotplug
 
 define Target/Description
 	Build firmware images for Broadcom based xDSL/routers

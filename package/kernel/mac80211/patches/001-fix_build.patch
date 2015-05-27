@@ -1,12 +1,21 @@
 --- a/Makefile
 +++ b/Makefile
+@@ -5,7 +5,7 @@
+ ifeq ($(KERNELRELEASE),)
+ 
+ MAKEFLAGS += --no-print-directory
+-SHELL := /bin/bash
++SHELL := /usr/bin/env bash
+ BACKPORT_DIR := $(shell pwd)
+ 
+ KMODDIR ?= updates
 @@ -19,6 +19,7 @@ KLIB_BUILD ?= $(KLIB)/build/
  KERNEL_CONFIG := $(KLIB_BUILD)/.config
  KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
  CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
 +STAMP_KERNEL_CONFIG := .kernel_config_md5_$(CONFIG_MD5)
  
- export KLIB KLIB_BUILD BACKPORT_PWD KMODDIR KMODPATH_ARG
+ export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
  
 @@ -36,7 +37,8 @@ mrproper:
  	@rm -f .kernel_config_md5 Kconfig.versions Kconfig.kernel
@@ -55,7 +64,7 @@
 -		print=0									;\
 -		for v in $$kvers ; do							\
 -			if [ "$$print" = "1" ] ; then					\
--				echo config BACKPORT_KERNEL_$$(echo $$v | tr . _)	;\
+-				echo config KERNEL_$$(echo $$v | tr . _)	;\
 -				echo "    def_bool y"					;\
 -			fi								;\
 -			if [ "$$v" = "$$kver" ] ; then print=1 ; fi			;\
@@ -110,7 +119,7 @@
 +	print=0									;\
 +	for v in $$kvers ; do							\
 +		if [ "$$print" = "1" ] ; then					\
-+			echo config BACKPORT_KERNEL_$$(echo $$v | tr . _)	;\
++			echo config KERNEL_$$(echo $$v | tr . _)	;\
 +			echo "    def_bool y"					;\
 +		fi								;\
 +		if [ "$$v" = "$$kver" ] ; then print=1 ; fi			;\

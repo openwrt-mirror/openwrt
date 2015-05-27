@@ -24,8 +24,13 @@ case $board in
 	3g-6200nl)
 		set_wifi_led "edimax:green:wlan"
 		;;
+	3g150b |\
 	3g300m)
 		set_usb_led "tenda:blue:3g"
+		;;
+	ai-br100)
+		ucidef_set_led_netdev "wan" "wan" "aigale:blue:wan" "eth0.2"
+		set_wifi_led "aigale:blue:wlan"
 		;;
 	a5-v11)
 		ucidef_set_led_default "power" "POWER" "a5-v11:red:power" "1"
@@ -67,6 +72,10 @@ case $board in
 		;;
 	br6524n)
 		set_wifi_led "edimax:blue:wlan"
+		;;
+	cf-wr800n)
+		ucidef_set_led_netdev "lan" "lan" "comfast:white:ethernet" eth0.1
+		set_wifi_led "comfast:white:wifi"
 		;;
 	cy-swr1100)
 		ucidef_set_led_default "wps" "WPS" "samsung:blue:wps" "0"
@@ -114,15 +123,16 @@ case $board in
 	hlk-rm04)
 		set_wifi_led "rt2800pci-phy0::radio"
 		;;
-        ht-tm02)
-		ucidef_set_led_netdev "eth" "ETH" "ht-tm02:white:status" "eth0"
-		set_wifi_led "ht-tm02:blue:wifi"
-                ;;
+	ht-tm02)
+		ucidef_set_led_netdev "eth" "Ethernet" "ht-tm02:green:lan" "eth0"
+		set_wifi_led "ht-tm02:blue:wlan"
+		;;
 	all0239-3g|\
 	hw550-3g)
 		set_usb_led "hw550-3g:green:usb"
 		;;
-	mlw221)
+	mlw221|\
+	mlwg2)
 		set_wifi_led "kingston:blue:wifi"
 		ucidef_set_led_default "system" "system" "kingston:blue:system" "1"
 		;;
@@ -135,6 +145,10 @@ case $board in
 	mpr-a2)
 		set_wifi_led "hame:blue:system"
 		;;
+	mr-102n)
+		set_wifi_led "mr-102n:green:wlan"
+		set_usb_led "mr-102n:green:usb"
+		;;
 	mzk-w300nh2)
 		set_wifi_led "mzkw300nh2:amber:wlan"
 		;;
@@ -143,6 +157,10 @@ case $board in
 		;;
 	nw718)
 		set_usb_led "nw718:amber:usb"
+		;;
+	m2m)
+		set_wifi_led "m2m:blue:wifi"
+		ucidef_set_led_netdev "eth" "Ethernet" "m2m:green:wan" "eth0"
 		;;
 	omni-emb-hpm)
 		ucidef_set_led_default "power" "POWER" "emb:orange:power" "1"
@@ -178,17 +196,17 @@ case $board in
 		set_usb_led "wcr150gn:amber:user"
 		;;
 	hg255d)
-    		set_wifi_led "hg255d:wlan"
-    		set_usb_led "hg255d:usb"
-    		ucidef_set_led_interface "lan" "hg255d:internet"
+		set_wifi_led "hg255d:wlan"
+		set_usb_led "hg255d:usb"
+		ucidef_set_led_interface "lan" "hg255d:internet"
 		;;
 	wnce2001)
 		set_wifi_led "netgear:green:wlan"
 		;;
 	rt-n14u)
 		ucidef_set_led_default "power" "power" "asus:blue:power" "1"
-		ucidef_set_led_interafce "lan" "asus:blue:lan"
-		ucidef_set_led_netdev "wan" "asus:blue:wan"
+		ucidef_set_led_netdev "lan" "lan" "asus:blue:lan" eth0.1
+		ucidef_set_led_netdev "wan" "wan" "asus:blue:wan" eth0.2
 		set_wifi_led "asus:blue:air"
 		set_usb_led "asus:blue:usb"
 		;;
@@ -218,11 +236,17 @@ case $board in
 	wt3020)
 		ucidef_set_led_default "power" "power" "nexx:blue:power" "0"
 		;;
+	xiaomi-miwifi-mini)
+		ucidef_set_led_default "power" "power" "xiaomi:red:status" "1"
+		;;
 	y1 |\
 	y1s)
 		ucidef_set_led_default "power" "power" "lenovo:blue:power" "1"
 		set_usb_led "lenovo:blue:usb"
 		set_wifi_led "lenovo:blue:wifi"
+		;;
+	zte-q7)
+		set_wifi_led "zte:blue:status"
 		;;
 esac
 

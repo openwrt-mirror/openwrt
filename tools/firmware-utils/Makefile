@@ -12,7 +12,7 @@ include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 define cc
-	$(HOSTCC) $(HOST_CFLAGS) -include endian.h $(HOST_STATIC_LINKING) $(HOST_LDFLAGS) -o $(HOST_BUILD_DIR)/bin/$(firstword $(1)) $(foreach src,$(1),src/$(src).c) $(2)
+	$(HOSTCC) $(HOST_CFLAGS) -include endian.h $(HOST_LDFLAGS) -o $(HOST_BUILD_DIR)/bin/$(firstword $(1)) $(foreach src,$(1),src/$(src).c) $(2)
 endef
 
 define Host/Compile
@@ -33,7 +33,7 @@ define Host/Compile
 	$(call cc,mkcasfw)
 	$(call cc,mkfwimage,-lz)
 	$(call cc,mkfwimage2,-lz)
-	$(call cc,imagetag imagetag_cmdline)
+	$(call cc,imagetag imagetag_cmdline cyg_crc32)
 	$(call cc,add_header)
 	$(call cc,makeamitbin)
 	$(call cc,encode_crc)
@@ -71,6 +71,7 @@ define Host/Compile
 	$(call cc,mkheader_gemtek,-lz)
 	$(call cc,mkrtn56uimg, -lz)
 	$(call cc,dgn3500sum)
+	$(call cc,edimax_fw_header, -Wall)
 endef
 
 define Host/Install

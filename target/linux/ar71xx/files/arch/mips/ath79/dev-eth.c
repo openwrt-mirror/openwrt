@@ -769,6 +769,32 @@ void __init ath79_setup_ar934x_eth_cfg(u32 mask)
 	iounmap(base);
 }
 
+void __init ath79_setup_ar934x_eth_rx_delay(unsigned int rxd,
+					    unsigned int rxdv)
+{
+	void __iomem *base;
+	u32 t;
+
+	rxd &= AR934X_ETH_CFG_RXD_DELAY_MASK;
+	rxdv &= AR934X_ETH_CFG_RDV_DELAY_MASK;
+
+	base = ioremap(AR934X_GMAC_BASE, AR934X_GMAC_SIZE);
+
+	t = __raw_readl(base + AR934X_GMAC_REG_ETH_CFG);
+
+	t &= ~(AR934X_ETH_CFG_RXD_DELAY_MASK << AR934X_ETH_CFG_RXD_DELAY_SHIFT |
+	       AR934X_ETH_CFG_RDV_DELAY_MASK << AR934X_ETH_CFG_RDV_DELAY_SHIFT);
+
+	t |= (rxd << AR934X_ETH_CFG_RXD_DELAY_SHIFT |
+	      rxdv << AR934X_ETH_CFG_RDV_DELAY_SHIFT);
+
+	__raw_writel(t, base + AR934X_GMAC_REG_ETH_CFG);
+	/* flush write */
+	__raw_readl(base + AR934X_GMAC_REG_ETH_CFG);
+
+	iounmap(base);
+}
+
 void __init ath79_setup_qca955x_eth_cfg(u32 mask)
 {
 	void __iomem *base;
@@ -1113,10 +1139,10 @@ void __init ath79_register_eth(unsigned int id)
 
 	/* Reset the device */
 	ath79_device_reset_set(pdata->reset_bit);
-	mdelay(100);
+	msleep(100);
 
 	ath79_device_reset_clear(pdata->reset_bit);
-	mdelay(100);
+	msleep(100);
 
 	platform_device_register(pdev);
 	ath79_eth_instance++;

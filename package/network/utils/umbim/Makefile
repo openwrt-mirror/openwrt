@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=umbim
-PKG_VERSION:=2014-09-09
+PKG_VERSION:=2015-04-09
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://git.openwrt.org/project/umbim.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=4ae19ab4fcdd70dbfc8c303d752502f2da5a7e75
+PKG_SOURCE_VERSION:=af9c293c1f1d8a97fbd8adf9c6070ead4920ca84
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
 
@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/umbim
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+libubox +kmod-usb-net +kmod-usb-net-cdc-mbim
+  DEPENDS:=+libubox +kmod-usb-net +kmod-usb-net-cdc-mbim +wwan
   TITLE:=Control utility for mobile broadband modems
 endef
 

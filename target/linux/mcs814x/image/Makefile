@@ -9,6 +9,8 @@ include $(INCLUDE_DIR)/image.mk
 
 TARGET_DTBS := rbt-832 dlan-usb-extender
 
+DTBS_DIR:=dts/
+
 LOADADDR:=0x00008000
 
 JFFS2_BLOCKSIZE = 128k
@@ -22,7 +24,7 @@ endef
 
 define Image/Build/DTB
 	cp $(KDIR)/zImage$(2) $(KDIR)/zImage-$(1);
-	cat $(LINUX_DIR)/arch/$(ARCH)/boot/$(1).dtb >> $(KDIR)/zImage$(2)-$(1);
+	cat $(LINUX_DIR)/arch/$(ARCH)/boot/$(DTBS_DIR)$(1).dtb >> $(KDIR)/zImage$(2)-$(1);
 	$(call Image/Build/MkuImage,$(KDIR)/zImage$(2)-$(1),$(KDIR)/uImage$(2)-$(1))
 	cp $(KDIR)/uImage$(2)-$(1) $(UIMAGE)$(2)-$(1);
 endef

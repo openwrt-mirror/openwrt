@@ -22,19 +22,11 @@
 #include "ralink_soc_eth.h"
 #include "mdio_rt2880.h"
 
-#define RT3883_SYSC_REG_RSTCTRL		0x34
 #define RT3883_RSTCTRL_FE		BIT(21)
 
 static void rt3883_fe_reset(void)
 {
-	u32 t;
-
-	t = rt_sysc_r32(RT3883_SYSC_REG_RSTCTRL);
-	t |= RT3883_RSTCTRL_FE;
-	rt_sysc_w32(t , RT3883_SYSC_REG_RSTCTRL);
-
-	t &= ~RT3883_RSTCTRL_FE;
-	rt_sysc_w32(t, RT3883_SYSC_REG_RSTCTRL);
+	fe_reset(RT3883_RSTCTRL_FE);
 }
 
 static int rt3883_fwd_config(struct fe_priv *priv)
@@ -64,15 +56,14 @@ static void rt3883_init_data(struct fe_soc_data *data,
 }
 
 static struct fe_soc_data rt3883_data = {
-	.mac = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 },
 	.init_data = rt3883_init_data,
 	.reset_fe = rt3883_fe_reset,
 	.fwd_config = rt3883_fwd_config,
 	.pdma_glo_cfg = FE_PDMA_SIZE_8DWORDS,
-	.rx_dly_int = FE_RX_DLY_INT,
-	.tx_dly_int = FE_TX_DLY_INT,
+	.rx_int = FE_RX_DONE_INT,
+	.tx_int = FE_TX_DONE_INT,
+	.status_int = FE_CNT_GDM_AF,
 	.checksum_bit = RX_DMA_L4VALID,
-	.tx_udf_bit = TX_DMA_UDF,
 	.mdio_read = rt2880_mdio_read,
 	.mdio_write = rt2880_mdio_write,
 	.mdio_adjust_link = rt2880_mdio_link_adjust,

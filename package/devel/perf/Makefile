@@ -19,7 +19,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/perf
   SECTION:=devel
   CATEGORY:=Development
-  DEPENDS:= +libelf1 +libdw +libpthread +librt +binutils
+  DEPENDS:= @USE_GLIBC +libelf1 +libdw +libpthread +librt +binutils
   TITLE:=Linux performance monitoring tool
   VERSION:=$(LINUX_VERSION)-$(PKG_RELEASE)
   URL:=http://www.kernel.org
@@ -33,7 +33,7 @@ endef
 # Linux sources directory
 define Build/Prepare
 	$(RM) -r $(PKG_BUILD_DIR)
-	ln -s $(LINUX_DIR)/tools/perf $(PKG_BUILD_DIR)
+	$(LN) $(LINUX_DIR)/tools/perf $(PKG_BUILD_DIR)
 endef
 
 # MAKE_FLAGS should be passed again upon cleaning because Perf's makefile
@@ -55,6 +55,7 @@ MAKE_FLAGS = \
 	LD="$(TARGET_CROSS)ld" \
 	CFLAGS="$(TARGET_CFLAGS) $(TARGET_CPPFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
+	WERROR=0 \
 	V=1 \
 	prefix=/usr
 

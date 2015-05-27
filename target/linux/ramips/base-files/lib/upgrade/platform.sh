@@ -16,9 +16,11 @@ platform_check_image() {
 	case "$board" in
 	3g-6200n | \
 	3g-6200nl | \
+	3g150b | \
 	3g300m | \
 	a5-v11 | \
 	air3gii | \
+	ai-br100 |\
 	all0239-3g | \
 	all0256n | \
 	all5002 | \
@@ -31,6 +33,7 @@ platform_check_image() {
 	bc2 | \
 	broadway | \
 	carambola | \
+	cf-wr800n | \
 	d105 | \
 	dap-1350 | \
 	dcs-930 | \
@@ -49,17 +52,22 @@ platform_check_image() {
 	f7c027 | \
 	fonera20n | \
 	freestation5 | \
+	firewrt |\
 	hg255d | \
 	hlk-rm04 | \
 	ht-tm02 | \
 	hw550-3g | \
 	ip2202 | \
+	m2m | \
 	m3 | \
 	m4 | \
+	microwrt | \
 	mlw221 | \
+	mlwg2 | \
 	mofi3500-3gn | \
 	mpr-a1 | \
 	mpr-a2 | \
+	mr-102n | \
 	mzk-w300nh2 | \
 	nbg-419n | \
 	nw718 | \
@@ -90,12 +98,12 @@ platform_check_image() {
 	whr-600d |\
 	whr-1166d |\
 	wsr-600 |\
-	wsr-1166 |\
 	wl-330n | \
 	wl-330n3g | \
 	wl-351 | \
 	wl341v3 | \
 	wli-tx4-ag300n | \
+	wzr-agl300nh | \
 	wmr300 |\
 	wnce2001 | \
 	wr512-3gn |\
@@ -106,10 +114,19 @@ platform_check_image() {
 	wt3020 |\
 	x5 |\
 	x8 |\
+	xiaomi-miwifi-mini |\
 	y1 |\
 	y1s |\
+	zte-q7 |\
 	zbt-wa05)
 		[ "$magic" != "27051956" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
+	wsr-1166)
+		[ "$magic" != "48445230" ] && {
 			echo "Invalid image type."
 			return 1
 		}
@@ -124,7 +141,8 @@ platform_check_image() {
 		;;
 	cy-swr1100 |\
 	dir-610-a1 |\
-	dir-645)
+	dir-645 |\
+	dir-860l-b1)
 		[ "$magic" != "5ea3a417" ] && {
 			echo "Invalid image type."
 			return 1
@@ -133,6 +151,13 @@ platform_check_image() {
 		;;
 	br-6475nd)
 		[ "$magic" != "43535953" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
+	c20i)
+		[ "$magic" != "03000000" ] && {
 			echo "Invalid image type."
 			return 1
 		}

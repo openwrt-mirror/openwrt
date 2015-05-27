@@ -33,13 +33,16 @@ igmp_header() {
 }
 
 igmp_add_phyint() {
-        local network direction altnets device up
+	local network direction altnets device up
 
-        config_get network $1 network
-        config_get direction $1 direction
-        config_get altnets $1 altnet
+	config_get network $1 network
+	config_get direction $1 direction
+	config_get altnets $1 altnet
 
-	json_load "$(ifstatus $network)"
+	local status="$(ubus -S call "network.interface.$network" status)"
+	[ -n "$status" ] || return
+
+	json_load "$status"
 	json_get_var device l3_device
 	json_get_var up up
 
@@ -47,6 +50,8 @@ igmp_add_phyint() {
 		procd_append_param error "$network is not up"
 		return;
 	}
+
+	[[ "$direction" = "upstream" ]] && has_upstream=1
 
 	echo -e "\nphyint $device $direction ratelimit 0 threshold 1" >> /var/etc/igmpproxy.conf
 
@@ -104,11 +109,14 @@ service_triggers() {
 }
 
 start_service() {
+	has_upstream=
 	config_load igmpproxy
 
-	procd_open_instance
 	config_foreach igmp_header igmpproxy
 	config_foreach igmp_add_phyint phyint
+	[ -n "$has_upstream" ] || return
+
+	procd_open_instance
 	procd_set_param command $PROG
 	[ -n "$OPTIONS" ] && procd_append_param $OPTIONS
 	procd_append_param command $CONFIGFILE

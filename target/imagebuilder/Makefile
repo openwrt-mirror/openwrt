@@ -1,5 +1,5 @@
 # 
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -12,10 +12,7 @@ include $(INCLUDE_DIR)/version.mk
 
 override MAKEFLAGS=
 
-PKG_OS:=$(word 2,$(subst -, ,$(shell $(HOSTCC) -dumpmachine)))
-PKG_CPU:=$(word 1,$(subst -, ,$(shell $(HOSTCC) -dumpmachine)))
-
-IB_NAME:=OpenWrt-ImageBuilder-$(BOARD)$(if $(SUBTARGET),_$(SUBTARGET))-for-$(PKG_OS)-$(PKG_CPU)
+IB_NAME:=OpenWrt-ImageBuilder-$(if $(CONFIG_VERSION_FILENAMES),$(VERSION_NUMBER)-)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET)).$(HOST_OS)-$(HOST_ARCH)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(IB_NAME)
 IB_KDIR:=$(patsubst $(TOPDIR)/%,$(PKG_BUILD_DIR)/%,$(KERNEL_BUILD_DIR))
 IB_LDIR:=$(patsubst $(TOPDIR)/%,$(PKG_BUILD_DIR)/%,$(LINUX_DIR))
@@ -56,9 +53,9 @@ $(BIN_DIR)/$(IB_NAME).tar.bz2: clean
 	find $(PKG_BUILD_DIR) -name CVS -o -name .git -o -name .svn \
 	  | $(XARGS) rm -rf
 	find $(STAGING_DIR_HOST)/bin -maxdepth 1 -type f -perm -u=x \
-	  | $(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/host/bin
-	$(MAKE) -C $(PKG_BUILD_DIR) package_index
-	$(TAR) c -C $(BUILD_DIR) $(IB_NAME) | bzip2 -c > $@
+	  | $(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
+	STRIP=sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
+	$(TAR) -cf - -C $(BUILD_DIR) $(IB_NAME) | bzip2 -c > $@
 
 download:
 prepare:

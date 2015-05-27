@@ -20,6 +20,7 @@ PKG_SOURCE_VERSION:=a5560f88bb2cddeef0ef11a12e7822b9c19a75a5
 PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
 PKG_LICENSE:=LGPL-2.1
 
+include $(INCLUDE_DIR)/package-seccomp.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
@@ -32,11 +33,16 @@ endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
 
+define Package/mdns/conffiles
+/etc/config/mdns
+endef
+
 define Package/mdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mdns $(1)/usr/sbin/
 	$(INSTALL_BIN) ./files/mdns.init $(1)/etc/init.d/mdns
-	$(INSTALL_BIN) ./files/mdns.config $(1)/etc/config/mdns
+	$(INSTALL_CONF) ./files/mdns.config $(1)/etc/config/mdns
+	$(call InstallSeccomp,$(1),./files/mdns.json)
 endef
 
 $(eval $(call BuildPackage,mdns))

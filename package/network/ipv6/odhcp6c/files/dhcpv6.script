@@ -20,16 +20,24 @@ setup_interface () {
 		proto_add_dns_server "$dns"
 	done
 
+	for radomain in $RA_DOMAINS; do
+		local duplicate=0
+		for domain in $DOMAINS; do
+			[ "$radomain" = "$domain" ] && duplicate=1
+		done
+		[ "$duplicate" = 0 ] && DOMAINS="$DOMAINS $radomain"
+	done
+
 	for domain in $DOMAINS; do
 		proto_add_dns_search "$domain"
 	done
 
 	for prefix in $PREFIXES; do
 		proto_add_ipv6_prefix "$prefix"
-                local entry="${prefix#*/}"
-                entry="${entry#*,}"
-                entry="${entry#*,}"
-                local valid="${entry%%,*}"
+		local entry="${prefix#*/}"
+		entry="${entry#*,}"
+		entry="${entry#*,}"
+		local valid="${entry%%,*}"
 
 		if [ -z "$RA_ADDRESSES" -a -z "$RA_ROUTES" -a \
 				-z "$RA_DNS" -a "$FAKE_ROUTES" = 1 ]; then
@@ -61,10 +69,10 @@ setup_interface () {
 
 		proto_add_ipv6_address "$addr" "$mask" "$preferred" "$valid" 1
 
-                if [ -z "$RA_ADDRESSES" -a -z "$RA_ROUTES" -a \
-                                -z "$RA_DNS" -a "$FAKE_ROUTES" = 1 ]; then
-                        RA_ROUTES="::/0,$SERVER,$valid,4096"
-                fi
+		if [ -z "$RA_ADDRESSES" -a -z "$RA_ROUTES" -a \
+				-z "$RA_DNS" -a "$FAKE_ROUTES" = 1 ]; then
+			RA_ROUTES="::/0,$SERVER,$valid,4096"
+		fi
 	done
 
 	for entry in $RA_ROUTES; do
@@ -78,10 +86,9 @@ setup_interface () {
 		entry="${entry#*,}"
 		local metric="${entry%%,*}"
 
-		if [ -z "$SOURCE_ROUTING" -o -z "$gw" ]; then
+		if [ -z "$gw" ]; then
 			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
 		else
-			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "::/128"
 			for prefix in $PREFIXES $ADDRESSES; do
 				local paddr="${prefix%%,*}"
 				proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$paddr"
@@ -114,7 +121,7 @@ setup_interface () {
 	[ -n "$ZONE" ] || ZONE=$(fw3 -q network $INTERFACE)
 
 	if [ "$IFACE_MAP" != 0 -a -n "$MAPTYPE" -a -n "$MAPRULE" ]; then
-		[ -z "$IFACE_MAP" -o "$IFACE_MAP" = 1 ] && IFACE_MAP=${INTERFACE}_map
+		[ -z "$IFACE_MAP" -o "$IFACE_MAP" = 1 ] && IFACE_MAP=${INTERFACE}_4
 		json_init
 		json_add_string name "$IFACE_MAP"
 		json_add_string ifname "@$INTERFACE"
@@ -127,20 +134,39 @@ setup_interface () {
 		[ -n "$IFACE_MAP_DELEGATE" ] && json_add_boolean delegate "$IFACE_MAP_DELEGATE"
 		json_close_object
 		ubus call network add_dynamic "$(json_dump)"
-	elif [ -n "$AFTR_IP" -a "$IFACE_DSLITE" != 0 -a -f /lib/netifd/proto/dslite.sh ]; then
-		[ -z "$IFACE_DSLITE" -o "$IFACE_DSLITE" = 1 ] && IFACE_DSLITE=${INTERFACE}_dslite
+	elif [ -n "$AFTR" -a "$IFACE_DSLITE" != 0 -a -f /lib/netifd/proto/dslite.sh ]; then
+		[ -z "$IFACE_DSLITE" -o "$IFACE_DSLITE" = 1 ] && IFACE_DSLITE=${INTERFACE}_4
 		json_init
 		json_add_string name "$IFACE_DSLITE"
 		json_add_string ifname "@$INTERFACE"
 		json_add_string proto "dslite"
-		json_add_string peeraddr "$AFTR_IP"
+		json_add_string peeraddr "$AFTR"
 		json_add_string tunlink "$INTERFACE"
 		[ -n "$ZONE_DSLITE" ] || ZONE_DSLITE=$ZONE
 		[ -n "$ZONE_DSLITE" ] && json_add_string zone "$ZONE_DSLITE"
 		[ -n "$IFACE_DSLITE_DELEGATE" ] && json_add_boolean delegate "$IFACE_DSLITE_DELEGATE"
 		json_close_object
 		ubus call network add_dynamic "$(json_dump)"
+	elif [ "$IFACE_464XLAT" != 0 -a -f /lib/netifd/proto/464xlat.sh ]; then
+		[ -z "$IFACE_464XLAT" -o "$IFACE_464XLAT" = 1 ] && IFACE_464XLAT=${INTERFACE}_4
+		json_init
+		json_add_string name "$IFACE_464XLAT"
+		json_add_string ifname "@$INTERFACE"
+		json_add_string proto "464xlat"
+		json_add_string tunlink "$INTERFACE"
+		[ -n "$ZONE_464XLAT" ] || ZONE_464XLAT=$ZONE
+		[ -n "$ZONE_464XLAT" ] && json_add_string zone "$ZONE_464XLAT"
+		[ -n "$IFACE_464XLAT_DELEGATE" ] && json_add_boolean delegate "$IFACE_464XLAT_DELEGATE"
+		json_close_object
+		ubus call network add_dynamic "$(json_dump)"
 	fi
+
+	# Apply IPv6 / ND configuration
+	HOPLIMIT=$(cat /proc/sys/net/ipv6/conf/$device/hop_limit)
+	[ -n "$RA_HOPLIMIT" -a -n "$HOPLIMIT" ] && [ "$RA_HOPLIMIT" -gt "$HOPLIMIT" ] && echo "$RA_HOPLIMIT" > /proc/sys/net/ipv6/conf/$device/hop_limit
+	[ -n "$RA_MTU" ] && [ "$RA_MTU" -gt 0 ] && echo "$RA_MTU" > /proc/sys/net/ipv6/conf/$device/mtu
+	[ -n "$RA_REACHABLE" ] && [ "$RA_REACHABLE" -gt 0 ] && echo "$RA_REACHABLE" > /proc/sys/net/ipv6/neigh/$device/base_reachable_time_ms
+	[ -n "$RA_RETRANSMIT" ] && [ "$RA_RETRANSMIT" -gt 0 ] && echo "$RA_RETRANSMIT" > /proc/sys/net/ipv6/neigh/$device/retrans_time_ms
 
 	# TODO: $SNTP_IP $SIP_IP $SNTP_FQDN $SIP_DOMAIN
 }

@@ -6,12 +6,6 @@
 	};
 	
 	palmbus@10000000 {
-		sysc@0 {
-			ralink,gpiomux = "i2c", "jtag";
-			ralink,uartmux = "gpio";
-			ralink,wdtmux = <1>;
-		};
-
 		gpio0: gpio@600 {
 			status = "okay";
 		};
@@ -23,7 +17,6 @@
 		gpio3: gpio@688 {
 			status = "okay";
 		};
-
 
 		spi@b00 {
 			status = "okay";
@@ -72,6 +65,15 @@
 
 	pcie@10140000 {
 		status = "okay";
+
+		pcie-bridge {
+			mt76@0,0 {
+				reg = <0x0000 0 0 0 0>;
+				device_type = "pci";
+				mediatek,mtd-eeprom = <&factory 0x8000>;
+				mediatek,2ghz = <0>;
+			};
+		};
 	};
 	
 	wmac@10180000 {

@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=e2fsprogs
-PKG_VERSION:=1.42.4
-PKG_MD5SUM:=b6e296f210d642361b7394437ff0f318
+PKG_VERSION:=1.42.12
+PKG_MD5SUM:=68255f51be017a93f2f6402fab06c2bf
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -17,6 +17,8 @@ PKG_SOURCE_URL:=@SF/e2fsprogs
 
 PKG_BUILD_DEPENDS:=util-linux
 PKG_INSTALL:=1
+
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -67,6 +69,30 @@ $(call Package/e2fsprogs)
   DEPENDS:= +e2fsprogs
 endef
 
+define Package/dumpe2fs
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem information dumping utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/e2freefrag
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem free space fragmentation information utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/filefrag
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem file fragmentation report utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/debugfs
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem debugger
+  DEPENDS:= +e2fsprogs
+endef
+
 TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
 
 CONFIGURE_VARS += \
@@ -88,18 +114,37 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR)/util \
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/util \
 		BUILDCC="$(HOSTCC)" \
 		CFLAGS="" \
 		CPPFLAGS="" \
 		LDFLAGS="" \
 		subst
-	$(MAKE) -C $(PKG_BUILD_DIR) \
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
 		LDFLAGS=-Wl,--gc-sections \
 		BUILDCC="$(HOSTCC)" \
 		DESTDIR="$(PKG_INSTALL_DIR)" \
 		LIBBLKID="$(PKG_BUILD_DIR)/lib/libblkid.a -luuid" \
 		all
+endef
+
+define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_BUILD_DIR)/lib/ext2fs/ext2fs.pc $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_BUILD_DIR)/lib/et/com_err.pc $(1)/usr/lib/pkgconfig
+
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/lib/libext2fs.{so,a}* $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/lib/libcom_err.{so,a}* $(1)/usr/lib
+
+	$(INSTALL_DIR) $(1)/usr/include/ext2fs
+	$(CP) $(PKG_BUILD_DIR)/lib/ext2fs/*.h $(1)/usr/include/ext2fs
+	$(INSTALL_DIR) $(1)/usr/include/et
+	$(CP) $(PKG_BUILD_DIR)/lib/et/*.h $(1)/usr/include/et
+endef
+
+define Package/e2fsprogs/conffiles
+/etc/e2fsck.conf
 endef
 
 define Package/e2fsprogs/install
@@ -109,6 +154,9 @@ define Package/e2fsprogs/install
 	$(LN) mke2fs $(1)/usr/sbin/mkfs.ext2
 	$(LN) mke2fs $(1)/usr/sbin/mkfs.ext3
 	$(LN) mke2fs $(1)/usr/sbin/mkfs.ext4
+	$(LN) e2fsck $(1)/usr/sbin/fsck.ext2
+	$(LN) e2fsck $(1)/usr/sbin/fsck.ext3
+	$(LN) e2fsck $(1)/usr/sbin/fsck.ext4
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libe2p.so.* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -136,6 +184,7 @@ endef
 define Package/tune2fs/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/tune2fs $(1)/usr/sbin/
+	$(LN) tune2fs $(1)/usr/sbin/findfs
 endef
 
 define Package/resize2fs/install
@@ -148,8 +197,34 @@ define Package/badblocks/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/badblocks $(1)/usr/sbin/
 endef
 
+define Package/dumpe2fs/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/dumpe2fs $(1)/usr/sbin/
+endef
+
+define Package/e2freefrag/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/e2freefrag $(1)/usr/sbin/
+endef
+
+define Package/filefrag/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/filefrag $(1)/usr/sbin/
+endef
+
+define Package/debugfs/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/debugfs $(1)/usr/sbin/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libss.so.* $(1)/usr/lib/
+endef
+
 $(eval $(call BuildPackage,e2fsprogs))
 $(eval $(call BuildPackage,libext2fs))
 $(eval $(call BuildPackage,tune2fs))
 $(eval $(call BuildPackage,resize2fs))
 $(eval $(call BuildPackage,badblocks))
+$(eval $(call BuildPackage,dumpe2fs))
+$(eval $(call BuildPackage,e2freefrag))
+$(eval $(call BuildPackage,filefrag))
+$(eval $(call BuildPackage,debugfs))

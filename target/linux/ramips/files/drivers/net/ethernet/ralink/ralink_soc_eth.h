@@ -25,6 +25,12 @@
 #include <linux/dma-mapping.h>
 #include <linux/phy.h>
 #include <linux/ethtool.h>
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
+#define u64_stats_fetch_retry_irq u64_stats_fetch_retry_bh
+#define u64_stats_fetch_begin_irq u64_stats_fetch_begin_bh
+#endif
 
 enum fe_reg {
 	FE_REG_PDMA_GLO_CFG = 0,
@@ -33,18 +39,26 @@ enum fe_reg {
 	FE_REG_TX_BASE_PTR0,
 	FE_REG_TX_MAX_CNT0,
 	FE_REG_TX_CTX_IDX0,
+	FE_REG_TX_DTX_IDX0,
 	FE_REG_RX_BASE_PTR0,
 	FE_REG_RX_MAX_CNT0,
 	FE_REG_RX_CALC_IDX0,
+	FE_REG_RX_DRX_IDX0,
 	FE_REG_FE_INT_ENABLE,
 	FE_REG_FE_INT_STATUS,
 	FE_REG_FE_DMA_VID_BASE,
 	FE_REG_FE_COUNTER_BASE,
 	FE_REG_FE_RST_GL,
+	FE_REG_FE_INT_STATUS2,
 	FE_REG_COUNT
 };
 
-#define FE_DRV_VERSION		"0.1.0"
+enum fe_work_flag {
+        FE_FLAG_RESET_PENDING,
+        FE_FLAG_MAX
+};
+
+#define FE_DRV_VERSION		"0.1.2"
 
 /* power of 2 to let NEXT_TX_DESP_IDX work */
 #define NUM_DMA_DESC		(1 << 7)
@@ -79,8 +93,22 @@ enum fe_reg {
 #define FE_TX_DLY_INT		BIT(1)
 #define FE_RX_DLY_INT		BIT(0)
 
+#define FE_RX_DONE_INT		FE_RX_DONE_INT0
+#define FE_TX_DONE_INT		(FE_TX_DONE_INT0 | FE_TX_DONE_INT1 | \
+				 FE_TX_DONE_INT2 | FE_TX_DONE_INT3)
+
 #define RT5350_RX_DLY_INT	BIT(30)
 #define RT5350_TX_DLY_INT	BIT(28)
+#define RT5350_RX_DONE_INT1	BIT(17)
+#define RT5350_RX_DONE_INT0	BIT(16)
+#define RT5350_TX_DONE_INT3	BIT(3)
+#define RT5350_TX_DONE_INT2	BIT(2)
+#define RT5350_TX_DONE_INT1	BIT(1)
+#define RT5350_TX_DONE_INT0	BIT(0)
+
+#define RT5350_RX_DONE_INT	(RT5350_RX_DONE_INT0 | RT5350_RX_DONE_INT1)
+#define RT5350_TX_DONE_INT	(RT5350_TX_DONE_INT0 | RT5350_TX_DONE_INT1 | \
+				 RT5350_TX_DONE_INT2 | RT5350_TX_DONE_INT3)
 
 /* registers */
 #define FE_FE_OFFSET		0x0000
@@ -264,6 +292,7 @@ enum fe_reg {
 #define FE_PST_DTX_IDX1		BIT(1)
 #define FE_PST_DTX_IDX0		BIT(0)
 
+#define FE_RX_2B_OFFSET		BIT(31)
 #define FE_TX_WB_DDONE		BIT(6)
 #define FE_RX_DMA_BUSY		BIT(3)
 #define FE_TX_DMA_BUSY		BIT(1)
@@ -278,9 +307,15 @@ enum fe_reg {
 #define FE_US_CYC_CNT_SHIFT	0x8
 #define FE_US_CYC_CNT_DIVISOR	1000000
 
-#define RX_DMA_PLEN0(_x)	(((_x) >> 16) & 0x3fff)
-#define RX_DMA_LSO		BIT(30)
+/* rxd2 */
 #define RX_DMA_DONE		BIT(31)
+#define RX_DMA_LSO		BIT(30)
+#define RX_DMA_PLEN0(_x)	(((_x) >> 16) & 0x3fff)
+#define RX_DMA_TAG		BIT(15)
+/* rxd3 */
+#define RX_DMA_TPID(_x)		(((_x) >> 16) & 0xffff)
+#define RX_DMA_VID(_x)		((_x) & 0xffff)
+/* rxd4 */
 #define RX_DMA_L4VALID		BIT(30)
 
 struct fe_rx_dma {
@@ -290,11 +325,12 @@ struct fe_rx_dma {
 	unsigned int rxd4;
 } __packed __aligned(4);
 
-#define TX_DMA_PLEN0_MASK	((0x3fff) << 16)
-#define TX_DMA_PLEN0(_x)	(((_x) & 0x3fff) << 16)
-#define TX_DMA_PLEN1(_x)	((_x) & 0x3fff)
-#define TX_DMA_GET_PLEN0(_x)    (((_x) >> 16 ) & 0x3fff)
-#define TX_DMA_GET_PLEN1(_x)    ((_x) & 0x3fff)
+#define TX_DMA_BUF_LEN		0x3fff
+#define TX_DMA_PLEN0_MASK	(TX_DMA_BUF_LEN << 16)
+#define TX_DMA_PLEN0(_x)	(((_x) & TX_DMA_BUF_LEN) << 16)
+#define TX_DMA_PLEN1(_x)	((_x) & TX_DMA_BUF_LEN)
+#define TX_DMA_GET_PLEN0(_x)    (((_x) >> 16 ) & TX_DMA_BUF_LEN)
+#define TX_DMA_GET_PLEN1(_x)    ((_x) & TX_DMA_BUF_LEN)
 #define TX_DMA_LS1		BIT(14)
 #define TX_DMA_LS0		BIT(30)
 #define TX_DMA_DONE		BIT(31)
@@ -346,15 +382,13 @@ struct fe_phy {
 
 struct fe_soc_data
 {
-	unsigned char mac[6];
-	const u32 *reg_table;
+	const u16 *reg_table;
 
 	void (*init_data)(struct fe_soc_data *data, struct net_device *netdev);
 	void (*reset_fe)(void);
 	void (*set_mac)(struct fe_priv *priv, unsigned char *mac);
 	int (*fwd_config)(struct fe_priv *priv);
-	void (*tx_dma)(struct fe_priv *priv, int idx, struct sk_buff *skb);
-	void (*rx_dma)(struct fe_priv *priv, int idx, int len);
+	void (*tx_dma)(struct fe_tx_dma *txd);
 	int (*switch_init)(struct fe_priv *priv);
 	int (*switch_config)(struct fe_priv *priv);
 	void (*port_init)(struct fe_priv *priv, struct device_node *port);
@@ -367,15 +401,19 @@ struct fe_soc_data
 
 	void *swpriv;
 	u32 pdma_glo_cfg;
-	u32 rx_dly_int;
-	u32 tx_dly_int;
+	u32 rx_int;
+	u32 tx_int;
+	u32 status_int;
 	u32 checksum_bit;
-	u32 tx_udf_bit;
 };
 
 #define FE_FLAG_PADDING_64B		BIT(0)
 #define FE_FLAG_PADDING_BUG		BIT(1)
 #define FE_FLAG_JUMBO_FRAME		BIT(2)
+#define FE_FLAG_RX_2B_OFFSET		BIT(3)
+#define FE_FLAG_RX_SG_DMA		BIT(4)
+#define FE_FLAG_RX_VLAN_CTAG		BIT(5)
+#define FE_FLAG_NAPI_WEIGHT		BIT(6)
 
 #define FE_STAT_REG_DECLARE		\
 	_FE(tx_bytes)			\
@@ -400,6 +438,22 @@ FE_STAT_REG_DECLARE
 #undef _FE
 };
 
+enum fe_tx_flags {
+	FE_TX_FLAGS_SINGLE0	= 0x01,
+	FE_TX_FLAGS_PAGE0	= 0x02,
+	FE_TX_FLAGS_PAGE1	= 0x04,
+};
+
+struct fe_tx_buf
+{
+	struct sk_buff *skb;
+	u32 flags;
+	DEFINE_DMA_UNMAP_ADDR(dma_addr0);
+	DEFINE_DMA_UNMAP_LEN(dma_len0);
+	DEFINE_DMA_UNMAP_ADDR(dma_addr1);
+	DEFINE_DMA_UNMAP_LEN(dma_len1);
+};
+
 struct fe_priv
 {
 	spinlock_t			page_lock;
@@ -420,7 +474,7 @@ struct fe_priv
 	struct napi_struct		rx_napi;
 
 	struct fe_tx_dma		*tx_dma;
-	struct sk_buff			**tx_skb;
+	struct fe_tx_buf		*tx_buf;
 	dma_addr_t			tx_phys;
 	unsigned int			tx_free_idx;
 
@@ -433,6 +487,10 @@ struct fe_priv
 
 	struct fe_hw_stats		*hw_stats;
 	unsigned long			vlan_map;
+	struct work_struct		pending_work;
+	DECLARE_BITMAP(pending_flags, FE_FLAG_MAX);
+	u16				tx_ring_size;
+	u16				rx_ring_size;
 };
 
 extern const struct of_device_id of_fe_match[];
@@ -446,6 +504,8 @@ void fe_stats_update(struct fe_priv *priv);
 void fe_fwd_config(struct fe_priv *priv);
 void fe_reg_w32(u32 val, enum fe_reg reg);
 u32 fe_reg_r32(enum fe_reg reg);
+
+void fe_reset(u32 reset_bits);
 
 static inline void *priv_netdev(struct fe_priv *priv)
 {

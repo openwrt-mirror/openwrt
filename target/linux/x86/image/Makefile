@@ -32,7 +32,7 @@ GRUB_SERIAL:=$(call qstrip,$(CONFIG_GRUB_SERIAL))
 
 ifneq ($(GRUB_SERIAL),)
   GRUB_CONSOLE_CMDLINE += console=$(GRUB_SERIAL),$(CONFIG_GRUB_BAUDRATE)n8
-  GRUB_SERIAL_CONFIG := serial --unit=0 --speed=$(CONFIG_GRUB_BAUDRATE) --word=8 --parity=no --stop=1
+  GRUB_SERIAL_CONFIG := serial --unit=0 --speed=$(CONFIG_GRUB_BAUDRATE) --word=8 --parity=no --stop=1 --rtscts=off
   GRUB_TERMINALS += serial
 endif
 
@@ -40,7 +40,9 @@ ifneq ($(GRUB_TERMINALS),)
   GRUB_TERMINAL_CONFIG := terminal_input $(GRUB_TERMINALS); terminal_output $(GRUB_TERMINALS)
 endif
 
+SIGNATURE:=$(shell dd if=/dev/urandom bs=4 count=1 2>/dev/null | hexdump -v -e '"%08x"')
 ROOTPART:=$(call qstrip,$(CONFIG_TARGET_ROOTFS_PARTNAME))
+ROOTPART:=$(if $(ROOTPART),$(ROOTPART),PARTUUID=$(SIGNATURE)-02)
 
 GRUB_TIMEOUT:=$(call qstrip,$(CONFIG_GRUB_TIMEOUT))
 
@@ -82,7 +84,7 @@ ifneq ($(CONFIG_GRUB_IMAGES),)
 		-e 's#@CMDLINE@#$(strip $(call Image/cmdline/$(1)) $(BOOTOPTS) $(GRUB_CONSOLE_CMDLINE))#g' \
 		-e 's#@TIMEOUT@#$(GRUB_TIMEOUT)#g' \
 		./grub.cfg > $(KDIR)/root.grub/boot/grub/grub.cfg
-	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" PATH="$(TARGET_PATH)" ./gen_image_generic.sh \
+	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" SIGNATURE="$(SIGNATURE)" PATH="$(TARGET_PATH)" ./gen_image_generic.sh \
 		$(BIN_DIR)/$(IMG_PREFIX)-combined-$(1).img \
 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $(KDIR)/root.grub \
 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(KDIR)/root.$(1) \
@@ -97,38 +99,6 @@ ifneq ($(CONFIG_GRUB_IMAGES),)
 endif
 
 ROOTDELAY=10
-
-ifneq ($(CONFIG_OLPC_BOOTSCRIPT_IMAGES),)
-
-  define Image/cmdline/ext4
-    root=$(ROOTPART) rootfstype=ext4 rootwait
-  endef
-
-  define Image/cmdline/jffs2-64k
-    block2mtd.block2mtd=$(ROOTPART),65536,rootfs root=/dev/mtdblock0 rootfstype=jffs2 rootdelay=$(ROOTDELAY)
-  endef
-
-  define Image/cmdline/jffs2-128k
-    block2mtd.block2mtd=$(ROOTPART),131072,rootfs root=/dev/mtdblock0 rootfstype=jffs2 rootdelay=$(ROOTDELAY)
-  endef
-
-  define Image/cmdline/squashfs
-    block2mtd.block2mtd=$(ROOTPART),65536,rootfs root=/dev/mtdblock0 rootfstype=squashfs rootdelay=$(ROOTDELAY)
-  endef
-
-  define Image/Build/bootscript
-	# left here because the image builder doesnt need these
-	$(INSTALL_DIR) $(KDIR)/root.bootscript/boot
-	$(CP) $(KDIR)/bzImage $(KDIR)/root.bootscript/boot/vmlinuz
-	sed -e 's#@CMDLINE@#$(strip $(call Image/cmdline/$(1))) $(BOOTOPTS)#g' \
-		./olpc.fth > $(KDIR)/root.bootscript/boot/olpc.fth
-	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" PATH="$(TARGET_PATH)" ./gen_image_olpc.sh \
-		$(BIN_DIR)/$(IMG_PREFIX)-combined-$(1).img \
-		$(CONFIG_TARGET_KERNEL_PARTSIZE) $(KDIR)/root.bootscript \
-		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(KDIR)/root.$(1)
-  endef
-
-endif
 
 define Image/Build/squashfs
 	$(call prepare_generic_squashfs,$(KDIR)/root.squashfs)
@@ -236,8 +206,6 @@ define Image/Build/Profile/bifferboard
 endef
 
 define Image/Prepare
-	$(CP) $(LINUX_DIR)/arch/x86/boot/bzImage $(KDIR)/bzImage
-	$(call Image/Prepare/bootscript)
 	$(call Image/Prepare/grub2)
 endef
 
@@ -247,7 +215,6 @@ endef
 
 define Image/Build
 	$(call Image/Build/$(1))
-	$(call Image/Build/bootscript,$(1))
   ifneq ($(1),iso)
 	$(call Image/Build/grub2,$(1))
 	$(call Image/Build/vdi,$(1))

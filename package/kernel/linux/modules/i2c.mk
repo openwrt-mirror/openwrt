@@ -24,15 +24,12 @@ I2C_CORE_MODULES:= \
   CONFIG_I2C:drivers/i2c/i2c-core \
   CONFIG_I2C_CHARDEV:drivers/i2c/i2c-dev
 
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),lt,3.12.0)),1)
-  ifeq ($(CONFIG_OF),y)
-    I2C_CORE_MODULES+=CONFIG_OF_I2C:drivers/of/of_i2c
-  endif
+ifeq ($(CONFIG_OF),y)
+  I2C_CORE_MODULES+=CONFIG_OF_I2C:drivers/of/of_i2c@lt3.12
 endif
 
 define KernelPackage/i2c-core
   $(call i2c_defaults,$(I2C_CORE_MODULES),51)
-  AUTOLOAD:=
   TITLE:=I2C support
 endef
 
@@ -207,13 +204,8 @@ endef
 
 $(eval $(call KernelPackage,i2c-mux))
 
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.6.0)),1)
 I2C_MUX_GPIO_MODULES:= \
   CONFIG_I2C_MUX_GPIO:drivers/i2c/muxes/i2c-mux-gpio
-else
-I2C_MUX_GPIO_MODULES:= \
-  CONFIG_I2C_MUX_GPIO:drivers/i2c/muxes/gpio-i2cmux
-endif
 
 define KernelPackage/i2c-mux-gpio
   $(call i2c_defaults,$(I2C_MUX_GPIO_MODULES),51)
@@ -227,12 +219,8 @@ endef
 
 $(eval $(call KernelPackage,i2c-mux-gpio))
 
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.6.0)),1)
-I2C_MUX_PREFIX:=i2c-mux-
-endif
-
 I2C_MUX_PCA954x_MODULES:= \
-  CONFIG_I2C_MUX_PCA954x:drivers/i2c/muxes/$(I2C_MUX_PREFIX)pca954x
+  CONFIG_I2C_MUX_PCA954x:drivers/i2c/muxes/i2c-mux-pca954x
 
 define KernelPackage/i2c-mux-pca954x
   $(call i2c_defaults,$(I2C_MUX_PCA954x_MODULES),51)
@@ -248,7 +236,7 @@ $(eval $(call KernelPackage,i2c-mux-pca954x))
 
 
 I2C_MUX_PCA9541_MODULES:= \
-  CONFIG_I2C_MUX_PCA9541:drivers/i2c/muxes/$(I2C_MUX_PREFIX)pca9541
+  CONFIG_I2C_MUX_PCA9541:drivers/i2c/muxes/i2c-mux-pca9541
 
 define KernelPackage/i2c-mux-pca9541
   $(call i2c_defaults,$(I2C_MUX_PCA9541_MODULES),51)

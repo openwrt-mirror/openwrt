@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2014 OpenWrt.org
+# Copyright (C) 2006-2013 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -22,7 +22,10 @@ PKG_LICENSE_FILES:=README
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 
+PKG_BUILD_DEPENDS:=ncurses/host
+
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
 
 define Package/libncurses
   SECTION:=libs
@@ -58,14 +61,27 @@ CONFIGURE_ARGS += \
 	--disable-rpath \
 	--without-ada \
 	--without-debug \
+	--without-manpages \
 	--without-profile \
 	--without-progs \
+	--without-tests \
 	--disable-big-core \
 	--disable-home-terminfo \
 	--with-normal \
 	--with-shared \
 	--with-terminfo-dirs=/usr/share/terminfo \
 	--with-default-terminfo-dir=/usr/share/terminfo
+
+HOST_CONFIGURE_ARGS += \
+	--without-cxx \
+	--without-cxx-binding \
+	--without-ada \
+	--without-debug \
+	--without-manpages \
+	--without-profile \
+	--without-tests \
+	--without-curses-h
+
 
 ifeq ($(HOST_OS),FreeBSD)
 	CONFIGURE_ARGS +=
@@ -131,7 +147,7 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/ncursesw5-config $(2)/bin/
 	$(SED) 's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/usr,g' -e 's/$$$$INCS //g' \
 		$(2)/bin/ncursesw5-config
-	$(LN) $(2)/bin/ncursesw5-config $(1)/usr/bin/ncursesw5-config
+	ln -sf $(STAGING_DIR)/host/bin/ncursesw5-config $(1)/usr/bin/ncursesw5-config
 endef
 else
 define Build/InstallDev
@@ -145,10 +161,21 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/ncurses5-config $(2)/bin/
 	$(SED) 's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/usr,g' \
 		$(2)/bin/ncurses5-config
-	$(LN) $(2)/bin/ncurses5-config $(1)/usr/bin/ncurses5-config
+	ln -sf $(STAGING_DIR)/host/bin/ncurses5-config $(1)/usr/bin/ncurses5-config
 endef
 endif
 
+
+define Host/Compile
+	$(MAKE) -C $(HOST_BUILD_DIR) libs
+	$(MAKE) -C $(HOST_BUILD_DIR)/progs tic
+endef
+
+define Host/Install
+	$(INSTALL_BIN) $(HOST_BUILD_DIR)/progs/tic $(STAGING_DIR_HOST)/bin/tic
+endef
+
+$(eval $(call HostBuild))
 $(eval $(call BuildPackage,terminfo))
 $(eval $(call BuildPackage,libncurses))
 $(eval $(call BuildPackage,libncursesw))

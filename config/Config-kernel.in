@@ -46,6 +46,7 @@ config KERNEL_KALLSYMS
 
 config KERNEL_FTRACE
 	bool "Compile the kernel with tracing support"
+	depends on !TARGET_uml
 	default n
 
 config KERNEL_FTRACE_SYSCALLS
@@ -56,6 +57,26 @@ config KERNEL_FTRACE_SYSCALLS
 config KERNEL_ENABLE_DEFAULT_TRACERS
 	bool "Trace process context switches and events"
 	depends on KERNEL_FTRACE
+	default n
+
+config KERNEL_FUNCTION_TRACER
+	bool "Function tracer"
+	depends on KERNEL_FTRACE
+	default n
+
+config KERNEL_FUNCTION_GRAPH_TRACER
+	bool "Function graph tracer"
+	depends on KERNEL_FUNCTION_TRACER
+	default n
+
+config KERNEL_DYNAMIC_FTRACE
+	bool "Enable/disable function tracing dynamically"
+	depends on KERNEL_FUNCTION_TRACER
+	default n
+
+config KERNEL_FUNCTION_PROFILER
+	bool "Function profiler"
+	depends on KERNEL_FUNCTION_TRACER
 	default n
 
 config KERNEL_DEBUG_KERNEL
@@ -96,6 +117,7 @@ config KERNEL_DYNAMIC_DEBUG
 
 config KERNEL_EARLY_PRINTK
 	bool "Compile the kernel with early printk"
+	default y if TARGET_bcm53xx
 	default n
 	depends on arm
 	select KERNEL_DEBUG_KERNEL
@@ -105,12 +127,41 @@ config KERNEL_EARLY_PRINTK
 	  debugging purposes to send messages over the serial console in early boot.
 	  Enable this to debug early boot problems.
 
+config KERNEL_KPROBES
+	bool "Compile the kernel with kprobes support"
+	default n
+	select KERNEL_FTRACE
+	select KERNEL_PERF_EVENTS
+	help
+	  Compiles the kernel with KPROBES support, which allows you to trap
+	  at almost any kernel address and execute a callback function.
+	  register_kprobe() establishes a probepoint and specifies the
+	  callback. Kprobes is useful for kernel debugging, non-intrusive
+	  instrumentation and testing.
+	  If in doubt, say "N".
+
+config KERNEL_KPROBE_EVENT
+	bool
+	default y if KERNEL_KPROBES
+
 config KERNEL_AIO
 	bool "Compile the kernel with asynchronous IO support"
 	default n
 
 config KERNEL_DIRECT_IO
 	bool "Compile the kernel with direct IO support"
+	default n
+
+config KERNEL_FHANDLE
+	bool "Compile the kernel with support for fhandle syscalls"
+	default n
+
+config KERNEL_FANOTIFY
+	bool "Compile the kernel with modern file notification support"
+	default n
+
+config KERNEL_BLK_DEV_BSG
+	bool "Compile the kernel with SCSI generic v4 support for any block device"
 	default n
 
 config KERNEL_MAGIC_SYSRQ
@@ -161,6 +212,22 @@ config USE_RFKILL
 config USE_SPARSE
 	bool "Enable sparse check during kernel build"
 	default n
+
+config KERNEL_DEVTMPFS
+	bool "Compile the kernel with device tmpfs enabled"
+	default n
+	help
+	  devtmpfs is a simple, kernel-managed /dev filesystem. The kernel creates
+	  devices nodes for all registered devices ti simplify boot, but leaves more
+	  complex tasks to userspace (e.g. udev).
+
+if KERNEL_DEVTMPFS
+
+	config KERNEL_DEVTMPFS_MOUNT
+		bool "Automatically mount devtmpfs after root filesystem is mounted"
+		default n
+
+endif
 
 #
 # CGROUP support symbols
@@ -465,3 +532,15 @@ if KERNEL_LXC_MISC
 		  operations on message queues.
 
 endif
+
+config KERNEL_SECCOMP_FILTER
+	bool
+	default n
+
+config KERNEL_SECCOMP
+	bool "Enable seccomp support"
+		depends on !(TARGET_uml)
+		select KERNEL_SECCOMP_FILTER
+		default n
+		help
+		  Build kernel with support for seccomp.

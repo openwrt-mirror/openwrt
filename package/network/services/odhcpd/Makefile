@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=odhcpd
-PKG_VERSION:=2014-11-06
+PKG_VERSION:=2015-05-21
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=git://github.com/sbyx/odhcpd.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=3b628005e66e90770b2757a4a02c1dee25ccb883
+PKG_SOURCE_VERSION:=2ebf6c8216287983779c8ec6597d30893b914a7c
 
 PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
 PKG_LICENSE:=GPL-2.0
@@ -24,10 +24,6 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 CMAKE_OPTIONS += -DUBUS=1
-
-ifneq ($(CONFIG_PACKAGE_odhcpd_ext_prefix_class),0)
-  CMAKE_OPTIONS += -DEXT_PREFIX_CLASS=$(CONFIG_PACKAGE_odhcpd_ext_prefix_class)
-endif
 
 ifneq ($(CONFIG_PACKAGE_odhcpd_ext_cer_id),0)
   CMAKE_OPTIONS += -DEXT_CER_ID=$(CONFIG_PACKAGE_odhcpd_ext_cer_id)
@@ -42,10 +38,6 @@ define Package/odhcpd
 endef
 
 define Package/odhcpd/config
-  config PACKAGE_odhcpd_ext_prefix_class
-    int "Prefix Class Extension ID (0 = disabled)"
-    depends on PACKAGE_odhcpd
-    default 0
   config PACKAGE_odhcpd_ext_cer_id
     int "CER-ID Extension ID (0 = disabled)"
     depends on PACKAGE_odhcpd

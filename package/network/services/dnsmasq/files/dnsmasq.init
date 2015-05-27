@@ -15,6 +15,7 @@ ADD_LOCAL_HOSTNAME=1
 CONFIGFILE="/var/etc/dnsmasq.conf"
 HOSTFILE="/tmp/hosts/dhcp"
 TRUSTANCHORSFILE="/usr/share/dnsmasq/trust-anchors.conf"
+TIMESTAMPFILE="/etc/dnsmasq.time"
 
 xappend() {
 	local value="$1"
@@ -85,6 +86,10 @@ append_address() {
 	xappend "--address=$1"
 }
 
+append_ipset() {
+	xappend "--ipset=$1"
+}
+
 append_interface() {
 	local ifname=$(uci_get_state network "$1" ifname "$1")
 	xappend "--interface=$ifname"
@@ -101,6 +106,10 @@ append_addnhosts() {
 
 append_bogusnxdomain() {
 	xappend "--bogus-nxdomain=$1"
+}
+
+append_pxe_service() {
+	xappend "--pxe-service=$1"
 }
 
 dnsmasq() {
@@ -120,9 +129,12 @@ dnsmasq() {
 	append_bool "$cfg" boguspriv "--bogus-priv"
 	append_bool "$cfg" expandhosts "--expand-hosts"
 	append_bool "$cfg" enable_tftp "--enable-tftp"
+	append_bool "$cfg" tftp_no_fail "--tftp-no-fail"
 	append_bool "$cfg" nonwildcard "--bind-interfaces"
 	append_bool "$cfg" fqdn "--dhcp-fqdn"
 	append_bool "$cfg" proxydnssec "--proxy-dnssec"
+	append_bool "$cfg" localservice "--local-service"
+	append_bool "$cfg" quietdhcp "--quiet-dhcp"
 
 	append_parm "$cfg" dhcpscript "--dhcp-script"
 	append_parm "$cfg" cachesize "--cache-size"
@@ -135,16 +147,19 @@ dnsmasq() {
 	append_parm "$cfg" "local" "--server"
 	config_list_foreach "$cfg" "server" append_server
 	config_list_foreach "$cfg" "address" append_address
+	config_list_foreach "$cfg" "ipset" append_ipset
 	config_list_foreach "$cfg" "interface" append_interface
 	config_list_foreach "$cfg" "notinterface" append_notinterface
 	config_list_foreach "$cfg" "addnhosts" append_addnhosts
 	config_list_foreach "$cfg" "bogusnxdomain" append_bogusnxdomain
 	append_parm "$cfg" "leasefile" "--dhcp-leasefile"
 	append_parm "$cfg" "resolvfile" "--resolv-file"
+	append_parm "$cfg" "serversfile" "--servers-file"
 	append_parm "$cfg" "tftp_root" "--tftp-root"
 	append_parm "$cfg" "dhcp_boot" "--dhcp-boot"
 	append_parm "$cfg" "local_ttl" "--local-ttl"
-
+	append_parm "$cfg" "pxe_prompt" "--pxe-prompt"
+	config_list_foreach "$cfg" "pxe_service" append_pxe_service
 	config_get DOMAIN "$cfg" domain
 
 	config_get_bool ADD_LOCAL_DOMAIN "$cfg" add_local_domain 1
@@ -191,6 +206,7 @@ dnsmasq() {
 	[ "$dnssec" -gt 0 ] && {
 		xappend "--conf-file=$TRUSTANCHORSFILE"
 		xappend "--dnssec"
+		xappend "--dnssec-timestamp=$TIMESTAMPFILE"
 		append_bool "$cfg" dnsseccheckunsigned "--dnssec-check-unsigned"
 	}
 
@@ -357,12 +373,11 @@ dhcp_boot_add() {
 	[ -n "$filename" ] || return 0
 
 	config_get servername "$cfg" servername
-	[ -n "$servername" ] || return 0
-
 	config_get serveraddress "$cfg" serveraddress
-	[ -n "$serveraddress" ] || return 0
 
-	xappend "--dhcp-boot=${networkid:+net:$networkid,}$filename,$servername,$serveraddress"
+	[ -n "$serveraddress" -a ! -n "$servername" ] && return 0
+
+	xappend "--dhcp-boot=${networkid:+net:$networkid,}${filename}${servername:+,$servername}${serveraddress:+,$serveraddress}"
 
 	config_get_bool force "$cfg" force 0
 
@@ -536,13 +551,26 @@ start_service() {
 	config_load dhcp
 
 	procd_open_instance
-	procd_set_param command $PROG -C $CONFIGFILE -k
+	procd_set_param command $PROG -C $CONFIGFILE -k -x /var/run/dnsmasq/dnsmasq.pid
 	procd_set_param file $CONFIGFILE
 	procd_set_param respawn
+
+	procd_add_jail dnsmasq ubus log
+	procd_add_jail_mount $CONFIGFILE $TRUSTANCHORSFILE $HOSTFILE /etc/passwd /dev/urandom /etc/dnsmasq.conf /tmp/dnsmasq.d /tmp/resolv.conf.auto /etc/hosts /etc/ethers
+	procd_add_jail_mount_rw /var/run/dnsmasq/ /tmp/dhcp.leases $TIMESTAMPFILE
+	
 	procd_close_instance
 
 	# before we can call xappend
+	mkdir -p /var/run/dnsmasq/
 	mkdir -p $(dirname $CONFIGFILE)
+	mkdir -p /var/lib/misc
+	touch /tmp/dhcp.leases
+
+	if [ ! -f "$TIMESTAMPFILE" ]; then
+		touch "$TIMESTAMPFILE"
+		chown nobody.nogroup "$TIMESTAMPFILE"
+	fi
 
 	echo "# auto-generated config file from /etc/config/dhcp" > $CONFIGFILE
 	echo "# auto-generated config file from /etc/config/dhcp" > $HOSTFILE

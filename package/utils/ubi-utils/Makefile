@@ -17,6 +17,7 @@ PKG_SOURCE_URL:=git://git.infradead.org/mtd-utils.git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=$(PKG_REV)
+PKG_MIRROR_MD5SUM:=69b68adcfcbe786584771e5978534ab4
 
 PKG_INSTALL:=1
 
@@ -26,7 +27,6 @@ PKG_LICENSE:=GPLv2
 PKG_LICENSE_FILES:=
 
 PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
-PKG_BUILD_DIR:=$(BUILD_DIR)/ubi-utils/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 

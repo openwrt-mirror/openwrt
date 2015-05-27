@@ -28,16 +28,16 @@ $(shell echo $(PROFILE) | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
 endef
 
 define Image/BuildKernel/Template
-	$(CP) $(LINUX_DIR)/arch/arm/boot/dts/ox820-$(1).dtb $(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb
+	$(CP) $(DTS_DIR)/ox820-$(1).dtb $(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb
 
 	$(call Image/BuildKernel/MkFIT,$(1),$(KDIR)/zImage,$(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb,none,0x60008000,0x60008000)
-	$(CP) $(KDIR)/fit-$(1).itb $(BIN_DIR)/$(IMG_PREFIX)-$(1)-fit-uImage.bin
+	$(CP) $(KDIR)/fit-$(1).itb $(BIN_DIR)/$(IMG_PREFIX)-$(1)-fit-uImage.itb
 
  ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(call Image/BuildKernel/MkFIT,$(1),$(KDIR)/zImage-initramfs,$(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb,none,0x60008000,0x60008000,-initramfs)
 	$(CP) $(KDIR)/fit-$(1)-initramfs.itb $(BIN_DIR)/$(IMG_PREFIX)-$(1)-fit-uImage-initramfs.itb
-	if [ -e "$(BIN_DIR)/$(IMG_PREFIX)-ox820-u-boot.bin" ]; then \
-	( dd if=$(BIN_DIR)/$(IMG_PREFIX)-ox820-u-boot.bin bs=128k conv=sync ; dd if=$(KDIR)/fit-$(1)-initramfs.itb bs=128k conv=sync ) \
+	if [ -e "$(KDIR)/u-boot.bin" ]; then \
+	( dd if=$(KDIR)/u-boot.bin bs=128k conv=sync ; dd if=$(KDIR)/fit-$(1)-initramfs.itb bs=128k conv=sync ) \
 		> $(BIN_DIR)/$(IMG_PREFIX)-$(1)-u-boot-initramfs.itb; \
 	fi
  endif
@@ -89,6 +89,7 @@ endef
 define Image/Build/squashfs
 	$(call Image/Build/SysupgradeNAND,$(call sanitize_profile_name),$(1),$(KDIR)/fit-$(call sanitize_profile_name).itb)
 	$(call Image/Build/UbinizeImage,$(call sanitize_profile_name),--uboot-env --kernel $(KDIR)/fit-$(call sanitize_profile_name).itb,$(1),$($(PROFILE)_UBI_OPTS))
+	cp $(KDIR)/$(IMG_PREFIX)-$(call sanitize_profile_name)-squashfs-ubinized.bin $(BIN_DIR)
 endef
 
 define Image/mkfs/targz
@@ -101,6 +102,7 @@ define Image/Build/ubifs
  ifneq ($($(PROFILE)_UBIFS_OPTS),)
 	$(call Image/Build/SysupgradeNAND,$(call sanitize_profile_name),ubifs,$(KDIR)/fit-$(call sanitize_profile_name).itb)
 	$(call Image/Build/UbinizeImage,$(call sanitize_profile_name),--uboot-env --kernel $(KDIR)/fit-$(call sanitize_profile_name).itb,ubifs,$($(PROFILE)_UBI_OPTS))
+	cp $(KDIR)/$(IMG_PREFIX)-$(call sanitize_profile_name)-ubifs-ubinized.bin $(BIN_DIR)
  endif
 
 endef

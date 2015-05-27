@@ -9,10 +9,20 @@
 board=$(mvebu_board_name)
 
 case "$board" in
-armada-xp-mamba)
-	ucidef_set_led_netdev "wan" "WAN" "tlc59116:1" "eth1"
-	ucidef_set_led_usbdev "usb1" "USB1" "tlc59116:5" "1-1"
-	ucidef_set_led_usbdev "usb2" "USB2" "tlc59116:6" "2-2"
+armada-385-linksys-caiman)
+	ucidef_set_led_netdev "wan" "WAN" "pca963x:caiman:white:wan" "eth0"
+	ucidef_set_led_usbdev "usb2" "USB2" "pca963x:caiman:white:usb2" "1-1"
+	ucidef_set_led_usbdev "usb3" "USB3" "pca963x:caiman:white:usb3_1" "2-1"
+	;;
+armada-385-linksys-cobra)
+	ucidef_set_led_netdev "wan" "WAN" "pca963x:cobra:white:wan" "eth0"
+	ucidef_set_led_usbdev "usb2" "USB2" "pca963x:cobra:white:usb2" "1-1"
+	ucidef_set_led_usbdev "usb3" "USB3" "pca963x:cobra:white:usb3_1" "2-1"
+	;;
+armada-xp-linksys-mamba)
+	ucidef_set_led_netdev "wan" "WAN" "mamba:white:wan" "eth1"
+	ucidef_set_led_usbdev "usb2" "USB2" "mamba:white:usb2" "1-1"
+	ucidef_set_led_usbdev "usb3" "USB3" "mamba:white:usb3_1" "2-2"
 	;;
 
 esac
