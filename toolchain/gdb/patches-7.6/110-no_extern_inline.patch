@@ -1,6 +1,5 @@
-diff -Nurp a/sim/common/sim-arange.c b/sim/common/sim-arange.c
---- a/sim/common/sim-arange.c	2014-08-30 00:32:15.000000000 +0800
-+++ b/sim/common/sim-arange.c	2015-05-28 16:56:01.183256111 +0800
+--- a/sim/common/sim-arange.c
++++ b/sim/common/sim-arange.c
 @@ -280,11 +280,7 @@ sim_addr_range_delete (ADDR_RANGE *ar, a
    build_search_tree (ar);
  }
@@ -20,9 +19,8 @@ diff -Nurp a/sim/common/sim-arange.c b/sim/common/sim-arange.c
  
 -#endif /* DEFINE_INLINE_P */
 +#endif /* DEFINE_NON_INLINE_P */
-diff -Nurp a/sim/common/sim-arange.h b/sim/common/sim-arange.h
---- a/sim/common/sim-arange.h	2014-08-30 00:32:15.000000000 +0800
-+++ b/sim/common/sim-arange.h	2015-05-28 16:56:31.139922385 +0800
+--- a/sim/common/sim-arange.h
++++ b/sim/common/sim-arange.h
 @@ -62,7 +62,7 @@ extern void sim_addr_range_delete (ADDR_
  
  /* Return non-zero if ADDR is in range AR, traversing the entire tree.

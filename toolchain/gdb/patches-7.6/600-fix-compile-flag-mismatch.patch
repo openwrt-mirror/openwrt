@@ -1,7 +1,6 @@
-diff -Nurp a/gdb/configure b/gdb/configure
---- a/gdb/configure	2014-08-30 00:32:15.000000000 +0800
-+++ b/gdb/configure	2015-05-28 16:59:05.079920370 +0800
-@@ -855,8 +855,7 @@ MAKEINFOFLAGS
+--- a/gdb/configure
++++ b/gdb/configure
+@@ -834,8 +834,7 @@ MAKEINFOFLAGS
  YACC
  YFLAGS
  XMKMF'
@@ -11,7 +10,7 @@ diff -Nurp a/gdb/configure b/gdb/configure
  multi-ice
  gdbserver'
  
-@@ -5169,7 +5168,7 @@ $as_echo "$with_auto_load_safe_path" >&6
+@@ -5033,7 +5032,7 @@ $as_echo "$with_auto_load_safe_path" >&6
  
  
  
@@ -20,10 +19,9 @@ diff -Nurp a/gdb/configure b/gdb/configure
  
  
  # Check whether to support alternative target configurations
-diff -Nurp a/gdb/gdbserver/configure b/gdb/gdbserver/configure
---- a/gdb/gdbserver/configure	2014-08-30 00:32:15.000000000 +0800
-+++ b/gdb/gdbserver/configure	2015-05-28 16:58:06.093254475 +0800
-@@ -2184,7 +2184,7 @@ $as_echo "$as_me: error: \`$ac_var' was
+--- a/gdb/gdbserver/configure
++++ b/gdb/gdbserver/configure
+@@ -2181,7 +2181,7 @@ $as_echo "$as_me: error: \`$ac_var' was
        ac_cache_corrupted=: ;;
      ,);;
      *)
