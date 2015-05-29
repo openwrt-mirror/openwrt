@@ -1,0 +1,83 @@
+--- a/readline/ChangeLog.gdb
++++ b/readline/ChangeLog.gdb
+@@ -1,3 +1,7 @@
++2015-04-19  Chen Gang  <gang.chen.5i5j@gmail.com>
++
++	* rlmbutil.h: Declare wcwidth() when HANDLE_MULTIBYTE enabled.
++
+ 2013-09-24  Pierre Muller  <muller@sourceware.org>
+ 
+ 	* readline.c (bind_arrow_keys_internal):
+--- a/readline/config.h.in
++++ b/readline/config.h.in
+@@ -6,6 +6,14 @@
+ 
+ #undef _FILE_OFFSET_BITS
+ 
++#undef __EXTENSIONS__
++#undef _ALL_SOURCE
++#undef _GNU_SOURCE
++#undef _POSIX_SOURCE
++#undef _POSIX_1_SOURCE
++#undef _POSIX_PTHREAD_SEMANTICS
++#undef _TANDEM_SOURCE
++
+ /* Define if on MINIX.  */
+ #undef _MINIX
+ 
+@@ -27,6 +35,8 @@
+ 
+ #undef PROTOTYPES
+ 
++#undef __PROTOTYPES
++
+ #undef __CHAR_UNSIGNED__
+ 
+ /* Define if the `S_IS*' macros in <sys/stat.h> do not work properly.  */
+@@ -71,6 +81,12 @@
+ /* Define if you have the mbrtowc function. */
+ #undef HAVE_MBRTOWC
+ 
++/* Define if you have the mbscmp function. */
++#undef HAVE_MBSCMP
++
++/* Define if you have the mbsnrtowcs function. */
++#undef HAVE_MBSNRTOWCS
++
+ /* Define if you have the mbsrtowcs function. */
+ #undef HAVE_MBSRTOWCS
+ 
+@@ -118,6 +134,9 @@
+ /* Define if you have the wcscoll function.  */
+ #undef HAVE_WCSCOLL
+ 
++/* Define if you have the wcsdup function.  */
++#undef HAVE_WCSDUP
++
+ /* Define if you have the wctype function.  */
+ #undef HAVE_WCTYPE
+ 
+@@ -235,9 +254,9 @@
+ 
+ #undef HAVE_GETPW_DECLS
+ 
+-#undef STRUCT_DIRENT_HAS_D_INO
++#undef HAVE_STRUCT_DIRENT_D_INO
+ 
+-#undef STRUCT_DIRENT_HAS_D_FILENO
++#undef HAVE_STRUCT_DIRENT_D_FILENO
+ 
+ #undef HAVE_BSD_SIGNALS
+ 
+--- a/readline/rlmbutil.h
++++ b/readline/rlmbutil.h
+@@ -96,6 +96,9 @@ extern int _rl_find_next_mbchar PARAMS((
+ 
+ #ifdef HANDLE_MULTIBYTE
+ 
++extern int wcwidth (wchar_t __c); /* For fedora 20 x86_64, it has wcwitdh(), but
++				     only declared when __USE_XOPEN.  */
++
+ extern int _rl_compare_chars PARAMS((char *, int, mbstate_t *, char *, int, mbstate_t *));
+ extern int _rl_get_char_len PARAMS((char *, mbstate_t *));
+ extern int _rl_adjust_point PARAMS((char *, int, mbstate_t *));
