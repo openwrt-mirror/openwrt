@@ -103,18 +103,8 @@ define KernelPackage/usb-phy-nop
   TITLE:=Support for USB NOP transceiver
   KCONFIG:=CONFIG_NOP_USB_XCEIV
   HIDDEN:=1
-ifneq ($(wildcard $(LINUX_DIR)/drivers/usb/phy/phy-generic.ko),)
   FILES:=$(LINUX_DIR)/drivers/usb/phy/phy-generic.ko
   AUTOLOAD:=$(call AutoLoad,43,phy-generic)
-else
-ifneq ($(wildcard $(LINUX_DIR)/drivers/usb/phy/phy-nop.ko),)
-  FILES:=$(LINUX_DIR)/drivers/usb/phy/phy-nop.ko
-  AUTOLOAD:=$(call AutoLoad,43,phy-nop)
-else
-  FILES:=$(LINUX_DIR)/drivers/usb/otg/nop-usb-xceiv.ko
-  AUTOLOAD:=$(call AutoLoad,43,nop-usb-xceiv)
-endif
-endif
   $(call AddDepends/usb)
 endef
 
@@ -344,7 +334,7 @@ define KernelPackage/usb-ohci-pci
   $(call AddDepends/usb)
 endef
 
-define KernelPackage/usb2-pci/description
+define KernelPackage/usb-ohci-pci/description
  Kernel support for PCI OHCI controllers
 endef
 
@@ -561,18 +551,10 @@ define KernelPackage/usb-audio
 	CONFIG_SND_USB_AUDIO
   $(call AddDepends/usb)
   $(call AddDepends/sound)
-# For Linux 2.6.35+
-ifneq ($(wildcard $(LINUX_DIR)/sound/usb/snd-usbmidi-lib.ko),)
   FILES:= \
 	$(LINUX_DIR)/sound/usb/snd-usbmidi-lib.ko \
 	$(LINUX_DIR)/sound/usb/snd-usb-audio.ko
   AUTOLOAD:=$(call AutoProbe,snd-usbmidi-lib snd-usb-audio)
-else
-  FILES:= \
-	$(LINUX_DIR)/sound/usb/snd-usb-lib.ko \
-	$(LINUX_DIR)/sound/usb/snd-usb-audio.ko
-  AUTOLOAD:=$(call AutoProbe,snd-usb-lib snd-usb-audio)
-endif
 endef
 
 define KernelPackage/usb-audio/description
