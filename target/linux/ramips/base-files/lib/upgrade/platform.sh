@@ -74,6 +74,8 @@ platform_check_image() {
 	omni-emb | \
 	omni-emb-hpm | \
 	omni-plug | \
+	olinuxino-rt5350f | \
+	olinuxino-rt5350f-evb | \
 	psr-680w | \
 	px4885 | \
 	rp-n53 | \
@@ -95,6 +97,7 @@ platform_check_image() {
 	w306r-v20 |\
 	w502u |\
 	whr-g300n |\
+	whr-300hp2 |\
 	whr-600d |\
 	whr-1166d |\
 	wsr-600 |\

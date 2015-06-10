@@ -852,6 +852,28 @@ define Image/BuildLoader
 endef
 
 #
+# Embed patched lzma-compressed kernel inside lzma-loader.
+#
+# Specifying the command line via the lzma-loader doesn't work with some
+# models (like the TP-LINK CPE series), so this version first patches the
+# command line in the image and then builds the loader around it.
+#
+# $(1), suffix of output filename, e.g. generic, lowercase board name, etc.
+# $(2), suffix of target file to build, e.g. bin, gz, elf
+# $(3), kernel command line to pass from lzma-loader to kernel
+# $(4), unused here
+# $(5), suffix of kernel filename, e.g. -initramfs, or empty
+define Image/BuildLoaderPatched
+	$(call PatchKernelLzma,$(1),$(3))
+	-rm -rf $(KDIR)/lzma-loader
+	$(LOADER_MAKE) LOADER=loader-$(1).$(2) \
+		LZMA_TEXT_START=0x80a00000 LOADADDR=0x80060000 \
+		LOADER_DATA="$(KDIR_TMP)/vmlinux-$(1)$(5).bin.lzma" BOARD="$(1)" \
+		compile loader.$(2)
+	-$(CP) $(KDIR)/loader-$(1).$(2) $(KDIR)/loader-$(1)$(5).$(2)
+endef
+
+#
 # Build lzma-loader alone which will search for lzma-compressed kernel identified by
 # uImage header with magic "OKLI" at boot time.
 #
@@ -945,7 +967,9 @@ define Image/BuildKernel
 	cp $(KDIR)/loader-generic.elf $(VMLINUX)-lzma.elf
 	-mkdir -p $(KDIR_TMP)
 	$(call Image/Build/Profile/$(IMAGE_PROFILE),buildkernel)
-ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+endef
+
+define Image/BuildKernel/Initramfs
 	cp $(KDIR)/vmlinux-initramfs.elf $(VMLINUX)-initramfs.elf
 	cp $(KDIR)/vmlinux-initramfs $(VMLINUX)-initramfs.bin
 	dd if=$(KDIR)/vmlinux-initramfs.bin.lzma of=$(VMLINUX)-initramfs.lzma bs=65536 conv=sync
@@ -954,7 +978,6 @@ ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(call MkuImage,lzma,,$(KDIR)/vmlinux-initramfs.bin.lzma,$(UIMAGE)-initramfs-lzma.bin)
 	cp $(KDIR)/loader-generic-initramfs.elf $(VMLINUX)-initramfs-lzma.elf
 	$(call Image/Build/Initramfs)
-endif
 endef
 
 Image/Build/WRT400N/buildkernel=$(call MkuImageLzma,$(2),$(3))
@@ -1484,14 +1507,10 @@ define Image/Build/TPLINK-LZMA/initramfs
 endef
 
 
-Image/Build/TPLINK-SAFELOADER/buildkernel=$(call PatchKernelLzma,$(2),$(3) $(4))
+Image/Build/TPLINK-SAFELOADER/loader = $(call Image/BuildLoaderPatched,$(1),elf,$(2) $(3))
 
 define Image/Build/TPLINK-SAFELOADER
-	-rm -rf $(KDIR)/lzma-loader
-	$(LOADER_MAKE) LOADER=loader-$(2).elf\
-		LZMA_TEXT_START=0x80a00000 LOADADDR=0x80060000 \
-		LOADER_DATA="$(KDIR_TMP)/vmlinux-$(2).bin.lzma" BOARD="$(2)" \
-		compile loader.elf
+	[ -e "$(KDIR)/loader-$(2).elf" ]
 
 	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
 		-B $(5) \

@@ -222,7 +222,6 @@ _procd_add_interface_trigger() {
 	json_close_array
 
 	json_close_array
-
 	json_close_array
 }
 

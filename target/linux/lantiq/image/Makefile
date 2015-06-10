@@ -38,9 +38,9 @@ define PatchKernelLzma
 endef
 
 define MkBrnImage
-	mkbrncmdline -i $(KDIR)/vmlinux-$(4) -o $(KDIR)/vmlinux-$(4)-brn BRN-BOOT $(6)
-	$(call CompressLzma,$(KDIR)/vmlinux-$(4)-brn,$(KDIR)/vmlinux-$(4)-brn.lzma)
-	mkbrnimg -s $(1) -m $(2) -o $(3) $(KDIR)/vmlinux-$(4)-brn.lzma $(KDIR)/root.$(5)
+	mkbrncmdline -i $(KDIR)/vmlinux-$(5) -o $(KDIR)/vmlinux-$(5)-brn BRN-BOOT $(7)
+	$(call CompressLzma,$(KDIR)/vmlinux-$(5)-brn,$(KDIR)/vmlinux-$(5)-brn.lzma)
+	mkbrnimg -s $(1) -m $(2) -p $(3) -o $(4) $(KDIR)/vmlinux-$(5)-brn.lzma $(KDIR)/root.$(6)
 endef
 
 define MkImageLzma
@@ -80,7 +80,7 @@ endef
 define Image/Build/squashfs
 	cat $(KDIR)/uImage-$(2) $(KDIR)/root.$(1) > $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).image
 	$(call prepare_generic_squashfs,$(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).image)
-	$(if $(3),$(call MkBrnImage,$(3),$(4),$(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3)-brnImage,$(2),$(1),$(5)))
+	$(if $(3),$(call MkBrnImage,$(3),$(4),$(5),$(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3)-brnImage,$(2),$(1),$(6)))
 endef
 
 define Image/BuildNAND/squashfs
@@ -244,15 +244,20 @@ endif
 endef
 
 define Image/BuildKernelLoader/Template
-	$(call PatchKernelLzma,$(1))
-	$(call Image/BuildLoader/Template,$(1))
 	$(CP) $(KDIR)/loader-$(1).bin $(BIN_DIR)/$(IMG_PREFIX)-$(1)-vmlinux-loader
 	$(CP) $(KDIR)/vmlinux-$(1) $(BIN_DIR)/$(IMG_PREFIX)-$(1)-vmlinux
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
-	$(call PatchKernelLzma,$(1),-initramfs)
-	$(call Image/BuildLoader/Template,$(1),-initramfs)
 	$(CP) $(KDIR)/loader-initramfs-$(1).bin $(BIN_DIR)/$(IMG_PREFIX)-$(1)-vmlinux-initramfs-loader
 	$(CP) $(KDIR)/vmlinux-initramfs-$(1) $(BIN_DIR)/$(IMG_PREFIX)-$(1)-vmlinux-initramfs
+endif
+endef
+
+define Image/Prepare/Profile
+	$(call PatchKernelLzma,$(1))
+	$(call Image/BuildLoader/Template,$(1))
+ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+	$(call PatchKernelLzma,$(1),-initramfs)
+	$(call Image/BuildLoader/Template,$(1),-initramfs)
 endif
 endef
 
@@ -427,11 +432,22 @@ Image/Build/Profile/VG3503J_V2=$(call Image/BuildLoader/$(1),$(1),VG3503J_V2)
 Image/BuildKernel/Profile/TDW8970=$(call Image/BuildKernelTPLink/Template,TDW8970,TD-W8970v1,$(1))
 Image/Build/Profile/TDW8970=$(call Image/BuildTPLink/$(1),$(1),TDW8970,TD-W8970v1)
 
+Image/BuildKernel/Profile/VGV7510KW22NOR=$(call Image/BuildKernel/Template,VGV7510KW22NOR,$(1))
+Image/Build/Profile/VGV7510KW22NOR=$(call Image/Build/$(1),$(1),VGV7510KW22NOR)
+
+Image/BuildKernel/Profile/VGV7510KW22BRN=$(call Image/BuildKernel/Template,VGV7510KW22BRN,$(1))
+Image/Build/Profile/VGV7510KW22BRN=$(call Image/Build/$(1),$(1),VGV7510KW22BRN,5BRNDA6431,0x12345678,0x04c11db7,$(1))
+
 Image/BuildKernel/Profile/VGV7519NOR=$(call Image/BuildKernel/Template,VGV7519NOR,$(1))
 Image/Build/Profile/VGV7519NOR=$(call Image/Build/$(1),$(1),VGV7519NOR)
 
 Image/BuildKernel/Profile/VGV7519BRN=$(call Image/BuildKernel/Template,VGV7519BRN,$(1))
-Image/Build/Profile/VGV7519BRN=$(call Image/Build/$(1),$(1),VGV7519BRN,5D00008000,0x12345678,$(1))
+Image/Build/Profile/VGV7519BRN=$(call Image/Build/$(1),$(1),VGV7519BRN,5D00008000,0x12345678,0x2083b8ed,$(1))
+
+define Image/Prepare
+	$(call Image/Prepare/Profile,VG3503J)
+	$(call Image/Prepare/Profile,VG3503J_V2)
+endef
 
 endif
 

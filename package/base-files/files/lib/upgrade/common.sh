@@ -56,7 +56,6 @@ run_ramfs() { # <command> [...]
 		/bin/rm /usr/bin/basename /bin/kill /bin/chmod
 
 	install_bin /sbin/mtd
-	install_bin /sbin/ubi
 	install_bin /sbin/mount_root
 	install_bin /sbin/snapshot
 	install_bin /sbin/snapshot_tool
@@ -213,12 +212,16 @@ jffs2_copy_config() {
 	fi
 }
 
+# Flash firmware to MTD partition
+#
+# $(1): path to image
+# $(2): (optional) pipe command to extract firmware, e.g. dd bs=n skip=m
 default_do_upgrade() {
 	sync
 	if [ "$SAVE_CONFIG" -eq 1 ]; then
-		get_image "$1" | mtd $MTD_CONFIG_ARGS -j "$CONF_TAR" write - "${PART_NAME:-image}"
+		get_image "$1" "$2" | mtd $MTD_CONFIG_ARGS -j "$CONF_TAR" write - "${PART_NAME:-image}"
 	else
-		get_image "$1" | mtd write - "${PART_NAME:-image}"
+		get_image "$1" "$2" | mtd write - "${PART_NAME:-image}"
 	fi
 }
 

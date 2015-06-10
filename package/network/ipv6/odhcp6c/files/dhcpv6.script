@@ -88,6 +88,10 @@ setup_interface () {
 
 		if [ -z "$gw" ]; then
 			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
+
+			# work around if there is a PIO matching a RIO
+			# Linux seems to prefer source-dest over dest-only even if metric is higher
+			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$addr/$mask"
 		else
 			for prefix in $PREFIXES $ADDRESSES; do
 				local paddr="${prefix%%,*}"
@@ -118,7 +122,7 @@ setup_interface () {
 		MAPRULE="$LW4O6"
 	fi
 
-	[ -n "$ZONE" ] || ZONE=$(fw3 -q network $INTERFACE)
+	[ -n "$ZONE" ] || ZONE=$(fw3 -q network $INTERFACE 2>/dev/null)
 
 	if [ "$IFACE_MAP" != 0 -a -n "$MAPTYPE" -a -n "$MAPRULE" ]; then
 		[ -z "$IFACE_MAP" -o "$IFACE_MAP" = 1 ] && IFACE_MAP=${INTERFACE}_4

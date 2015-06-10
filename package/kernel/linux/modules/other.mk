@@ -28,7 +28,7 @@ $(eval $(call KernelPackage,6lowpan))
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-lib-crc16 +kmod-hid
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-crypto-ecb +kmod-lib-crc16 +kmod-hid
   KCONFIG:= \
 	CONFIG_BLUEZ \
 	CONFIG_BLUEZ_L2CAP \
@@ -434,7 +434,7 @@ $(eval $(call KernelPackage,ssb))
 define KernelPackage/bcma
   SUBMENU:=$(OTHER_MENU)
   TITLE:=BCMA support
-  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx
+  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx @!TARGET_bcm53xx
   KCONFIG:=\
 	CONFIG_BCMA \
 	CONFIG_BCMA_POSSIBLE=y \
@@ -638,7 +638,6 @@ define KernelPackage/mtdtests
   SUBMENU:=$(OTHER_MENU)
   TITLE:=MTD subsystem tests
   KCONFIG:=CONFIG_MTD_TESTS
-  DEPENDS:=+kmod-nand
   FILES:=\
 	$(LINUX_DIR)/drivers/mtd/tests/mtd_nandecctest.ko \
 	$(LINUX_DIR)/drivers/mtd/tests/mtd_oobtest.ko \
@@ -656,40 +655,6 @@ endef
 
 $(eval $(call KernelPackage,mtdtests))
 
-
-define KernelPackage/nand
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=NAND flash support
-  KCONFIG:=CONFIG_MTD_NAND \
-	CONFIG_MTD_NAND_IDS \
-	CONFIG_MTD_NAND_ECC
-  FILES:= \
-	$(LINUX_DIR)/drivers/mtd/nand/nand_ids.ko \
-	$(LINUX_DIR)/drivers/mtd/nand/nand_ecc.ko \
-	$(LINUX_DIR)/drivers/mtd/nand/nand.ko
-  AUTOLOAD:=$(call AutoLoad,20,nand_ids nand_ecc nand)
-endef
-
-define KernelPackage/nand/description
- Kernel module for NAND support
-endef
-
-$(eval $(call KernelPackage,nand))
-
-
-define KernelPackage/nandsim
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=NAND simulator
-  DEPENDS:=+kmod-nand
-  KCONFIG:=CONFIG_MTD_NAND_NANDSIM
-  FILES:=$(LINUX_DIR)/drivers/mtd/nand/nandsim.ko
-endef
-
-define KernelPackage/nandsim/description
- Kernel module for NAND flash simulation.
-endef
-
-$(eval $(call KernelPackage,nandsim))
 
 define KernelPackage/serial-8250
   SUBMENU:=$(OTHER_MENU)

@@ -7,7 +7,7 @@ From: "Thomas E. Dickey" <dickey@invisible-island.net>
 Date: Sun, 7 Dec 2014 03:10:09 +0000
 Subject: [PATCH] ncurses 5.9 - patch 20141206
 
- modify MKlib_gen.sh to work around change in development version of
+  modify MKlib_gen.sh to work around change in development version of
   gcc introduced here:
 	  https://gcc.gnu.org/ml/gcc-patches/2014-06/msg02185.html
 	  https://gcc.gnu.org/ml/gcc-patches/2014-07/msg00236.html
