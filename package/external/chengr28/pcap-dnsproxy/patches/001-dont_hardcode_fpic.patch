@@ -1,0 +1,22 @@
+--- a/Source/KeyPairGenerator/CMakeLists.txt
++++ b/Source/KeyPairGenerator/CMakeLists.txt
+@@ -32,7 +32,7 @@ set(GENERATOR_SRC_DIR
+ 		"KeyPairGenerator.cpp")
+ 
+ # Compiling and linking flags
+-add_definitions(-std=c++11 -fpic)
++add_definitions(-std=c++11)
+ add_definitions(-DENABLE_LIBSODIUM)
+ 
+ # Executable file name
+--- a/Source/Pcap_DNSProxy/CMakeLists.txt
++++ b/Source/Pcap_DNSProxy/CMakeLists.txt
+@@ -59,7 +59,7 @@ set(MAIN_SRC_FILES
+ 		"Service.cpp")
+ 
+ # Compiling and linking flags
+-add_definitions(-std=c++11 -fpic)
++add_definitions(-std=c++11)
+ add_definitions(-DENABLE_PCAP)
+ add_definitions(-DENABLE_LIBSODIUM)
+ 
