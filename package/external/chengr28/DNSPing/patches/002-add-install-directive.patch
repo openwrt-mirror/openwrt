@@ -1,0 +1,7 @@
+--- a/Source/DNSPing/CMakeLists.txt
++++ b/Source/DNSPing/CMakeLists.txt
+@@ -39,3 +39,4 @@ set(SRC_FILES
+ add_definitions(-std=c++11)
+ 
+ add_executable(DNSPing ${SRC_FILES})
++INSTALL(TARGETS DNSPing RUNTIME DESTINATION sbin)
