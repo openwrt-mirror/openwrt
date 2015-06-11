@@ -45,7 +45,7 @@ config BUSYBOX_DEFAULT_LOCALE_SUPPORT
 	default n
 config BUSYBOX_DEFAULT_UNICODE_SUPPORT
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_UNICODE_USING_LOCALE
 	bool
 	default n
@@ -54,25 +54,25 @@ config BUSYBOX_DEFAULT_FEATURE_CHECK_UNICODE_IN_ENV
 	default n
 config BUSYBOX_DEFAULT_SUBST_WCHAR
 	int
-	default 0
+	default 195101
 config BUSYBOX_DEFAULT_LAST_SUPPORTED_WCHAR
 	int
-	default 0
+	default 195101
 config BUSYBOX_DEFAULT_UNICODE_COMBINING_WCHARS
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_UNICODE_WIDE_WCHARS
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_UNICODE_BIDI_SUPPORT
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_UNICODE_NEUTRAL_TABLE
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_UNICODE_PRESERVE_BROKEN
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_PAM
 	bool
 	default n
@@ -888,10 +888,10 @@ config BUSYBOX_DEFAULT_START_STOP_DAEMON
 	default y
 config BUSYBOX_DEFAULT_FEATURE_START_STOP_DAEMON_FANCY
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_FEATURE_START_STOP_DAEMON_LONG_OPTIONS
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_WHICH
 	bool
 	default y
