@@ -465,6 +465,9 @@ define BuildImage
     image_prepare: compile
 		mkdir -p $(KDIR)/tmp
 		$(call Image/Prepare)
+  else
+    image_prepare:
+		mkdir -p $(KDIR)/tmp
   endif
 
   mkfs_prepare: image_prepare

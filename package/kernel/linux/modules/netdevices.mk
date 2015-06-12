@@ -148,6 +148,23 @@ endef
 $(eval $(call KernelPackage,gw16083))
 
 
+define KernelPackage/phy-broadcom
+   SUBMENU:=$(NETWORK_DEVICES_MENU)
+   TITLE:=Broadcom Ethernet PHY driver
+   KCONFIG:=CONFIG_BROADCOM_PHY
+   DEPENDS:=+kmod-libphy
+   FILES:=$(LINUX_DIR)/drivers/net/phy/broadcom.ko
+   AUTOLOAD:=$(call AutoLoad,18,broadcom)
+endef
+
+define KernelPackage/phy-broadcom/description
+   Currently supports the BCM5411, BCM5421, BCM5461, BCM5464, BCM5481,
+   BCM5482 and BCM57780 PHYs.
+endef
+
+$(eval $(call KernelPackage,phy-broadcom))
+
+
 define KernelPackage/swconfig
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=switch configuration API
@@ -809,27 +826,6 @@ define KernelPackage/vmxnet3/description
 endef
 
 $(eval $(call KernelPackage,vmxnet3))
-
-
-define KernelPackage/stmmac
-  SUBMENU:=$(NETWORK_DEVICES_MENU)
-  TITLE:=STMicro 10/100/1000 Ethernet driver
-  DEPENDS:=+kmod-mii +kmod-ptp +kmod-libphy
-  KCONFIG:=CONFIG_NET_VENDOR_STMICRO=y \
-	  CONFIG_STMMAC_ETH \
-	  CONFIG_STMMAC_PLATFORM=y \
-	  CONFIG_STMMAC_DEBUG_FS=y \
-	  CONFIG_STMMAC_DA=y \
-	  CONFIG_DWMAC_IPQ806X=y
-  FILES:=$(LINUX_DIR)/drivers/net/ethernet/stmicro/stmmac/stmmac.ko
-  AUTOLOAD:=$(call AutoLoad,50,stmmac.ko)
-endef
-
-define KernelPackage/stmmac/description
-  Kernel module for STMicroelectronics 10/100/1000 Ethernet driver
-endef
-
-$(eval $(call KernelPackage,stmmac))
 
 
 define KernelPackage/spi-ks8995

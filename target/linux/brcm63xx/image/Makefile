@@ -94,6 +94,7 @@ endef
 
 define Image/Build/RedBootDTB
 	# Prepare kernel and rootfs
+	cat $(KDIR)/vmlinux $(DTS_DIR)/$(3).dtb > $(KDIR)/vmlinux-$(3)
 	gzip -9 -c $(KDIR)/vmlinux-$(3) > $(KDIR)/vmlinux-$(3).bin.gz
 	dd if=$(KDIR)/vmlinux-$(3).bin.gz of=$(BIN_DIR)/$(IMG_PREFIX)-$(2)-vmlinux.gz bs=65536 conv=sync
 	dd if=$(KDIR)/root.squashfs of="$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs" bs=64k conv=sync
@@ -121,6 +122,7 @@ define Image/Build/RedBootDTB
 		"$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs" \
 		> "$(BIN_DIR)/$(IMG_PREFIX)-$(2)-redboot.bin"
 	rm -f $(BIN_DIR)/redbootscript $(BIN_DIR)/redbootscript.padded
+	rm -f $(KDIR)/vmlinux-$(3)
 endef
 
 define Image/Build/HCSDTB
@@ -167,6 +169,7 @@ define Image/PrepareLoaderDTB
 	# append dtb to vmlinux, then build a standard LZMA loader
 	cat $(KDIR)/vmlinux$(1) $(DTS_DIR)/$(2).dtb > $(KDIR)/vmlinux$(1)-$(2)
 	$(call Image/PrepareLoader,$(1)-$(2),$(3),$(4))
+	rm -f $(KDIR)/vmlinux$(1)-$(2)
 endef
 
 define Image/PrepareCFELzmaKernel
@@ -198,6 +201,7 @@ define Image/PrepareCFELzmaKernelDTB
 	$(LINUX_DIR)/scripts/dtc/dtc -O dtb -o $(DTS_DIR)/$(1).dtb ../dts/$(1).dts
 	cat $(KDIR)/vmlinux $(DTS_DIR)/$(1).dtb > $(KDIR)/vmlinux-$(1)
 	$(call Image/PrepareCFELzmaKernel,-$(1))
+	rm -f $(KDIR)/vmlinux-$(1)
 endef
 
 define Image/Prepare
@@ -287,7 +291,7 @@ $(eval $(call ImageDTB,CFEDTB,96368MVNgr,96368MVNgr-generic,bcm96368MVNgr,96368M
 $(eval $(call ImageDTB,CFEDTB,96368MVWG,96368MVWG-generic,bcm96368MVWG,96368MVWG,6368))
 
 # ADB P.DG A4001N
-$(eval $(call ImageDTB,CFEDTB,A4001N,A4001N,a4001n,96328dg2x2,6328,--pad 8))
+$(eval $(call ImageDTB,CFEDTB,A4001N,A4001N,a4001n,96328dg2x2,6328,--pad 4))
 # ADB P.DG A4001N1
 $(eval $(call ImageDTB,CFEDTB,A4001N1,A4001N1,a4001n1,963281T_TEF,6328,--pad 8))
 # Alcatel RG100A
