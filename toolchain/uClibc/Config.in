@@ -11,9 +11,9 @@ choice
 		select UCLIBC_VERSION_0_9_33
 		bool "uClibc 0.9.33.2"
 
-	config UCLIBC_USE_VERSION_20150528
-		select UCLIBC_VERSION_20150528
-		bool "uClibc snapshot (2015-05-28)"
+	config UCLIBC_USE_VERSION_20150615
+		select UCLIBC_VERSION_20150615
+		bool "uClibc snapshot (2015-06-15)"
 
 endchoice
 
