@@ -1,0 +1,13 @@
+--- a/src/chinadns.c
++++ b/src/chinadns.c
+@@ -32,6 +32,10 @@
+ 
+ #include "config.h"
+ 
++#ifndef MAX
++	#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
++#endif
++
+ typedef struct {
+   uint16_t id;
+   struct timeval ts;
