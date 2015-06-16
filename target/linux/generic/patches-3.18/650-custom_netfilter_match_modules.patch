@@ -2,7 +2,7 @@
 +++ b/net/ipv4/netfilter/Makefile
 @@ -53,6 +53,10 @@ obj-$(CONFIG_IP_NF_RAW) += iptable_raw.o
  obj-$(CONFIG_IP_NF_SECURITY) += iptable_security.o
-
+ 
  # matches
 +obj-$(CONFIG_IP_NF_MATCH_BANDWIDTH) += ipt_bandwidth.o
 +obj-$(CONFIG_IP_NF_MATCH_TIMERANGE) += ipt_timerange.o
@@ -10,7 +10,7 @@
 +obj-$(CONFIG_IP_NF_MATCH_WEBURL) += ipt_weburl.o
  obj-$(CONFIG_IP_NF_MATCH_AH) += ipt_ah.o
  obj-$(CONFIG_IP_NF_MATCH_RPFILTER) += ipt_rpfilter.o
-
+ 
 --- /dev/null
 +++ b/net/ipv4/netfilter/ipt_weburl.c
 @@ -0,0 +1,398 @@
@@ -4119,9 +4119,9 @@
 --- a/net/ipv4/netfilter/Kconfig
 +++ b/net/ipv4/netfilter/Kconfig
 @@ -389,5 +389,25 @@ config IP_NF_ARP_MANGLE
-
+ 
  endif # IP_NF_ARPTABLES
-
+ 
 +config IP_NF_MATCH_WEBURL
 +	tristate "weburl match support"
 +	depends on IP_NF_IPTABLES
@@ -4143,7 +4143,7 @@
 +	help
 +		This option enables bandwidth match support.
  endmenu
-
+ 
 --- /dev/null
 +++ b/net/ipv4/netfilter/ipt_weburl.mod.c
 @@ -0,0 +1,20 @@
