@@ -7,19 +7,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.2.1-d2c2c17a2f
+PKG_VERSION:=0.4.2.2-b26489bb9f
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=d2c2c17a2f8c1d7040822dbad8f3af0d6cce597d
+PKG_SOURCE_VERSION:=b26489bb9f8d74388a332b5b565168630beed0b8
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
-CMAKE_INSTALL:=1
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=LICENSE
-PKG_BUILD_DEPENDS:=libsodium libpcap
 PKG_USE_MIPS16:=0
 
 PKG_MAINTAINER:=Chengr28 <chengr28@twitter>
@@ -28,18 +26,37 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 TARGET_CFLAGS += $(FPIC)
-#TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib
-TARGET_LDFLAGS += -lpthread -lsodium -lpcap
+
+CMAKE_OPTIONS += \
+	-DCOMPILE_OPENWRT=ON \
+	$(if $(CONFIG_PACKAGE_pcap-dnsproxy_libsodium),-DENABLE_LIBSODIUM=ON,-DENABLE_LIBSODIUM=OFF) \
+	-DENABLE_PCAP=ON
+
+define Package/pcap-dnsproxy/config
+	if PACKAGE_pcap-dnsproxy
+	config PACKAGE_pcap-dnsproxy_libsodium
+		bool "Build with libsodium support."
+		default y
+	endif
+endef
+
 
 define Package/pcap-dnsproxy
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=A local DNS server based on LibPcap
 	URL:=https://github.com/chengr28/Pcap_DNSProxy
-	DEPENDS:=+libpthread +libstdcpp +libpcap +libsodium
+	DEPENDS:=+libpthread +libstdcpp +libpcap \
+		+PACKAGE_pcap-dnsproxy_libsodium:libsodium
 endef
 
-#CONFIGURE_ARGS := -DENABLE_LIBSODIUM=ON -DENABLE_PCAP=ON
+define Package/pcap-dnsproxy/conffiles
+/etc/pcap-dnsproxy/Config.conf
+/etc/pcap-dnsproxy/Hosts.conf
+/etc/pcap-dnsproxy/IPFilter.conf
+/etc/pcap-dnsproxy/Routing.txt
+/etc/pcap-dnsproxy/White_List.txt
+endef
 
 define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/usr/sbin

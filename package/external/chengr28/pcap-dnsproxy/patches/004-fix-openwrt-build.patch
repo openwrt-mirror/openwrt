@@ -1,0 +1,19 @@
+--- a/Source/KeyPairGenerator/CMakeLists.txt
++++ b/Source/KeyPairGenerator/CMakeLists.txt
+@@ -50,6 +50,4 @@ ENDIF(COMPILE_OPENWRT)
+ # Libraries linking
+ IF(ENABLE_LIBSODIUM)
+ 	target_link_libraries(KeyPairGenerator sodium)
+-ELSEIF(COMPILE_OPENWRT)
+-	target_link_libraries(KeyPairGenerator sodium)
+ ENDIF(ENABLE_LIBSODIUM)
+--- a/Source/Pcap_DNSProxy/CMakeLists.txt
++++ b/Source/Pcap_DNSProxy/CMakeLists.txt
+@@ -87,7 +87,3 @@ ENDIF(ENABLE_PCAP)
+ IF(ENABLE_LIBSODIUM)
+ 	target_link_libraries(Pcap_DNSProxy sodium)
+ ENDIF(ENABLE_LIBSODIUM)
+-IF(COMPILE_OPENWRT)
+-	target_link_libraries(Pcap_DNSProxy pcap)
+-	target_link_libraries(Pcap_DNSProxy sodium)
+-ENDIF(COMPILE_OPENWRT)
