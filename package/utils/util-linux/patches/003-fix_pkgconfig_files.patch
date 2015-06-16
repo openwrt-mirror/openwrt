@@ -10,7 +10,7 @@
  endif # BUILD_LIBUUID
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1802,15 +1802,19 @@ AC_CONFIG_HEADERS([config.h])
+@@ -1908,18 +1908,22 @@ AC_CONFIG_HEADERS([config.h])
  #
  AC_CONFIG_FILES([
  Makefile
@@ -19,6 +19,9 @@
  libblkid/docs/version.xml
  libblkid/src/blkid.h
 +libmount/mount.pc
+ libfdisk/docs/Makefile
+ libfdisk/docs/version.xml
+ libfdisk/src/libfdisk.h
  libmount/docs/Makefile
  libmount/docs/version.xml
  libmount/src/libmount.h
