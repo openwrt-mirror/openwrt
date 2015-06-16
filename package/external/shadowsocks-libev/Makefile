@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-libev
-PKG_VERSION:=2.2.1-d53cd0c3fd
+PKG_VERSION:=2.2.2-4883903e65
 PKG_RELEASE:=1
-PKG_REV:=d53cd0c3fded50dbd3774c90b64ffd91a9b3c19a
+PKG_REV:=4883903e657095b93f88a3a3b9a0dccdffdaa397
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
