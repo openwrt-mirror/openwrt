@@ -30,12 +30,17 @@ include $(INCLUDE_DIR)/cmake.mk
 TARGET_CFLAGS += $(FPIC)
 CMAKE_SOURCE_DIR:=Source/DNSPing
 
+## FIXME: need include files to build with musl-libc
+# Note: GCC 4.6 and 4.8 dont have complete C++11 support
+#       Please use GCC 4.9 or higher to compile
 define Package/DNSPing
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Ping with DNS requesting.
 	URL:=https://github.com/chengr28/DNSPing
-	DEPENDS:=+libstdcpp
+	DEPENDS:=+libstdcpp \
+		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN \
+		@USE_MUSL:BROKEN
 endef
 
 

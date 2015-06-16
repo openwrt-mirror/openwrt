@@ -40,14 +40,18 @@ define Package/pcap-dnsproxy/config
 	endif
 endef
 
-
+## FIXME: need include files to build with musl-libc
+# Note: GCC 4.6 and 4.8 dont have complete C++11 support
+#       Please use GCC 4.9 or higher to compile
 define Package/pcap-dnsproxy
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=A local DNS server based on LibPcap
 	URL:=https://github.com/chengr28/Pcap_DNSProxy
 	DEPENDS:=+libpthread +libstdcpp +libpcap \
-		+PACKAGE_pcap-dnsproxy_libsodium:libsodium
+		+PACKAGE_pcap-dnsproxy_libsodium:libsodium \
+		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN \
+		@USE_MUSL:BROKEN
 endef
 
 define Package/pcap-dnsproxy/conffiles
