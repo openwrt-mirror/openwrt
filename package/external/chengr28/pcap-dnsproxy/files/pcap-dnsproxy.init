@@ -10,7 +10,7 @@ SERVICE_DAEMONIZE=1
 # CONFIG=
 
 start() {
-	service_start /usr/sbin/Pcap_DNSProxy
+	service_start /usr/sbin/Pcap_DNSProxy -c /etc/pcap-dnsproxy/Config.conf
 }
 
 stop() {
