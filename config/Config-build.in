@@ -211,7 +211,7 @@ menu "Global build settings"
 	config PKG_CHECK_FORMAT_SECURITY
 		bool
 		prompt "Enable gcc format-security"
-		default n
+		default y
 		help
 		  Add -Wformat -Werror=format-security to the CFLAGS.  You can disable
 		  this per package by adding PKG_CHECK_FORMAT_SECURITY:=0 in the package
@@ -270,6 +270,7 @@ menu "Global build settings"
 
 	choice
 		prompt "Enable RELRO protection"
+		default PKG_RELRO_FULL
 		help
 		  Enable a link-time protection known as RELRO (Relocation Read Only)
 		  which helps to protect from certain type of exploitation techniques
