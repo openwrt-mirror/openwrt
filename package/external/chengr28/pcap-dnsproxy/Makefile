@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.2.2-b26489bb9f
+PKG_VERSION:=0.4.2.2-a0f1606f8a
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=b26489bb9f8d74388a332b5b565168630beed0b8
+PKG_SOURCE_VERSION:=a0f1606f8af64a898d97ba0525bd720b85161412
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -40,7 +40,6 @@ define Package/pcap-dnsproxy/config
 	endif
 endef
 
-## FIXME: need include files to build with musl-libc
 # Note: GCC 4.6 and 4.8 dont have complete C++11 support
 #       Please use GCC 4.9 or higher to compile
 define Package/pcap-dnsproxy
@@ -50,8 +49,7 @@ define Package/pcap-dnsproxy
 	URL:=https://github.com/chengr28/Pcap_DNSProxy
 	DEPENDS:=+libpthread +libstdcpp +libpcap \
 		+PACKAGE_pcap-dnsproxy_libsodium:libsodium \
-		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN \
-		@USE_MUSL:BROKEN
+		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN
 endef
 
 define Package/pcap-dnsproxy/conffiles

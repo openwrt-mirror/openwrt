@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=DNSPing
-PKG_VERSION:=0.1.1-065fa65090
+PKG_VERSION:=0.1.1-49b01e8da2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/DNSPing.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=065fa65090c5f6866ed8d2673ce999eb774d624a
+PKG_SOURCE_VERSION:=49b01e8da25a79b0b3db9ec1fa0c471768f13aef
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -30,7 +30,9 @@ include $(INCLUDE_DIR)/cmake.mk
 TARGET_CFLAGS += $(FPIC)
 CMAKE_SOURCE_DIR:=Source/DNSPing
 
-## FIXME: need include files to build with musl-libc
+CMAKE_OPTIONS += \
+	-DCOMPILE_OPENWRT=ON
+
 # Note: GCC 4.6 and 4.8 dont have complete C++11 support
 #       Please use GCC 4.9 or higher to compile
 define Package/DNSPing
@@ -39,8 +41,7 @@ define Package/DNSPing
 	TITLE:=Ping with DNS requesting.
 	URL:=https://github.com/chengr28/DNSPing
 	DEPENDS:=+libstdcpp \
-		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN \
-		@USE_MUSL:BROKEN
+		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN
 endef
 
 
