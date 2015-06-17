@@ -1,6 +1,6 @@
 --- a/drivers/net/Kconfig
 +++ b/drivers/net/Kconfig
-@@ -199,6 +199,125 @@ config RIONET_RX_SIZE
+@@ -220,6 +220,125 @@ config RIONET_RX_SIZE
  	depends on RIONET
  	default "128"
 
@@ -128,7 +128,7 @@
  	depends on INET
 --- a/drivers/net/Makefile
 +++ b/drivers/net/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_BONDING) += bonding/
+@@ -10,6 +10,7 @@ obj-$(CONFIG_IPVLAN) += ipvlan/
  obj-$(CONFIG_DUMMY) += dummy.o
  obj-$(CONFIG_EQUALIZER) += eql.o
  obj-$(CONFIG_IFB) += ifb.o
@@ -1545,7 +1545,7 @@
 +
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -33,6 +33,9 @@
+@@ -35,6 +35,9 @@
  #include <linux/netdev_features.h>
  #include <linux/sched.h>
  #include <net/flow_keys.h>
@@ -1555,7 +1555,7 @@
 
  /* A. Checksumming of received packets by device.
   *
-@@ -523,6 +526,9 @@ struct sk_buff {
+@@ -534,6 +537,9 @@ struct sk_buff {
  	 * first. This is owned by whoever has the skb queued ATM.
  	 */
  	char			cb[48] __aligned(8);
@@ -1565,7 +1565,7 @@
 
  	unsigned long		_skb_refdst;
  	void			(*destructor)(struct sk_buff *skb);
-@@ -532,6 +538,9 @@ struct sk_buff {
+@@ -543,6 +549,9 @@ struct sk_buff {
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	struct nf_conntrack	*nfct;
  #endif
@@ -1575,7 +1575,7 @@
  #if IS_ENABLED(CONFIG_BRIDGE_NETFILTER)
  	struct nf_bridge_info	*nf_bridge;
  #endif
-@@ -553,6 +562,9 @@ struct sk_buff {
+@@ -564,6 +573,9 @@ struct sk_buff {
  				xmit_more:1;
  	/* one bit hole */
  	kmemcheck_bitfield_end(flags1);
@@ -1585,7 +1585,7 @@
 
  	/* fields enclosed in headers_start/headers_end are copied
  	 * using a single memcpy() in __copy_skb_header()
-@@ -760,6 +772,10 @@ static inline struct rtable *skb_rtable(
+@@ -757,6 +769,10 @@ static inline struct rtable *skb_rtable(
  	return (struct rtable *)skb_dst(skb);
  }
 
@@ -1596,7 +1596,7 @@
  void kfree_skb(struct sk_buff *skb);
  void kfree_skb_list(struct sk_buff *segs);
  void skb_tx_error(struct sk_buff *skb);
-@@ -3136,6 +3152,10 @@ static inline void __nf_copy(struct sk_b
+@@ -3225,6 +3241,10 @@ static inline void __nf_copy(struct sk_b
  	if (copy)
  		dst->nfctinfo = src->nfctinfo;
  #endif
@@ -1636,7 +1636,7 @@
   * number or errno values. Not nice, but better than additional function
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -129,6 +129,9 @@
+@@ -130,6 +130,9 @@
  #include <linux/inetdevice.h>
  #include <linux/cpu_rmap.h>
  #include <linux/static_key.h>
@@ -1646,23 +1646,23 @@
  #include <linux/hashtable.h>
  #include <linux/vmalloc.h>
  #include <linux/if_macvlan.h>
-@@ -2619,8 +2622,12 @@ static int xmit_one(struct sk_buff *skb,
+@@ -2614,8 +2617,12 @@ static int xmit_one(struct sk_buff *skb,
  {
  	unsigned int len;
  	int rc;
 -
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
-+	if (!list_empty(&ptype_all) &&
++	if ((!list_empty(&ptype_all) || !list_empty(&dev->ptype_all))) &&
 +				!(skb->imq_flags & IMQ_F_ENQUEUE))
 +#else
- 	if (!list_empty(&ptype_all))
+ 	if (!list_empty(&ptype_all) || !list_empty(&dev->ptype_all))
 +#endif
  		dev_queue_xmit_nit(skb, dev);
 
  #ifdef CONFIG_ETHERNET_PACKET_MANGLE
 --- a/net/core/skbuff.c
 +++ b/net/core/skbuff.c
-@@ -78,6 +78,9 @@
+@@ -80,6 +80,9 @@
 
  struct kmem_cache *skbuff_head_cache __read_mostly;
  static struct kmem_cache *skbuff_fclone_cache __read_mostly;
@@ -1672,7 +1672,7 @@
 
  /**
   *	skb_panic - private function for out-of-line support
-@@ -111,6 +114,82 @@ static void skb_under_panic(struct sk_bu
+@@ -113,6 +116,82 @@ static void skb_under_panic(struct sk_bu
  	skb_panic(skb, sz, addr, __func__);
  }
 
@@ -1755,7 +1755,7 @@
  /*
   * kmalloc_reserve is a wrapper around kmalloc_node_track_caller that tells
   * the caller if emergency pfmemalloc reserves are being used. If it is and
-@@ -608,6 +687,28 @@ static void skb_release_head_state(struc
+@@ -708,6 +787,28 @@ static void skb_release_head_state(struc
  		WARN_ON(in_irq());
  		skb->destructor(skb);
  	}
@@ -1784,7 +1784,7 @@
  #if IS_ENABLED(CONFIG_NF_CONNTRACK)
  	nf_conntrack_put(skb->nfct);
  #endif
-@@ -732,6 +833,10 @@ static void __copy_skb_header(struct sk_
+@@ -825,6 +926,10 @@ static void __copy_skb_header(struct sk_
  	/* We do not copy old->sk */
  	new->dev		= old->dev;
  	memcpy(new->cb, old->cb, sizeof(old->cb));
@@ -1795,7 +1795,7 @@
  	skb_dst_copy(new, old);
  #ifdef CONFIG_XFRM
  	new->sp			= secpath_get(old->sp);
-@@ -3297,6 +3402,13 @@ void __init skb_init(void)
+@@ -3403,6 +3508,13 @@ void __init skb_init(void)
  						0,
  						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
  						NULL);
@@ -1837,7 +1837,7 @@
  			    !(IP6CB(skb)->flags & IP6SKB_REROUTED));
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -777,6 +777,18 @@ config NETFILTER_XT_TARGET_LOG
+@@ -793,6 +793,18 @@ config NETFILTER_XT_TARGET_LOG
 
  	  To compile it as a module, choose M here.  If unsure, say N.
 
@@ -1858,7 +1858,7 @@
  	depends on NETFILTER_ADVANCED
 --- a/net/netfilter/Makefile
 +++ b/net/netfilter/Makefile
-@@ -110,6 +110,7 @@ obj-$(CONFIG_NETFILTER_XT_TARGET_CT) +=
+@@ -112,6 +112,7 @@ obj-$(CONFIG_NETFILTER_XT_TARGET_CT) +=
  obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
  obj-$(CONFIG_NETFILTER_XT_TARGET_HL) += xt_HL.o
  obj-$(CONFIG_NETFILTER_XT_TARGET_HMARK) += xt_HMARK.o
@@ -1868,7 +1868,7 @@
  obj-$(CONFIG_NETFILTER_XT_TARGET_NETMAP) += xt_NETMAP.o
 --- a/net/netfilter/core.c
 +++ b/net/netfilter/core.c
-@@ -184,9 +184,11 @@ next_hook:
+@@ -185,9 +185,11 @@ next_hook:
  		ret = NF_DROP_GETERR(verdict);
  		if (ret == 0)
  			ret = -EPERM;
