@@ -1,6 +1,6 @@
 --- a/net/ipv4/netfilter/Makefile
 +++ b/net/ipv4/netfilter/Makefile
-@@ -53,6 +53,10 @@ obj-$(CONFIG_IP_NF_RAW) += iptable_raw.o
+@@ -54,6 +54,10 @@ obj-$(CONFIG_IP_NF_RAW) += iptable_raw.o
  obj-$(CONFIG_IP_NF_SECURITY) += iptable_security.o
 
  # matches
@@ -4118,7 +4118,7 @@
 +
 --- a/net/ipv4/netfilter/Kconfig
 +++ b/net/ipv4/netfilter/Kconfig
-@@ -389,5 +389,25 @@ config IP_NF_ARP_MANGLE
+@@ -398,5 +398,25 @@ config IP_NF_ARP_MANGLE
 
  endif # IP_NF_ARPTABLES
 

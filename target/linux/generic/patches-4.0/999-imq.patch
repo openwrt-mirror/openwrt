@@ -1646,14 +1646,13 @@
  #include <linux/hashtable.h>
  #include <linux/vmalloc.h>
  #include <linux/if_macvlan.h>
-@@ -2614,8 +2617,12 @@ static int xmit_one(struct sk_buff *skb,
+@@ -2614,8 +2617,11 @@ static int xmit_one(struct sk_buff *skb,
  {
  	unsigned int len;
  	int rc;
 -
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
-+	if ((!list_empty(&ptype_all) || !list_empty(&dev->ptype_all))) &&
-+				!(skb->imq_flags & IMQ_F_ENQUEUE))
++	if ((!list_empty(&ptype_all) || !list_empty(&dev->ptype_all)) && !(skb->imq_flags & IMQ_F_ENQUEUE))
 +#else
  	if (!list_empty(&ptype_all) || !list_empty(&dev->ptype_all))
 +#endif
