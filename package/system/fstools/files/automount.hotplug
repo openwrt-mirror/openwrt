@@ -56,7 +56,7 @@ set_fstab(){
 				'vfat')
 					uci set fstab.${section}.options="iocharset=utf8,umask=0000,dmask=0000,fmask=0000";;
                 *)
-                    uci set fstab.${section}.enabled=0;;
+                    uci revert fstab;;
 			esac
 		fi
 		uci commit fstab
