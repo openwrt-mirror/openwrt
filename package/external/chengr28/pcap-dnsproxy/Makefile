@@ -32,11 +32,15 @@ CMAKE_OPTIONS += \
 	$(if $(CONFIG_PACKAGE_pcap-dnsproxy_libsodium),-DENABLE_LIBSODIUM=ON,-DENABLE_LIBSODIUM=OFF) \
 	-DENABLE_PCAP=ON
 
+# Port 53 leads to dnsmasq startup failure.
 define Package/pcap-dnsproxy/config
 	if PACKAGE_pcap-dnsproxy
 	config PACKAGE_pcap-dnsproxy_libsodium
 		bool "Build with libsodium support."
 		default y
+	config PCAP_DNSPROXY_LISTENPORT
+		int "Change default Listen Port, can NOT be 53"
+		default 1053
 	endif
 endef
 
@@ -67,6 +71,8 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/pcap-dnsproxy.init $(1)/etc/init.d/pcap-dnsproxy
 	$(INSTALL_DIR) $(1)/etc/pcap-dnsproxy
+	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'  $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Operation Mode = Private,Operation Mode = Server,g'                   $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/IPFilter.ini $(1)/etc/pcap-dnsproxy/IPFilter.conf

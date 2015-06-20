@@ -13,5 +13,6 @@ start() {
 }
 
 stop() {
-	service_stop /usr/sbin/Pcap_DNSProxy
+	# FIXME: something wrong with 'service_stop'
+	killall -SIGTERM Pcap_DNSProxy
 }
