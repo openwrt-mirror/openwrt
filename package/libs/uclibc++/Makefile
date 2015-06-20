@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uclibc++
 PKG_VERSION:=0.2.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=uClibc++-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://cxx.uclibc.org/src/
@@ -44,6 +44,10 @@ UCLIBC_TARGET_ARCH:=$(shell echo $(ARCH) | sed -e s'/-.*//' \
 	-e 's/mipsel.*/mips/' \
 )
 
+ifeq ($(ARCH),powerpc)
+TARGET_CFLAGS += -fno-stack-protector
+endif
+
 TARGET_CFLAGS += $(FPIC)
 
 ifneq ($(CONFIG_CCACHE),)
@@ -55,8 +59,9 @@ MAKE_FLAGS:= \
 	$(TARGET_CONFIGURE_OPTS) \
 	CPU_CFLAGS="$(TARGET_CFLAGS)" \
 	CROSS="$(TARGET_CROSS)" \
+	LDFLAGS="-Wl,--warn-common -Wl,--warn-once -Wl,-z,combreloc -Wl,-z,defs $(TARGET_LDFLAGS)" \
 	CP="$(CP)" \
-	GEN_LIBS="-lc $(LIBGCC_S)" \
+	GEN_LIBS="-lc $(LIBGCC_S) -lssp" \
 	check_as_needed=
 
 # check_as_needed overrides dependency on libgcc_s

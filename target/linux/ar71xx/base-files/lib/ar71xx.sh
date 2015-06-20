@@ -107,6 +107,9 @@ tplink_board_detect() {
 	"015300"*)
 		model="EasyLink EL-MINI"
 		;;
+	"04440001"*)
+		model="BITMAIN ANTMINER S1"
+		;;
 	"120000"*)
 		model="MERCURY MAC1200R"
 		;;
@@ -441,6 +444,9 @@ ar71xx_board_detect() {
 	*"GL-CONNECT INET v1")
 		name="gl-inet"
 		gl_inet_board_detect
+		;;
+	*"EnGenius EPG5000")
+		name="epg5000"
 		;;
 	*"EnGenius ESR1750")
 		name="esr1750"
@@ -796,7 +802,7 @@ ar71xx_board_detect() {
 	*"TL-WR710N v1")
 		name="tl-wr710n"
 		;;
-	*"TL-WR720N v3")
+	*"TL-WR720N"*)
 		name="tl-wr720n-v3"
 		;;
 	*"TL-MR10U")
@@ -843,6 +849,9 @@ ar71xx_board_detect() {
 		;;
 	*WPJ344)
 		name="wpj344"
+		;;
+	*WPJ531)
+		name="wpj531"
 		;;
 	*WPJ558)
 		name="wpj558"

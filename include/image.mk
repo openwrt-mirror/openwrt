@@ -305,6 +305,11 @@ define Build/append-rootfs
 	dd if=$(word 2,$^) $(if $(1),bs=$(1) conv=sync) >> $@
 endef
 
+define Build/pad-to
+	dd if=$@ of=$@.new bs=$(1) conv=sync
+	mv $@.new $@
+endef
+
 define Build/pad-rootfs
 	$(call prepare_generic_squashfs,$@ $(1))
 endef
@@ -327,6 +332,13 @@ define Build/check-size
 	}
 endef
 
+define Build/combined-image
+	-sh $(TOPDIR)/scripts/combined-image.sh \
+		"$(word 1,$^)" \
+		"$@" \
+		"$@.new"
+	@mv $@.new $@
+endef
 
 define Device/Init
   PROFILES := $(PROFILE)

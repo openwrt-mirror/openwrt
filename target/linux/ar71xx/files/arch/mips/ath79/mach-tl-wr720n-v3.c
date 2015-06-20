@@ -104,6 +104,5 @@ static void __init tl_wr720n_v3_setup(void)
 	tplink_register_builtin_wmac1(0x1000, mac, 0);
 }
 
-MIPS_MACHINE(ATH79_MACH_TL_WR720N_V3, "TL-WR720N-v3", "TP-LINK TL-WR720N v3",
+MIPS_MACHINE(ATH79_MACH_TL_WR720N_V3, "TL-WR720N-v3", "TP-LINK TL-WR720N v3/v4",
 		tl_wr720n_v3_setup);
-

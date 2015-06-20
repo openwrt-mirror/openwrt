@@ -30,6 +30,7 @@
 #define ALIGN(x,a) ({ typeof(a) __a = (a); (((x) + __a - 1) & ~(__a - 1)); })
 
 #define HEADER_VERSION_V1	0x01000000
+#define HWID_ANTMINER_S1	0x04440001
 #define HWID_GL_INET_V1		0x08000001
 #define HWID_GS_OOLITE_V1	0x3C000101
 #define HWID_TL_MR10U_V1	0x00100101
@@ -53,6 +54,7 @@
 #define HWID_TL_WDR4900_V1	0x49000001
 #define HWID_TL_WR703N_V1	0x07030101
 #define HWID_TL_WR720N_V3	0x07200103
+#define HWID_TL_WR720N_V4	0x07200104
 #define HWID_TL_WR741ND_V1	0x07410001
 #define HWID_TL_WR741ND_V4	0x07410004
 #define HWID_TL_WR740N_V1	0x07400001
@@ -402,6 +404,11 @@ static struct board_info boards[] = {
 		.hw_rev		= 1,
 		.layout_id	= "4Mlzma",
 	}, {
+		.id		= "TL-WR720Nv4",
+		.hw_id		= HWID_TL_WR720N_V4,
+		.hw_rev		= 1,
+		.layout_id	= "4Mlzma",
+	}, {
 		.id		= "GL-INETv1",
 		.hw_id		= HWID_GL_INET_V1,
 		.hw_rev		= 1,
@@ -411,6 +418,11 @@ static struct board_info boards[] = {
 		.hw_id		= HWID_GS_OOLITE_V1,
 		.hw_rev		= 1,
 		.layout_id	= "16Mlzma",
+	}, {
+		.id		= "ANTMINER-S1",
+		.hw_id		= HWID_ANTMINER_S1,
+		.hw_rev		= 1,
+		.layout_id	= "8Mlzma",
 	}, {
 		/* terminating entry */
 	}
