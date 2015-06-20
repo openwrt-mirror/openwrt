@@ -85,6 +85,10 @@ case $board in
 		ucidef_set_led_default "power" "POWER" "d105:red:power" "1"
 		set_usb_led "d105:green:usb"
 		;;
+	dcs-930l-b1)
+		ucidef_set_led_default "power" "POWER" "d-link:red:power" "1"
+		ucidef_set_led_netdev "wifi" "WiFi" "d-link:blue:wps"
+		;;
 	dir-300-b1|\
 	dir-600-b1|\
 	dir-600-b2|\
@@ -175,6 +179,11 @@ case $board in
 		set_wifi_led "7links:orange:wifi"
 		set_usb_led "7links:blue:storage"
 		;;
+    pbr-m1)
+        ucidef_set_led_netdev "internet" "internet" "pbr-m1:green:internet" "eth0.2"
+        ucidef_set_led_default "power" "power" "pbr-m1:green:power" "1"
+        ucidef_set_led_default "sys" "sys" "pbr-m1:green:sys" "1"
+        ;;
 	sl-r7205)
 		set_wifi_led "rt2800pci-phy0::radio"
 		;;
@@ -202,6 +211,10 @@ case $board in
 		;;
 	wnce2001)
 		set_wifi_led "netgear:green:wlan"
+		;;
+	re6500)
+		ucidef_set_led_default "power" "power" "linksys:white:power" "1"
+		ucidef_set_led_default "wifi" "wifi" "linksys:orange:wifi" "1"
 		;;
 	rt-n14u)
 		ucidef_set_led_default "power" "power" "asus:blue:power" "1"

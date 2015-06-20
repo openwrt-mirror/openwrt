@@ -53,6 +53,7 @@ ramips_setup_interfaces()
 	all5003 | \
 	broadway | \
 	dcs-930| \
+	dcs-930l-b1| \
 	ht-tm02| \
 	ncs601w | \
 	wnce2001)
@@ -103,6 +104,7 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "2" "0 9t"
 		;;
 
+        re6500 | \
 	asl26555)
 		ucidef_set_interface_lan "eth0.1"
 		ucidef_add_switch "switch0" "1" "1"
@@ -129,6 +131,7 @@ ramips_setup_interfaces()
 	dir-320-b1 | \
 	dir-615-h1 | \
 	firewrt | \
+	pbr-m1 | \
 	hlk-rm04 | \
 	mt7621 | \
 	mt7628 | \

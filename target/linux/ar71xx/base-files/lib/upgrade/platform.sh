@@ -208,6 +208,7 @@ platform_check_image() {
 	dir-825-c1 | \
 	dir-835-a1 | \
 	dragino2 | \
+	epg5000 | \
 	esr1750 | \
 	esr900 | \
 	ew-dorin | \
@@ -229,6 +230,7 @@ platform_check_image() {
 	rocket-m-xw | \
 	nanostation-m-xw | \
 	rw2458n | \
+	wpj531 | \
 	wndap360 | \
 	wpj344 | \
 	wzr-hp-g300nh2 | \
