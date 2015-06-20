@@ -687,6 +687,35 @@ define Device/oolite
 endef
 TARGET_DEVICES += oolite
 
+define Device/tl-wr941nd-v7
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR941ND-v7
+    DEVICE_PROFILE := TLWR941NV7
+    TPLINK_HWID := 0x09410007
+endef
+
+define Device/tl-wdr3320-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WDR3320-v2
+    DEVICE_PROFILE := TLWDR3320V2
+    TPLINK_HWID := 0x33200002
+endef
+
+define Device/tl-wr882n-v1
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR882N-v1
+    DEVICE_PROFILE := TLWR882N
+    TPLINK_HWID := 0x08820001
+endef
+
+define Device/tl-wdr6300-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WDR6300
+    DEVICE_PROFILE := TLWDR6300
+    TPLINK_HWID := 0x63000002
+endef
+TARGET_DEVICES += tl-wr941nd-v7 tl-wdr3320-v2 tl-wr882n-v1 tl-wdr6300-v2
+
 # UBNT_BOARD e.g. one of (XS2, XS5, RS, XM)
 # UBNT_TYPE e.g. one of (BZ, XM, XW)
 # UBNT_CHIP e.g. one of (ar7240, ar933x, ar934x)
@@ -2129,11 +2158,6 @@ $(eval $(call SingleProfile,TPLINK,64kraw,TLWR1043V1,tl-wr1043nd-v1,TL-WR1043ND,
 
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
-
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR941NV7,tl-wr941nd-v7,TL-WR941ND-v7,ttyS0,115200,0x09410007,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR3320V2,tl-wdr3320-v2,TL-WDR3320-v2,ttyS0,115200,0x33200002,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR882N,tl-wr882n-v1,TL-WR882N-v1,ttyS0,115200,0x08820001,1,8Mlzma))
-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR6300,tl-wdr6300-v2,TL-WDR6300,ttyS0,115200,0x63000002,1,8Mlzma))
 
 $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
 
