@@ -6,11 +6,10 @@ SERVICE_USE_PID=1
 SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
 
-#TODO: startup params
-# CONFIG=
+# MUST set Config.conf before 'enable' this service
 
 start() {
-	service_start /usr/sbin/Pcap_DNSProxy -c /etc/pcap-dnsproxy/Config.conf
+	service_start /usr/sbin/Pcap_DNSProxy -c /etc/pcap-dnsproxy
 }
 
 stop() {
