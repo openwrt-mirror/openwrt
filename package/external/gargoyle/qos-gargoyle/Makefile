@@ -30,6 +30,7 @@ endef
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
+	$(call Build/Prepare/Default)
 endef
 
 
@@ -38,13 +39,13 @@ endef
 
 define Build/Compile
 	-$(MAKE) -C $(PKG_BUILD_DIR) clean
-	$(MAKE) -C $(PKG_BUILD_DIR) \
+#	$(MAKE) -C $(PKG_BUILD_DIR) \
 		$(TARGET_CONFIGURE_OPTS) \
-		CFLAGS="$(TARGET_CFLAGS) -I $(STAGING_DIR)/usr/include" \
-		LDFLAGS="$(TARGET_LDFLAGS) -L $(STAGING_DIR)/usr/lib" \
+		CFLAGS="$(TARGET_CFLAGS) -I$(STAGING_DIR)/include -I$(STAGING_DIR)/usr/include" \
+		LDFLAGS="$(TARGET_LDFLAGS) -L$(STAGING_DIR)/usr/lib" \
 		BUILD_DIR="$(BUILD_DIR)" \
 		all
-
+	$(call Build/Compile/Default,BUILD_DIR="$(BUILD_DIR)" all)
 
 endef
 
