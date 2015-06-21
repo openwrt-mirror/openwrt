@@ -779,7 +779,7 @@ define Device/ubnt-nano-m
   $(Device/ubnt-xm)
   BOARDNAME := UBNT-NM
 endef
-TARGET_DEVICES += rw2458n ubnt-airrouter ubnt-bullet-m ubnt-rocket-m ubnt-nano-m
+#TARGET_DEVICES += rw2458n ubnt-airrouter ubnt-bullet-m ubnt-rocket-m ubnt-nano-m
 
 define Device/ubnt-unifi
   $(Device/ubnt-bz)
@@ -792,7 +792,7 @@ define Device/ubnt-unifi-outdoor
   BOARDNAME := UBNT-U20
   DEVICE_PROFILE := UBNT UBNTUNIFIOUTDOOR
 endef
-TARGET_DEVICES += ubnt-unifi ubnt-unifi-outdoor
+#TARGET_DEVICES += ubnt-unifi ubnt-unifi-outdoor
 
 define Device/ubnt-nano-m-xw
   $(Device/ubnt-xw)
@@ -808,7 +808,7 @@ define Device/ubnt-rocket-m-xw
   $(Device/ubnt-xw)
   BOARDNAME := UBNT-RM-XW
 endef
-TARGET_DEVICES += ubnt-nano-m-xw ubnt-loco-m-xw ubnt-rocket-m-xw
+#TARGET_DEVICES += ubnt-nano-m-xw ubnt-loco-m-xw ubnt-rocket-m-xw
 
 define Device/ubnt-air-gateway
   $(Device/ubnt-xm)
@@ -818,7 +818,7 @@ define Device/ubnt-air-gateway
   UBNT_CHIP := ar933x
   CONSOLE = ttyATH0,115200
 endef
-TARGET_DEVICES += ubnt-air-gateway
+#TARGET_DEVICES += ubnt-air-gateway
 
 define Device/ubdev01
   $(Device/ubnt-xm)
@@ -829,7 +829,7 @@ define Device/ubdev01
   UBNT_CHIP := ar7240
 endef
 
-TARGET_DEVICES += ubdev01
+#TARGET_DEVICES += ubdev01
 
 define Device/ubnt-routerstation
   IMAGE_SIZE := 16128k
@@ -866,7 +866,7 @@ $(Device/ubnt-routerstation)
   UBNT_CHIP := ar7100
 endef
 
-TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
+#TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
 
 define Device/ubnt-uap-pro
   IMAGE_SIZE := 15744k
@@ -888,7 +888,7 @@ $(Device/ubnt-uap-pro)
   DEVICE_PROFILE := UBNT
 endef
 
-TARGET_DEVICES += ubnt-uap-pro ubnt-unifi-outdoor-plus
+#TARGET_DEVICES += ubnt-uap-pro ubnt-unifi-outdoor-plus
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
