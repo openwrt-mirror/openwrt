@@ -10,12 +10,17 @@
  */
 
 #include <byteswap.h>
+#include <endian.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#if !defined(__BYTE_ORDER)
+#error "Unknown byte order"
+#endif
 
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define cpu_to_le32(x)	bswap_32(x)
