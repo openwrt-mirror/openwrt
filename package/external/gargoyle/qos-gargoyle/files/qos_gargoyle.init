@@ -180,15 +180,15 @@ apply_all_rules()
 					need_proto="1"
 
 				;;
-				layer7)
-					layer7_connmark=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $2 }')
-					layer7_mask=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $3 }')
-					if [ -n "$layer7_connmark" ] ; then
-						match_str="$match_str -m connmark --mark $layer7_connmark/$layer7_mask "
-					else
-						match_str="$match_str -m layer7 --l7proto $option_value"
-					fi
-				;;
+#				layer7)
+#					layer7_connmark=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $2 }')
+#					layer7_mask=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $3 }')
+#					if [ -n "$layer7_connmark" ] ; then
+#						match_str="$match_str -m connmark --mark $layer7_connmark/$layer7_mask "
+#					else
+#						match_str="$match_str -m layer7 --l7proto $option_value"
+#					fi
+#				;;
 				connbytes_kb)
 					match_str="$match_str -m connbytes --connbytes $(($option_value*1024)): --connbytes-dir both --connbytes-mode bytes"
 				;;
@@ -290,12 +290,24 @@ update_markfile()
 initialize_qos()
 {
 	#initialize layer7_marker if necessary
-	create_l7marker_chain
+	# disable layer7 related stuff since layer7 support was removed in OP trunk
+	# create_l7marker_chain
 
 	# Now, load/insert necessary kernel modules
 	# The following packages are required for the modules:
 	rmmod  imq >&- 2>&-
-	insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >&- 2>&-
+	# origin one; no 'hook_chains' and 'hook_tables' in new IMQ patch
+	#insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >&- 2>&-
+	# load multi-queue imq
+	# NUM_CPU=$(grep -c 'model name' /proc/cpuinfo)
+	# modprobe imq numqueues=$NUM_CPU
+	NUM_CPU=$(grep -c 'processor' /proc/cpuinfo)
+	# if we get '0' then use one cpu since the line not exists.
+	if [ "$NUM_CPU" = "0" ] ; then
+		insmod imq numdevs=1 numqueues=1 >&- 2>&-
+	else
+		insmod imq numdevs=1 numqueues=$NUM_CPU >&- 2>&-
+	fi
 	ip link set dev imq0 mtu 1500
 
 	insmod cls_fw >&- 2>&-
