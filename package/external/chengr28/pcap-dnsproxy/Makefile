@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.2.2-a0f1606f8a
-PKG_RELEASE:=1
+PKG_VERSION:=0.4.2.2
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=a0f1606f8af64a898d97ba0525bd720b85161412
+PKG_SOURCE_VERSION:=22b161b2530b241aa99c599178d0ab3a038c05ae
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/cmake.mk
 TARGET_CFLAGS += $(FPIC)
 
 CMAKE_OPTIONS += \
-	-DCOMPILE_OPENWRT=ON \
+	-DPLATFORM_OPENWRT=ON \
 	$(if $(CONFIG_PACKAGE_pcap-dnsproxy_libsodium),-DENABLE_LIBSODIUM=ON,-DENABLE_LIBSODIUM=OFF) \
 	-DENABLE_PCAP=ON
 
@@ -46,6 +46,7 @@ endef
 
 # Note: GCC 4.6 and 4.8 dont have complete C++11 support
 #       Please use GCC 4.9 or higher to compile
+#       Don't use regular expression when compiling with GCC 4.8
 define Package/pcap-dnsproxy
 	SECTION:=net
 	CATEGORY:=Network
@@ -53,7 +54,7 @@ define Package/pcap-dnsproxy
 	URL:=https://github.com/chengr28/Pcap_DNSProxy
 	DEPENDS:=+libpthread +libstdcpp +libpcap \
 		+PACKAGE_pcap-dnsproxy_libsodium:libsodium \
-		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN
+		@GCC_VERSION_4_6:BROKEN
 endef
 
 define Package/pcap-dnsproxy/conffiles

@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=DNSPing
-PKG_VERSION:=0.1.1-49b01e8da2
-PKG_RELEASE:=1
+PKG_VERSION:=0.1.1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/DNSPing.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=49b01e8da25a79b0b3db9ec1fa0c471768f13aef
+PKG_SOURCE_VERSION:=39a1d502212cabc19c581e3d43165573c860195c
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -31,17 +31,18 @@ TARGET_CFLAGS += $(FPIC)
 CMAKE_SOURCE_DIR:=Source/DNSPing
 
 CMAKE_OPTIONS += \
-	-DCOMPILE_OPENWRT=ON
+	-DPLATFORM_OPENWRT=ON
 
 # Note: GCC 4.6 and 4.8 dont have complete C++11 support
 #       Please use GCC 4.9 or higher to compile
+#       Don't use regular expression when compiling with GCC 4.8
 define Package/DNSPing
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Ping with DNS requesting.
 	URL:=https://github.com/chengr28/DNSPing
 	DEPENDS:=+libstdcpp \
-		@GCC_VERSION_4_6:BROKEN @GCC_VERSION_4_8:BROKEN
+		@GCC_VERSION_4_6:BROKEN
 endef
 
 
