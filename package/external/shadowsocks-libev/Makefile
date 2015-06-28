@@ -8,16 +8,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-libev
-PKG_VERSION:=2.2.2-4883903e65
-PKG_RELEASE:=1
-PKG_REV:=4883903e657095b93f88a3a3b9a0dccdffdaa397
+#PKG_VERSION:=2.2.2-4883903e65
+PKG_VERSION:=2.2.2
+PKG_RELEASE:=2
+#PKG_REV:=4883903e657095b93f88a3a3b9a0dccdffdaa397
+PKG_REV:=7adc94cca67ab3d24945cfbfef3fa7f5be1c280c
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-libev.git
+#PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-libev.git
+PKG_SOURCE_URL:=https://github.com/wongsyrone/shadowsocks-libev.git
 PKG_SOURCE_VERSION:=$(PKG_REV)
 
+PKG_BUILD_DEPENDS:=libsodium
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Max Lv <max.c.lv@gmail.com>
@@ -86,6 +90,10 @@ Package/shadowsocks-libev-spec-polarssl/postinst = $(Package/shadowsocks-libev-s
 ifeq ($(BUILD_VARIANT),polarssl)
 	CONFIGURE_ARGS += --with-crypto-library=polarssl
 endif
+
+# self-modified version needed
+# for libsodium
+TARGET_LDFLAGS+= -lsodium
 
 define Package/shadowsocks-libev/install
 	$(INSTALL_DIR) $(1)/usr/bin
