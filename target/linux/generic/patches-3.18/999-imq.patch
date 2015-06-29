@@ -138,7 +138,7 @@
  obj-$(CONFIG_MII) += mii.o
 --- /dev/null
 +++ b/drivers/net/imq.c
-@@ -0,0 +1,901 @@
+@@ -0,0 +1,906 @@
 +/*
 + *             Pseudo-driver for the intermediate queue device.
 + *
@@ -1040,6 +1040,11 @@
 +MODULE_PARM_DESC(numdevs, "number of IMQ devices (how many imq* devices will be created)");
 +MODULE_PARM_DESC(numqueues, "number of queues per IMQ device");
 +MODULE_PARM_DESC(imq_dev_accurate_stats, "Notify if need the accurate imq device stats");
++
++MODULE_AUTHOR("http://https://github.com/imq/linuximq");
++MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See https://github.com/imq/linuximq/wiki for more information.");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS_RTNL_LINK("imq");
 --- /dev/null
 +++ b/include/linux/imq.h
 @@ -0,0 +1,13 @@
