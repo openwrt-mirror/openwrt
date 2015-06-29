@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dns2socks
-PKG_VERSION:=1.8
+PKG_VERSION:=2.0
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk

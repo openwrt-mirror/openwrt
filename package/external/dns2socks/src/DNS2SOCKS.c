@@ -5,7 +5,7 @@
 // http://www.freesoft.org/CIE/RFC/1035/43.htm
 
 //application name and version
-#define APP_NAME "DNS2SOCKS V1.8"
+#define APP_NAME "DNS2SOCKS V2.0"
 //first output line in console
 #define APP_STRING "\n" APP_NAME " (free software, use parameter /? to display help)\n"
 //log file header line
@@ -55,6 +55,8 @@ static CRITICAL_SECTION g_sCritSect;			//to protect the list g_psFirst and g_uCa
 static SOCKET g_hSockUdp;						//UDP socket
 static unsigned char* g_uaUsrPwd=NULL;			//authentication package for SOCKS
 static int g_iUsrPwdLen;						//length of g_caUsrPwd
+static int g_iHttpProxyConnectLen=0;			//length of CONNECT command in g_caHttpProxyConnect
+static char g_caHttpProxyConnect[300];			//CONNECT command in case of using HTTP proxy
 
 //OS specific functionality
 #ifdef _WIN32
@@ -529,8 +531,82 @@ static int ReceiveBytes(SOCKET hSock, unsigned int uAmount, uint16_t* u16aBuf)
 	}
 }
 
+//sends CONNECT command to HTTP proxy and checks answer
+static int HandleHttpProxy(SOCKET hSock, char* caBuf)
+{
+	char* szErrMsg;
+	char* szPosEnd;
+	const char* szPosStatus;
+	int iRet;
+	int iPos;
+
+	iRet=send(hSock, g_caHttpProxyConnect, g_iHttpProxyConnectLen, 0);
+	if(iRet!=g_iHttpProxyConnectLen)
+	{
+		szErrMsg=(iRet==SOCKET_ERROR)?GetSysError(WSAGetLastError()):"Invalid amount of sent bytes";
+		OutputToLog(OUTPUT_ALL, "Sending to HTTP proxy has failed: %s", szErrMsg);
+		if(iRet==SOCKET_ERROR)
+			FreeSysError(szErrMsg);
+		return 0;	//error
+	}
+	//receive answer
+	iPos=0;
+	for(;;)
+	{
+		iRet=recv(hSock, caBuf+iPos, 2000-iPos, 0);
+		if(iRet<=0)
+		{
+			if(iRet==SOCKET_ERROR)
+				OutputToLog(OUTPUT_ALL, "The HTTP proxy has closed the connection unexpectedly");
+			else
+			{
+				szErrMsg=GetSysError(WSAGetLastError());
+				OutputToLog(OUTPUT_ALL, "Receiving from HTTP proxy has failed: %s", szErrMsg);
+				FreeSysError(szErrMsg);
+			}
+			return 0;	//error
+		}
+		iPos+=iRet;
+		if(iPos<4)
+			continue;	//continue receiving
+		//check header, must begin with HTTP
+		if(caBuf[0]=='H' || caBuf[1]=='T' || caBuf[2]=='T' || caBuf[3]=='P')
+		{
+			caBuf[iPos]='\0';	//terminate the string
+			//try to find empty line that marks the end of the HTTP proxy answer
+			szPosEnd=strstr(caBuf, "\r\n\r\n");
+			if(!szPosEnd)
+				continue;	//continue receiving
+			//extract status code -> scan for space character (also stops on any control character)
+			szPosStatus=caBuf+4;
+			while(*(unsigned char*)szPosStatus>' ')
+				++szPosStatus;
+			if(*szPosStatus==' ')
+			{
+				//we want: 200 Connection established
+				if(atoi(++szPosStatus)==200)
+					break;	//header reception complete
+				//find end of line (must be there, otherwise upper search for empty line would have failed
+				szPosEnd=strchr(szPosStatus, '\r');
+				*szPosEnd='\0';
+				OutputToLog(OUTPUT_ALL, "Connecting DNS server has failed: %s", szPosStatus);
+				return 0;	//error
+			}
+		}
+		OutputToLog(OUTPUT_ALL, "Invalid answer from HTTP proxy");
+		return 0;	//error
+	}
+	//so far there shouldn't be an answer from the DNS server (nothing after \r\n\r\n)
+	if(szPosEnd[4])
+	{
+		OutputToLog(OUTPUT_ALL, "DNS server answered before request");
+		return 0;	//error
+	}
+	return 1;	//o.k.
+}
+
 //thread for connecting the SOCKS server and resolving the DNS request
-THREAD_FUNCTION(SocksThread, pEntry)
+THREAD_FUNCTION(DnsThread, pEntry)
 {
 	uint16_t u16aBuf[32754];	//max UDP packet length on Windows plus one byte - using uint16_t here for alignment
 	struct SEntry* psEntry=(struct SEntry*)pEntry;
@@ -548,7 +624,7 @@ THREAD_FUNCTION(SocksThread, pEntry)
 		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
 		return 0;
 	}
-	//connect SOCKS server
+	//connect SOCKS server or HTTP proxy
 	if(connect(hSock, (struct sockaddr*)&g_sSocksAddr, GetAddrLen(&g_sSocksAddr))==SOCKET_ERROR)
 	{
 		szErrMsg=GetSysError(WSAGetLastError());
@@ -557,41 +633,22 @@ THREAD_FUNCTION(SocksThread, pEntry)
 		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
 		return 0;
 	}
-	((uint8_t*)u16aBuf)[0]=5;	//version 5 as we use SOCKS5
-	((uint8_t*)u16aBuf)[1]=1;	//number of authentication methods supported
-	((uint8_t*)u16aBuf)[2]=g_uaUsrPwd?2:0;	//user/password authentication or no authentication
-	iLen=send(hSock, (const char*)u16aBuf, 3, 0);
-	if(iLen!=3)
+	//using HTTP proxy instead of SOCKS?
+	if(g_iHttpProxyConnectLen)
 	{
-		szErrMsg=(iLen==SOCKET_ERROR)?GetSysError(WSAGetLastError()):"Invalid amount of sent bytes";
-		OutputToLog(OUTPUT_ALL, "Sending to SOCKS server has failed: %s", szErrMsg);
-		if(iLen==SOCKET_ERROR)
-			FreeSysError(szErrMsg);
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
+		if(!HandleHttpProxy(hSock, (char*)u16aBuf))
+		{
+			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+			return 0;
+		}
 	}
-	//check respons
-	if(!ReceiveBytes(hSock, 2, u16aBuf+8))
+	else
 	{
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
-	}
-	if(((uint8_t*)u16aBuf)[16]!=5 || ((uint8_t*)u16aBuf)[17]!=((uint8_t*)u16aBuf)[2])
-	{
-		if(((uint8_t*)u16aBuf)[16]!=5)
-			OutputToLog(OUTPUT_ALL, "The SOCKS server has answered with a SOCKS version number unequal to 5");
-		else if(g_uaUsrPwd)
-			OutputToLog(OUTPUT_ALL, "The SOCKS server does not support user/password authentication");
-		else
-			OutputToLog(OUTPUT_ALL, "The SOCKS server wants an authentication");
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
-	}
-	//send authentication if enabled
-	if(g_uaUsrPwd)
-	{
-		iLen=send(hSock, (const char*)g_uaUsrPwd, g_iUsrPwdLen, 0);
-		if(iLen!=g_iUsrPwdLen)
+		((uint8_t*)u16aBuf)[0]=5;	//version 5 as we use SOCKS5
+		((uint8_t*)u16aBuf)[1]=1;	//number of authentication methods supported
+		((uint8_t*)u16aBuf)[2]=g_uaUsrPwd?2:0;	//user/password authentication or no authentication
+		iLen=send(hSock, (const char*)u16aBuf, 3, 0);
+		if(iLen!=3)
 		{
 			szErrMsg=(iLen==SOCKET_ERROR)?GetSysError(WSAGetLastError()):"Invalid amount of sent bytes";
 			OutputToLog(OUTPUT_ALL, "Sending to SOCKS server has failed: %s", szErrMsg);
@@ -600,111 +657,141 @@ THREAD_FUNCTION(SocksThread, pEntry)
 			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
 			return 0;
 		}
-		//check response
+		//check respons
 		if(!ReceiveBytes(hSock, 2, u16aBuf+8))
 		{
 			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
 			return 0;
 		}
-		if(((uint8_t*)u16aBuf)[17])	//2nd byte of answer must be 0 for "success"
+		if(((uint8_t*)u16aBuf)[16]!=5 || ((uint8_t*)u16aBuf)[17]!=((uint8_t*)u16aBuf)[2])
 		{
-			OutputToLog(OUTPUT_ALL, "The SOCKS server authentication has failed (error code %u)", (unsigned int)((uint8_t*)u16aBuf)[17]);
+			if(((uint8_t*)u16aBuf)[16]!=5)
+				OutputToLog(OUTPUT_ALL, "The SOCKS server has answered with a SOCKS version number unequal to 5");
+			else if(g_uaUsrPwd)
+				OutputToLog(OUTPUT_ALL, "The SOCKS server does not support user/password authentication");
+			else
+				OutputToLog(OUTPUT_ALL, "The SOCKS server wants an authentication");
+			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+			return 0;
+		}
+		//send authentication if enabled
+		if(g_uaUsrPwd)
+		{
+			iLen=send(hSock, (const char*)g_uaUsrPwd, g_iUsrPwdLen, 0);
+			if(iLen!=g_iUsrPwdLen)
+			{
+				szErrMsg=(iLen==SOCKET_ERROR)?GetSysError(WSAGetLastError()):"Invalid amount of sent bytes";
+				OutputToLog(OUTPUT_ALL, "Sending to SOCKS server has failed: %s", szErrMsg);
+				if(iLen==SOCKET_ERROR)
+					FreeSysError(szErrMsg);
+				RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+				return 0;
+			}
+			//check response
+			if(!ReceiveBytes(hSock, 2, u16aBuf+8))
+			{
+				RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+				return 0;
+			}
+			if(((uint8_t*)u16aBuf)[17])	//2nd byte of answer must be 0 for "success"
+			{
+				OutputToLog(OUTPUT_ALL, "The SOCKS server authentication has failed (error code %u)", (unsigned int)((uint8_t*)u16aBuf)[17]);
+				RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+				return 0;
+			}
+		}
+		//connect DNS server via SOCKS, the DNS server must support TCP
+		((uint8_t*)u16aBuf)[1]=1;	//establish a TCP/IP stream connection
+		((uint8_t*)u16aBuf)[2]=0;	//reserved, must be 0x00
+		switch(g_sDnsSrvAddr.ss_family)
+		{
+		case AF_UNSPEC:	//use name
+			((uint8_t*)u16aBuf)[3]=3;	//name
+			iLen=(int)((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_flowinfo;	//length in sin6_flowinfo (see ParseIpAndPort)
+			((uint8_t*)u16aBuf)[4]=(uint8_t)iLen;	//maximum length is 255
+			memcpy(((uint8_t*)u16aBuf)+5, *(char**)&((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_addr, iLen);	//copy name (see ParseIpAndPort)
+			*(uint16_t*)(((uint8_t*)u16aBuf)+iLen+5)=((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_port;	//port
+			iPos=iLen+7;
+			break;
+		case AF_INET:	//use IPv4
+			((uint8_t*)u16aBuf)[3]=1;	//IPv4 address
+			*(uint32_t*)(u16aBuf+2)=((struct sockaddr_in*)&g_sDnsSrvAddr)->sin_addr.s_addr;	//address
+			*(uint16_t*)(u16aBuf+4)=((struct sockaddr_in*)&g_sDnsSrvAddr)->sin_port;		//port
+			iPos=10;
+			break;
+		default:	//use IPv6
+			((uint8_t*)u16aBuf)[3]=4;	//IPv6 address
+			memcpy(u16aBuf+2, &((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_addr, 16);		//address
+			*(uint16_t*)(u16aBuf+10)=((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_port;		//port
+			iPos=22;
+		}
+		iLen=send(hSock, (const char*)u16aBuf, iPos, 0);
+		if(iLen!=iPos)
+		{
+			szErrMsg=(iLen==SOCKET_ERROR)?GetSysError(WSAGetLastError()):"Invalid amount of sent bytes";
+			OutputToLog(OUTPUT_ALL, "Connecting through SOCKS server has failed: %s", szErrMsg);
+			if(iLen==SOCKET_ERROR)
+				FreeSysError(szErrMsg);
+			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+			return 0;
+		}
+		//check expected answer (get first 5 bytes to detect address type)
+		if(!ReceiveBytes(hSock, 5, u16aBuf))
+		{
+			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+			return 0;
+		}
+		if(((uint8_t*)u16aBuf)[0]!=5 || ((uint8_t*)u16aBuf)[1]!=0 || (((uint8_t*)u16aBuf)[3]!=1 && ((uint8_t*)u16aBuf)[3]!=3 && ((uint8_t*)u16aBuf)[3]!=4))
+		{
+			szErrMsg="Unexpected answer from SOCKS server";
+			//correct version -> try to resolve the error code
+			if(((uint8_t*)u16aBuf)[0]==5)
+				switch(((uint8_t*)u16aBuf)[1])
+				{
+				case 2:
+					szErrMsg="Connection not allowed by ruleset";
+					break;
+				case 3:
+					szErrMsg="Network unreachable";
+					break;
+				case 4:
+					szErrMsg="Host unreachable";
+					break;
+				case 5:
+					szErrMsg="Connection refused by destination host";
+					break;
+				case 6:
+					szErrMsg="TTL expired";
+					break;
+				case 7:
+					szErrMsg="Command not supported / protocol error";
+					break;
+				case 8:
+					szErrMsg="Address type not supported";
+				}
+			OutputToLog(OUTPUT_ALL, "Connecting through SOCKS server has failed: %s", szErrMsg);
+			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
+			return 0;
+		}
+		//get rest of answer
+		//all bytes after that are part of the "normal" communication
+		switch(((uint8_t*)u16aBuf)[3])
+		{
+		case 1:	//IPv4
+			iLen=5;
+			break;
+		case 4:	//IPv6
+			iLen=17;
+			break;
+		default:	//name
+			iLen=2+((uint8_t*)u16aBuf)[4];	//port length plus length of name
+		}
+		if(!ReceiveBytes(hSock, iLen, u16aBuf))
+		{
 			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
 			return 0;
 		}
 	}
-	//connect DNS server via SOCKS, the DNS server must support TCP
-	((uint8_t*)u16aBuf)[1]=1;	//establish a TCP/IP stream connection
-	((uint8_t*)u16aBuf)[2]=0;	//reserved, must be 0x00
-	switch(g_sDnsSrvAddr.ss_family)
-	{
-	case AF_UNSPEC:	//use name
-		((uint8_t*)u16aBuf)[3]=3;	//name
-		iLen=(int)((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_flowinfo;	//length in sin6_flowinfo (see ParseIpAndPort)
-		((uint8_t*)u16aBuf)[4]=(uint8_t)iLen;	//maximum length is 255
-		memcpy(((uint8_t*)u16aBuf)+5, *(char**)&((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_addr, iLen);	//copy name (see ParseIpAndPort)
-		*(uint16_t*)(((uint8_t*)u16aBuf)+iLen+5)=((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_port;	//port
-		iPos=iLen+7;
-		break;
-	case AF_INET:	//use IPv4
-		((uint8_t*)u16aBuf)[3]=1;	//IPv4 address
-		*(uint32_t*)(u16aBuf+2)=((struct sockaddr_in*)&g_sDnsSrvAddr)->sin_addr.s_addr;	//address
-		*(uint16_t*)(u16aBuf+4)=((struct sockaddr_in*)&g_sDnsSrvAddr)->sin_port;		//port
-		iPos=10;
-		break;
-	default:	//use IPv6
-		((uint8_t*)u16aBuf)[3]=4;	//IPv6 address
-		memcpy(u16aBuf+2, &((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_addr, 16);		//address
-		*(uint16_t*)(u16aBuf+10)=((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_port;		//port
-		iPos=22;
-	}
-	iLen=send(hSock, (const char*)u16aBuf, iPos, 0);
-	if(iLen!=iPos)
-	{
-		szErrMsg=(iLen==SOCKET_ERROR)?GetSysError(WSAGetLastError()):"Invalid amount of sent bytes";
-		OutputToLog(OUTPUT_ALL, "Connecting through SOCKS server has failed: %s", szErrMsg);
-		if(iLen==SOCKET_ERROR)
-			FreeSysError(szErrMsg);
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
-	}
-	//check expected answer (get first 5 bytes to detect address type)
-	if(!ReceiveBytes(hSock, 5, u16aBuf))
-	{
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
-	}
-	if(((uint8_t*)u16aBuf)[0]!=5 || ((uint8_t*)u16aBuf)[1]!=0 || (((uint8_t*)u16aBuf)[3]!=1 && ((uint8_t*)u16aBuf)[3]!=3 && ((uint8_t*)u16aBuf)[3]!=4))
-	{
-		szErrMsg="Unexpected answer from SOCKS server";
-		//correct version -> try to resolve the error code
-		if(((uint8_t*)u16aBuf)[0]==5)
-			switch(((uint8_t*)u16aBuf)[1])
-			{
-			case 2:
-				szErrMsg="Connection not allowed by ruleset";
-				break;
-			case 3:
-				szErrMsg="Network unreachable";
-				break;
-			case 4:
-				szErrMsg="Host unreachable";
-				break;
-			case 5:
-				szErrMsg="Connection refused by destination host";
-				break;
-			case 6:
-				szErrMsg="TTL expired";
-				break;
-			case 7:
-				szErrMsg="Command not supported / protocol error";
-				break;
-			case 8:
-				szErrMsg="Address type not supported";
-			}
-		OutputToLog(OUTPUT_ALL, "Connecting through SOCKS server has failed: %s", szErrMsg);
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
-	}
-	//get rest of answer
-	//all bytes after that are part of the "normal" communication
-	switch(((uint8_t*)u16aBuf)[3])
-	{
-	case 1:	//IPv4
-		iLen=5;
-		break;
-	case 4:	//IPv6
-		iLen=17;
-		break;
-	default:	//name
-		iLen=2+((uint8_t*)u16aBuf)[4];	//port length plus length of name
-	}
-	if(!ReceiveBytes(hSock, iLen, u16aBuf))
-	{
-		RemoveEntry(psEntry, hSock, g_bCacheEnabled);
-		return 0;
-	}
-
 	iPos=2+ntohs(*psEntry->u16aRequest);
 	//send DNS request via SOCKS
 	iLen=send(hSock, (const char*)psEntry->u16aRequest, iPos, 0);
@@ -807,7 +894,7 @@ static void HandleDnsRequest(uint16_t* u16aRequest, int iLen, void* pClientAddr,
 			if(g_bCacheEnabled)
 				g_psFirst=psEntry;
 			//create thread to resolve entry
-			if(ThreadCreate(SocksThread, psEntry))
+			if(ThreadCreate(DnsThread, psEntry))
 			{
 				++g_uCacheCount;
 				//output amount of entries and current entry
@@ -853,7 +940,7 @@ static void HandleDnsRequest(uint16_t* u16aRequest, int iLen, void* pClientAddr,
 					//copy current ID
 					psEntry->u16aRequest[1]=*u16aRequest;
 					//create thread to resolve request again
-					if(!ThreadCreate(SocksThread, psEntry))
+					if(!ThreadCreate(DnsThread, psEntry))
 						RemoveEntry(psEntry, (SOCKET)SOCKET_ERROR, 0);
 				}
 				else
@@ -1025,6 +1112,17 @@ static int ParseIpAndPort(int iFlag, const char* szParamName, const char* szPort
 	iRet=getaddrinfo(szIpAndPort, szPort, &sHint, &psResult);
 	if(iRet)
 	{
+		//some getaddrinfo implementations seem to have some trouble, so try the old IPv4 variant additionally
+		((struct sockaddr_in*)psAddr)->sin_addr.s_addr=inet_addr(szIpAndPort);
+		if(INADDR_NONE!=((struct sockaddr_in*)psAddr)->sin_addr.s_addr)
+		{
+			((struct sockaddr_in*)psAddr)->sin_port=htons((uint16_t)atoi(szPort));
+			if(((struct sockaddr_in*)psAddr)->sin_port)
+			{
+				((struct sockaddr_in*)psAddr)->sin_family=AF_INET;
+				return 1;	//o.k.
+			}
+		}
 		//only for the DNS server also support name
 		if(&g_sDnsSrvAddr==psAddr)
 		{
@@ -1054,6 +1152,44 @@ static int ParseIpAndPort(int iFlag, const char* szParamName, const char* szPort
 	//copy 1st result
 	memcpy(psAddr, psResult->ai_addr, psResult->ai_addrlen);
 	freeaddrinfo(psResult);
+	return 1;	//o.k.
+}
+
+//creates CONNECT command for HTTP proxy containing DNS address
+static int CreateHttpProxyConnectCommand()
+{
+	memcpy(g_caHttpProxyConnect, "CONNECT ", 8);
+	g_iHttpProxyConnectLen=8;
+	if(g_sDnsSrvAddr.ss_family==AF_UNSPEC)
+	{
+		//sin6_addr contains pointer to name, see ParseIpAndPort (max. length is 255)
+		int iLenDnsAddr=sprintf(g_caHttpProxyConnect+g_iHttpProxyConnectLen, "%s:%u", *(char**)&((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_addr, ntohs(((struct sockaddr_in6*)&g_sDnsSrvAddr)->sin6_port));
+
+		if(iLenDnsAddr<=0)
+			return 0;	//error
+		g_iHttpProxyConnectLen+=iLenDnsAddr;
+	}
+	else
+	{
+		//add IP and port to g_caHttpProxyConnect
+		char szPort[6];
+		int iLenPort;
+
+		if(g_sDnsSrvAddr.ss_family==AF_INET6)
+			g_caHttpProxyConnect[g_iHttpProxyConnectLen++]='[';	//enclose with [] for IPv6
+		if(getnameinfo((struct sockaddr*)&g_sDnsSrvAddr, GetAddrLen(&g_sDnsSrvAddr), g_caHttpProxyConnect+g_iHttpProxyConnectLen, 128, szPort, sizeof(szPort), NI_NUMERICHOST|NI_NUMERICSERV))
+			return 0;	//error
+		g_iHttpProxyConnectLen+=(int)strlen(g_caHttpProxyConnect+g_iHttpProxyConnectLen);
+		if(g_sDnsSrvAddr.ss_family==AF_INET6)
+			g_caHttpProxyConnect[g_iHttpProxyConnectLen++]=']';	//enclose with [] for IPv6
+		g_caHttpProxyConnect[g_iHttpProxyConnectLen++]=':';
+		iLenPort=(int)strlen(szPort);
+		memcpy(g_caHttpProxyConnect+g_iHttpProxyConnectLen, szPort, iLenPort);
+		g_iHttpProxyConnectLen+=iLenPort;
+	}
+	//complete command
+	memcpy(g_caHttpProxyConnect+g_iHttpProxyConnectLen, " HTTP/1.0\r\n\r\n", 13);
+	g_iHttpProxyConnectLen+=13;
 	return 1;	//o.k.
 }
 
@@ -1148,6 +1284,10 @@ int main(int iArgCount, char** szaArgs)
 					continue;
 				}
 				break;
+			case 't':	//HTTP proxy?
+			case 'T':
+				g_iHttpProxyConnectLen=1;	//used as boolean here; later it contains the real length of the CONNECT command
+				continue;
 			}
 		}
 		else
@@ -1165,9 +1305,11 @@ int main(int iArgCount, char** szaArgs)
 		//either correct help request or unknown parameter -> display usage and stop
 		OutputFatal("\nDNS2SOCKS tunnels DNS requests via SOCKS5 and caches the answers.\n\n\n"
 			"Usage:\n\n"
-			"DNS2SOCKS [/?] [/d] [/q] [/l[a]:FilePath] [/u:User /p:Password]\n"
+			"DNS2SOCKS [/?] [/t] [/d] [/q] [/l[a]:FilePath] [/u:User /p:Password]\n"
 			"          [Socks5ServerIP[:Port]] [DNSServerIPorName[:Port]] [ListenIP[:Port]]\n\n"
 			"/?            to view this help\n"
+			"/t            to use a HTTP proxy instead of a SOCKS server\n"
+			"              (here: Socks5ServerIP = HttpProxyIP, no support for /u and /p)\n"
 			"/d            to disable the cache\n"
 			"/q            to suppress the text output\n"
 			"/l:FilePath   to create a new log file \"FilePath\"\n"
@@ -1190,6 +1332,11 @@ int main(int iArgCount, char** szaArgs)
 	if(!szPassword && szUser)
 	{
 		OutputFatal("\nUser specified but no password!\n");
+		return 1;
+	}
+	if(g_iHttpProxyConnectLen && szPassword)
+	{
+		OutputFatal("\nAuthentication not supported for HTTP proxy!\n");
 		return 1;
 	}
 	if(szUser)
@@ -1220,6 +1367,16 @@ int main(int iArgCount, char** szaArgs)
 		if(!ParseIpAndPort(saAddresses[iAddrCount].iFlag, saAddresses[iAddrCount].szName, saAddresses[iAddrCount].szDefaultPort, (char*)saAddresses[iAddrCount].szDefaultAddress, saAddresses[iAddrCount].psAddr))
 			return 1;
 		++iAddrCount;
+	}
+
+	//create CONNECT command in case of using HTPP proxy
+	if(g_iHttpProxyConnectLen)
+	{
+		if(!CreateHttpProxyConnectCommand())
+		{
+			OutputFatal("\nFailed to create CONNECT command!\n");
+			return 1;
+		}
 	}
 
 	g_hSockUdp=socket(sAddr.ss_family, SOCK_DGRAM, IPPROTO_UDP);
@@ -1264,12 +1421,12 @@ int main(int iArgCount, char** szaArgs)
 		strcpy((char*)u16aBuf+1280, "unknown");
 	}
 	//output configuration
-	OutputToLog(OUTPUT_LINE_BREAK|OUTPUT_CONSOLE, "SOCKS server %s port %s\n"
+	OutputToLog(OUTPUT_LINE_BREAK|OUTPUT_CONSOLE, "%s %s port %s\n"
 		"DNS server   %s port %s\n"
 		"listening on %s port %s\n"
 		"cache %s\n"
 		"authentication %s\n",
-		(char*)u16aBuf, (char*)u16aBuf+256,
+		g_iHttpProxyConnectLen?"HTTP proxy  ":"SOCKS server", (char*)u16aBuf, (char*)u16aBuf+256,
 		(char*)u16aBuf+512, (char*)u16aBuf+768,
 		(char*)u16aBuf+1024, (char*)u16aBuf+1280,
 		g_bCacheEnabled?"enabled":"disabled",

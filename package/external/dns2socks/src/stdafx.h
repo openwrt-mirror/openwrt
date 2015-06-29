@@ -4,7 +4,7 @@
 #ifdef _WIN32
 
 //Windows specific includes
-#define WINVER 0x500
+#define WINVER 0x501
 #define _CRT_SECURE_NO_WARNINGS
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -31,7 +31,6 @@
 typedef int SOCKET;
 #define SOCKET_ERROR (-1)
 #define closesocket(hSock) close(hSock)
-#define WSACleanup()
 #define WSAGetLastError() errno
 #define CRITICAL_SECTION pthread_mutex_t
 #define InitializeCriticalSection(criticalSection) pthread_mutex_init(criticalSection, NULL)
