@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-libev
-PKG_VERSION:=2.2.2-4883903e65
-PKG_RELEASE:=1
+PKG_VERSION:=2.2.2
+PKG_RELEASE:=4
 PKG_REV:=4883903e657095b93f88a3a3b9a0dccdffdaa397
 
 PKG_SOURCE_PROTO:=git
@@ -40,9 +40,9 @@ define Package/shadowsocks-libev/Default
 	DEPENDS:=$(3)
 endef
 
-Package/shadowsocks-libev = $(call Package/shadowsocks-libev/Default,openssl,(OpenSSL),+libopenssl +libsodium)
+Package/shadowsocks-libev = $(call Package/shadowsocks-libev/Default,openssl,(OpenSSL),+libopenssl +libsodium +ipset +ip +iptables-mod-tproxy)
 Package/shadowsocks-libev-spec = $(call Package/shadowsocks-libev/Default,openssl,(OpenSSL),+libopenssl +resolveip +libsodium +ipset +ip +iptables-mod-tproxy)
-Package/shadowsocks-libev-polarssl = $(call Package/shadowsocks-libev/Default,polarssl,(PolarSSL),+libpolarssl +libsodium)
+Package/shadowsocks-libev-polarssl = $(call Package/shadowsocks-libev/Default,polarssl,(PolarSSL),+libpolarssl +libsodium +ipset +ip +iptables-mod-tproxy)
 Package/shadowsocks-libev-spec-polarssl = $(call Package/shadowsocks-libev/Default,polarssl,(PolarSSL),+libpolarssl +resolveip +libsodium +ipset +ip +iptables-mod-tproxy)
 
 define Package/shadowsocks-libev/description
