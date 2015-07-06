@@ -1,0 +1,11 @@
+--- a/src/network/ns_parse.c
++++ b/src/network/ns_parse.c
+@@ -95,7 +95,7 @@ int ns_skiprr(const unsigned char *ptr,
+ 			p += r;
+ 		}
+ 	}
+-	return ptr - p;
++	return p - ptr;
+ bad:
+ 	errno = EMSGSIZE;
+ 	return -1;
