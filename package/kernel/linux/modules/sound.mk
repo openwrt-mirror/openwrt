@@ -195,10 +195,8 @@ define KernelPackage/hda-intel
     CONFIG_DW_DMAC_PCI=n
   DEPENDS:=+kmod-hda
   FILES:= \
-    $(LINUX_DIR)/sound/pci/hda/snd-hda-intel.ko \
-    $(LINUX_DIR)/sound/pci/hda/snd-hda-codec.ko
+    $(LINUX_DIR)/sound/pci/hda/snd-hda-intel.ko
   AUTOLOAD:=\
-    $(call AutoLoad,50,snd-hda-codec) \
     $(call AutoLoad,55,snd-hda-intel)
   $(call AddDepends/sound)
 endef
