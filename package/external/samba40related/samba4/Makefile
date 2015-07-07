@@ -138,13 +138,13 @@ CONFIGURE_VARS += \
 	ac_cv_header_zlib_h=yes \
 	samba_cv_zlib_1_2_3=yes
 # changed ac_cv_header_zlib_h && samba_cv_zlib_1_2_3
+# due to PKG_RELRO_FULL delete '--disable-relro'
 CONFIGURE_ARGS += \
 	--exec-prefix=/usr \
 	--prefix=/ \
 	--disable-avahi \
 	--disable-cups \
 	--disable-pie \
-	--disable-relro \
 	--disable-static \
 	--disable-swat \
 	--disable-shared-libs \
