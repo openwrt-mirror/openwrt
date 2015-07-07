@@ -146,7 +146,7 @@ config KERNEL_KPROBE_EVENT
 
 config KERNEL_AIO
 	bool "Compile the kernel with asynchronous IO support"
-	default n
+	default y if TARGET_arm
 
 config KERNEL_DIRECT_IO
 	bool "Compile the kernel with direct IO support"
