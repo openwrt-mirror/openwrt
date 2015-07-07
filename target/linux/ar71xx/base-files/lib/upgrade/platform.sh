@@ -205,6 +205,7 @@ platform_check_image() {
 	dir-615-c1 | \
 	dir-615-e1 | \
 	dir-615-e4 | \
+	dir-615-i1 | \
 	dir-825-c1 | \
 	dir-835-a1 | \
 	dragino2 | \
@@ -228,6 +229,7 @@ platform_check_image() {
 	nanostation-m | \
 	rocket-m | \
 	rocket-m-xw | \
+	rocket-m-ti | \
 	nanostation-m-xw | \
 	rw2458n | \
 	wpj531 | \
@@ -300,6 +302,8 @@ platform_check_image() {
 		return 1
 		;;
 
+	antminer-s1 | \
+	antminer-s3 | \
 	archer-c5 | \
 	archer-c7 | \
 	el-m150 | \

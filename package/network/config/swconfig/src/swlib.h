@@ -116,8 +116,8 @@ struct uci_package;
 struct switch_dev {
 	int id;
 	char dev_name[IFNAMSIZ];
-	const char *name;
-	const char *alias;
+	char *name;
+	char *alias;
 	int ports;
 	int vlans;
 	int cpu_port;
@@ -135,7 +135,7 @@ struct switch_val {
 	int err;
 	int port_vlan;
 	union {
-		const char *s;
+		char *s;
 		int i;
 		struct switch_port *ports;
 	} value;
@@ -146,8 +146,8 @@ struct switch_attr {
 	int atype;
 	int id;
 	int type;
-	const char *name;
-	const char *description;
+	char *name;
+	char *description;
 	struct switch_attr *next;
 };
 
@@ -158,7 +158,7 @@ struct switch_port {
 
 struct switch_portmap {
 	unsigned int virt;
-	const char *segment;
+	char *segment;
 };
 
 /**

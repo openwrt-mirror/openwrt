@@ -10,11 +10,11 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=mac80211
 
-PKG_VERSION:=2015-03-09
-PKG_RELEASE:=3
+PKG_VERSION:=2015-06-22
+PKG_RELEASE:=1
 PKG_SOURCE_URL:=http://mirror2.openwrt.org/sources
 PKG_BACKPORT_VERSION:=
-PKG_MD5SUM:=6d4b04e4ce8a1f54dabfb04f4709453c
+PKG_MD5SUM:=352b2b46d36a72aadc96161a3cefdb1c
 
 PKG_SOURCE:=compat-wireless-$(PKG_VERSION)$(PKG_BACKPORT_VERSION).tar.bz2
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/compat-wireless-$(PKG_VERSION)
@@ -60,7 +60,6 @@ define KernelPackage/mac80211/Default
   SUBMENU:=$(WMENU)
   URL:=https://wireless.wiki.kernel.org/
   MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
-  DEPENDS:=@!LINUX_4_1
 endef
 
 define KernelPackage/cfg80211
@@ -128,7 +127,7 @@ endef
 $(eval $(call Download,linux-firmware))
 
 PKG_ATH10K_LINUX_FIRMWARE_NAME:=ath10k-firmware
-PKG_ATH10K_LINUX_FIRMWARE_VERSION:=da0f85d924226ee30c46e037120621c9e192b39e
+PKG_ATH10K_LINUX_FIRMWARE_VERSION:=b46f3e01a6c1f9150fb4612ef53611d714565842
 PKG_ATH10K_LINUX_FIRMWARE_SOURCE:=$(PKG_ATH10K_LINUX_FIRMWARE_NAME)-$(PKG_ATH10K_LINUX_FIRMWARE_VERSION).tar.bz2
 PKG_ATH10K_LINUX_FIRMWARE_PROTO:=git
 PKG_ATH10K_LINUX_FIRMWARE_SOURCE_URL:=https://github.com/kvalo/ath10k-firmware.git
@@ -619,19 +618,6 @@ define KernelPackage/ath10k/description
 This module adds support for wireless adapters based on
 Atheros IEEE 802.11ac family of chipsets. For now only
 PCI is supported.
-endef
-
-define KernelPackage/ath10k/config
-  if PACKAGE_kmod-ath10k
-
-	config ATH10K_STA_FW
-		bool "Firmware optimized for STA operation"
-		default n
-		help
-		  Use the ath10k firmware optimized for wireless client instead
-		  of access point operation.
-
-  endif
 endef
 
 define KernelPackage/carl9170
@@ -1858,15 +1844,9 @@ define KernelPackage/ath10k/install
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
-ifeq ($(CONFIG_ATH10K_STA_FW),y)
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/main/firmware-2.bin_999.999.0.636 \
-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
-else
-	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/firmware-4.bin_10.2.4.45 \
-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin
-endif
+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/untested/firmware-5.bin_10.2.4.70-2 \
+		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
 endef
 
 define KernelPackage/mwl8k/install

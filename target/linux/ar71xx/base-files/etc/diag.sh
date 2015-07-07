@@ -12,7 +12,8 @@ get_status_led() {
 	all0305)
 		status_led="eap7660d:green:ds4"
 		;;
-	antminer-s1)
+	antminer-s1|\
+	antminer-s3)
 		status_led="bitmain:green:system"
 		;;
 	ap132)
@@ -40,6 +41,9 @@ get_status_led() {
 	bullet-m | rocket-m | rocket-m-xw | nano-m | nanostation-m | nanostation-m-xw | loco-m-xw)
 		status_led="ubnt:green:link4"
 		;;
+	rocket-m-ti)
+		status_led="ubnt:green:link6"
+		;;
 	bxu2000n-2-a1)
 		status_led="bhu:green:status"
 		;;
@@ -57,6 +61,7 @@ get_status_led() {
 	dir-505-a1 |\
 	dir-600-a1 |\
 	dir-615-e1 |\
+	dir-615-i1 |\
 	dir-615-e4)
 		status_led="d-link:green:power"
 		;;
