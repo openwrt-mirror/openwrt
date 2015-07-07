@@ -886,6 +886,9 @@ ar71xx_board_detect() {
 	*WRT400N)
 		name="wrt400n"
 		;;
+	*WAP4410N)
+		name="wap4410n"
+		;;
 	*"WZR-450HP2")
 		name="wzr-450hp2"
 		;;
