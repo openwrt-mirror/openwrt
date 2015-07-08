@@ -65,6 +65,14 @@ define Package/pcap-dnsproxy/conffiles
 /etc/pcap-dnsproxy/White_List.txt
 endef
 
+# disable auto boot cause we have NOT set anything, and log poisoning will occur.
+# we can also keep this section empty to avoid default postinst script.
+define Package/pcap-dnsproxy/postinst
+#!/bin/sh
+/etc/init.d/pcap-dnsproxy stop
+/etc/init.d/pcap-dnsproxy disable
+endef
+
 define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/KeyPairGenerator $(1)/usr/sbin/KeyPairGenerator
@@ -74,6 +82,10 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/etc/pcap-dnsproxy
 	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'  $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(SED) 's,Operation Mode = Private,Operation Mode = Server,g'                   $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Buffer Queue Limits = 64,Buffer Queue Limits = 512,g'                 $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 5KB,g'                      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Accept Type = ,Accept Type = Permit:1|2|5|6|12|15|16|28|33|99,g'      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,EDNS Label = 0,EDNS Label = 1,g'                                      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/IPFilter.ini $(1)/etc/pcap-dnsproxy/IPFilter.conf
