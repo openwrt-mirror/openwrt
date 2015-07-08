@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=samba40
 PKG_VERSION:=4.0.26
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 PKG_SOURCE_URL:=http://ftp.samba.org/pub/samba \
 	http://ftp.samba.org/pub/samba/old-versions
@@ -179,7 +179,7 @@ MAKE_FLAGS += DYNEXP= PICFLAG= MODULES=
 
 define Package/samba40-server/install
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_DATA) ./files/$(PKG_NAME).config $(1)/etc/config/samba4.config
+	$(INSTALL_DATA) ./files/samba40.config $(1)/etc/config/samba4
 	$(INSTALL_DIR) $(1)/etc/samba
 	$(INSTALL_DATA) ./files/smb.conf.template $(1)/etc/samba
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/codepages/lowcase.dat $(1)/etc/samba
@@ -200,8 +200,6 @@ define Package/samba40-server/install
 	$(LN) ../sbin/samba4_multicall $(1)/usr/bin/smbcacls
 	$(LN) ../sbin/samba4_multicall $(1)/usr/bin/nmblookup
 	$(LN) ../sbin/samba4_multicall $(1)/usr/bin/testparm
-	$(INSTALL_DIR) $(1)/etc/openldap/schema
-	$(CP) $(PKG_BUILD_DIR)/examples/LDAP/samba.schema $(1)/etc/openldap/schema
 	$(INSTALL_DIR) $(1)/etc/samba
 	$(LN) /var/etc/secrets.tdb $(1)/etc/samba/secrets.tdb
 	$(LN) /var/etc/schannel_store.tdb $(1)/etc/samba/schannel_store.tdb
