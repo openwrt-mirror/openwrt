@@ -3,4 +3,6 @@
 # Note: fan_ctrl is mvebu-specific to control CPU fan, don't remove it.
 #       let's get rid of cron.
 /sbin/fan_ctrl.sh &
+# enable tcp fast open
+echo 3 > /proc/sys/net/ipv4/tcp_fastopen
 exit 0
