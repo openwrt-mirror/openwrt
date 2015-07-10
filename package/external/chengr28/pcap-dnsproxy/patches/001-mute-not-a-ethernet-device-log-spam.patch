@@ -1,0 +1,10 @@
+--- a/Source/Pcap_DNSProxy/Capture.cpp
++++ b/Source/Pcap_DNSProxy/Capture.cpp
+@@ -322,6 +322,7 @@ bool __fastcall CaptureModule(const pcap
+ 		|| strnlen(pDrive->name, PACKET_MAXSIZE) >= strlen("any") && memcmp(pDrive->name, "any", strlen("any")) == 0
+ 		#if defined(PLATFORM_OPENWRT)
+ 			|| strnlen(pDrive->name, PACKET_MAXSIZE) >= strlen("pppoe-wan") && memcmp(pDrive->name, "pppoe-wan", strlen("pppoe-wan")) == 0
++			|| strnlen(pDrive->name, PACKET_MAXSIZE) >= strlen("imq0") && memcmp(pDrive->name, "imq0", strlen("imq0")) == 0
+ 		#endif
+ 	#endif
+ 		)

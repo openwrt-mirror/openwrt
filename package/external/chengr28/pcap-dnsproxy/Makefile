@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.2.3
+PKG_VERSION:=0.4.2.4
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=d69d7af328fc8156b84961851e4d9a5b710c9635
+PKG_SOURCE_VERSION:=2099f58649d5ee249016372ddaa3cb71e028f51e
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -71,8 +71,11 @@ define Package/pcap-dnsproxy/postinst
 #!/bin/sh
 /etc/init.d/pcap-dnsproxy stop
 /etc/init.d/pcap-dnsproxy disable
+exit 0
 endef
 
+# temporary not changed
+# 	$(SED) 's,Operation Mode = Private,Operation Mode = Server,g'                   $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/KeyPairGenerator $(1)/usr/sbin/KeyPairGenerator
@@ -81,9 +84,8 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_BIN) ./files/pcap-dnsproxy.init $(1)/etc/init.d/pcap-dnsproxy
 	$(INSTALL_DIR) $(1)/etc/pcap-dnsproxy
 	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'  $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Operation Mode = Private,Operation Mode = Server,g'                   $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Buffer Queue Limits = 64,Buffer Queue Limits = 512,g'                 $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 5KB,g'                      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Buffer Queue Limits = 64,Buffer Queue Limits = 128,g'                 $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 50KB,g'                     $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(SED) 's,Accept Type = ,Accept Type = Permit:1|2|5|6|12|15|16|28|33|99,g'      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(SED) 's,EDNS Label = 0,EDNS Label = 1,g'                                      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
