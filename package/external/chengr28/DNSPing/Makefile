@@ -1,7 +1,7 @@
 #
 # Copyright (C) 2015 wongsyrone
 #
-# This is free software, licensed under the MIT.
+# This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
 #
 include $(TOPDIR)/rules.mk
