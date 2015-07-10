@@ -95,11 +95,12 @@ int main(int argc,char *argv[])
             printf("Processes sync failed.\n");
             sem_unlink(SEM_COUNT_NAME);
             sem_unlink(SEM_BLOCK_NAME);
+            return 1;
         }
         else
         {
             printf("Processes sync succeed.\n");
+            return 0;
         }
     }
-    return 0;
 }
