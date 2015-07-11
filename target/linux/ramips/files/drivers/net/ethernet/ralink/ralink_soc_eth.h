@@ -461,6 +461,19 @@ struct fe_tx_ring
 	dma_addr_t tx_phys;
 	u16 tx_ring_size;
 	u16 tx_free_idx;
+	u16 tx_next_idx;
+	u16 tx_thresh;
+};
+
+struct fe_rx_ring
+{
+	struct fe_rx_dma *rx_dma;
+	u8 **rx_data;
+	dma_addr_t rx_phys;
+	u16 rx_ring_size;
+	u16 frag_size;
+	u16 rx_buf_size;
+	u16 rx_calc_idx;
 };
 
 struct fe_priv
@@ -475,11 +488,7 @@ struct fe_priv
 	struct device			*device;
 	unsigned long			sysclk;
 
-	u16				frag_size;
-	u16				rx_buf_size;
-	struct fe_rx_dma		*rx_dma;
-	u8				**rx_data;
-	dma_addr_t			rx_phys;
+	struct fe_rx_ring		rx_ring;
 	struct napi_struct		rx_napi;
 
 	struct fe_tx_ring               tx_ring;
@@ -495,7 +504,6 @@ struct fe_priv
 	unsigned long			vlan_map;
 	struct work_struct		pending_work;
 	DECLARE_BITMAP(pending_flags, FE_FLAG_MAX);
-	u16				rx_ring_size;
 };
 
 extern const struct of_device_id of_fe_match[];
