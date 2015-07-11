@@ -38,7 +38,7 @@ define Package/samba40-server
   TITLE:=Samba $(PKG_VERSION) SMB/CIFS server
   URL:=http://www.samba.org/
   VARIANT:=samba40-server
-  DEPENDS:=
+  DEPENDS:=+zlib
 endef
 
 define Package/samba40-client
