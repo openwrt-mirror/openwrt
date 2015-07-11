@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
 PKG_VERSION:=0.4.2.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
@@ -83,11 +83,11 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/pcap-dnsproxy.init $(1)/etc/init.d/pcap-dnsproxy
 	$(INSTALL_DIR) $(1)/etc/pcap-dnsproxy
-	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'  $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Buffer Queue Limits = 64,Buffer Queue Limits = 128,g'                 $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 50KB,g'                     $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Accept Type = ,Accept Type = Permit:1|2|5|6|12|15|16|28|33|99,g'      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,EDNS Label = 0,EDNS Label = 1,g'                                      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'                          $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Buffer Queue Limits = 64,Buffer Queue Limits = 128,g'                                         $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 50KB,g'                                             $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,Accept Type = dummy value for sed tool,Accept Type = Permit:1|2|5|6|12|15|16|28|33|99,g'      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+	$(SED) 's,EDNS Label = 0,EDNS Label = 1,g'                                                              $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/IPFilter.ini $(1)/etc/pcap-dnsproxy/IPFilter.conf
