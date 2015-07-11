@@ -36,6 +36,12 @@ antminer-s1)
 	ucidef_set_led_wlan "wlan" "WLAN" "bitmain:green:wlan" "phy0tpt"
 	;;
 
+antminer-s3)
+	ucidef_set_led_wlan "wlan" "WLAN" "bitmain:green:wlan" "phy0tpt"
+	ucidef_set_led_default "sys" "SYS" "bitmain:green:sys" "0"
+	ucidef_set_led_default "lan" "LAN" "bitmain:yellow:lan" "0"
+	;;
+
 ap113)
 	ucidef_set_led_usbdev "usb" "USB" "ap113:green:usb" "1-1"
 	;;
@@ -50,6 +56,15 @@ loco-m-xw)
 	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "ubnt:orange:link2" "wlan0" "26" "100" "-25" "13"
 	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "ubnt:green:link3" "wlan0" "51" "100" "-50" "13"
 	ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "ubnt:green:link4" "wlan0" "76" "100" "-75" "13"
+	;;
+
+rocket-m-ti)
+	ucidef_set_led_rssi "rssiverylow"	"RSSIVERYLOW"		"ubnt:green:link1" "wlan0" "1" "100" "0" "13"
+	ucidef_set_led_rssi "rssilow"		"RSSILOW"		"ubnt:green:link2" "wlan0" "26" "100" "-25" "13"
+	ucidef_set_led_rssi "rssimediumlow"	"RSSIMEDIUMLOW"		"ubnt:green:link3" "wlan0" "51" "100" "-50" "13"
+	ucidef_set_led_rssi "rssimediumhigh"	"RSSIMEDIUMHIGH"	"ubnt:green:link4" "wlan0" "76" "100" "-75" "13"
+	ucidef_set_led_rssi "rssihigh"		"RSSIHIGH"		"ubnt:green:link5" "wlan0" "76" "100" "-75" "13"
+	ucidef_set_led_rssi "rssiveryhigh"	"RSSIVERYHIGH"		"ubnt:green:link4" "wlan0" "76" "100" "-75" "13"
 	;;
 
 bxu2000n-2-a1)
@@ -145,6 +160,14 @@ dir-825-b1)
 	ucidef_set_led_usbdev "usb" "USB" "d-link:blue:usb" "1-1"
 	;;
 
+dir-615-i1)
+	ucidef_set_led_default "power" "POWER" "d-link:green:power" "1"
+	ucidef_set_led_default "diag" "DIAG" "d-link:amber:power" "0"
+	ucidef_set_led_default "wps" "WPS" "d-link:blue:wps" "0"
+	ucidef_set_led_netdev "wan" "WAN" "d-link:green:wan" "eth0"
+	ucidef_set_led_wlan "wlan" "WLAN" "d-link:green:wlan" "phy0tpt"
+	;;
+
 dir-825-c1)
 	ucidef_set_led_usbdev "usb" "USB" "d-link:blue:usb" "1-1"
 	ucidef_set_led_wlan "wlan2g" "WLAN 2.4 GHz" "d-link:blue:wlan2g" "phy0tpt"
@@ -161,8 +184,13 @@ esr900)
 	;;
 
 esr1750)
-	ucidef_set_led_wlan "wlan2g" "WLAN 2.4 GHz" "esr1750:blue:wlan-2g" "phy0tpt"
-	ucidef_set_led_wlan "wlan5g" "WLAN 5 GHz" "esr1750:blue:wlan-5g" "phy1tpt"
+	ucidef_set_led_wlan "wlan2g" "WLAN 2.4 GHz" "esr1750:blue:wlan-2g" "phy1tpt"
+	ucidef_set_led_wlan "wlan5g" "WLAN 5 GHz" "esr1750:blue:wlan-5g" "phy0tpt"
+	;;
+
+epg5000)
+	ucidef_set_led_wlan "wlan2g" "WLAN 2.4 GHz" "epg5000:blue:wlan-2g" "phy1tpt"
+	ucidef_set_led_wlan "wlan5g" "WLAN 5 GHz" "epg5000:blue:wlan-5g" "phy0tpt"
 	;;
 
 hiwifi-hc6361)

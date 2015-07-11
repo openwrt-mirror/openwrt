@@ -363,7 +363,7 @@ int swlib_set_attr_string(struct switch_dev *dev, struct switch_attr *a, int por
 		val.value.i = atoi(str);
 		break;
 	case SWITCH_TYPE_STRING:
-		val.value.s = str;
+		val.value.s = (char *)str;
 		break;
 	case SWITCH_TYPE_PORTS:
 		ports = alloca(sizeof(struct switch_port) * dev->ports);
@@ -529,10 +529,13 @@ struct switch_attr *swlib_lookup_attr(struct switch_dev *dev,
 static void
 swlib_priv_free(void)
 {
+	if (family)
+		nl_object_put((struct nl_object*)family);
 	if (cache)
 		nl_cache_free(cache);
 	if (handle)
 		nl_socket_free(handle);
+	family = NULL;
 	handle = NULL;
 	cache = NULL;
 }
@@ -749,10 +752,25 @@ swlib_free_attributes(struct switch_attr **head)
 
 	while (a) {
 		next = a->next;
+		free(a->name);
+		free(a->description);
 		free(a);
 		a = next;
 	}
 	*head = NULL;
+}
+
+static void
+swlib_free_port_map(struct switch_dev *dev)
+{
+	int i;
+
+	if (!dev || !dev->maps)
+		return;
+
+	for (i = 0; i < dev->ports; i++)
+		free(dev->maps[i].segment);
+	free(dev->maps);
 }
 
 void
@@ -761,6 +779,9 @@ swlib_free(struct switch_dev *dev)
 	swlib_free_attributes(&dev->ops);
 	swlib_free_attributes(&dev->port_ops);
 	swlib_free_attributes(&dev->vlan_ops);
+	swlib_free_port_map(dev);
+	free(dev->name);
+	free(dev->alias);
 	free(dev);
 
 	if (--refcount == 0)

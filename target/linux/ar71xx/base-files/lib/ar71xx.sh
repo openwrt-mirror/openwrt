@@ -110,6 +110,9 @@ tplink_board_detect() {
 	"04440001"*)
 		model="BITMAIN ANTMINER S1"
 		;;
+	"04440003"*)
+		model="BITMAIN ANTMINER S3"
+		;;
 	"120000"*)
 		model="MERCURY MAC1200R"
 		;;
@@ -371,6 +374,9 @@ ar71xx_board_detect() {
 	*"AP135-020 reference board")
 		name="ap135-020"
 		;;
+	*"AP143 reference board")
+		name="ap143"
+		;;
 	*AP81)
 		name="ap81"
 		;;
@@ -416,6 +422,9 @@ ar71xx_board_detect() {
 		;;
 	*"DIR-615 rev. E4")
 		name="dir-615-e4"
+		;;
+	*"DIR-615 rev. I1")
+		name="dir-615-i1"
 		;;
 	*"DIR-825 rev. B1")
 		name="dir-825-b1"
@@ -648,6 +657,9 @@ ar71xx_board_detect() {
 		;;
 	*"Rocket M")
 		name="rocket-m"
+		;;
+	*"Rocket M TI")
+		name="rocket-m-ti"
 		;;
 	*"Rocket M XW")
 		name="rocket-m-xw"
@@ -894,6 +906,9 @@ ar71xx_board_detect() {
 		;;
 	*WRT400N)
 		name="wrt400n"
+		;;
+	*WAP4410N)
+		name="wap4410n"
 		;;
 	*"WZR-450HP2")
 		name="wzr-450hp2"

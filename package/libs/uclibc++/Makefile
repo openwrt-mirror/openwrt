@@ -50,6 +50,10 @@ ifneq ($(CONFIG_CCACHE),)
 TARGET_CXX=$(TARGET_CXX_NOCACHE)
 endif
 
+ifeq ($(CONFIG_USE_MUSL),y)
+SSP_LIB=-lssp_nonshared
+endif
+
 MAKE_FLAGS:= \
 	TOPDIR="$(PKG_BUILD_DIR)/" \
 	$(TARGET_CONFIGURE_OPTS) \
@@ -57,7 +61,7 @@ MAKE_FLAGS:= \
 	CROSS="$(TARGET_CROSS)" \
 	LDFLAGS="-Wl,--warn-common -Wl,--warn-once -Wl,-z,combreloc -Wl,-z,defs $(TARGET_LDFLAGS)" \
 	CP="$(CP)" \
-	GEN_LIBS="-lc $(LIBGCC_S) -lssp_nonshared" \
+	GEN_LIBS="-lc $(LIBGCC_S) $(SSP_LIB)" \
 	check_as_needed=
 
 # check_as_needed overrides dependency on libgcc_s
@@ -75,8 +79,9 @@ define Build/InstallDev
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/g++-uc $(TOOLCHAIN_DIR)/bin/
 	$(CP) $(PKG_INSTALL_DIR)/include/* $(1)/usr/include/uClibc++/
 	$(CP) $(PKG_INSTALL_DIR)/lib/libuClibc++*.{a,so}* $(1)/usr/lib/
-	$(SED) 's|-I/include/|-I$(STAGING_DIR)/usr/include/uClibc++/|g' $(TOOLCHAIN_DIR)/bin/g++-uc
-	$(SED) 's|-L/lib/|-L$(STAGING_DIR)/usr/lib/|g' $(TOOLCHAIN_DIR)/bin/g++-uc
+	$(SED) 's!\(^\|[[:space:]]\)-[IL]$(TOOLCHAIN_DIR)/[^[:space:]]*!!g' $(TOOLCHAIN_DIR)/bin/g++-uc
+	$(SED) 's|-I/include/|-I$$$${STAGING_DIR:-$(STAGING_DIR)}/usr/include/uClibc++/|g' $(TOOLCHAIN_DIR)/bin/g++-uc
+	$(SED) 's|-L/lib/|-L$$$${STAGING_DIR:-$(STAGING_DIR)}/lib/|g' $(TOOLCHAIN_DIR)/bin/g++-uc
 # add another wrapper which links against both uClibc++ and libstdc++ 
 	$(INSTALL_BIN) $(TOOLCHAIN_DIR)/bin/g++-uc $(TOOLCHAIN_DIR)/bin/g++-uc+std
 	$(SED) 's|^WRAPPER_INCLUDEDIR=.*||g' $(TOOLCHAIN_DIR)/bin/g++-uc+std
