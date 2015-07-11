@@ -4,13 +4,11 @@
 	server string = |DESCRIPTION|
 	unix charset = |CHARSET|
 	workgroup = |WORKGROUP|
-	os level = 20
 	null passwords = yes
 	passdb backend = smbpasswd
 	security = share
 	smb encrypt = disabled
 	smb passwd file = /etc/samba/smbpasswd
-	syslog = 10
 	domain logons = no
 	strict allocate = yes
 	read raw = yes
@@ -23,5 +21,5 @@
 	max xmit = 65535
 	max connections = 8
 	deadtime = 30
-	aio read size = 16384
-	aio write size = 16384
+	aio read size = 0
+	aio write size = 0
