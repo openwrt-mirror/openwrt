@@ -123,12 +123,7 @@ ppp_generic_setup() {
 	[ "$(uci get syncdial.config.enabled)" == "1" ] && {
 		ppp_if_cnt=$(cat /etc/config/network | grep -c "proto 'pppoe'")
 		syncppp_option="syncppp $ppp_if_cnt"
-		shellsync $ppp_if_cnt 10 || ([ "$(uci get syncdial.config.force_redial)" == "1" ] && {
-			#如果同步失败
-			echo "Process sync failed.stop all pppd and try again."
-			killall -9 pppd
-			shellsync $ppp_if_cnt 20
-		})
+		shellsync $ppp_if_cnt 10
 	}
 	proto_run_command "$config" /usr/sbin/pppd \
 		nodetach ipparam "$config" \
