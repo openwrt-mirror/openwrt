@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=samba40
 PKG_VERSION:=4.0.26
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 PKG_SOURCE_URL:=http://ftp.samba.org/pub/samba \
 	http://ftp.samba.org/pub/samba/old-versions
@@ -38,7 +38,7 @@ define Package/samba40-server
   TITLE:=Samba $(PKG_VERSION) SMB/CIFS server
   URL:=http://www.samba.org/
   VARIANT:=samba40-server
-  DEPENDS:=+libaio +libdrpc +zlib
+  DEPENDS:=
 endef
 
 define Package/samba40-client
@@ -47,12 +47,6 @@ define Package/samba40-client
   TITLE:=Samba $(PKG_VERSION) SMB/CIFS client
   URL:=http://www.samba.org/
 #  DEPENDS:=+libreadline +libncurses +libopenldap-sals +krb5-mit-libs +libaio +zlib
-endef
-
-define Package/samba40-server/config
-config PACKAGE_SAMBA40_MAX_DEBUG_LEVEL
-	int "Maximum level of compiled-in debug messages"
-	default -1
 endef
 
 define Package/samba40-server/description
@@ -71,12 +65,8 @@ define Package/luci-app-$(PKG_NAME)
 endef
 
 TARGET_CFLAGS += \
-	-DMAX_DEBUG_LEVEL=$(CONFIG_PACKAGE_SAMBA40_MAX_DEBUG_LEVEL) \
 	-D_GNU_SOURCE \
-	-D__location__=\\\"\\\" \
-	-ffunction-sections -fdata-sections \
-	-DNETLOGON_SUPPORT \
-	-DLSA_SUPPORT
+	-ffunction-sections -fdata-sections
 
 TARGET_LDFLAGS += -Wl,--gc-sections
 
@@ -156,7 +146,7 @@ CONFIGURE_ARGS += \
 	--with-piddir=/var/run \
 	--with-privatedir=/etc/samba \
 	--with-sendfile-support \
-	--with-aio-support \
+	--without-aio-support \
 	--without-cluster-support \
 	--without-pam \
 	--without-winbind \
@@ -171,9 +161,9 @@ CONFIGURE_ARGS += \
 	--with-libiconv="$(ICONV_PREFIX)" \
 	--without-acl-support \
 	--without-quotas \
-	--with-syslog \
+	--without-syslog \
 	--with-shared-modules=pdb_tdbsam,pdb_wbc_sam,idmap_nss,nss_info_template,auth_winbind,auth_wbc,auth_domain,vfs \
-	--with-static-modules=vfs_default,vfs_dirsort,vfs_daio_linux
+	--with-static-modules=vfs_default
 
 MAKE_FLAGS += DYNEXP= PICFLAG= MODULES=
 
