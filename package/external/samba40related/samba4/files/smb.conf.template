@@ -4,11 +4,11 @@
 	server string = |DESCRIPTION|
 	unix charset = |CHARSET|
 	workgroup = |WORKGROUP|
-	null passwords = yes
 	passdb backend = smbpasswd
-	security = share
+	security = user
 	smb encrypt = disabled
 	smb passwd file = /etc/samba/smbpasswd
+	lock directory = /var/locks
 	domain logons = no
 	strict allocate = yes
 	read raw = yes
