@@ -1187,7 +1187,7 @@
  	nf_bridge_get(src->nf_bridge);
 --- a/include/net/netfilter/nf_queue.h
 +++ b/include/net/netfilter/nf_queue.h
-@@ -33,6 +33,13 @@ struct nf_queue_handler {
+@@ -35,6 +35,13 @@ struct nf_queue_handler {
  void nf_register_queue_handler(const struct nf_queue_handler *qh);
  void nf_unregister_queue_handler(void);
  void nf_reinject(struct nf_queue_entry *entry, unsigned int verdict);
@@ -1460,7 +1460,7 @@
  obj-$(CONFIG_NETFILTER_XT_TARGET_NETMAP) += xt_NETMAP.o
 --- a/net/netfilter/core.c
 +++ b/net/netfilter/core.c
-@@ -184,9 +184,11 @@ next_hook:
+@@ -185,9 +185,11 @@ next_hook:
  		ret = NF_DROP_GETERR(verdict);
  		if (ret == 0)
  			ret = -EPERM;
@@ -1482,9 +1482,9 @@
  	     struct net_device *outdev, int (*okfn)(struct sk_buff *),
 -	     unsigned int queuenum);
 +	     unsigned int queuenum, unsigned int queuetype);
+ void nf_queue_nf_hook_drop(struct nf_hook_ops *ops);
  int __init netfilter_queue_init(void);
 
- /* nf_log.c */
 --- a/net/netfilter/nf_queue.c
 +++ b/net/netfilter/nf_queue.c
 @@ -27,6 +27,23 @@
@@ -1511,7 +1511,7 @@
  /* return EBUSY when somebody else is registered, return EEXIST if the
   * same handler is registered, return 0 in case of success. */
  void nf_register_queue_handler(const struct nf_queue_handler *qh)
-@@ -105,7 +122,8 @@ int nf_queue(struct sk_buff *skb,
+@@ -122,7 +139,8 @@ int nf_queue(struct sk_buff *skb,
  		      struct net_device *indev,
  		      struct net_device *outdev,
  		      int (*okfn)(struct sk_buff *),
@@ -1521,7 +1521,7 @@
  {
  	int status = -ENOENT;
  	struct nf_queue_entry *entry = NULL;
-@@ -115,7 +133,17 @@ int nf_queue(struct sk_buff *skb,
+@@ -132,7 +150,17 @@ int nf_queue(struct sk_buff *skb,
  	/* QUEUE == DROP if no one is waiting, to be safe. */
  	rcu_read_lock();
 
@@ -1540,7 +1540,7 @@
  	if (!qh) {
  		status = -ESRCH;
  		goto err_unlock;
-@@ -205,9 +233,11 @@ void nf_reinject(struct nf_queue_entry *
+@@ -222,9 +250,11 @@ void nf_reinject(struct nf_queue_entry *
  		local_bh_enable();
  		break;
  	case NF_QUEUE:
