@@ -1,10 +1,20 @@
 --- a/Source/Pcap_DNSProxy/Capture.cpp
 +++ b/Source/Pcap_DNSProxy/Capture.cpp
-@@ -322,6 +322,7 @@ bool __fastcall CaptureModule(const pcap
- 		|| strnlen(pDrive->name, PACKET_MAXSIZE) >= strlen("any") && memcmp(pDrive->name, "any", strlen("any")) == 0
- 		#if defined(PLATFORM_OPENWRT)
- 			|| strnlen(pDrive->name, PACKET_MAXSIZE) >= strlen("pppoe-wan") && memcmp(pDrive->name, "pppoe-wan", strlen("pppoe-wan")) == 0
-+			|| strnlen(pDrive->name, PACKET_MAXSIZE) >= strlen("imq0") && memcmp(pDrive->name, "imq0", strlen("imq0")) == 0
- 		#endif
+@@ -375,7 +375,7 @@ bool __fastcall CaptureModule(const pcap
+ 		DeviceType = DLT_APPLE_IP_OVER_IEEE1394;
+ 	if (DeviceType == 0)
+ 	{
+-	#if (defined(PLATFORM_LINUX) || defined(PLATFORM_MACX))
++/*	#if (defined(PLATFORM_LINUX) || defined(PLATFORM_MACX))
+ 		if (pcap_datalink(DeviceHandle) != DLT_NULL && pcap_datalink(DeviceHandle) != DLT_NFLOG) //BSD loopback encapsulation and Linux NETLINK NFLOG socket log messages
+ 		{
  	#endif
- 		)
+@@ -387,7 +387,7 @@ bool __fastcall CaptureModule(const pcap
+ 	#if (defined(PLATFORM_LINUX) || defined(PLATFORM_MACX))
+ 		}
+ 	#endif
+-
++*/
+ 		pcap_close(DeviceHandle);
+ 		return false;
+ 	}
