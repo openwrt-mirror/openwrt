@@ -7,8 +7,8 @@ CPU_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon2/temp1_input`
 DDR_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp1_input`
 WIFI_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp2_input`
 
-CPU_LOW=75
-CPU_HIGH=85
+CPU_LOW=60
+CPU_HIGH=70
 DDR_LOW=60
 DDR_HIGH=70
 WIFI_LOW=85
