@@ -1845,8 +1845,8 @@ define KernelPackage/ath10k/install
 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/untested/firmware-5.bin_10.2.4.70-2 \
-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.1/untested/firmware-2.bin_10.1.467.3-1 \
+		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 endef
 
 define KernelPackage/mwl8k/install
