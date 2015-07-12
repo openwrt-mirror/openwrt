@@ -40,3 +40,4 @@ int readlen(ssl_context *ssl,unsigned char *buffer, int readlen,int bufferlen);
 __int64 ntoh64(__int64 val );
 __int64 hton64(__int64 val );
 #endif
+#include<string.h>
