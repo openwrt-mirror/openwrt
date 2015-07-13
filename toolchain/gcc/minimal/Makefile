@@ -30,11 +30,11 @@ define Host/Prepare
 endef
 
 define Host/Compile
-	+$(GCC_MAKE) $(HOST_JOBS) -C $(GCC_BUILD_DIR) all-gcc all-target-libgcc
+	+$(GCC_MAKE) $(HOST_JOBS) -C $(GCC_BUILD_DIR) all-gcc all-target-libgcc all-target-libffi
 endef
 
 define Host/Install
-	$(GCC_MAKE) -C $(GCC_BUILD_DIR) install-gcc install-target-libgcc
+	$(GCC_MAKE) -C $(GCC_BUILD_DIR) install-gcc install-target-libgcc install-target-libffi
 endef
 
 define Host/Clean
