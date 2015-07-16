@@ -58,6 +58,10 @@ ARV8539PW22)
         ucidef_set_led_netdev "dsl" "dsl" "soc:green:dsl" "nas0"
         ucidef_set_led_netdev "online" "online" "soc:green:online" "pppoe-wan"
         ;;
+VGV953)
+	ucidef_set_led_default "power" "power" "power" "0"
+	ucidef_set_led_default "power2" "power2" "power2" "1"
+	;;
 *)
 	;;
 esac
