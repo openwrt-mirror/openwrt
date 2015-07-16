@@ -14,7 +14,7 @@ $(eval $(call Profile,EASY80920NAND))
 
 define Profile/VGV953
   NAME:=Lantiq VR9 - SPEEDPORT W921V
-  PACKAGES:=wpad-mini
+  PACKAGES:=wpad-mini kmod-usb-dwc2
 endef
 
 VGV953_UBIFS_OPTS:="-m 512 -e 15872 -c 2048"

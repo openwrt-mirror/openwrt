@@ -49,16 +49,16 @@
 			label = "sevice";
 			gpios = <&stp 17 1>;
 		};
-		phone {					/* white */
-			label = "phone";
+		telephony {				/* white */
+			label = "telephony";
 			gpios = <&stp 18 1>;
 		};
-		wireless {				/* white */
-			label = "wireless";
+		wlan {					/* white */
+			label = "wlan";
 			gpios = <&stp 19 1>;
 		};
-		internet {				/* white */
-			label = "internet";
+		online {				/* white */
+			label = "online";
 			gpios = <&stp 20 1>;
 		};
 		dsl {					/* white */
