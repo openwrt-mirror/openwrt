@@ -1082,7 +1082,7 @@ static int ag71xx_poll(struct napi_struct *napi, int limit)
 more:
 	DBG("%s: stay in polling mode, rx=%d, tx=%d, limit=%d\n",
 			dev->name, rx_done, tx_done, limit);
-	return rx_done;
+	return limit;
 
 oom:
 	if (netif_msg_rx_err(ag))
@@ -1248,7 +1248,7 @@ static int ag71xx_probe(struct platform_device *pdev)
 
 	dev->irq = platform_get_irq(pdev, 0);
 	err = request_irq(dev->irq, ag71xx_interrupt,
-			  IRQF_DISABLED,
+			  0x0,
 			  dev->name, dev);
 	if (err) {
 		dev_err(&pdev->dev, "unable to request IRQ %d\n", dev->irq);

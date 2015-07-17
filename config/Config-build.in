@@ -211,7 +211,7 @@ menu "Global build settings"
 	config PKG_CHECK_FORMAT_SECURITY
 		bool
 		prompt "Enable gcc format-security"
-		default n
+		default y
 		help
 		  Add -Wformat -Werror=format-security to the CFLAGS.  You can disable
 		  this per package by adding PKG_CHECK_FORMAT_SECURITY:=0 in the package
@@ -219,25 +219,26 @@ menu "Global build settings"
 
 	choice
 		prompt "User space Stack-Smashing Protection"
-		default PKG_CC_STACKPROTECTOR_NONE
+		depends on USE_MUSL
+		default PKG_CC_STACKPROTECTOR_REGULAR
 		help
 		  Enable GCC Stack Smashing Protection (SSP) for userspace applications
 		config PKG_CC_STACKPROTECTOR_NONE
 			bool "None"
 		config PKG_CC_STACKPROTECTOR_REGULAR
 			bool "Regular"
-			select SSP_SUPPORT
+			select SSP_SUPPORT if !USE_MUSL
 			depends on KERNEL_CC_STACKPROTECTOR_REGULAR
 		config PKG_CC_STACKPROTECTOR_STRONG
 			bool "Strong"
-			select SSP_SUPPORT
+			select SSP_SUPPORT if !USE_MUSL
 			depends on GCC_VERSION_4_9_LINARO
 			depends on KERNEL_CC_STACKPROTECTOR_STRONG
 	endchoice
 
 	choice
 		prompt "Kernel space Stack-Smashing Protection"
-		default KERNEL_CC_STACKPROTECTOR_NONE
+		default KERNEL_CC_STACKPROTECTOR_REGULAR
 		help
 		  Enable GCC Stack-Smashing Protection (SSP) for the kernel
 		config KERNEL_CC_STACKPROTECTOR_NONE
@@ -251,6 +252,7 @@ menu "Global build settings"
 
 	choice
 		prompt "Enable buffer-overflows detection (FORTIFY_SOURCE)"
+		default PKG_FORTIFY_SOURCE_1
 		help
 		  Enable the _FORTIFY_SOURCE macro which introduces additional
 		  checks to detect buffer-overflows in the following standard library
@@ -270,6 +272,7 @@ menu "Global build settings"
 
 	choice
 		prompt "Enable RELRO protection"
+		default PKG_RELRO_FULL
 		help
 		  Enable a link-time protection known as RELRO (Relocation Read Only)
 		  which helps to protect from certain type of exploitation techniques

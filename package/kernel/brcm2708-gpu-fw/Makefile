@@ -8,13 +8,13 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=brcm2708-gpu-fw
-PKG_REV:=38aa676b044f8de46aedb4bd972538a7ad6a3ce1
-PKG_VERSION:=20150210
+PKG_REV:=d4945b3b77d29cc5bb3777734422c048c1f1d003
+PKG_VERSION:=20150712
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/Hexxeh/rpi-firmware/archive/
-PKG_MD5SUM:=f5683c1dcb255714942f7c9fd61b3a0a
+PKG_MD5SUM:=18fe2d11acf9e277f7b3fb2cd18eabfb
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/rpi-firmware-$(PKG_REV)
 
@@ -33,11 +33,21 @@ define Package/brcm2708-gpu-fw/description
 endef
 
 define Build/Compile
+	true
+endef
+
+define Package/brcm2708-gpu-fw/install
+	true
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(BUILD_DIR)/brcm2708-gpu-fw-boot
-	$(CP) $(PKG_BUILD_DIR)/* $(BUILD_DIR)/brcm2708-gpu-fw-boot
+	$(CP) $(PKG_BUILD_DIR)/bootcode.bin $(KERNEL_BUILD_DIR)
+	$(CP) $(PKG_BUILD_DIR)/COPYING.linux $(KERNEL_BUILD_DIR)
+	$(CP) $(PKG_BUILD_DIR)/LICENCE.broadcom $(KERNEL_BUILD_DIR)
+	$(CP) $(PKG_BUILD_DIR)/start.elf $(KERNEL_BUILD_DIR)
+	$(CP) $(PKG_BUILD_DIR)/start_cd.elf $(KERNEL_BUILD_DIR)
+	$(CP) $(PKG_BUILD_DIR)/fixup.dat $(KERNEL_BUILD_DIR)
+	$(CP) $(PKG_BUILD_DIR)/fixup_cd.dat $(KERNEL_BUILD_DIR)
 endef
 
 $(eval $(call BuildPackage,brcm2708-gpu-fw))

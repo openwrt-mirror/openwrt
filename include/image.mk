@@ -126,6 +126,22 @@ define Image/BuildKernel/MkFIT
 	PATH=$(LINUX_DIR)/scripts/dtc:$(PATH) mkimage -f $(KDIR)/fit-$(1).its $(KDIR)/fit-$(1)$(7).itb
 endef
 
+# $(1) source dts file
+# $(2) target dtb file
+# $(3) extra CPP flags
+# $(4) extra DTC flags
+define Image/BuildDTB
+	$(CPP) -nostdinc -x assembler-with-cpp \
+		-I$(LINUX_DIR)/arch/$(ARCH)/boot/dts \
+		-I$(LINUX_DIR)/arch/$(ARCH)/boot/dts/include \
+		-undef -D__DTS__ $(3) \
+		-o $(2).tmp $(1)
+	$(LINUX_DIR)/scripts/dtc/dtc -O dtb \
+		-i$(dir $(1)) $(4) \
+		-o $(2) $(2).tmp
+	$(RM) $(2).tmp
+endef
+
 define Image/mkfs/jffs2/sub
 		$(STAGING_DIR_HOST)/bin/mkfs.jffs2 $(3) --pad -e $(patsubst %k,%KiB,$(1)) -o $(KDIR)/root.jffs2-$(2) -d $(TARGET_DIR) -v 2>&1 1>/dev/null | awk '/^.+$$$$/'
 		$(call add_jffs2_mark,$(KDIR)/root.jffs2-$(2))
@@ -224,7 +240,7 @@ ifneq ($(CONFIG_TARGET_ROOTFS_UBIFS),)
 endif
 
 define Image/mkfs/cpiogz
-	( cd $(TARGET_DIR); find . | cpio -o -H newc | gzip -9 >$(BIN_DIR)/$(IMG_PREFIX)-rootfs.cpio.gz )
+	( cd $(TARGET_DIR); find . | cpio -o -H newc | gzip -9n >$(BIN_DIR)/$(IMG_PREFIX)-rootfs.cpio.gz )
 endef
 
 define Image/mkfs/targz
@@ -304,6 +320,11 @@ define Build/append-rootfs
 	dd if=$(word 2,$^) $(if $(1),bs=$(1) conv=sync) >> $@
 endef
 
+define Build/pad-to
+	dd if=$@ of=$@.new bs=$(1) conv=sync
+	mv $@.new $@
+endef
+
 define Build/pad-rootfs
 	$(call prepare_generic_squashfs,$@ $(1))
 endef
@@ -321,11 +342,18 @@ endef
 
 define Build/check-size
 	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
-		echo "WARNING: Image file $@ is too big"; \
+		echo "WARNING: Image file $@ is too big" >&2; \
 		rm -f $@; \
 	}
 endef
 
+define Build/combined-image
+	-sh $(TOPDIR)/scripts/combined-image.sh \
+		"$(word 1,$^)" \
+		"$@" \
+		"$@.new"
+	@mv $@.new $@
+endef
 
 define Device/Init
   PROFILES := $(PROFILE)
@@ -367,10 +395,10 @@ define Device/Build/initramfs
   $$(_TARGET): $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE)
 
   $(KDIR)/$$(KERNEL_NAME)-initramfs: image_prepare
-  $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_INITRAMFS_IMAGE)
+  $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE)
 	cp $$^ $$@
 
-  $(KDIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_NAME)-initramfs
+  $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_NAME)-initramfs
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL_INITRAMFS))
 endef
@@ -378,7 +406,7 @@ endif
 
 define Device/Build/check_size
 	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
-		echo "WARNING: Image file $@ is too big"; \
+		echo "WARNING: Image file $@ is too big" >&2; \
 		rm -f $@; \
 	}
 endef
@@ -397,24 +425,29 @@ define Device/Build/kernel
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
   $(BIN_DIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_IMAGE)
 	cp $$^ $$@
-  $(KDIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_NAME)
+  ifndef IB
+    ifdef CONFIG_IB
+      install: $(KDIR)/$$(KERNEL_IMAGE)
+    endif
+    $(KDIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_NAME)
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL))
 	$$(if $$(KERNEL_SIZE),$$(call Device/Build/check_size,$$(KERNEL_SIZE)))
+  endif
 endef
 
 define Device/Build/image
   $$(_TARGET): $(BIN_DIR)/$(call IMAGE_NAME,$(1),$(2))
   $(eval $(call Device/Export,$(KDIR)/$(KERNEL_IMAGE),$(1)))
-  $(eval $(call Device/Export,$(KDIR)/$(KERNEL_INITRAMFS_IMAGE),$(1)))
-  $(eval $(call Device/Export,$(KDIR)/$(call IMAGE_NAME,$(1),$(2)),$(1)))
-  $(KDIR)/$(call IMAGE_NAME,$(1),$(2)): $(KDIR)/$$(KERNEL_IMAGE) $(KDIR)/root.$(1)
+  $(eval $(call Device/Export,$(KDIR)/tmp/$(KERNEL_INITRAMFS_IMAGE),$(1)))
+  $(eval $(call Device/Export,$(KDIR)/tmp/$(call IMAGE_NAME,$(1),$(2)),$(1)))
+  $(KDIR)/tmp/$(call IMAGE_NAME,$(1),$(2)): $(KDIR)/$$(KERNEL_IMAGE) $(KDIR)/root.$(1)
 	@rm -f $$@
 	[ -f $$(word 1,$$^) -a -f $$(word 2,$$^) ]
 	$$(call concat_cmd,$(if $(IMAGE/$(2)/$(1)),$(IMAGE/$(2)/$(1)),$(IMAGE/$(2))))
 
   .IGNORE: $(BIN_DIR)/$(call IMAGE_NAME,$(1),$(2))
-  $(BIN_DIR)/$(call IMAGE_NAME,$(1),$(2)): $(KDIR)/$(call IMAGE_NAME,$(1),$(2))
+  $(BIN_DIR)/$(call IMAGE_NAME,$(1),$(2)): $(KDIR)/tmp/$(call IMAGE_NAME,$(1),$(2))
 	cp $$^ $$@
 
 endef
@@ -457,7 +490,11 @@ define BuildImage
 		$(call Build/Clean)
 
     image_prepare: compile
+		mkdir -p $(KDIR)/tmp
 		$(call Image/Prepare)
+  else
+    image_prepare:
+		mkdir -p $(KDIR)/tmp
   endif
 
   mkfs_prepare: image_prepare
@@ -465,7 +502,7 @@ define BuildImage
 
   kernel_prepare: mkfs_prepare
 	$(call Image/BuildKernel)
-	$(if $(CONFIG_TARGET_ROOTFS_INITRAMFS),$(call Image/BuildKernel/Initramfs))
+	$(if $(CONFIG_TARGET_ROOTFS_INITRAMFS),$(if $(IB),,$(call Image/BuildKernel/Initramfs)))
 	$(call Image/InstallKernel)
 
   $(foreach device,$(TARGET_DEVICES),$(call Device,$(device)))

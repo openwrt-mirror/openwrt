@@ -1,6 +1,6 @@
 --- a/arch/mips/ath79/machtypes.h
 +++ b/arch/mips/ath79/machtypes.h
-@@ -16,22 +16,191 @@
+@@ -16,22 +16,195 @@
  
  enum ath79_mach_type {
  	ATH79_MACH_GENERIC = 0,
@@ -35,9 +35,12 @@
 +	ATH79_MACH_DIR_615_C1,		/* D-Link DIR-615 rev. C1 */
 +	ATH79_MACH_DIR_615_E1,		/* D-Link DIR-615 rev. E1 */
 +	ATH79_MACH_DIR_615_E4,		/* D-Link DIR-615 rev. E4 */
++	ATH79_MACH_DIR_615_I1,		/* D-Link DIR-615 rev. I1 */
 +	ATH79_MACH_DIR_825_B1,		/* D-Link DIR-825 rev. B1 */
 +	ATH79_MACH_DIR_825_C1,		/* D-Link DIR-825 rev. C1 */
 +	ATH79_MACH_DIR_835_A1,		/* D-Link DIR-835 rev. A1 */
++	ATH79_MACH_DLAN_PRO_500_WP,	/* devolo dLAN pro 500 Wireless+ */
++	ATH79_MACH_DLAN_PRO_1200_AC,	/* devolo dLAN pro 1200+ WiFi ac*/
 +	ATH79_MACH_DRAGINO2,		/* Dragino Version 2 */
 +	ATH79_MACH_ESR900,		/* EnGenius ESR900 */
 +	ATH79_MACH_EW_DORIN,		/* embedded wireless Dorin Platform */
@@ -134,7 +137,7 @@
 +	ATH79_MACH_TL_WR2543N,		/* TP-LINK TL-WR2543N/ND */
 +	ATH79_MACH_TL_WR703N,		/* TP-LINK TL-WR703N */
 +	ATH79_MACH_TL_WR710N,		/* TP-LINK TL-WR710N */
-+	ATH79_MACH_TL_WR720N_V3,	/* TP-LINK TL-WR720N v3 */
++	ATH79_MACH_TL_WR720N_V3,	/* TP-LINK TL-WR720N v3/v4 */
 +	ATH79_MACH_TL_WR741ND,		/* TP-LINK TL-WR741ND */
 +	ATH79_MACH_TL_WR741ND_V4,	/* TP-LINK TL-WR741ND  v4*/
 +	ATH79_MACH_TL_WR841N_V1,	/* TP-LINK TL-WR841N v1 */
@@ -179,6 +182,7 @@
 +	ATH79_MACH_WP543,		/* Compex WP543 */
 +	ATH79_MACH_WPE72,		/* Compex WPE72 */
 +	ATH79_MACH_WPJ344,		/* Compex WPJ344 */
++	ATH79_MACH_WPJ531,		/* Compex WPJ531 */
 +	ATH79_MACH_WPJ558,		/* Compex WPJ558 */
 +	ATH79_MACH_WRT160NL,		/* Linksys WRT160NL */
 +	ATH79_MACH_WRT400N,		/* Linksys WRT400N */
@@ -265,7 +269,7 @@
  config ATH79_MACH_AP121
  	bool "Atheros AP121 reference board"
  	select SOC_AR933X
-@@ -11,62 +75,986 @@ config ATH79_MACH_AP121
+@@ -11,62 +75,1031 @@ config ATH79_MACH_AP121
  	select ATH79_DEV_M25P80
  	select ATH79_DEV_USB
  	select ATH79_DEV_WMAC
@@ -510,6 +514,16 @@
 +	select ATH79_DEV_USB
 +	select ATH79_DEV_WMAC
 +
++config ATH79_MACH_WPJ531
++       bool "Compex WPJ531 board support"
++       select SOC_QCA953X
++       select ATH79_DEV_ETH
++       select ATH79_DEV_GPIO_BUTTONS
++       select ATH79_DEV_LEDS_GPIO
++       select ATH79_DEV_M25P80
++       select ATH79_DEV_USB
++       select ATH79_DEV_WMAC
++
 +config ATH79_MACH_WPJ558
 +	bool "Compex WPJ558 board support"
 +	select SOC_QCA955X
@@ -571,6 +585,17 @@
 +	select ATH79_DEV_WMAC
 +	select ATH79_NVRAM
 +
++config ATH79_MACH_DIR_615_I1
++	bool "D-Link DIR-615 rev. I1 support"
++	select SOC_AR934X
++	select ATH79_DEV_AP9X_PCI if PCI
++	select ATH79_DEV_ETH
++	select ATH79_DEV_GPIO_BUTTONS
++	select ATH79_DEV_LEDS_GPIO
++	select ATH79_DEV_M25P80
++	select ATH79_DEV_WMAC
++	select ATH79_NVRAM
++
 +config ATH79_MACH_DIR_825_B1
 +	bool "D-Link DIR-825 rev. B1 board support"
 +	select SOC_AR71XX
@@ -591,6 +616,30 @@
 +	select ATH79_DEV_M25P80
 +	select ATH79_DEV_USB
 +	select ATH79_DEV_WMAC
++
++config ATH79_MACH_DLAN_PRO_500_WP
++	bool "devolo dLAN pro 500 Wireless+ support"
++	select SOC_AR934X
++	select ATH79_DEV_ETH
++	select ATH79_DEV_GPIO_BUTTONS
++	select ATH79_DEV_LEDS_GPIO
++	select ATH79_DEV_SPI
++	select ATH79_DEV_M25P80
++	select ATH79_DEV_WMAC
++	select ATH79_DEV_USB
++
++config ATH79_MACH_DLAN_PRO_1200_AC
++	bool "devolo dLAN pro 1200+ WiFi ac support"
++	select SOC_AR934X
++	select ATH79_DEV_AP9X_PCI if PCI
++	select ATH79_DEV_ETH
++	select ATH79_DEV_GPIO_BUTTONS
++	select ATH79_DEV_LEDS_GPIO
++	select ATH79_DEV_SPI
++	select ATH79_DEV_M25P80
++	select ATH79_DEV_WMAC
++	select ATH79_DEV_NFC
++	select ATH79_DEV_USB
 +
 +config ATH79_MACH_DRAGINO2
 +	bool "DRAGINO V2 support"
@@ -1118,7 +1167,7 @@
 +	select ATH79_DEV_WMAC
 +
 +config ATH79_MACH_TL_WR720N_V3
-+	bool "TP-LINK TL-WR720N v3 support"
++	bool "TP-LINK TL-WR720N v3/v4 support"
 +	select SOC_AR933X
 +	select ATH79_DEV_ETH
 +	select ATH79_DEV_GPIO_BUTTONS
@@ -1280,7 +1329,7 @@
  
  config ATH79_MACH_UBNT_XM
  	bool "Ubiquiti Networks XM/UniFi boards"
-@@ -83,6 +1071,97 @@ config ATH79_MACH_UBNT_XM
+@@ -83,6 +1116,97 @@ config ATH79_MACH_UBNT_XM
  	  Say 'Y' here if you want your kernel to support the
  	  Ubiquiti Networks XM (rev 1.0) board.
  
@@ -1378,7 +1427,7 @@
  endmenu
  
  config SOC_AR71XX
-@@ -124,7 +1203,10 @@ config ATH79_DEV_DSA
+@@ -124,7 +1248,10 @@ config ATH79_DEV_DSA
  config ATH79_DEV_ETH
  	def_bool n
  
@@ -1390,7 +1439,7 @@
  	def_bool n
  
  config ATH79_DEV_GPIO_BUTTONS
-@@ -154,6 +1236,11 @@ config ATH79_PCI_ATH9K_FIXUP
+@@ -154,6 +1281,11 @@ config ATH79_PCI_ATH9K_FIXUP
  	def_bool n
  
  config ATH79_ROUTERBOOT
@@ -1404,7 +1453,7 @@
  endif
 --- a/arch/mips/ath79/Makefile
 +++ b/arch/mips/ath79/Makefile
-@@ -38,9 +38,120 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
+@@ -38,9 +38,124 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
  #
  # Machines
  #
@@ -1425,11 +1474,14 @@
 +obj-$(CONFIG_ATH79_MACH_CAP4200AG)	+= mach-cap4200ag.o
 +obj-$(CONFIG_ATH79_MACH_CPE510)		+= mach-cpe510.o
  obj-$(CONFIG_ATH79_MACH_DB120)		+= mach-db120.o
++obj-$(CONFIG_ATH79_MACH_DLAN_PRO_500_WP)	+= mach-dlan-pro-500-wp.o
++obj-$(CONFIG_ATH79_MACH_DLAN_PRO_1200_AC)	+= mach-dlan-pro-1200-ac.o
 +obj-$(CONFIG_ATH79_MACH_DGL_5500_A1)	+= mach-dgl-5500-a1.o
 +obj-$(CONFIG_ATH79_MACH_DHP_1565_A1)	+= mach-dhp-1565-a1.o
 +obj-$(CONFIG_ATH79_MACH_DIR_505_A1)	+= mach-dir-505-a1.o
 +obj-$(CONFIG_ATH79_MACH_DIR_600_A1)	+= mach-dir-600-a1.o
 +obj-$(CONFIG_ATH79_MACH_DIR_615_C1)	+= mach-dir-615-c1.o
++obj-$(CONFIG_ATH79_MACH_DIR_615_I1)	+= mach-dir-615-i1.o
 +obj-$(CONFIG_ATH79_MACH_DIR_825_B1)	+= mach-dir-825-b1.o
 +obj-$(CONFIG_ATH79_MACH_DIR_825_C1)	+= mach-dir-825-c1.o
 +obj-$(CONFIG_ATH79_MACH_DRAGINO2)	+= mach-dragino2.o
@@ -1514,6 +1566,7 @@
 +obj-$(CONFIG_ATH79_MACH_WP543)		+= mach-wp543.o
 +obj-$(CONFIG_ATH79_MACH_WPE72)		+= mach-wpe72.o
 +obj-$(CONFIG_ATH79_MACH_WPJ344)	+= mach-wpj344.o
++obj-$(CONFIG_ATH79_MACH_WPJ531)	+= mach-wpj531.o
 +obj-$(CONFIG_ATH79_MACH_WPJ558)	+= mach-wpj558.o
 +obj-$(CONFIG_ATH79_MACH_WRT160NL)	+= mach-wrt160nl.o
 +obj-$(CONFIG_ATH79_MACH_WRT400N)	+= mach-wrt400n.o

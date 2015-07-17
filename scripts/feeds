@@ -390,7 +390,7 @@ sub do_install_target($) {
 
 		system("ln -sf ../../$path ./target/linux/");
 	} else {
-		warn "Package is not valid\n";
+		warn "Target is not valid\n";
 		return 1;
 	}
 
@@ -450,10 +450,10 @@ sub install_package {
 	my $force = shift;
 	my $ret = 0;
 
-	$feed = lookup_target($feed, $name);
-	$feed and do {
+	my $this_feed_target = lookup_target($feed, $name);
+	$this_feed_target and do {
 		$installed_targets{$name} and return 0;
-		install_target($feed, $name);
+		install_target($this_feed_target, $name);
 		return 0;
 	};
 
@@ -497,8 +497,8 @@ sub install_package {
 	$installed{$src} = 1;
 
 	defined($override) and $override == 1
-		and warn "Overriding package '$src'\n"
-		or warn "Installing package '$src'\n";
+		and warn "Overriding core package '$src' with version from $feed->[1]\n"
+		or warn "Installing package '$src' from $feed->[1]\n";
 
 	do_install_package($feed, $pkg) == 0 or do {
 		warn "failed.\n";
@@ -687,6 +687,7 @@ sub update {
 	my %opts;
 	my $feed_name;
 	my $perform_update=1;
+	my $failed=0;
 
 	$ENV{SCAN_COOKIE} = $$;
 	$ENV{OPENWRT_VERBOSE} = 's';
@@ -711,8 +712,7 @@ sub update {
 	if ( ($#ARGV == -1) or $opts{a}) {
 		foreach my $feed (@feeds) {
 			my ($type, $name, $src) = @$feed;
-			next unless update_feed($type, $name, $src, $perform_update) == 1;
-			last;
+			update_feed($type, $name, $src, $perform_update) == 0 or $failed=1;
 		}
 	} else {
 		while ($feed_name = shift @ARGV) {
@@ -721,14 +721,14 @@ sub update {
 				if($feed_name ne $name) {
 					next;
 				}
-				update_feed($type, $name, $src, $perform_update);
+				update_feed($type, $name, $src, $perform_update) == 0 or $failed=1;
 			}
 		}
 	}
 
 	refresh_config();
 
-	return 0;
+	return $failed;
 }
 
 sub feed_config() {
@@ -793,7 +793,7 @@ my %commands = (
 	'uninstall' => \&uninstall,
 	'feed_config' => \&feed_config,
 	'clean' => sub {
-		system("rm -rf feeds");
+		system("rm -rf ./feeds ./package/feeds");
 	}
 );
 

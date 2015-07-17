@@ -48,7 +48,7 @@ TARGET_Default_IMAGES:=
 define Image/Build/CFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(3).lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(2)-$(1)-cfe.bin \
+		--output $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-cfe.bin \
 		--boardid $(4) --chipid $(5) --entry $(LOADER_ENTRY) \
 		--load-addr $(LOADER_ENTRY) --info1 "-$(call Image/LimitName16,$(2))" \
 		$(call rootfspad/$(1)) \
@@ -60,49 +60,50 @@ define Image/Build/OLDCFEDTB
 	$(TOPDIR)/scripts/brcmImage.pl -t -p \
 		-b $(4) -c $(5)	-e $(LOADER_ENTRY) -a $(LOADER_ENTRY) \
 		-k $(KDIR)/vmlinux-$(3).lzma.cfe -r $(KDIR)/root.$(1) \
-		-o $(BIN_DIR)/openwrt-$(2)-$(1)-cfe.bin $(6)
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-cfe.bin $(6)
 endef
 
 define Image/Build/SPW303VCFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(3).lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
+		--output $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).tmp \
 		--boardid $(4) --chipid $(5) --entry $(LOADER_ENTRY) \
 		$(call rootfspad/$(1)) \
 		--load-addr $(LOADER_ENTRY) $(6)
 	# Fix up header
-	$(STAGING_DIR_HOST)/bin/spw303v -i $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
-		-o $(BIN_DIR)/openwrt-$(2)-$(1)-cfe-sysupgrade.bin
-	$(STAGING_DIR_HOST)/bin/xorimage -i $(BIN_DIR)/openwrt-$(2)-$(1)-cfe-sysupgrade.bin \
-		-o $(BIN_DIR)/openwrt-$(2)-$(1)-cfe-factory.bin
-	rm -f $(BIN_DIR)/openwrt-$(2)-$(1).tmp
+	$(STAGING_DIR_HOST)/bin/spw303v -i $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).tmp \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-cfe-sysupgrade.bin
+	$(STAGING_DIR_HOST)/bin/xorimage -i $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-cfe-sysupgrade.bin \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-cfe-factory.bin
+	rm -f $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).tmp
 endef
 
 define Image/Build/ZYXCFEDTB
 	# Generate the tagged image
 	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux-$(3).lzma.cfe -f $(KDIR)/root.$(1) \
-		--output $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
+		--output $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).tmp \
 		--boardid $(4) --chipid $(5) --entry $(LOADER_ENTRY) \
 		--load-addr $(LOADER_ENTRY) --info1 "-$(call Image/LimitName16,$(2))" \
 		$(call rootfspad/$(1)) \
 		--info2 $(1) $(6)
 	# Fix up header
-	$(STAGING_DIR_HOST)/bin/zyxbcm -i $(BIN_DIR)/openwrt-$(2)-$(1).tmp \
-		-o $(BIN_DIR)/openwrt-$(2)-$(1)-zyxcfe.bin
-	rm -f $(BIN_DIR)/openwrt-$(2)-$(1).tmp
+	$(STAGING_DIR_HOST)/bin/zyxbcm -i $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).tmp \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-zyxcfe.bin
+	rm -f $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).tmp
 endef
 
 define Image/Build/RedBootDTB
 	# Prepare kernel and rootfs
-	gzip -9 -c $(KDIR)/vmlinux-$(3) > $(KDIR)/vmlinux-$(3).bin.gz
-	dd if=$(KDIR)/vmlinux-$(3).bin.gz of=$(BIN_DIR)/openwrt-$(2)-vmlinux.gz bs=65536 conv=sync
-	dd if=$(KDIR)/root.squashfs of="$(BIN_DIR)/openwrt-$(2)-root.squashfs" bs=64k conv=sync
-	echo -ne \\xDE\\xAD\\xC0\\xDE >> "$(BIN_DIR)/openwrt-$(2)-root.squashfs"
+	cat $(KDIR)/vmlinux $(DTS_DIR)/$(3).dtb > $(KDIR)/vmlinux-$(3)
+	gzip -9n -c $(KDIR)/vmlinux-$(3) > $(KDIR)/vmlinux-$(3).bin.gz
+	dd if=$(KDIR)/vmlinux-$(3).bin.gz of=$(BIN_DIR)/$(IMG_PREFIX)-$(2)-vmlinux.gz bs=65536 conv=sync
+	dd if=$(KDIR)/root.squashfs of="$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs" bs=64k conv=sync
+	echo -ne \\xDE\\xAD\\xC0\\xDE >> "$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs"
 	# Generate the scripted image
 	$(CP) ./redbootscript.template $(BIN_DIR)/redbootscript
 	let \
-		kernellen="$$$$(stat -c%s $(BIN_DIR)/openwrt-$(2)-vmlinux.gz)" \
-		rootfsdatalen="$$$$(stat -c %s $(BIN_DIR)/openwrt-$(2)-root.squashfs)" \
+		kernellen="$$$$(stat -c%s $(BIN_DIR)/$(IMG_PREFIX)-$(2)-vmlinux.gz)" \
+		rootfsdatalen="$$$$(stat -c %s $(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs)" \
 		rootfsaddr="0xBE430000 + kernellen" \
 		rootfslen="0xBEBF0000 - rootfsaddr" \
 		offset2="0x1000 + kernellen"; \
@@ -117,23 +118,25 @@ define Image/Build/RedBootDTB
 	dd if="$(BIN_DIR)/redbootscript" of="$(BIN_DIR)/redbootscript.padded" bs=4096 conv=sync
 	cat \
 		"$(BIN_DIR)/redbootscript.padded" \
-		"$(BIN_DIR)/openwrt-$(2)-vmlinux.gz" \
-		"$(BIN_DIR)/openwrt-$(2)-root.squashfs" \
-		> "$(BIN_DIR)/openwrt-$(2)-redboot.bin"
+		"$(BIN_DIR)/$(IMG_PREFIX)-$(2)-vmlinux.gz" \
+		"$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs" \
+		> "$(BIN_DIR)/$(IMG_PREFIX)-$(2)-redboot.bin"
+	rm -f $(BIN_DIR)/redbootscript $(BIN_DIR)/redbootscript.padded
+	rm -f $(KDIR)/vmlinux-$(3)
 endef
 
 define Image/Build/HCSDTB
 	# Generate the image
 	$(STAGING_DIR_HOST)/bin/hcsmakeimage --magic_byte=$(4) \
 		--rev_maj=$(5) --rev_min=$(6) --input_file=$(KDIR)/$(7) \
-		--output_file=$(BIN_DIR)/openwrt-$(2)-$(1).bin \
+		--output_file=$(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).bin \
 		--ldaddress=$(LOADADDR)
 endef
 
 define Image/Build/ChkDTB
 	# Generate Netgear factory image
-	$(STAGING_DIR_HOST)/bin/mkchkimg -o $(BIN_DIR)/openwrt-$(2)-$(1)-factory.chk \
-	-k $(BIN_DIR)/openwrt-$(4)-$(1)-cfe.bin -b $(5) -r $(6)
+	$(STAGING_DIR_HOST)/bin/mkchkimg -o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1)-factory.chk \
+	-k $(BIN_DIR)/$(IMG_PREFIX)-$(4)-$(1)-cfe.bin -b $(5) -r $(6)
 endef
 
 define Image/Build/Dummy
@@ -166,6 +169,7 @@ define Image/PrepareLoaderDTB
 	# append dtb to vmlinux, then build a standard LZMA loader
 	cat $(KDIR)/vmlinux$(1) $(DTS_DIR)/$(2).dtb > $(KDIR)/vmlinux$(1)-$(2)
 	$(call Image/PrepareLoader,$(1)-$(2),$(3),$(4))
+	rm -f $(KDIR)/vmlinux$(1)-$(2)
 endef
 
 define Image/PrepareCFELzmaKernel
@@ -194,9 +198,10 @@ endef
 
 define Image/PrepareCFELzmaKernelDTB
 	# compile the dts (the dtb will be later reused for the lzma loader)
-	$(LINUX_DIR)/scripts/dtc/dtc -O dtb -o $(DTS_DIR)/$(1).dtb ../dts/$(1).dts
+	$(call Image/BuildDTB,../dts/$(1).dts,$(DTS_DIR)/$(1).dtb)
 	cat $(KDIR)/vmlinux $(DTS_DIR)/$(1).dtb > $(KDIR)/vmlinux-$(1)
 	$(call Image/PrepareCFELzmaKernel,-$(1))
+	rm -f $(KDIR)/vmlinux-$(1)
 endef
 
 define Image/Prepare
@@ -286,7 +291,7 @@ $(eval $(call ImageDTB,CFEDTB,96368MVNgr,96368MVNgr-generic,bcm96368MVNgr,96368M
 $(eval $(call ImageDTB,CFEDTB,96368MVWG,96368MVWG-generic,bcm96368MVWG,96368MVWG,6368))
 
 # ADB P.DG A4001N
-$(eval $(call ImageDTB,CFEDTB,A4001N,A4001N,a4001n,96328dg2x2,6328,--pad 8))
+$(eval $(call ImageDTB,CFEDTB,A4001N,A4001N,a4001n,96328dg2x2,6328,--pad 4))
 # ADB P.DG A4001N1
 $(eval $(call ImageDTB,CFEDTB,A4001N1,A4001N1,a4001n1,963281T_TEF,6328,--pad 8))
 # Alcatel RG100A
@@ -360,6 +365,8 @@ $(eval $(call ImageDTB,CFEDTB,HG553,HG553,hg553,HW553,6358,--rsa-signature "Echo
 $(eval $(call ImageDTB,CFEDTB,HG556a_AB,HG556a_A,hg556a-a,HW556,6358,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x10000 --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,HG556a_AB,HG556a_B,hg556a-b,HW556,6358,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x20000 --tag-version 8))
 $(eval $(call ImageDTB,CFEDTB,HG556a_C,HG556a_C,hg556a-c,HW556,6358,--rsa-signature "EchoLife_HG556a" --image-offset 0x20000 --block-size 0x20000 --tag-version 8))
+# Huawei HG655b
+$(eval $(call ImageDTB,CFEDTB,HG655b,HG655b,hg655b,HW65x,6368,--image-offset 0x20000 --tag-version 7 --pad 4))
 # Inteno VG50
 $(eval $(call ImageDTB,Dummy,VG50,vg50,vg50,VW6339GU,63268))
 # Inventel Livebox 1

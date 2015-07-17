@@ -124,6 +124,9 @@ ar8327_get_pad_cfg(struct ar8327_pad_cfg *cfg)
 		break;
 	}
 
+	if (cfg->mac06_exchange_en)
+		t |= AR8337_PAD_MAC06_EXCHANGE_EN;
+
 	return t;
 }
 
@@ -508,9 +511,6 @@ ar8327_hw_config_pdata(struct ar8xxx_priv *priv,
 	data->port6_status = ar8327_get_port_init_status(&pdata->port6_cfg);
 
 	t = ar8327_get_pad_cfg(pdata->pad0_cfg);
-	if (chip_is_ar8337(priv))
-		t |= AR8337_PAD_MAC06_EXCHANGE_EN;
-
 	ar8xxx_write(priv, AR8327_REG_PAD0_MODE, t);
 	t = ar8327_get_pad_cfg(pdata->pad5_cfg);
 	ar8xxx_write(priv, AR8327_REG_PAD5_MODE, t);
@@ -761,6 +761,24 @@ ar8327_atu_flush(struct ar8xxx_priv *priv)
 		ar8xxx_write(priv, AR8327_REG_ATU_FUNC,
 			     AR8327_ATU_FUNC_OP_FLUSH |
 			     AR8327_ATU_FUNC_BUSY);
+
+	return ret;
+}
+
+static int
+ar8327_atu_flush_port(struct ar8xxx_priv *priv, int port)
+{
+	u32 t;
+	int ret;
+
+	ret = ar8216_wait_bit(priv, AR8327_REG_ATU_FUNC,
+			      AR8327_ATU_FUNC_BUSY, 0);
+	if (!ret) {
+		t = (port << AR8327_ATU_PORT_NUM_S);
+		t |= AR8327_ATU_FUNC_OP_FLUSH_PORT;
+		t |= AR8327_ATU_FUNC_BUSY;
+		ar8xxx_write(priv, AR8327_REG_ATU_FUNC, t);
+	}
 
 	return ret;
 }
@@ -1120,6 +1138,12 @@ static const struct switch_attr ar8327_sw_attr_globals[] = {
 		.set = NULL,
 		.get = ar8xxx_sw_get_arl_table,
 	},
+	{
+		.type = SWITCH_TYPE_NOVAL,
+		.name = "flush_arl_table",
+		.description = "Flush ARL table",
+		.set = ar8xxx_sw_set_flush_arl_table,
+	},
 };
 
 static const struct switch_attr ar8327_sw_attr_port[] = {
@@ -1143,6 +1167,12 @@ static const struct switch_attr ar8327_sw_attr_port[] = {
 		.set = ar8327_sw_set_eee,
 		.get = ar8327_sw_get_eee,
 		.max = 1,
+	},
+	{
+		.type = SWITCH_TYPE_NOVAL,
+		.name = "flush_arl_table",
+		.description = "Flush port's ARL table entries",
+		.set = ar8xxx_sw_set_flush_port_arl_table,
 	},
 };
 
@@ -1189,6 +1219,7 @@ const struct ar8xxx_chip ar8327_chip = {
 	.read_port_status = ar8327_read_port_status,
 	.read_port_eee_status = ar8327_read_port_eee_status,
 	.atu_flush = ar8327_atu_flush,
+	.atu_flush_port = ar8327_atu_flush_port,
 	.vtu_flush = ar8327_vtu_flush,
 	.vtu_load_vlan = ar8327_vtu_load_vlan,
 	.phy_fixup = ar8327_phy_fixup,
@@ -1222,6 +1253,7 @@ const struct ar8xxx_chip ar8337_chip = {
 	.read_port_status = ar8327_read_port_status,
 	.read_port_eee_status = ar8327_read_port_eee_status,
 	.atu_flush = ar8327_atu_flush,
+	.atu_flush_port = ar8327_atu_flush_port,
 	.vtu_flush = ar8327_vtu_flush,
 	.vtu_load_vlan = ar8327_vtu_load_vlan,
 	.phy_fixup = ar8327_phy_fixup,

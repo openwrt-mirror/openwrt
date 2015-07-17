@@ -109,35 +109,31 @@ platform_check_image() {
 	return $error
 }
 
-platform_extract_trx_from_chk() {
-	local header_len=$((0x$(get_magic_long_at "$1" 4)))
-
-	dd if="$1" of="$2" bs=$header_len skip=1
-}
-
-platform_extract_trx_from_cybertan() {
-	dd if="$1" of="$2" bs=32 skip=1
-}
-
 platform_pre_upgrade() {
 	local file_type=$(platform_identify "$1")
 	local dir="/tmp/sysupgrade-bcm53xx"
 	local trx="$1"
+	local offset
 
 	[ "$(platform_flash_type)" != "nand" ] && return
 
-	# Extract trx
+	# Find trx offset
 	case "$file_type" in
-		"chk")		trx="/tmp/$(basename $1).trx"; platform_extract_trx_from_chk "$1" "$trx";;
-		"cybertan")	trx="/tmp/$(basename $1).trx"; platform_extract_trx_from_cybertan "$1" "$trx";;
+		"chk")		offset=$((0x$(get_magic_long_at "$1" 4)));;
+		"cybertan")	offset=32;;
 	esac
 
 	# Extract partitions from trx
 	rm -fR $dir
 	mkdir -p $dir
 	otrx extract "$trx" \
+		${offset:+-o $offset} \
 		-1 $dir/kernel \
 		-2 $dir/root
+	[ $? -ne 0 ] && {
+		echo "Failed to extract TRX partitions."
+		return
+	}
 
 	# Firmwares without UBI image should be flashed "normally"
 	local root_type=$(identify $dir/root)
@@ -164,6 +160,10 @@ platform_pre_upgrade() {
 	otrx create /tmp/kernel.trx \
 		-f $dir/kernel -b $(($linux_length + 28)) \
 		-f /tmp/null.bin
+	[ $? -ne 0 ] && {
+		echo "Failed to create simple TRX with new kernel."
+		return
+	}
 
 	# Prepare UBI image (drop unwanted extra blocks)
 	local ubi_length=0
@@ -171,25 +171,39 @@ platform_pre_upgrade() {
 		ubi_length=$(($ubi_length + 131072))
 	done
 	dd if=$dir/root of=/tmp/root.ubi bs=131072 count=$((ubi_length / 131072)) 2>/dev/null
+	[ $? -ne 0 ] && {
+		echo "Failed to prepare new UBI image."
+		return
+	}
 
 	# Flash
 	mtd write /tmp/kernel.trx firmware
 	nand_do_upgrade /tmp/root.ubi
 }
 
+platform_trx_from_chk_cmd() {
+	local header_len=$((0x$(get_magic_long_at "$1" 4)))
+
+	echo -n dd bs=$header_len skip=1
+}
+
+platform_trx_from_cybertan_cmd() {
+	echo -n dd bs=32 skip=1
+}
+
 platform_do_upgrade() {
 	local file_type=$(platform_identify "$1")
 	local trx="$1"
+	local cmd=
 
 	[ "$(platform_flash_type)" == "nand" ] && {
 		echo "Writing whole image to NAND flash. All erase counters will be lost."
 	}
 
 	case "$file_type" in
-		"chk")		trx="/tmp/$(basename $1).trx"; platform_extract_trx_from_chk "$1" "$trx";;
-		"cybertan")	trx="/tmp/$(basename $1).trx"; platform_extract_trx_from_cybertan "$1" "$trx";;
+		"chk")		cmd=$(platform_trx_from_chk_cmd "$trx");;
+		"cybertan")	cmd=$(platform_trx_from_cybertan_cmd "$trx");;
 	esac
 
-	shift
-	default_do_upgrade "$trx" "$@"
+	default_do_upgrade "$trx" "$cmd"
 }

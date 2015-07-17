@@ -267,6 +267,8 @@ define KernelPackage/dm
 	CONFIG_DM_DEBUG=n \
 	CONFIG_DM_UEVENT=n \
 	CONFIG_DM_DELAY=n \
+	CONFIG_DM_LOG_WRITES=n \
+	CONFIG_DM_MQ_DEFAULT=n \
 	CONFIG_DM_MULTIPATH=n \
 	CONFIG_DM_ZERO=n \
 	CONFIG_DM_SNAPSHOT=n \
@@ -614,9 +616,9 @@ define KernelPackage/scsi-core
 	CONFIG_SCSI \
 	CONFIG_BLK_DEV_SD
   FILES:= \
-	$(if $(findstring y,$(CONFIG_SCSI)),,$(LINUX_DIR)/drivers/scsi/scsi_mod.ko) \
+	$(LINUX_DIR)/drivers/scsi/scsi_mod.ko \
 	$(LINUX_DIR)/drivers/scsi/sd_mod.ko
-  AUTOLOAD:=$(call AutoLoad,40,sd_mod,1)
+  AUTOLOAD:=$(call AutoLoad,40,scsi_mod sd_mod,1)
 endef
 
 $(eval $(call KernelPackage,scsi-core))

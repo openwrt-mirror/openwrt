@@ -2,6 +2,7 @@
 # Copyright (C) 2011 OpenWrt.org
 
 UCIDEF_LEDS_CHANGED=0
+UCIDEF_GPIO_SWITCHES_CHANGED=0
 
 ucidef_set_led_netdev() {
 	local cfg="led_$1"
@@ -157,6 +158,26 @@ EOF
 	UCIDEF_LEDS_CHANGED=1
 }
 
+ucidef_set_led_trigger_gpio() {
+	local cfg="led_$1"
+	local name=$2
+	local sysfs=$3
+	local gpio=$4
+	local inverted=$5
+
+	uci -q get system.$cfg && return 0
+
+	uci batch <<EOF
+set system.$cfg='led'
+set system.$cfg.name='$name'
+set system.$cfg.sysfs='$sysfs'
+set system.$cfg.trigger='gpio'
+set system.$cfg.gpio='$gpio'
+set system.$cfg.inverted='$inverted'
+EOF
+	UCIDEF_LEDS_CHANGED=1
+}
+
 ucidef_set_rssimon() {
 	local dev="$1"
 	local refresh="$2"
@@ -178,6 +199,29 @@ EOF
 ucidef_commit_leds()
 {
 	[ "$UCIDEF_LEDS_CHANGED" = "1" ] && uci commit system
+}
+
+ucidef_set_gpio_switch() {
+	local cfg="gpio_switch_$1"
+	local name="$2"
+	local gpio_pin="$3"
+	# use "0" as default value
+	local default="${4:-0}"
+
+	uci -q get "system.$cfg" && return 0
+
+	uci batch <<EOF
+set system.$cfg='gpio_switch'
+set system.$cfg.name='$name'
+set system.$cfg.gpio_pin='$gpio_pin'
+set system.$cfg.value='$default'
+EOF
+	UCIDEF_GPIO_SWITCHES_CHANGED=1
+}
+
+ucidef_commit_gpio_switches()
+{
+	[ "$UCIDEF_GPIO_SWITCHES_CHANGED" = "1" ] && uci commit system
 }
 
 ucidef_set_interface_loopback() {

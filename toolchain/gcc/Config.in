@@ -18,6 +18,7 @@ choice
 	config GCC_USE_VERSION_4_9_LINARO
 		select GCC_VERSION_4_9_LINARO
 		bool "gcc 4.9.x with Linaro enhancements"
+		depends on BROKEN
 
 endchoice
 
@@ -41,7 +42,8 @@ config EXTRA_GCC_CONFIG_OPTIONS
 config SSP_SUPPORT
 	bool
 	prompt "Enable Stack-Smashing Protection support" if TOOLCHAINOPTS
-	default n
+	depends on !USE_MUSL
+	default y if !USE_MUSL
 	help
 	    Enable Stack-Smashing Protection support
 

@@ -32,21 +32,11 @@ SOUNDCORE_FILES ?= \
 	$(LINUX_DIR)/sound/core/oss/snd-pcm-oss.ko \
 	$(LINUX_DIR)/sound/core/snd-compress.ko
 
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.12.0)),1)
 SOUNDCORE_LOAD += \
 	$(if $(CONFIG_SND_DMAENGINE_PCM),snd-pcm-dmaengine)
 
 SOUNDCORE_FILES += \
 	$(if $(CONFIG_SND_DMAENGINE_PCM),$(LINUX_DIR)/sound/core/snd-pcm-dmaengine.ko)
-endif
-
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),lt,3.14.0)),1)
-SOUNDCORE_LOAD += \
-	snd-page-alloc
-
-SOUNDCORE_FILES += \
-	$(LINUX_DIR)/sound/core/snd-page-alloc.ko
-endif
 
 define KernelPackage/sound-core
   SUBMENU:=$(SOUND_MENU)
@@ -164,7 +154,7 @@ define KernelPackage/sound-soc-ac97
   KCONFIG:=CONFIG_SND_SOC_AC97_CODEC
   FILES:=$(LINUX_DIR)/sound/soc/codecs/snd-soc-ac97.ko
   AUTOLOAD:=$(call AutoLoad,57,snd-soc-ac97)
-  DEPENDS:=+kmod-ac97 +kmod-sound-soc-core +TARGET_ep93xx:kmod-sound-soc-ep93xx-ac97
+  DEPENDS:=+kmod-ac97 +kmod-sound-soc-core
   $(call AddDepends/sound)
 endef
 

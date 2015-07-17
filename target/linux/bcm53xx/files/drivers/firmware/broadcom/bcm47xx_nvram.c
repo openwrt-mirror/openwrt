@@ -35,6 +35,7 @@ struct nvram_header {
 };
 
 static char nvram_buf[NVRAM_SPACE];
+static size_t nvram_len;
 static const u32 nvram_sizes[] = {0x8000, 0xF000, 0x10000};
 
 static u32 find_nvram_size(void __iomem *end)
@@ -60,7 +61,7 @@ static int nvram_find_and_copy(void __iomem *iobase, u32 lim)
 	u32 *src, *dst;
 	u32 size;
 
-	if (nvram_buf[0]) {
+	if (nvram_len) {
 		pr_warn("nvram already initialized\n");
 		return -EEXIST;
 	}
@@ -94,17 +95,23 @@ static int nvram_find_and_copy(void __iomem *iobase, u32 lim)
 	return -ENXIO;
 
 found:
-	if (header->len > size)
-		pr_err("The nvram size accoridng to the header seems to be bigger than the partition on flash\n");
-	if (header->len > NVRAM_SPACE)
-		pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
-		       header->len, NVRAM_SPACE - 1);
-
 	src = (u32 *)header;
 	dst = (u32 *)nvram_buf;
 	for (i = 0; i < sizeof(struct nvram_header); i += 4)
 		*dst++ = __raw_readl(src++);
-	for (; i < header->len && i < NVRAM_SPACE && i < size; i += 4)
+	header = (struct nvram_header *)nvram_buf;
+	nvram_len = header->len;
+	if (nvram_len > size) {
+		pr_err("The nvram size according to the header seems to be bigger than the partition on flash\n");
+		nvram_len = size;
+	}
+	if (nvram_len >= NVRAM_SPACE) {
+		pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
+		       header->len, NVRAM_SPACE - 1);
+		nvram_len = NVRAM_SPACE - 1;
+	}
+	/* proceed reading data after header */
+	for (; i < nvram_len; i += 4)
 		*dst++ = readl(src++);
 	nvram_buf[NVRAM_SPACE - 1] = '\0';
 
@@ -147,21 +154,18 @@ static int nvram_init(void)
 		return -ENODEV;
 
 	err = mtd_read(mtd, 0, sizeof(header), &bytes_read, (uint8_t *)&header);
-	if (!err && header.magic == NVRAM_MAGIC) {
-		u8 *dst = (uint8_t *)nvram_buf;
-		size_t len = header.len;
-
-		if (len >= NVRAM_SPACE) {
-			len = NVRAM_SPACE - 1;
+	if (!err && header.magic == NVRAM_MAGIC &&
+	    header.len > sizeof(header)) {
+		nvram_len = header.len;
+		if (nvram_len >= NVRAM_SPACE) {
 			pr_err("nvram on flash (%i bytes) is bigger than the reserved space in memory, will just copy the first %i bytes\n",
-				header.len, len);
+				header.len, NVRAM_SPACE);
+			nvram_len = NVRAM_SPACE - 1;
 		}
 
-		err = mtd_read(mtd, 0, len, &bytes_read, dst);
-		if (err)
-			return err;
-
-		return 0;
+		err = mtd_read(mtd, 0, nvram_len, &nvram_len,
+			       (u8 *)nvram_buf);
+		return err;
 	}
 #endif
 
@@ -176,7 +180,7 @@ int bcm47xx_nvram_getenv(const char *name, char *val, size_t val_len)
 	if (!name)
 		return -EINVAL;
 
-	if (!nvram_buf[0]) {
+	if (!nvram_len) {
 		err = nvram_init();
 		if (err)
 			return err;
@@ -219,5 +223,26 @@ int bcm47xx_nvram_gpio_pin(const char *name)
 	return -ENOENT;
 }
 EXPORT_SYMBOL(bcm47xx_nvram_gpio_pin);
+
+char *bcm47xx_nvram_get_contents(size_t *nvram_size)
+{
+	int err;
+	char *nvram;
+
+	if (!nvram_len) {
+		err = nvram_init();
+		if (err)
+			return NULL;
+	}
+
+	*nvram_size = nvram_len - sizeof(struct nvram_header);
+	nvram = vmalloc(*nvram_size);
+	if (!nvram)
+		return NULL;
+	memcpy(nvram, &nvram_buf[sizeof(struct nvram_header)], *nvram_size);
+
+	return nvram;
+}
+EXPORT_SYMBOL(bcm47xx_nvram_get_contents);
 
 MODULE_LICENSE("GPLv2");

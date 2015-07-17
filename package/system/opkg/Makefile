@@ -112,27 +112,16 @@ define Package/opkg/Default/install
 	$(INSTALL_DIR) $(1)/bin
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DATA) ./files/opkg$(2).conf $(1)/etc/opkg.conf
-  ifneq ($(CONFIG_SIGNED_PACKAGES),)
-	echo "option check_signature 1" >> $(1)/etc/opkg.conf
-  endif
-  ifeq ($(CONFIG_PER_FEED_REPO),)
-	echo "src/gz %n %U" >> $(1)/etc/opkg.conf
-  else
-	for d in base $(FEEDS_ENABLED); do \
-		echo "src/gz %n_$$$$d %U/$$$$d" >> $(1)/etc/opkg.conf; \
-	done
-    ifneq ($(CONFIG_PER_FEED_REPO_ADD_DISABLED),)
-	for d in $(FEEDS_DISABLED); do \
-		echo "$(if $(CONFIG_PER_FEED_REPO_ADD_COMMENTED),# )src/gz %n_$$$$d %U/$$$$d" >> $(1)/etc/opkg.conf; \
-	done
-    endif
-  endif
+	$(call FeedSourcesAppend,$(1)/etc/opkg.conf)
 	$(VERSION_SED) $(1)/etc/opkg.conf
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/opkg-cl $(1)/bin/opkg
 endef
 
 define Package/opkg/install
 	$(call Package/opkg/Default/install,$(1),)
+  ifneq ($(CONFIG_SIGNED_PACKAGES),)
+	echo "option check_signature 1" >> $(1)/etc/opkg.conf
+  endif
 	mkdir $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/opkg-key $(1)/usr/sbin/
 endef

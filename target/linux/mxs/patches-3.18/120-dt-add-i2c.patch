@@ -1,6 +1,6 @@
 --- a/arch/arm/boot/dts/imx23.dtsi
 +++ b/arch/arm/boot/dts/imx23.dtsi
-@@ -146,6 +146,39 @@
+@@ -147,6 +147,39 @@
  					fsl,pull-up = <MXS_PULL_DISABLE>;
  				};
  
@@ -40,7 +40,7 @@
  				auart0_pins_a: auart0@0 {
  					reg = <0>;
  					fsl,pinmux-ids = <
-@@ -444,7 +477,12 @@
+@@ -445,7 +478,12 @@
  			};
  
  			i2c@80058000 {
@@ -55,7 +55,7 @@
  				status = "disabled";
 --- a/arch/arm/boot/dts/imx23-olinuxino.dts
 +++ b/arch/arm/boot/dts/imx23-olinuxino.dts
-@@ -73,6 +73,12 @@
+@@ -74,6 +74,12 @@
  				status = "okay";
  			};
  
@@ -68,7 +68,7 @@
  			duart: serial@80070000 {
  				pinctrl-names = "default";
  				pinctrl-0 = <&duart_pins_a>;
-@@ -88,7 +94,7 @@
+@@ -89,7 +95,7 @@
  			usbphy0: usbphy@8007c000 {
  				status = "okay";
  			};

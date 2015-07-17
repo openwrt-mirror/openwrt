@@ -73,6 +73,10 @@ case $board in
 	br6524n)
 		set_wifi_led "edimax:blue:wlan"
 		;;
+	cf-wr800n)
+		ucidef_set_led_netdev "lan" "lan" "comfast:white:ethernet" eth0.1
+		set_wifi_led "comfast:white:wifi"
+		;;
 	cy-swr1100)
 		ucidef_set_led_default "wps" "WPS" "samsung:blue:wps" "0"
 		set_usb_led "samsung:blue:usb"
@@ -80,6 +84,10 @@ case $board in
 	d105)
 		ucidef_set_led_default "power" "POWER" "d105:red:power" "1"
 		set_usb_led "d105:green:usb"
+		;;
+	dcs-930l-b1)
+		ucidef_set_led_default "power" "POWER" "d-link:red:power" "1"
+		ucidef_set_led_netdev "wifi" "WiFi" "d-link:blue:wps"
 		;;
 	dir-300-b1|\
 	dir-600-b1|\
@@ -141,6 +149,10 @@ case $board in
 	mpr-a2)
 		set_wifi_led "hame:blue:system"
 		;;
+	mr-102n)
+		set_wifi_led "mr-102n:green:wlan"
+		set_usb_led "mr-102n:green:usb"
+		;;
 	mzk-w300nh2)
 		set_wifi_led "mzkw300nh2:amber:wlan"
 		;;
@@ -172,6 +184,11 @@ case $board in
 		set_wifi_led "7links:orange:wifi"
 		set_usb_led "7links:blue:storage"
 		;;
+    pbr-m1)
+        ucidef_set_led_netdev "internet" "internet" "pbr-m1:green:internet" "eth0.2"
+        ucidef_set_led_default "power" "power" "pbr-m1:green:power" "1"
+        ucidef_set_led_default "sys" "sys" "pbr-m1:green:sys" "1"
+        ;;
 	sl-r7205)
 		set_wifi_led "rt2800pci-phy0::radio"
 		;;
@@ -200,6 +217,10 @@ case $board in
 	wnce2001)
 		set_wifi_led "netgear:green:wlan"
 		;;
+	re6500)
+		ucidef_set_led_default "power" "power" "linksys:white:power" "1"
+		ucidef_set_led_default "wifi" "wifi" "linksys:orange:wifi" "1"
+		;;
 	rt-n14u)
 		ucidef_set_led_default "power" "power" "asus:blue:power" "1"
 		ucidef_set_led_netdev "lan" "lan" "asus:blue:lan" eth0.1
@@ -221,6 +242,10 @@ case $board in
 		ucidef_set_led_default "power" "power" "zbtlink:blue:power" "1"
 		set_wifi_led "zbtlink:blue:air"
 		set_usb_led "zbtlink:blue:usb"
+		;;
+	oy-0001)
+		ucidef_set_led_default "power" "power" "oy:green:power" "1"
+		set_wifi_led "oy:green:wifi"
 		;;
 	wr8305rt)
 		ucidef_set_led_default "power" "power" "wr8305rt:sys" "1"

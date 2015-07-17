@@ -803,8 +803,8 @@ static int b53_global_reset_switch(struct switch_dev *dev)
 	priv->enable_jumbo = 0;
 	priv->allow_vid_4095 = 0;
 
-	memset(priv->vlans, 0, sizeof(priv->vlans) * dev->vlans);
-	memset(priv->ports, 0, sizeof(priv->ports) * dev->ports);
+	memset(priv->vlans, 0, sizeof(*priv->vlans) * dev->vlans);
+	memset(priv->ports, 0, sizeof(*priv->ports) * dev->ports);
 
 	return b53_switch_reset(priv);
 }
@@ -1201,7 +1201,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
 		.dev_name = "BCM53011",
 		.alias = "bcm53011",
 		.vlans = 4096,
-		.enabled_ports = 0x1f,
+		.enabled_ports = 0x1bf,
 		.cpu_port = B53_CPU_PORT_25, /* TODO: auto detect */
 		.vta_regs = B53_VTA_REGS,
 		.duplex_reg = B53_DUPLEX_STAT_GE,

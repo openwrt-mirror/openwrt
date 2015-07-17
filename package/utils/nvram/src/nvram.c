@@ -65,7 +65,7 @@ static void _nvram_free(nvram_handle_t *h)
 static nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	const char *name, const char *value )
 {
-	if ((strlen(value) + 1) > NVRAM_SPACE)
+	if ((strlen(value) + 1) > h->length - h->offset)
 		return NULL;
 
 	if (!t) {
@@ -286,11 +286,11 @@ int nvram_commit(nvram_handle_t *h)
 
 	/* Clear data area */
 	ptr = (char *) header + sizeof(nvram_header_t);
-	memset(ptr, 0xFF, NVRAM_SPACE - sizeof(nvram_header_t));
+	memset(ptr, 0xFF, nvram_part_size - h->offset - sizeof(nvram_header_t));
 	memset(&tmp, 0, sizeof(nvram_header_t));
 
 	/* Leave space for a double NUL at the end */
-	end = (char *) header + NVRAM_SPACE - 2;
+	end = (char *) header + nvram_part_size - h->offset - 2;
 
 	/* Write out all tuples */
 	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
@@ -395,7 +395,7 @@ nvram_handle_t * nvram_open(const char *file, int rdonly)
 				header = nvram_header(h);
 
 				if (header->magic == NVRAM_MAGIC &&
-				    (rdonly || header->len < NVRAM_SPACE)) {
+				    (rdonly || header->len < h->length - h->offset)) {
 					_nvram_rehash(h);
 					free(mtd);
 					return h;

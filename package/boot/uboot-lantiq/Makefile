@@ -150,6 +150,25 @@ define uboot/arv752dpw22_brn
   DEPS:=@TARGET_lantiq_xway_ARV752DPW22
 endef
 
+define uboot/arv8539pw22_ram
+  TITLE:=U-Boot for Speedport W 504V Typ A (RAM)
+  SOC:=danube
+  DDR_SETTINGS:=board/arcadyan/arv8539pw22/ddr_settings.h
+  DEPS:=@TARGET_lantiq_xway_ARV8539PW22
+endef
+
+define uboot/arv8539pw22_nor
+  TITLE:=U-Boot for Speedport W 504V Typ A (NOR)
+  SOC:=danube
+  DEPS:=@TARGET_lantiq_xway_ARV8539PW22
+endef
+
+define uboot/arv8539pw22_brn
+  TITLE:=U-Boot for Speedport W 504V Typ A (BRN)
+  SOC:=danube
+  DEPS:=@TARGET_lantiq_xway_ARV8539PW22
+endef
+
 define uboot/gigasx76x_ram
   TITLE:=U-Boot for Siemens Gigaset sx76x (RAM)
   SOC:=danube
@@ -257,6 +276,24 @@ define uboot/p2812hnufx_nandspl
   DEPS:=@TARGET_lantiq_xrx200_P2812HNUF1||@TARGET_lantiq_xrx200_P2812HNUF3
 endef
 
+define uboot/vgv7510kw22_brn
+  TITLE:=U-Boot for Arcadyan VGV7510KW22 (BRN)
+  SOC:=vr9
+  DEPS:=@TARGET_lantiq_xrx200_VGV7510KW22NOR||@TARGET_lantiq_xrx200_VGV7510KW22BRN
+endef
+
+define uboot/vgv7510kw22_nor
+  TITLE:=U-Boot for Arcadyan VGV7510KW22 (NOR)
+  SOC:=vr9
+  DEPS:=@TARGET_lantiq_xrx200_VGV7510KW22NOR||@TARGET_lantiq_xrx200_VGV7510KW22BRN
+endef
+
+define uboot/vgv7510kw22_ram
+  TITLE:=U-Boot for Arcadyan VGV7510KW22 (RAM)
+  SOC:=vr9
+  DDR_SETTINGS:=board/arcadyan/vgv7510kw22/ddr_settings.h
+  DEPS:=@TARGET_lantiq_xrx200_VGV7510KW22NOR||@TARGET_lantiq_xrx200_VGV7510KW22BRN
+endef
 
 UBOOTS:= \
 	arv4519pw_ram arv4519pw_nor arv4519pw_brn \
@@ -265,12 +302,14 @@ UBOOTS:= \
 	arv7518pw_ram arv7518pw_nor arv7518pw_brn \
 	arv752dpw_ram arv752dpw_nor arv752dpw_brn \
 	arv752dpw22_ram arv752dpw22_nor arv752dpw22_brn \
+        arv8539pw22_brn arv8539pw22_nor arv8539pw22_ram \
 	gigasx76x_ram gigasx76x_nor \
 	acmp252_ram acmp252_nor \
 	easy50712_ram easy50712_nor easy50712_norspl \
 	easy80920_ram easy80920_nor easy80920_norspl easy80920_sfspl \
 	fb3370_eva fb3370_ram fb3370_sfspl \
-	p2812hnufx_ram p2812hnufx_nandspl
+	p2812hnufx_ram p2812hnufx_nandspl \
+	vgv7510kw22_brn vgv7510kw22_nor vgv7510kw22_ram
 
 define Package/uboot/template
 define Package/uboot-lantiq-$(1)

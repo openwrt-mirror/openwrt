@@ -10,11 +10,11 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=mac80211
 
-PKG_VERSION:=2015-03-09
-PKG_RELEASE:=3
+PKG_VERSION:=2015-06-22
+PKG_RELEASE:=1
 PKG_SOURCE_URL:=http://mirror2.openwrt.org/sources
 PKG_BACKPORT_VERSION:=
-PKG_MD5SUM:=6d4b04e4ce8a1f54dabfb04f4709453c
+PKG_MD5SUM:=352b2b46d36a72aadc96161a3cefdb1c
 
 PKG_SOURCE:=compat-wireless-$(PKG_VERSION)$(PKG_BACKPORT_VERSION).tar.bz2
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/compat-wireless-$(PKG_VERSION)
@@ -60,7 +60,6 @@ define KernelPackage/mac80211/Default
   SUBMENU:=$(WMENU)
   URL:=https://wireless.wiki.kernel.org/
   MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
-  DEPENDS:=@!TARGET_uml
 endef
 
 define KernelPackage/cfg80211
@@ -128,7 +127,7 @@ endef
 $(eval $(call Download,linux-firmware))
 
 PKG_ATH10K_LINUX_FIRMWARE_NAME:=ath10k-firmware
-PKG_ATH10K_LINUX_FIRMWARE_VERSION:=da0f85d924226ee30c46e037120621c9e192b39e
+PKG_ATH10K_LINUX_FIRMWARE_VERSION:=b46f3e01a6c1f9150fb4612ef53611d714565842
 PKG_ATH10K_LINUX_FIRMWARE_SOURCE:=$(PKG_ATH10K_LINUX_FIRMWARE_NAME)-$(PKG_ATH10K_LINUX_FIRMWARE_VERSION).tar.bz2
 PKG_ATH10K_LINUX_FIRMWARE_PROTO:=git
 PKG_ATH10K_LINUX_FIRMWARE_SOURCE_URL:=https://github.com/kvalo/ath10k-firmware.git
@@ -624,12 +623,12 @@ endef
 define KernelPackage/ath10k/config
   if PACKAGE_kmod-ath10k
 
-	config ATH10K_STA_FW
-		bool "Firmware optimized for STA operation"
+	config ATH10K_API2_FW
+		bool "Firmware optimized for AP operation (v10.1 / API v2)"
 		default n
 		help
-		  Use the ath10k firmware optimized for wireless client instead
-		  of access point operation.
+		  Use the ath10k firmware from the 10.1 SDK using API v2 optimized
+		  for access point operation if the default firmware keeps crashing.
 
   endif
 endef
@@ -1140,7 +1139,7 @@ config PACKAGE_B43_USE_SSB
 config PACKAGE_B43_USE_BCMA
 	select PACKAGE_kmod-bcma
 	tristate
-	depends on !TARGET_brcm47xx
+	depends on !TARGET_brcm47xx && !TARGET_bcm53xx
 	default PACKAGE_kmod-b43 if PACKAGE_B43_BUSES_BCMA_AND_SSB
 	default PACKAGE_kmod-b43 if PACKAGE_B43_BUSES_BCMA
 
@@ -1263,7 +1262,7 @@ config PACKAGE_B43_USE_BCMA
 		  This allows choosing buses that b43 should support.
 
 	config PACKAGE_B43_BUSES_BCMA_AND_SSB
-		depends on !TARGET_brcm47xx_legacy && !TARGET_brcm47xx_mips74k
+		depends on !TARGET_brcm47xx_legacy && !TARGET_brcm47xx_mips74k && !TARGET_bcm53xx
 		bool "BCMA and SSB"
 
 	config PACKAGE_B43_BUSES_BCMA
@@ -1271,7 +1270,7 @@ config PACKAGE_B43_USE_BCMA
 		bool "BCMA only"
 
 	config PACKAGE_B43_BUSES_SSB
-		depends on !TARGET_brcm47xx_mips74k
+		depends on !TARGET_brcm47xx_mips74k && !TARGET_bcm53xx
 		bool "SSB only"
 
 	endchoice
@@ -1858,14 +1857,14 @@ define KernelPackage/ath10k/install
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
-ifeq ($(CONFIG_ATH10K_STA_FW),y)
+ifeq ($(CONFIG_ATH10K_API2_FW),y)
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/main/firmware-2.bin_999.999.0.636 \
+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.1/firmware-2.bin_10.1.467.2-1 \
 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 else
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/firmware-4.bin_10.2.4.45 \
-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin
+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/untested/firmware-5.bin_10.2.4.70-2 \
+		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
 endif
 endef
 

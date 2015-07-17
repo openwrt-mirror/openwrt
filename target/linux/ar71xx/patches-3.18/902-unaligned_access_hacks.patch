@@ -342,7 +342,7 @@
  #endif /* _LINUX_TYPES_H */
 --- a/net/ipv4/af_inet.c
 +++ b/net/ipv4/af_inet.c
-@@ -1324,8 +1324,8 @@ static struct sk_buff **inet_gro_receive
+@@ -1326,8 +1326,8 @@ static struct sk_buff **inet_gro_receive
  	if (unlikely(ip_fast_csum((u8 *)iph, 5)))
  		goto out_unlock;
  
@@ -745,15 +745,15 @@
  u32 secure_ipv6_port_ephemeral(const __be32 *saddr, const __be32 *daddr,
 --- a/include/uapi/linux/in.h
 +++ b/include/uapi/linux/in.h
-@@ -78,7 +78,7 @@ enum {
+@@ -81,7 +81,7 @@ enum {
  /* Internet address. */
  struct in_addr {
  	__be32	s_addr;
 -};
 +} __attribute__((packed, aligned(2)));
+ #endif
  
  #define IP_TOS		1
- #define IP_TTL		2
 --- a/net/core/secure_seq.c
 +++ b/net/core/secure_seq.c
 @@ -46,11 +46,12 @@ __u32 secure_tcpv6_sequence_number(const
@@ -835,7 +835,7 @@
  
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3677,14 +3677,16 @@ static bool tcp_parse_aligned_timestamp(
+@@ -3678,14 +3678,16 @@ static bool tcp_parse_aligned_timestamp(
  {
  	const __be32 *ptr = (const __be32 *)(th + 1);
  

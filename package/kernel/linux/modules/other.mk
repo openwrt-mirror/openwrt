@@ -13,7 +13,9 @@ WATCHDOG_DIR:=watchdog
 define KernelPackage/6lowpan
   SUBMENU:=$(OTHER_MENU)
   TITLE:=6LoWPAN shared code
-  KCONFIG:=CONFIG_6LOWPAN
+  KCONFIG:= \
+	CONFIG_6LOWPAN \
+	CONFIG_6LOWPAN_NHC=n
   FILES:=$(LINUX_DIR)/net/6lowpan/6lowpan.ko
   AUTOLOAD:=$(call AutoProbe,6lowpan)
 endef
@@ -28,7 +30,7 @@ $(eval $(call KernelPackage,6lowpan))
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-lib-crc16 +kmod-hid
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-crypto-ecb +kmod-lib-crc16 +kmod-hid +!LINUX_3_18:kmod-crypto-cmac
   KCONFIG:= \
 	CONFIG_BLUEZ \
 	CONFIG_BLUEZ_L2CAP \
@@ -40,14 +42,18 @@ define KernelPackage/bluetooth
 	CONFIG_BLUEZ_HIDP \
 	CONFIG_BT \
 	CONFIG_BT_BREDR=y \
+	CONFIG_BT_DEBUGFS=n \
 	CONFIG_BT_L2CAP=y \
 	CONFIG_BT_LE=y \
 	CONFIG_BT_SCO=y \
 	CONFIG_BT_RFCOMM \
 	CONFIG_BT_BNEP \
 	CONFIG_BT_HCIBTUSB \
+	CONFIG_BT_HCIBTUSB_BCM=n \
 	CONFIG_BT_HCIUSB \
 	CONFIG_BT_HCIUART \
+	CONFIG_BT_HCIUART_BCM=n \
+	CONFIG_BT_HCIUART_INTEL=n \
 	CONFIG_BT_HCIUART_H4 \
 	CONFIG_BT_HIDP \
 	CONFIG_HID_SUPPORT=y
@@ -59,6 +65,10 @@ define KernelPackage/bluetooth
 	$(LINUX_DIR)/net/bluetooth/hidp/hidp.ko \
 	$(LINUX_DIR)/drivers/bluetooth/hci_uart.ko \
 	$(LINUX_DIR)/drivers/bluetooth/btusb.ko
+ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,4.1.0)),1)
+  FILES+= \
+	$(LINUX_DIR)/drivers/bluetooth/btintel.ko
+endif
   AUTOLOAD:=$(call AutoProbe,bluetooth rfcomm bnep hidp hci_uart btusb)
 endef
 
@@ -75,7 +85,7 @@ define KernelPackage/bluetooth_6lowpan
   DEPENDS:=+kmod-6lowpan +kmod-bluetooth
   KCONFIG:=CONFIG_BT_6LOWPAN
   FILES:=$(LINUX_DIR)/net/bluetooth/bluetooth_6lowpan.ko
-       AUTOLOAD:=$(call AutoProbe,bluetooth)
+  AUTOLOAD:=$(call AutoProbe,bluetooth_6lowpan)
 endef
 
 define KernelPackage/bluetooth_6lowpan/description
@@ -434,7 +444,7 @@ $(eval $(call KernelPackage,ssb))
 define KernelPackage/bcma
   SUBMENU:=$(OTHER_MENU)
   TITLE:=BCMA support
-  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx
+  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx @!TARGET_bcm53xx
   KCONFIG:=\
 	CONFIG_BCMA \
 	CONFIG_BCMA_POSSIBLE=y \
@@ -638,7 +648,6 @@ define KernelPackage/mtdtests
   SUBMENU:=$(OTHER_MENU)
   TITLE:=MTD subsystem tests
   KCONFIG:=CONFIG_MTD_TESTS
-  DEPENDS:=+kmod-nand
   FILES:=\
 	$(LINUX_DIR)/drivers/mtd/tests/mtd_nandecctest.ko \
 	$(LINUX_DIR)/drivers/mtd/tests/mtd_oobtest.ko \
@@ -656,40 +665,6 @@ endef
 
 $(eval $(call KernelPackage,mtdtests))
 
-
-define KernelPackage/nand
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=NAND flash support
-  KCONFIG:=CONFIG_MTD_NAND \
-	CONFIG_MTD_NAND_IDS \
-	CONFIG_MTD_NAND_ECC
-  FILES:= \
-	$(LINUX_DIR)/drivers/mtd/nand/nand_ids.ko \
-	$(LINUX_DIR)/drivers/mtd/nand/nand_ecc.ko \
-	$(LINUX_DIR)/drivers/mtd/nand/nand.ko
-  AUTOLOAD:=$(call AutoLoad,20,nand_ids nand_ecc nand)
-endef
-
-define KernelPackage/nand/description
- Kernel module for NAND support
-endef
-
-$(eval $(call KernelPackage,nand))
-
-
-define KernelPackage/nandsim
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=NAND simulator
-  DEPENDS:=+kmod-nand
-  KCONFIG:=CONFIG_MTD_NAND_NANDSIM
-  FILES:=$(LINUX_DIR)/drivers/mtd/nand/nandsim.ko
-endef
-
-define KernelPackage/nandsim/description
- Kernel module for NAND flash simulation.
-endef
-
-$(eval $(call KernelPackage,nandsim))
 
 define KernelPackage/serial-8250
   SUBMENU:=$(OTHER_MENU)

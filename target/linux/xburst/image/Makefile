@@ -25,14 +25,18 @@ endef
 
 
 define MkImageGzip
-	gzip -9 -c $(1) > $(1).gz
+	gzip -9n -c $(1) > $(1).gz
 	mkimage -A mips -O linux -T kernel -a 0x80010000 -C gzip \
 		-e $(call kernel_entry,$(KDIR)/vmlinux.debug) -n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
 		-d $(1).gz $(2)
 endef
 
+define Image/Prepare
+	$(call MkImageGzip,$(KDIR)/vmlinux,$(KDIR)/uimage)
+endef
+
 define Image/BuildKernel
-	$(call MkImageGzip,$(KDIR)/vmlinux,$(UIMAGE))
+	cp $(KDIR)/uimage $(UIMAGE)
 endef
 
 define Image/Build/squashfs

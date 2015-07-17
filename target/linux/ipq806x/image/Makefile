@@ -9,7 +9,7 @@ UBINIZE_OPTS = -m 2048 -p 128KiB
 E2SIZE=$(shell echo $$(($(CONFIG_TARGET_ROOTFS_PARTSIZE)*1024)))
 
 define Image/BuildKernel/FIT
-	gzip -9 -c $(KDIR)/Image > $(KDIR)/Image.gz
+	gzip -9n -c $(KDIR)/Image > $(KDIR)/Image.gz
 	$(call CompressLzma,$(KDIR)/Image,$(KDIR)/Image.gz)
 	$(call Image/BuildKernel/MkFIT,$(1), $(KDIR)/Image.gz, $(LINUX_DIR)/arch/arm/boot/dts/$(1).dtb,gzip,0x42208000,0x42208000)
 	$(CP) $(KDIR)/fit-$(1).itb $(BIN_DIR)/$(IMG_PREFIX)-$(1)-fit-uImage.itb
@@ -19,8 +19,12 @@ ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 endif
 endef
 
+define Image/Prepare
+	$(CP) $(LINUX_DIR)/vmlinux $(KDIR)/$(IMG_PREFIX)-vmlinux.elf
+endef
+
 define Image/BuildKernel
-	$(CP) $(LINUX_DIR)/vmlinux $(BIN_DIR)/$(IMG_PREFIX)-vmlinux.elf
+	$(CP) $(KDIR)/$(IMG_PREFIX)-vmlinux.elf $(BIN_DIR)
 	$(call Image/BuildKernel/FIT,qcom-ipq8064-ap148)
 	$(call Image/BuildKernel/FIT,qcom-ipq8064-db149)
 endef

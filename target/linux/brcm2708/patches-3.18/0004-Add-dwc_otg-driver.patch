@@ -159,7 +159,7 @@ Signed-off-by: Kari Suvanto <karis79@gmail.com>
  }
 --- a/drivers/usb/core/message.c
 +++ b/drivers/usb/core/message.c
-@@ -1889,6 +1889,85 @@ free_interfaces:
+@@ -1872,6 +1872,85 @@ free_interfaces:
  	if (cp->string == NULL &&
  			!(dev->quirks & USB_QUIRK_CONFIG_INTF_STRINGS))
  		cp->string = usb_cache_string(dev, cp->desc.iConfiguration);
@@ -4081,7 +4081,7 @@ Signed-off-by: Kari Suvanto <karis79@gmail.com>
 +module_exit(fsg_cleanup);
 --- a/drivers/usb/host/Kconfig
 +++ b/drivers/usb/host/Kconfig
-@@ -744,6 +744,19 @@ config USB_HWA_HCD
+@@ -751,6 +751,19 @@ config USB_HWA_HCD
  	  To compile this driver a module, choose M here: the module
  	  will be called "hwa-hc".
  
