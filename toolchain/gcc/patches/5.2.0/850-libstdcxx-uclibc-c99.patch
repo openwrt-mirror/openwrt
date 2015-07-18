@@ -39,7 +39,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
      const int __ret = __builtin_vsprintf(__out, __fmt, __args);
 --- a/libstdc++-v3/include/bits/basic_string.h
 +++ b/libstdc++-v3/include/bits/basic_string.h
-@@ -5239,7 +5239,7 @@ _GLIBCXX_END_NAMESPACE_CXX11
+@@ -5242,7 +5242,7 @@ _GLIBCXX_END_NAMESPACE_CXX11
  _GLIBCXX_END_NAMESPACE_VERSION
  } // namespace
  

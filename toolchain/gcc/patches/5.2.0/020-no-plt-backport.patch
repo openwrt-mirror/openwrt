@@ -15,7 +15,7 @@
  #ifndef NO_FUNCTION_CSE
 --- a/gcc/common.opt
 +++ b/gcc/common.opt
-@@ -1776,6 +1776,10 @@ fpie
+@@ -1779,6 +1779,10 @@ fpie
  Common Report Var(flag_pie,1) Negative(fPIC)
  Generate position-independent code for executables if possible (small mode)
  

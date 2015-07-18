@@ -136,7 +136,7 @@
  Wextra
  Common Var(extra_warnings) Warning
  Print extra (possibly unwanted) warnings
-@@ -1361,6 +1365,9 @@ fguess-branch-probability
+@@ -1364,6 +1368,9 @@ fguess-branch-probability
  Common Report Var(flag_guess_branch_prob) Optimization
  Enable guessing of branch probabilities
  
@@ -209,7 +209,7 @@
  -Wfatal-errors  -Wfloat-equal  -Wformat  -Wformat=2 @gol
  -Wno-format-contains-nul -Wno-format-extra-args -Wformat-nonliteral @gol
  -Wformat-security  -Wformat-signedness  -Wformat-y2k @gol
-@@ -5379,6 +5379,22 @@ This option is only supported for C and
+@@ -5380,6 +5380,22 @@ This option is only supported for C and
  @option{-Wall} and by @option{-Wpedantic}, which can be disabled with
  @option{-Wno-pointer-sign}.
  
@@ -232,7 +232,7 @@
  @item -Wstack-protector
  @opindex Wstack-protector
  @opindex Wno-stack-protector
-@@ -7852,7 +7868,7 @@ so, the first branch is redirected to ei
+@@ -7853,7 +7869,7 @@ so, the first branch is redirected to ei
  second branch or a point immediately following it, depending on whether
  the condition is known to be true or false.
  

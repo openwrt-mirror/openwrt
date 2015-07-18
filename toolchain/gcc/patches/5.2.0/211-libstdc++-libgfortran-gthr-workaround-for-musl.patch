@@ -60,7 +60,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@222329 138bc75d-0d04-0410-961f-8
  #endif
 --- a/libstdc++-v3/configure.host
 +++ b/libstdc++-v3/configure.host
-@@ -271,6 +271,9 @@ case "${host_os}" in
+@@ -273,6 +273,9 @@ case "${host_os}" in
    freebsd*)
      os_include_dir="os/bsd/freebsd"
      ;;

@@ -51,7 +51,7 @@ Upstream-Status: Inappropriate [distribution: codesourcery]
     This is quite expensive. */
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -932,6 +932,7 @@ with_system_zlib
+@@ -933,6 +933,7 @@ with_system_zlib
  enable_maintainer_mode
  enable_link_mutex
  enable_version_specific_runtime_libs
@@ -59,7 +59,7 @@ Upstream-Status: Inappropriate [distribution: codesourcery]
  enable_plugin
  enable_host_shared
  enable_libquadmath_support
-@@ -1661,6 +1662,8 @@ Optional Features:
+@@ -1670,6 +1671,8 @@ Optional Features:
    --enable-version-specific-runtime-libs
                            specify that runtime libraries should be installed
                            in a compiler-specific directory
@@ -68,7 +68,7 @@ Upstream-Status: Inappropriate [distribution: codesourcery]
    --enable-plugin         enable plugin support
    --enable-host-shared    build host code as shared libraries
    --disable-libquadmath-support
-@@ -28087,6 +28090,19 @@ if test "${enable_version_specific_runti
+@@ -28151,6 +28154,19 @@ if test "${enable_version_specific_runti
  fi
  
  
@@ -90,7 +90,7 @@ Upstream-Status: Inappropriate [distribution: codesourcery]
  
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
-@@ -5571,6 +5571,16 @@ AC_ARG_ENABLE(version-specific-runtime-l
+@@ -5601,6 +5601,16 @@ AC_ARG_ENABLE(version-specific-runtime-l
                  [specify that runtime libraries should be
                   installed in a compiler-specific directory])])
  
@@ -117,7 +117,7 @@ Upstream-Status: Inappropriate [distribution: codesourcery]
  -Wredundant-decls  -Wno-return-local-addr @gol
  -Wreturn-type  -Wsequence-point  -Wshadow  -Wno-shadow-ivar @gol
  -Wshift-count-negative -Wshift-count-overflow @gol
-@@ -4432,6 +4433,14 @@ made up of data only and thus requires n
+@@ -4433,6 +4434,14 @@ made up of data only and thus requires n
  most targets, it is made up of code and thus requires the stack to be
  made executable in order for the program to work properly.
  

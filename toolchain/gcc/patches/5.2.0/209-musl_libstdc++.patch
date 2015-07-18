@@ -1,6 +1,6 @@
 --- a/libstdc++-v3/configure.host
 +++ b/libstdc++-v3/configure.host
-@@ -272,6 +272,13 @@ case "${host_os}" in
+@@ -274,6 +274,13 @@ case "${host_os}" in
      os_include_dir="os/bsd/freebsd"
      ;;
    gnu* | linux* | kfreebsd*-gnu | knetbsd*-gnu)
@@ -14,7 +14,7 @@
      if [ "$uclibc" = "yes" ]; then
        os_include_dir="os/uclibc"
      elif [ "$bionic" = "yes" ]; then
-@@ -280,6 +287,9 @@ case "${host_os}" in
+@@ -282,6 +289,9 @@ case "${host_os}" in
        os_include_dir="os/gnu-linux"
      fi
      ;;

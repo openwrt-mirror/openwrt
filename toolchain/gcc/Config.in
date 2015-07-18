@@ -24,9 +24,9 @@ choice
 		select GCC_VERSION_4_9_LINARO_1
 		bool "gcc 4.9.x_1 with Linaro enhancements"
 
-	config GCC_USE_VERSION_5_1_0
-		select GCC_VERSION_5_1_0
-		bool "gcc 5.1.0 (Buildroot)"
+	config GCC_USE_VERSION_5_2_0
+		select GCC_VERSION_5_2_0
+		bool "gcc 5.2.0 (Buildroot)"
 
 endchoice
 
