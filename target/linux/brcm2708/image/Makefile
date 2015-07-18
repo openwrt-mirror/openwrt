@@ -11,6 +11,16 @@ include $(INCLUDE_DIR)/host.mk
 FAT32_BLOCK_SIZE=1024
 FAT32_BLOCKS=$(shell echo $$(($(CONFIG_BRCM2708_SD_BOOT_PARTSIZE)*1024*1024/$(FAT32_BLOCK_SIZE))))
 
+ifneq ($(CONFIG_TARGET_IMAGES_GZIP),)
+  define Image/gzip
+    gzip -9n -c $(1) > $(1).gz
+    mv $(1).gz $(BIN_DIR)
+  endef
+else
+  define Image/gzip
+  endef
+endif
+
 ### Image scripts ###
 define Build/build-dtb
 	$(LINUX_DIR)/scripts/dtc/dtc -O dtb -o $@.dtb $(DTS_DIR)/$(DEVICE_DTS).dts
@@ -40,6 +50,7 @@ endef
 define Build/sdcard-img
 	./gen_rpi_sdcard_img.sh $@ $@.boot $(word 2,$^) \
 		$(CONFIG_BRCM2708_SD_BOOT_PARTSIZE) $(CONFIG_TARGET_ROOTFS_PARTSIZE)
+	$(call Image/gzip,$@)
 endef
 
 ### Device macros ###
@@ -67,11 +78,20 @@ define add_bcm2708
   TARGET_DEVICES += $(2)
 endef
 
-# Raspberry Pi Model B
-$(eval $(call add_bcm2708,RaspberryPi,rpi-b,bcm2708-rpi-b))
-# Raspberry Pi Model B+
-$(eval $(call add_bcm2708,RaspberryPi,rpi-b-plus,bcm2708-rpi-b-plus))
-# Raspberry Pi 2 Model B
-$(eval $(call add_bcm2708,RaspberryPi2,rpi-2-b,bcm2709-rpi-2-b))
+### BCM2708/BCM2835 ###
+ifeq ($(SUBTARGET),bcm2708)
+  # Raspberry Pi Model B
+  $(eval $(call add_bcm2708,RaspberryPi_B,rpi-b,bcm2708-rpi-b))
+  # Raspberry Pi Model B+
+  $(eval $(call add_bcm2708,RaspberryPi_BPlus,rpi-b-plus,bcm2708-rpi-b-plus))
+  # Raspberry Pi Compute Module
+  $(eval $(call add_bcm2708,RaspberryPi_CM,rpi-cm,bcm2708-rpi-cm))
+endif
+
+### BCM2709/BCM2836 ###
+ifeq ($(SUBTARGET),bcm2709)
+  # Raspberry Pi 2 Model B
+  $(eval $(call add_bcm2708,RaspberryPi_2,rpi-2-b,bcm2709-rpi-2-b))
+endif
 
 $(eval $(call BuildImage))
