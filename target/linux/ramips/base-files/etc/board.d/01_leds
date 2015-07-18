@@ -242,6 +242,10 @@ case $board in
 		set_wifi_led "zbtlink:blue:air"
 		set_usb_led "zbtlink:blue:usb"
 		;;
+	oy-0001)
+		ucidef_set_led_default "power" "power" "oy:green:power" "1"
+		set_wifi_led "oy:green:wifi"
+		;;
 	wr8305rt)
 		ucidef_set_led_default "power" "power" "wr8305rt:sys" "1"
 		set_usb_led "wr8305rt:usb"
@@ -269,6 +273,9 @@ case $board in
 		;;
 	zte-q7)
 		set_wifi_led "zte:blue:status"
+		;;
+	mzk-dp150n)
+		ucidef_set_led_default "power" "power" "mzkdp150n:green:power" "1"
 		;;
 esac
 

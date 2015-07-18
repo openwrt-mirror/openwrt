@@ -400,6 +400,9 @@ ramips_board_detect() {
 	*"Zbtlink ZBT-WA05")
 		name="zbt-wa05"
 		;;
+	*"OY-0001")
+		name="oy-0001"
+		;;
 	*"ZBT WR8305RT")
 		name="wr8305rt"
 		;;
@@ -420,6 +423,9 @@ ramips_board_detect() {
 		;;
 	*"Mediatek MT7628AN evaluation board")
 		name="mt7628"
+		;;
+	*"Planex MZK-DP150N")
+		name="mzk-dp150n"
 		;;
 	*)
 		name="generic"

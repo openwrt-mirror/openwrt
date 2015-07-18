@@ -208,6 +208,8 @@ platform_check_image() {
 	dir-615-i1 | \
 	dir-825-c1 | \
 	dir-835-a1 | \
+	dlan-pro-500-wp | \
+	dlan-pro-1200-ac | \
 	dragino2 | \
 	epg5000 | \
 	esr1750 | \

@@ -95,7 +95,7 @@ endef
 define Image/Build/RedBootDTB
 	# Prepare kernel and rootfs
 	cat $(KDIR)/vmlinux $(DTS_DIR)/$(3).dtb > $(KDIR)/vmlinux-$(3)
-	gzip -9 -c $(KDIR)/vmlinux-$(3) > $(KDIR)/vmlinux-$(3).bin.gz
+	gzip -9n -c $(KDIR)/vmlinux-$(3) > $(KDIR)/vmlinux-$(3).bin.gz
 	dd if=$(KDIR)/vmlinux-$(3).bin.gz of=$(BIN_DIR)/$(IMG_PREFIX)-$(2)-vmlinux.gz bs=65536 conv=sync
 	dd if=$(KDIR)/root.squashfs of="$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs" bs=64k conv=sync
 	echo -ne \\xDE\\xAD\\xC0\\xDE >> "$(BIN_DIR)/$(IMG_PREFIX)-$(2)-root.squashfs"
@@ -198,7 +198,7 @@ endef
 
 define Image/PrepareCFELzmaKernelDTB
 	# compile the dts (the dtb will be later reused for the lzma loader)
-	$(LINUX_DIR)/scripts/dtc/dtc -O dtb -o $(DTS_DIR)/$(1).dtb ../dts/$(1).dts
+	$(call Image/BuildDTB,../dts/$(1).dts,$(DTS_DIR)/$(1).dtb)
 	cat $(KDIR)/vmlinux $(DTS_DIR)/$(1).dtb > $(KDIR)/vmlinux-$(1)
 	$(call Image/PrepareCFELzmaKernel,-$(1))
 	rm -f $(KDIR)/vmlinux-$(1)

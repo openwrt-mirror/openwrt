@@ -72,6 +72,7 @@ platform_check_image() {
 	mpr-a2 | \
 	mr-102n | \
 	mzk-w300nh2 | \
+	mzk-dp150n | \
 	nbg-419n | \
 	nw718 | \
 	omni-emb | \
@@ -117,6 +118,7 @@ platform_check_image() {
 	wr6202 |\
 	wr8305rt |\
 	wrtnode |\
+	oy-0001 |\
 	wt1520 |\
 	wt3020 |\
 	x5 |\

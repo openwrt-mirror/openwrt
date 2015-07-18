@@ -535,7 +535,9 @@ wpa_supplicant_add_network() {
 	json_get_vars \
 		ssid bssid key \
 		basic_rate mcast_rate \
-		ieee80211w
+		ieee80211w ieee80211r
+
+	set_default ieee80211r 0
 
 	local key_mgmt='NONE'
 	local enc_str=
@@ -545,6 +547,8 @@ wpa_supplicant_add_network() {
 	local wpa_key_mgmt="WPA-PSK"
 	local scan_ssid="scan_ssid=1"
 	local freq
+
+	[ "$ieee80211r" -gt 0 ] && wpa_key_mgmt="FT-PSK $wpa_key_mgmt"
 
 	[[ "$_w_mode" = "adhoc" ]] && {
 		append network_data "mode=1" "$N$T"
@@ -591,6 +595,7 @@ wpa_supplicant_add_network() {
 		;;
 		eap)
 			key_mgmt='WPA-EAP'
+		        [ "$ieee80211r" -gt 0 ] && key_mgmt="FT-EAP $key_mgmt"
 
 			json_get_vars eap_type identity ca_cert
 			[ -n "$ca_cert" ] && append network_data "ca_cert=\"$ca_cert\"" "$N$T"

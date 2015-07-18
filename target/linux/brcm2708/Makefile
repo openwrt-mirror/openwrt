@@ -16,10 +16,10 @@ CPU_TYPE:=arm1176jzf-s
 CPU_SUBTYPE:=vfp
 SUBTARGETS:=bcm2708 bcm2709
 
-KERNEL_PATCHVER:=3.18
+KERNEL_PATCHVER:=4.1
 
 include $(INCLUDE_DIR)/target.mk
-DEFAULT_PACKAGES += brcm2708-gpu-fw kmod-usb-hid kmod-sound-core kmod-sound-arm-bcm2835
+DEFAULT_PACKAGES += brcm2708-gpu-fw kmod-usb-hid kmod-sound-core kmod-sound-arm-bcm2835 kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1
 
 define Target/Description
 	Build firmware image for Broadcom BCM2708/BCM2709 SoC devices.

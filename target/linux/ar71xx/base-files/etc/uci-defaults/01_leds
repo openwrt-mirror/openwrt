@@ -173,6 +173,19 @@ dir-825-c1)
 	ucidef_set_led_wlan "wlan2g" "WLAN 2.4 GHz" "d-link:blue:wlan2g" "phy0tpt"
 	;;
 
+dlan-pro-500-wp)
+	ucidef_set_led_default "power" "System Power" "devolo:green:status" "1"
+	ucidef_set_led_netdev "lan" "Ethernet Activity" "devolo:green:eth" "br-lan"
+	ucidef_set_led_wlan "wlan2g" "WLAN 2.4 GHz" "devolo:green:wlan-2g" "phy0tpt"
+	ucidef_set_led_wlan "wlan5g" "WLAN 5 GHz" "devolo:blue:wlan-5g" "none"
+	;;
+
+dlan-pro-1200-ac)
+	ucidef_set_led_wlan "wlan" "WLAN" "devolo:status:wlan" "phy0radio"
+	ucidef_set_led_trigger_gpio "plcw" "dLAN" "devolo:status:dlan" "17" "0"
+	ucidef_set_led_trigger_gpio "plcr" "dLAN" "devolo:error:dlan" "16" "0"
+	;;
+
 gl-inet)
 	ucidef_set_led_netdev "lan" "LAN" "gl-connect:green:lan" "eth1"
 	ucidef_set_led_wlan "wlan" "WLAN" "gl-connect:red:wlan" "phy0tpt"
