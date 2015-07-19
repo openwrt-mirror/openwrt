@@ -69,8 +69,8 @@ endef
 # we can also keep this section empty to avoid default postinst script.
 define Package/pcap-dnsproxy/postinst
 #!/bin/sh
-/etc/init.d/pcap-dnsproxy stop
-/etc/init.d/pcap-dnsproxy disable
+$${IPKG_INSTROOT}/etc/init.d/pcap-dnsproxy stop 2>/dev/null
+$${IPKG_INSTROOT}/etc/init.d/pcap-dnsproxy disable 2>/dev/null
 exit 0
 endef
 
