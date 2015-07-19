@@ -1,7 +1,4 @@
 #!/bin/sh
-# loop for every 5 mins
-[ ! -x /bin/sleep ] && exit 1
-while [ true ]; do
 
 CPU_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon2/temp1_input`
 DDR_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp1_input`
@@ -29,6 +26,3 @@ elif [ "$CPU_TEMP" -ge "$CPU_LOW" -o "$DDR_TEMP" -ge "$DDR_LOW" -o "$WIFI_TEMP" 
 else
 	echo "0" > $FAN_CTRL
 fi
-
-/bin/sleep 5m
-done
