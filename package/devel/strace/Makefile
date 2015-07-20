@@ -27,6 +27,14 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
+HOST_CFLAGS += -I$(LINUX_DIR)/user_headers/include
+
+CONFIGURE_VARS+= \
+	LDFLAGS_FOR_BUILD="$(HOST_LDFLAGS)" \
+	CPPFLAGS_FOR_BUILD="$(HOST_CPPFLAGS)" \
+	CFLAGS_FOR_BUILD="$(HOST_CFLAGS)" \
+	CC_FOR_BUILD="$(HOST_CC)"
+
 define Package/strace
   SECTION:=utils
   CATEGORY:=Utilities
