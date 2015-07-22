@@ -1914,10 +1914,10 @@ config BUSYBOX_DEFAULT_NC
 	default y
 config BUSYBOX_DEFAULT_NC_SERVER
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_NC_EXTRA
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_NC_110_COMPAT
 	bool
 	default n
