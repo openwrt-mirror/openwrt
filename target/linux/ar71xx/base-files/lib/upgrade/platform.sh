@@ -179,6 +179,7 @@ platform_check_image() {
 	ap136-010 | \
 	ap136-020 | \
 	ap135-020 | \
+	ap147-010 | \
 	ap96 | \
 	bxu2000n-2-a1 | \
 	db120 | \
@@ -312,6 +313,7 @@ platform_check_image() {
 	el-mini | \
 	gl-inet | \
 	mc-mac1200r | \
+	onion-omega | \
 	oolite | \
 	smart-300 | \
 	tl-mr10u | \

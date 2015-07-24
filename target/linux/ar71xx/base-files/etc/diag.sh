@@ -23,6 +23,9 @@ get_status_led() {
 	ap136-020)
 		status_led="ap136:green:status"
 		;;
+	ap147-010)
+		status_led="ap147:green:status"
+		;;
 	ap135-020)
 		status_led="ap135:green:status"
 		;;
@@ -172,6 +175,9 @@ get_status_led() {
 	om5p | \
 	om5p-an)
 		status_led="om5p:blue:power"
+		;;
+	onion-omega)
+		status_led="onion:amber:system"
 		;;
 	pb44)
 		status_led="pb44:amber:jump1"

@@ -307,6 +307,9 @@ ramips_board_detect() {
 	*"Sparklan WCR-150GN")
 		name="wcr-150gn"
 		;;
+	*"STORYLiNK SAP-G3200U3")
+		name="sap-g3200u3"
+		;;
 	*"V22RW-2X2")
 		name="v22rw-2x2"
 		;;
@@ -420,6 +423,9 @@ ramips_board_detect() {
 		;;
 	*"Mediatek MT7628AN evaluation board")
 		name="mt7628"
+		;;
+	*"Mediatek MT7688 evaluation board")
+		name="mt7688"
 		;;
 	*"Planex MZK-DP150N")
 		name="mzk-dp150n"
