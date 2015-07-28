@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.2.5
-PKG_RELEASE:=3
+PKG_VERSION:=0.4.3
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=884687fcd7d6461f10fa2ee56e67ad1bef1fb6a7
+PKG_SOURCE_VERSION:=9b2ba31beb0ea4474851ad6c1fbb540dda2e4edb
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -62,7 +62,7 @@ define Package/pcap-dnsproxy/conffiles
 /etc/pcap-dnsproxy/Hosts.conf
 /etc/pcap-dnsproxy/IPFilter.conf
 /etc/pcap-dnsproxy/Routing.txt
-/etc/pcap-dnsproxy/White_List.txt
+/etc/pcap-dnsproxy/WhiteList.txt
 endef
 
 # disable auto boot cause we have NOT set anything, and log poisoning will occur.
@@ -92,7 +92,7 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/IPFilter.ini $(1)/etc/pcap-dnsproxy/IPFilter.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Routing.txt $(1)/etc/pcap-dnsproxy/Routing.txt
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/White_List.txt $(1)/etc/pcap-dnsproxy/White_List.txt
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/WhiteList.txt $(1)/etc/pcap-dnsproxy/WhiteList.txt
 
 endef
 
