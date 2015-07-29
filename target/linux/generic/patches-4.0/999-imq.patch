@@ -138,7 +138,7 @@
  obj-$(CONFIG_MII) += mii.o
 --- /dev/null
 +++ b/drivers/net/imq.c
-@@ -0,0 +1,900 @@
+@@ -0,0 +1,907 @@
 +/*
 + *             Pseudo-driver for the intermediate queue device.
 + *
@@ -787,12 +787,19 @@
 + 				*/
 +				if (imq_dev_accurate_stats && txq->xmit_lock_owner != cpu) {
 +					HARD_TX_LOCK(dev, txq, cpu);
-+					dev_hard_start_xmit(skb_popd, dev, txq, &dummy_ret);
++					if (!netif_xmit_frozen_or_stopped(txq)) {
++						dev_hard_start_xmit(skb_popd, dev, txq, &dummy_ret);
++					}
 +					HARD_TX_UNLOCK(dev, txq);
 +				} else {
-+					dev_hard_start_xmit(skb_popd, dev, txq, &dummy_ret);
++					if (!netif_xmit_frozen_or_stopped(txq)) {
++						dev_hard_start_xmit(skb_popd, dev, txq, &dummy_ret);
++					}
 +				}
 +			}
++		} else {
++			/* No ready skb, then schedule it */
++			__netif_schedule(q);
 +		}
 +		rcu_read_unlock_bh();
 +		retval = 0;
