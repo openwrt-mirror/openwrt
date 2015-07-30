@@ -14,3 +14,4 @@ if [ "$ACTION" = "pressed" -a "$BUTTON" = "wps" ]; then
 	[ -z $WPS_LED ] || led_off $WPS_LED
 fi
 
+return 0

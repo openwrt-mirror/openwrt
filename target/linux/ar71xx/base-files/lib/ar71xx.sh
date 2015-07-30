@@ -38,7 +38,7 @@ wndr3700_board_detect() {
 		;;
 	"33373031")
 		# Use awk to remove everything after the first zero byte
-		model="$(ar71xx_get_mtd_offset_size_format art 41 32 %c | awk 'BEGIN{FS="[[:cntrl:]]"} {print $1; exit}')"
+		model="$(ar71xx_get_mtd_offset_size_format art 41 32 %c | LC_CTYPE=C awk -v 'FS=[^[:print:]]' '{print $1; exit}')"
 		case $model in
 		$'\xff'*)
 			if [ "${model:24:1}" = 'N' ]; then
@@ -377,6 +377,9 @@ ar71xx_board_detect() {
 	*"AP143 reference board")
 		name="ap143"
 		;;
+	*"AP147-010 reference board")
+		name="ap147-010"
+		;;
 	*AP81)
 		name="ap81"
 		;;
@@ -570,6 +573,9 @@ ar71xx_board_detect() {
 		;;
 	*"OM5P AN")
 		name="om5p-an"
+		;;
+	*"Onion Omega")
+		name="onion-omega"
 		;;
 	*PB42)
 		name="pb42"

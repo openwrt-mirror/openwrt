@@ -38,3 +38,5 @@ then
 	status_led_blink_failsafe
 	jffs2reset -y && reboot &
 fi
+
+return 0

@@ -301,7 +301,6 @@ $(eval $(call KernelPackage,iio-dht11))
 define KernelPackage/lp
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Parallel port and line printer support
-  DEPENDS:=@BROKEN
   KCONFIG:= \
 	CONFIG_PARPORT \
 	CONFIG_PRINTER \
@@ -310,7 +309,7 @@ define KernelPackage/lp
 	$(LINUX_DIR)/drivers/parport/parport.ko \
 	$(LINUX_DIR)/drivers/char/lp.ko \
 	$(LINUX_DIR)/drivers/char/ppdev.ko
-  AUTOLOAD:=$(call AutoLoad,50,parport lp)
+  AUTOLOAD:=$(call AutoLoad,50,parport lp ppdev)
 endef
 
 $(eval $(call KernelPackage,lp))
@@ -692,14 +691,16 @@ define KernelPackage/regmap
   TITLE:=Generic register map support
   DEPENDS:=+kmod-lib-lzo +kmod-i2c-core
   KCONFIG:=CONFIG_REGMAP \
+	   CONFIG_REGMAP_MMIO \
 	   CONFIG_REGMAP_SPI \
 	   CONFIG_REGMAP_I2C \
 	   CONFIG_SPI=y
   FILES:= \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-core.ko \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-i2c.ko \
+	$(LINUX_DIR)/drivers/base/regmap/regmap-mmio.ko \
 	$(if $(CONFIG_SPI),$(LINUX_DIR)/drivers/base/regmap/regmap-spi.ko)
-  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-spi)
+  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-mmio regmap-spi)
 endef
 
 define KernelPackage/regmap/description
