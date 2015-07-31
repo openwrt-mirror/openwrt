@@ -65,17 +65,31 @@ define Package/pcap-dnsproxy/conffiles
 /etc/pcap-dnsproxy/WhiteList.txt
 endef
 
-# disable auto boot cause we have NOT set anything, and log poisoning will occur.
-# we can also keep this section empty to avoid default postinst script.
+# disable auto boot cause we have NOT set anything.
+# When $IPKG_INSTROOT is defined, you run within the buildroot, if it is empty you run on the target.
 define Package/pcap-dnsproxy/postinst
 #!/bin/sh
-$${IPKG_INSTROOT}/etc/init.d/pcap-dnsproxy stop 2>/dev/null
-$${IPKG_INSTROOT}/etc/init.d/pcap-dnsproxy disable 2>/dev/null
+# check if we are on real system
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	echo "Removing rc.d symlink for pcap-dnsproxy"
+	echo "You should set configuration file(s) before creating rc.d symlink."
+	/etc/init.d/pcap-dnsproxy disable
+fi
 exit 0
 endef
 
-# temporary not changed
-# 	$(SED) 's,Operation Mode = Private,Operation Mode = Server,g'                   $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
+# Stop and disable service(removing rc.d symlink) before remove package
+define Package/pcap-dnsproxy/prerm
+#!/bin/sh
+# check if we are on real system
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	echo "Stopping service and removing rc.d symlink for pcap-dnsproxy"
+	/etc/init.d/pcap-dnsproxy stop
+	/etc/init.d/pcap-dnsproxy disable
+fi
+exit 0
+endef
+
 define Package/pcap-dnsproxy/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/KeyPairGenerator $(1)/usr/sbin/KeyPairGenerator
