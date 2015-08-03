@@ -31,7 +31,7 @@ apply_rule_404() {
 	let INDEX+=1
 }
 
-apply_rule_302() {
+apply_rule_redirect() {
 	local cfg="$1"
 
 	config_get shost "$cfg" 'shost'
@@ -73,7 +73,7 @@ start() {
 	insmod adv-kill
 
 	config_foreach apply_rule_404 'rule_404'
-	config_foreach apply_rule_302 'rule_302'
+	config_foreach apply_rule_redirect 'rule_redirect'
 	config_foreach apply_rule_502 'rule_502'
 	config_foreach apply_rule_modify 'rule_modify'
 }
