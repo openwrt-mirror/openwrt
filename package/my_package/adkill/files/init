@@ -64,6 +64,18 @@ apply_rule_modify() {
 	let INDEX+=1
 }
 
+apply_rule_fake_pack() {
+	local cfg="$1"
+
+	config_get host "$cfg" 'host'
+	config_get url "$cfg" 'url'
+	config_get c_type "$cfg" 'type'
+	config_get content "$cfg" 'content'
+
+	echo F $INDEX $host $url $c_type $content > /proc/advkill/advconf
+	let INDEX+=1
+}
+
 start() {
 
 	config_load 'adkill'
@@ -76,6 +88,7 @@ start() {
 	config_foreach apply_rule_redirect 'rule_redirect'
 	config_foreach apply_rule_502 'rule_502'
 	config_foreach apply_rule_modify 'rule_modify'
+	config_foreach apply_rule_fake_pack 'rule_fakepack'
 }
 
 stop() {
