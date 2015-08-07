@@ -15,22 +15,24 @@ Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
 
 --- a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
 +++ b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-@@ -30,6 +30,22 @@
+@@ -35,6 +35,24 @@
  				bias-disable;
  			};
  
-+			pcie1_pins: pcie1_pinmux {
++			pcie0_pins: pcie0_pinmux {
 +				mux {
 +					pins = "gpio3";
-+					drive-strength = <2>;
++					function = "pcie1_rst";
++					drive-strength = <12>;
 +					bias-disable;
 +				};
 +			};
 +
-+			pcie2_pins: pcie2_pinmux {
++			pcie1_pins: pcie1_pinmux {
 +				mux {
 +					pins = "gpio48";
-+					drive-strength = <2>;
++					function = "pcie2_rst";
++					drive-strength = <12>;
 +					bias-disable;
 +				};
 +			};
@@ -38,7 +40,7 @@ Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
  			spi_pins: spi_pins {
  				mux {
  					pins = "gpio18", "gpio19", "gpio21";
-@@ -133,5 +149,19 @@
+@@ -138,5 +156,19 @@
  		usb30@1 {
  			status = "ok";
  		};
@@ -46,44 +48,47 @@ Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
 +		pcie0: pci@1b500000 {
 +			status = "ok";
 +			reset-gpio = <&qcom_pinmux 3 0>;
-+			pinctrl-0 = <&pcie1_pins>;
++			pinctrl-0 = <&pcie0_pins>;
 +			pinctrl-names = "default";
 +		};
 +
 +		pcie1: pci@1b700000 {
 +			status = "ok";
 +			reset-gpio = <&qcom_pinmux 48 0>;
-+			pinctrl-0 = <&pcie2_pins>;
++			pinctrl-0 = <&pcie1_pins>;
 +			pinctrl-names = "default";
 +		};
  	};
  };
 --- a/arch/arm/boot/dts/qcom-ipq8064-db149.dts
 +++ b/arch/arm/boot/dts/qcom-ipq8064-db149.dts
-@@ -30,6 +30,30 @@
+@@ -30,6 +30,33 @@
  				bias-disable;
  			};
  
-+			pcie1_pins: pcie1_pinmux {
++			pcie0_pins: pcie0_pinmux {
 +				mux {
 +					pins = "gpio3";
-+					drive-strength = <2>;
++					function = "pcie1_rst";
++					drive-strength = <12>;
++					bias-disable;
++				};
++			};
++
++			pcie1_pins: pcie1_pinmux {
++				mux {
++					pins = "gpio48";
++					function = "pcie2_rst";
++					drive-strength = <12>;
 +					bias-disable;
 +				};
 +			};
 +
 +			pcie2_pins: pcie2_pinmux {
 +				mux {
-+					pins = "gpio48";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+			};
-+
-+			pcie3_pins: pcie3_pinmux {
-+				mux {
 +					pins = "gpio63";
-+					drive-strength = <2>;
++					function = "pcie3_rst";
++					drive-strength = <12>;
 +					bias-disable;
 +				};
 +			};
@@ -91,7 +96,7 @@ Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
  			spi_pins: spi_pins {
  				mux {
  					pins = "gpio18", "gpio19", "gpio21";
-@@ -128,5 +152,26 @@
+@@ -128,5 +155,26 @@
  		usb30@1 {
  			status = "ok";
  		};
@@ -99,21 +104,21 @@ Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
 +		pcie0: pci@1b500000 {
 +			status = "ok";
 +			reset-gpio = <&qcom_pinmux 3 0>;
-+			pinctrl-0 = <&pcie1_pins>;
++			pinctrl-0 = <&pcie0_pins>;
 +			pinctrl-names = "default";
 +		};
 +
 +		pcie1: pci@1b700000 {
 +			status = "ok";
 +			reset-gpio = <&qcom_pinmux 48 0>;
-+			pinctrl-0 = <&pcie2_pins>;
++			pinctrl-0 = <&pcie1_pins>;
 +			pinctrl-names = "default";
 +		};
 +
 +		pcie2: pci@1b900000 {
 +			status = "ok";
 +			reset-gpio = <&qcom_pinmux 63 0>;
-+			pinctrl-0 = <&pcie3_pins>;
++			pinctrl-0 = <&pcie2_pins>;
 +			pinctrl-names = "default";
 +		};
  	};
@@ -259,10 +264,3 @@ Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
  		hs_phy_1: phy@100f8800 {
  			compatible = "qcom,dwc3-hs-usb-phy";
  			reg = <0x100f8800 0x30>;
-@@ -389,6 +514,5 @@
- 				dr_mode = "host";
- 			};
- 		};
--
- 	};
- };
