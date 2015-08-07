@@ -1,11 +1,3 @@
-From 52d3e1864a811a98e1a52539802d41b5b78e90fa Mon Sep 17 00:00:00 2001
-From: GuoGuo <gch981213@gmail.com>
-Date: Fri, 7 Aug 2015 13:57:17 +0800
-Subject: [PATCH] Add Gargoyle Netfilter modules
-To: openwrt-devel@lists.openwrt.org
-
-Signed-off-by: GuoGuo <gch981213@gmail.com>
----
  include/linux/netfilter_ipv4/ipt_bandwidth.h |  106 ++
  include/linux/netfilter_ipv4/ipt_timerange.h |   43 +
  include/linux/netfilter_ipv4/ipt_webmon.h    |   63 +
@@ -9257,6 +9249,3 @@ index 0000000..622f4c5
 +}
 +
 +
--- 
-2.4.3
-
