@@ -17,7 +17,7 @@ PKG_REV:=e2b788431ff65f5217cefd1842e69261c8829a54
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/wlibo666/adkill.git
+PKG_SOURCE_URL:=https://github.com/981213/adkill.git
 PKG_SOURCE_VERSION:=$(PKG_REV)
 
 #PKG_UNPACK=mkdir -p $(PKG_BUILD_DIR); $(CP) ./src/* $(PKG_BUILD_DIR)/
