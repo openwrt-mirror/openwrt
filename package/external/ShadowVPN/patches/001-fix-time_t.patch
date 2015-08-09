@@ -1,0 +1,10 @@
+--- a/src/nat.h
++++ b/src/nat.h
+@@ -30,6 +30,7 @@
+ #include <sys/socket.h>
+ #endif
+ 
++#include <time.h>
+ #include "uthash.h"
+ 
+ /**
