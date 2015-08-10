@@ -41,7 +41,7 @@ define KernelPackage/crypto-aead
 	CONFIG_CRYPTO_AEAD \
 	CONFIG_CRYPTO_AEAD2
   FILES:=$(LINUX_DIR)/crypto/aead.ko
-  AUTOLOAD:=$(call AutoLoad,09,crypto_aead,1)
+  AUTOLOAD:=$(call AutoLoad,09,aead,1)
   $(call AddDepends/crypto)
 endef
 
@@ -66,6 +66,7 @@ define KernelPackage/crypto-manager
 	CONFIG_CRYPTO_MANAGER \
 	CONFIG_CRYPTO_MANAGER2
   FILES:=$(LINUX_DIR)/crypto/cryptomgr.ko
+  AUTOLOAD:=$(call AutoLoad,09,cryptomgr,1)
   $(call AddDepends/crypto)
 endef
 
@@ -379,10 +380,9 @@ $(eval $(call KernelPackage,crypto-ecb))
 
 define KernelPackage/crypto-hmac
   TITLE:=HMAC digest CryptoAPI module
-  DEPENDS:=+kmod-crypto-hash
+  DEPENDS:=+kmod-crypto-hash +kmod-crypto-manager
   KCONFIG:=CONFIG_CRYPTO_HMAC
   FILES:=$(LINUX_DIR)/crypto/hmac.ko
-  DEPENDS:=+kmod-crypto-manager
   AUTOLOAD:=$(call AutoLoad,09,hmac)
   $(call AddDepends/crypto)
 endef
