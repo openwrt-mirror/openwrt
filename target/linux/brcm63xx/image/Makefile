@@ -38,11 +38,6 @@ define Build/append-dtb
 	cat $@.dtb >> $@
 endef
 
-define Build/gzip
-	gzip -9 -c $@ > $@.gz
-	mv $@.gz $@
-endef
-
 define Build/hcs-initramfs
 	$(STAGING_DIR_HOST)/bin/hcsmakeimage --magic_bytes=$(HCS_MAGIC_BYTES) \
 		--rev_maj=$(HCS_REV_MAJ) --rev_min=$(HCS_REV_MIN) --input_file=$@ \
@@ -136,12 +131,6 @@ define Build/cfe-spw303v-bin
 		$(CFE_EXTRAS)
 endef
 
-define Build/netgear-chk
-	$(STAGING_DIR_HOST)/bin/mkchkimg -o $@.netgear -k $@ \
-	-b $(NETGEAR_ID) -r $(NETGEAR_REGION)
-	mv $@.netgear $@
-endef
-
 define Build/spw303v-bin
 	$(STAGING_DIR_HOST)/bin/spw303v -i $@ -o $@.spw303v
 	mv $@.spw303v $@
@@ -181,10 +170,9 @@ define Device/Default
   PROFILES = Default $$(DEVICE_PROFILE)
   KERNEL_INITRAMFS_IMAGE = $$(KERNEL_INITRAMFS_PREFIX).elf
   DEVICE_PROFILE :=
-  DEVICE_NAME :=
   DEVICE_DTS :=
 endef
-DEVICE_VARS += DEVICE_PROFILE DEVICE_NAME DEVICE_DTS
+DEVICE_VARS += DEVICE_PROFILE DEVICE_DTS
 
 # BCM33xx HCS devices: only generates ramdisks (unsupported bin images)
 define Device/bcm33xxHcsRamdisk
@@ -257,10 +245,10 @@ define Device/bcm63xxCfeNetgear
   CFE_BOARD_ID :=
   CFE_CHIP_ID :=
   CFE_EXTRAS :=
-  NETGEAR_ID :=
+  NETGEAR_BOARD_ID :=
   NETGEAR_REGION :=
 endef
-DEVICE_VARS += NETGEAR_ID NETGEAR_REGION
+DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_REGION
 
 # BCM63xx Old CFE devices: both ramdisks and parallel/spi bin images
 # Old versions of CFE bootloader not compatible with imagetag
@@ -319,7 +307,6 @@ define bcm33xxHcsRamdisk
   define Device/$(2)
     $$(Device/bcm33xxHcsRamdisk)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     HCS_MAGIC_BYTES := $(4)
     HCS_REV_MIN := $(5)
@@ -335,7 +322,6 @@ define bcm63xxCfeRamdisk
   define Device/$(2)
     $$(Device/bcm63xxCfeRamdisk)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
   endef
   TARGET_DEVICES += $(2)
@@ -351,7 +337,6 @@ define bcm63xxCfe
   define Device/$(2)
     $$(Device/bcm63xxCfe)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
@@ -370,7 +355,6 @@ define bcm63xxCfeMultiFlash
   define Device/$(2)
     $$(Device/bcm63xxCfeMultiFlash)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
@@ -389,7 +373,6 @@ define bcm63xxCfeBc221
   define Device/$(2)
     $$(Device/bcm63xxCfeBc221)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
@@ -410,12 +393,11 @@ define bcm63xxCfeNetgear
   define Device/$(2)
     $$(Device/bcm63xxCfeNetgear)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
     CFE_EXTRAS := $(6)
-    NETGEAR_ID := $(7)
+    NETGEAR_BOARD_ID := $(7)
     NETGEAR_REGION := $(8)
   endef
   TARGET_DEVICES += $(2)
@@ -431,7 +413,6 @@ define bcm63xxCfeOld
   define Device/$(2)
     $$(Device/bcm63xxCfeOld)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
@@ -450,7 +431,6 @@ define bcm63xxCfeSpw303v
   define Device/$(2)
     $$(Device/bcm63xxCfeSpw303v)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
@@ -469,7 +449,6 @@ define bcm63xxCfeZyxel
   define Device/$(2)
     $$(Device/bcm63xxCfeZyxel)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
     CFE_BOARD_ID := $(4)
     CFE_CHIP_ID := $(5)
@@ -485,7 +464,6 @@ define bcm63xxRedBoot
   define Device/$(2)
     $$(Device/bcm63xxRedBoot)
     DEVICE_PROFILE := $(1)
-    DEVICE_NAME := $(2)
     DEVICE_DTS := $(3)
   endef
   TARGET_DEVICES += $(2)

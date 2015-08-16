@@ -126,22 +126,13 @@ define Build/linksys-bin
 	mv $@.new $@
 endef
 
-define Build/netgear-chk
-	$(STAGING_DIR_HOST)/bin/mkchkimg \
-		-o $@.new \
-		-k $@ \
-		-b $(BOARD_ID) \
-		-r $(REGION)
-	mv $@.new $@
-endef
-
 #################################################
 # Devices
 #################################################
 
 DEVICE_VARS += PRODUCTID
 DEVICE_VARS += DEVICE_ID VERSION
-DEVICE_VARS += BOARD_ID REGION
+DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_REGION
 
 define Device/Default
 	KERNEL := kernel-bin
@@ -187,8 +178,8 @@ endef
 define NetgearDevice
   define Device/netgear-$(1)
 	$$(Device/netgear)
-	BOARD_ID := $(2)
-	REGION := $(3)
+	NETGEAR_BOARD_ID := $(2)
+	NETGEAR_REGION := $(3)
   endef
   TARGET_DEVICES += netgear-$(1)
 endef
