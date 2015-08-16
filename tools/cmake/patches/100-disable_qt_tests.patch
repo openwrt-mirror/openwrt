@@ -1,6 +1,6 @@
 --- a/Tests/RunCMake/CMakeLists.txt
 +++ b/Tests/RunCMake/CMakeLists.txt
-@@ -159,14 +159,6 @@ add_RunCMake_test(interface_library)
+@@ -160,14 +160,6 @@ add_RunCMake_test(interface_library)
  add_RunCMake_test(no_install_prefix)
  add_RunCMake_test(configure_file)
  
