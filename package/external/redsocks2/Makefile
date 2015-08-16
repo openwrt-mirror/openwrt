@@ -75,7 +75,7 @@ ifeq ($(BUILD_VARIANT),polarssl)
 endif
 
 define Package/redsocks2/install
-	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/redsocks2 $(1)/usr/sbin/redsocks2
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/redsocks2.config $(1)/etc/config/redsocks2
