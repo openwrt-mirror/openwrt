@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=samba40
 PKG_VERSION:=4.0.26
-PKG_RELEASE:=5
+PKG_RELEASE:=6
 
 PKG_SOURCE_URL:=http://ftp.samba.org/pub/samba \
 	http://ftp.samba.org/pub/samba/old-versions
@@ -196,7 +196,9 @@ define Package/samba40-server/install
 endef
 
 define Package/samba40-server/conffiles
+/etc/config/samba4
 /etc/samba/smb.conf.template
+/etc/samba/smbpasswd
 endef
 
 define Package/samba40-client/install
