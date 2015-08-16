@@ -27,6 +27,8 @@ export OPENWRTVERSION
 export LD_LIBRARY_PATH:=$(subst ::,:,$(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):)$(TOPDIR)/staging_dir/host/lib)
 export DYLD_LIBRARY_PATH:=$(subst ::,:,$(if $(DYLD_LIBRARY_PATH),$(DYLD_LIBRARY_PATH):)$(TOPDIR)/staging_dir/host/lib)
 export GIT_CONFIG_PARAMETERS='core.autocrlf=false'
+# From xz 5.2, it supports multi-core compression/decompression
+export XZ_OPT='--threads=0'
 export MAKE_JOBSERVER=$(filter --jobserver%,$(MAKEFLAGS))
 
 # prevent perforce from messing with the patch utility
