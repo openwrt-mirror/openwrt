@@ -2,9 +2,9 @@
 
 [ "$ACTION" = ifup ] || exit 0
 
-device=$(uci get shadowvpn.@shadowvpn[-1].device_save 2>/dev/null)
+device=$(ip route show 0/0 | sed -e 's/.* dev \([^ ]*\).*/\1/')
 
-[ -n "$device" -a "$DEVICE" = "$device" ] || exit 0
+[ -z "$device" -o "$DEVICE" = "$device" ] || exit 0
 
 /etc/init.d/shadowvpn restart
 logger -t ShadowVPN "Restart ShadowVPN due to ifup of $INTERFACE ($DEVICE)"

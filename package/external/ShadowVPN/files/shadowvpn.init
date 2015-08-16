@@ -13,6 +13,7 @@ start_vpn() {
 	config_get port $1 port
 	config_get password $1 password
 	config_get concurrency $1 concurrency
+	config_get net $1 net
 	config_get mtu $1 mtu
 	config_get intf $1 intf
 	: ${server:?}
@@ -25,6 +26,7 @@ start_vpn() {
 		password=$password
 		mode=client
 		concurrency=${concurrency:-1}
+		net=${net:-10.7.0.1/31}
 		mtu=${mtu:-1440}
 		intf=${intf:-tun0}
 		up=/etc/shadowvpn/client_up.sh
@@ -50,5 +52,8 @@ boot() {
 		mknod /dev/net/tun c 10 200
 		chmod 0666 /dev/net/tun
 	fi
+	until ip route show 0/0 | grep -q "^default"; do
+		sleep 1
+	done
 	start
 }
