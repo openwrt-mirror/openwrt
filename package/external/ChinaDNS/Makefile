@@ -47,6 +47,14 @@ define Package/ChinaDNS/conffiles
 /etc/chinadns_chnroute.txt
 endef
 
+# Remove local implementation of ns_parser functions since this set of functions
+# already been fixed by musl-libc upstream.
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(call Build/Prepare/Default)
+	rm -f $(PKG_BUILD_DIR)/src/local_ns_parser.{c,h}
+endef
+
 define Package/ChinaDNS/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/chinadns.init $(1)/etc/init.d/chinadns
