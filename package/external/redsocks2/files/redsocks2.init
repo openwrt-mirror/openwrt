@@ -2,13 +2,9 @@
 # Copyright (C) 2015 GuoGuo <gch981213@gmail.com>
 # Redsocks2 启动脚本
 START=90
-STOP=15
-
-SERVICE_USE_PID=1
-SERVICE_WRITE_PID=1
-SERVICE_DAEMONIZE=1
-
-CONFIG=/var/etc/redsocks2.conf
+APP=redsocks2
+PID_FILE=/var/run/$APP.pid
+CFG_FILE=/var/etc/redsocks2.conf
 
 #程序是否启用 CFG_TYPE=redsocks2_base
 if_enabled() {
@@ -24,25 +20,25 @@ if_enabled() {
 gen_config_base() {
 	local cfg="$1"
 	
-	echo "base {" > $CONFIG 
+	echo "base {" > $CFG_FILE
 
 	config_get loglevel "$cfg" 'loglevel'
 	case "$loglevel" in
 		debug)
-			echo "log_debug = on;" >> $CONFIG
-			echo "log_info = on;" >> $CONFIG
+			echo "log_debug = on;" >> $CFG_FILE
+			echo "log_info = on;" >> $CFG_FILE
 			;;
 		info)
-			echo "log_debug = off;" >> $CONFIG
-			echo "log_info = on;" >> $CONFIG
+			echo "log_debug = off;" >> $CFG_FILE
+			echo "log_info = on;" >> $CFG_FILE
 			;;
 		off)
-			echo "log_debug = off;" >> $CONFIG
-			echo "log_info = off;" >> $CONFIG
+			echo "log_debug = off;" >> $CFG_FILE
+			echo "log_info = off;" >> $CFG_FILE
 	esac
-	echo "daemon = on;" >> $CONFIG
-	echo "redirector = iptables;" >> $CONFIG
-	echo "}" >> $CONFIG
+	echo "daemon = on;" >> $CFG_FILE
+	echo "redirector = iptables;" >> $CFG_FILE
+	echo "}" >> $CFG_FILE
 }
 
 #重定向配置文件生成. CFG_TYPE=redsocks2_redirect
@@ -60,7 +56,7 @@ gen_config_redirect() {
 	config_get redsocks2_login "$cfg" 'enc_type'
 	[ -z $redsocks2_login ] && config_get redsocks2_login "$cfg" 'username'
 	config_get redsocks2_password "$cfg" 'password'
-	cat >> $CONFIG <<EOF
+	cat >> $CFG_FILE <<EOF
 redsocks {
 	local_ip = $local_ip;
 	local_port = $local_port;
@@ -69,21 +65,21 @@ redsocks {
 	type = $proxy_type;
 	autoproxy = $autoproxy;
 EOF
-	[ $autoproxy = '1' ] && echo "timeout = $timeout;" >> $CONFIG
+	[ $autoproxy = '1' ] && echo "timeout = $timeout;" >> $CFG_FILE
 	case $proxy_type in
 		socks5 | \
 		shadowsocks)
 			[ ! -z $redsocks2_login ] && {
-				echo "login = $redsocks2_login;" >> $CONFIG
-				echo "password = $redsocks2_password;" >> $CONFIG
+				echo "login = \"$redsocks2_login\";" >> $CFG_FILE
+				echo "password = \"$redsocks2_password\";" >> $CFG_FILE
 			}
 			;;
 		direct)
 			config_get interface "$cfg" 'interface'
-			[ ! -z $interface ] && echo "interface = $interface;" >> $CONFIG
+			[ ! -z $interface ] && echo "interface = $interface;" >> $CFG_FILE
 			;;
 	esac
-	echo "}" >> $CONFIG
+	echo "}" >> $CFG_FILE
 }
 
 #自动代理判断高级设置 CFG_TYPE=redsocks2_autoproxy
@@ -91,7 +87,7 @@ gen_config_autoproxy() {
 	local cfg="$1"
 	config_get no_quick_check_seconds "$cfg" 'no_quick_check_seconds' 300
 	config_get quick_connect_timeout "$cfg" 'quick_connect_timeout' 2
-	cat >> $CONFIG <<EOF
+	cat >> $CFG_FILE <<EOF
 autoproxy {
 	no_quick_check_seconds = $no_quick_check_seconds;
 	quick_connect_timeout = $quick_connect_timeout;
@@ -108,7 +104,7 @@ gen_config_ipcache() {
 	config_get autosave_interval "cfg" 'autosave_interval' 3600
 	config_get_bool port_check "$cfg" 'port_check' 0
 	
-	cat >> $CONFIG <<EOF
+	cat >> $CFG_FILE <<EOF
 ipcache {
 	cache_size = $cache_size;
 	cache_file = "$cache_file";
@@ -135,7 +131,7 @@ gen_config_udprelay() {
 	config_get redsocks2_password "$cfg" 'password'
 	config_get dest_ip "$cfg" 'dest_ip'
 	config_get dest_port "$cfg" 'dest_port'
-	cat >> $CONFIG <<EOF
+	cat >> $CFG_FILE <<EOF
 redudp {
 	local_ip = $local_ip;
 	local_port = $local_port;
@@ -150,16 +146,16 @@ EOF
 		socks5 | \
 		shadowsocks)
 			[ ! -z $redsocks2_login ] && {
-				echo "login = $redsocks2_login;" >> $CONFIG
-				echo "password = $redsocks2_password;" >> $CONFIG
+				echo "login = \"$redsocks2_login\";" >> $CFG_FILE
+				echo "password = \"$redsocks2_password\";" >> $CFG_FILE
 			}
 			;;
 		direct)
 			config_get interface "$cfg" 'interface'
-			[ ! -z $interface ] && echo "interface = $interface;" >> $CONFIG
+			[ ! -z $interface ] && echo "interface = $interface;" >> $CFG_FILE
 			;;
 	esac
-	echo "}" >> $CONFIG
+	echo "}" >> $CFG_FILE
 }
 
 #redsocks2 iptables流量劫持设定 CFG_TYPE=redsocks2_iptables
@@ -221,7 +217,7 @@ start() {
 	config_foreach gen_config_ipcache 'redsocks2_ipcache'
 	config_foreach gen_config_udprelay 'redsocks2_udprelay'
 
-	service_start /usr/sbin/redsocks2 -c $CONFIG
+	service_start /usr/sbin/redsocks2 -c $CFG_FILE -p $PID_FILE
 
 	config_foreach redsocks2_iptables_start_instance 'redsocks2_iptables'
 }
@@ -230,7 +226,7 @@ stop() {
 	config_load 'redsocks2'
 	config_foreach if_enabled 'redsocks2_base'
 
-	service_stop /usr/sbin/redsocks2
+	service_stop /usr/sbin/redsocks2 && rm -rf $PID_FILE
 
 	config_foreach redsocks2_iptables_stop_instance 'redsocks2_iptables'
 }

@@ -35,7 +35,7 @@ define Package/redsocks2/Default
 	DEPENDS:=$(3)
 endef
 
-Package/redsocks2-openssl = $(call Package/redsocks2/Default,openssl,(OpenSSL),+libevent2 +libopenssl)
+Package/redsocks2 = $(call Package/redsocks2/Default,openssl,(OpenSSL),+libevent2 +libopenssl)
 Package/redsocks2-polarssl = $(call Package/redsocks2/Default,polarssl,(PolarSSL),+libevent2 +libpolarssl)
 
 define Package/redsocks2/description
@@ -45,14 +45,12 @@ The name is changed to be REDSOCKS2 since this release to distinguish with origi
 This variant is useful for anti-GFW (Great Fire Wall).
 endef
 
-Package/redsocks2-openssl/description = $(Package/redsocks2/description)
 Package/redsocks2-polarssl/description = $(Package/redsocks2/description)
 
 define Package/redsocks2/conffiles
 /etc/config/redsocks2
 endef
 
-Package/redsocks2-openssl/conffiles = $(Package/redsocks2/conffiles)
 Package/redsocks2-polarssl/conffiles = $(Package/redsocks2/conffiles)
 
 define Package/redsocks2/postinst
@@ -70,7 +68,6 @@ fi
 exit 0
 endef
 
-Package/redsocks2-openssl/postinst = $(Package/redsocks2/postinst)
 Package/redsocks2-polarssl/postinst = $(Package/redsocks2/postinst)
 
 ifeq ($(BUILD_VARIANT),polarssl)
@@ -79,7 +76,7 @@ endif
 
 define Package/redsocks2/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/redsocks2 $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/redsocks2 $(1)/usr/sbin/redsocks2
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/redsocks2.config $(1)/etc/config/redsocks2
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -87,11 +84,10 @@ define Package/redsocks2/install
 	$(INSTALL_DIR) $(1)/usr/share/redsocks2
 	$(INSTALL_DATA) ./files/redsocks2.include $(1)/usr/share/redsocks2/firewall.include
 	$(INSTALL_DIR) $(1)/etc/redsocks2
-	$(INSTALL_DATA) ./files/redsocks2.example $(1)/etc/redsocks2/config.example
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/redsocks.conf.example $(1)/etc/redsocks2/config.example
 endef
 
-Package/redsocks2-openssl/install = $(Package/redsocks2/install)
 Package/redsocks2-polarssl/install = $(Package/redsocks2/install)
 
-$(eval $(call BuildPackage,redsocks2-openssl))
+$(eval $(call BuildPackage,redsocks2))
 $(eval $(call BuildPackage,redsocks2-polarssl))
