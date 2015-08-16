@@ -14,7 +14,7 @@ start() {
 }
 
 stop() {
-	# FIXED: something wrong with 'service_stop', if you cant stop, use killall instead.
-	# killall -SIGTERM Pcap_DNSProxy
+	# If you cant stop, use 'killall' instead.
+	# i.e. killall -SIGTERM Pcap_DNSProxy
 	service_stop /usr/sbin/Pcap_DNSProxy
 }

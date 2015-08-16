@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.3
+PKG_VERSION:=0.4.3.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=9b2ba31beb0ea4474851ad6c1fbb540dda2e4edb
+PKG_SOURCE_VERSION:=5268a5cf7841f8c6883caac405a14efcf6277e55
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -65,20 +65,17 @@ define Package/pcap-dnsproxy/conffiles
 /etc/pcap-dnsproxy/WhiteList.txt
 endef
 
-# disable auto boot cause we have NOT set anything.
-# When $IPKG_INSTROOT is defined, you run within the buildroot, if it is empty you run on the target.
 define Package/pcap-dnsproxy/postinst
 #!/bin/sh
 # check if we are on real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
-	echo "Removing rc.d symlink for pcap-dnsproxy"
-	echo "You should set configuration file(s) before creating rc.d symlink."
-	/etc/init.d/pcap-dnsproxy disable
+	echo "Be sure to set configuration file(s) before rebooting your router."
+	/etc/init.d/pcap-dnsproxy enable
 fi
 exit 0
 endef
 
-# Stop and disable service(removing rc.d symlink) before remove package
+# Stop and disable service(removing rc.d symlink) before removing
 define Package/pcap-dnsproxy/prerm
 #!/bin/sh
 # check if we are on real system
