@@ -1,16 +1,16 @@
 #
 # Copyright (C) 2015 OpenWrt-dist
 #
-# This is free software, licensed under the MIT.
-# See /LICENSE for more information.
+# This is free software, licensed under the GPLv3.
+# See /COPYING for more information.
 #
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ChinaDNS
 PKG_VERSION:=1.3.2
-PKG_RELEASE:=1
-PKG_REV:=cfadc894cff366fa2292877ae8b09b457c0cc66b
+PKG_RELEASE:=2
+PKG_REV:=9e4261c78e911851f76a9b9113d48fcdc44ce32e
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(PKG_REV)
@@ -44,14 +44,12 @@ endef
 
 define Package/ChinaDNS/conffiles
 /etc/config/chinadns
-/etc/chinadns_iplist.txt
 /etc/chinadns_chnroute.txt
 endef
 
 define Package/ChinaDNS/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/chinadns.init $(1)/etc/init.d/chinadns
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/iplist.txt $(1)/etc/chinadns_iplist.txt
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/chnroute.txt $(1)/etc/chinadns_chnroute.txt
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/chinadns.config $(1)/etc/config/chinadns
