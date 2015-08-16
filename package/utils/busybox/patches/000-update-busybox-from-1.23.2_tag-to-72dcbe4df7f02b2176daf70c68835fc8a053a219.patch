@@ -9,7 +9,7 @@
 +SUBLEVEL = 0
 +EXTRAVERSION = .git
  NAME = Unnamed
- 
+
  # *DOCUMENTATION*
 @@ -552,7 +552,7 @@ export	INSTALL_PATH ?= /boot
  #
@@ -18,11 +18,11 @@
 -# makefile but the arguement can be passed to make if needed.
 +# makefile but the argument can be passed to make if needed.
  #
- 
+
  MODLIB	= $(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)
 @@ -1165,24 +1165,7 @@ endif
  ALLSOURCE_ARCHS := $(ARCH)
- 
+
  define all-sources
 -	( find $(__srctree) $(RCS_FIND_IGNORE) \
 -	       \( -name include -o -name arch \) -prune -o \
@@ -44,7 +44,7 @@
 -	       -name '*.[chS]' -print )
 +	( find -regex '.*\.[ch]$$' )
  endef
- 
+
  quiet_cmd_cscope-file = FILELST cscope.files
 --- a/Makefile.custom
 +++ b/Makefile.custom
@@ -63,13 +63,13 @@
 +++ b/Makefile.flags
 @@ -163,7 +163,7 @@ SKIP_STRIP = y
  endif
- 
+
  ifneq ($(CONFIG_EXTRA_LDFLAGS),)
 -EXTRA_LDFLAGS += $(strip $(subst ",,$(CONFIG_EXTRA_LDFLAGS)))
 +LDFLAGS += $(strip $(subst ",,$(CONFIG_EXTRA_LDFLAGS)))
  #"))
  endif
- 
+
 --- a/README
 +++ b/README
 @@ -185,7 +185,7 @@ Supported hardware:
@@ -78,25 +78,25 @@
    work under ARM, CRIS, H8/300, x86, ia64, x86_64, m68k, MIPS, PowerPC, S390,
 -  SH3/4/5, Sparc, v850e, and x86_64.  Anything else probably won't work.
 +  SH3/4/5, Sparc, and v850e.  Anything else probably won't work.
- 
+
    The module loading mechanism for the 2.6 kernel is much more generic, and
    we believe 2.6.x kernel module loading support should work on all
 --- a/applets/install.sh
 +++ b/applets/install.sh
 @@ -5,19 +5,26 @@ export LC_CTYPE=POSIX
- 
+
  prefix=$1
  if [ -z "$prefix" ]; then
 -	echo "usage: applets/install.sh DESTINATION [--symlinks/--hardlinks/--scriptwrapper]"
 +	echo "usage: applets/install.sh DESTINATION [--symlinks/--hardlinks/--binaries/--scriptwrapper]"
  	exit 1
  fi
- 
+
 +# Source the configuration
 +. ./.config
 +
  h=`sort busybox.links | uniq`
- 
+
 +sharedlib_dir="0_lib"
 +
  linkopts=""
@@ -123,7 +123,7 @@
  	done
  fi
 @@ -68,6 +76,7 @@ install -m 755 busybox "$prefix/bin/busy
- 
+
  for i in $h; do
  	appdir=`dirname "$i"`
 +	app=`basename "$i"`
@@ -164,7 +164,7 @@
 +++ b/archival/dpkg.c
 @@ -1472,12 +1472,16 @@ static void init_archive_deb_control(arc
  	tar_handle->src_fd = ar_handle->src_fd;
- 
+
  	/* We don't care about data.tar.* or debian-binary, just control.tar.* */
 +	llist_add_to(&(ar_handle->accept), (char*)"control.tar");
  #if ENABLE_FEATURE_SEAMLESS_GZ
@@ -176,12 +176,12 @@
 +#if ENABLE_FEATURE_SEAMLESS_XZ
 +	llist_add_to(&(ar_handle->accept), (char*)"control.tar.xz");
 +#endif
- 
+
  	/* Assign the tar handle as a subarchive of the ar handle */
  	ar_handle->dpkg__sub_archive = tar_handle;
 @@ -1492,12 +1496,19 @@ static void init_archive_deb_data(archiv
  	tar_handle->src_fd = ar_handle->src_fd;
- 
+
  	/* We don't care about control.tar.* or debian-binary, just data.tar.* */
 +	llist_add_to(&(ar_handle->accept), (char*)"data.tar");
  #if ENABLE_FEATURE_SEAMLESS_GZ
@@ -196,7 +196,7 @@
 +#if ENABLE_FEATURE_SEAMLESS_XZ
 +	llist_add_to(&(ar_handle->accept), (char*)"data.tar.xz");
 +#endif
- 
+
  	/* Assign the tar handle as a subarchive of the ar handle */
  	ar_handle->dpkg__sub_archive = tar_handle;
 --- a/archival/dpkg_deb.c
@@ -204,7 +204,7 @@
 @@ -70,6 +70,8 @@ int dpkg_deb_main(int argc, char **argv)
  	ar_archive->dpkg__sub_archive = tar_archive;
  	ar_archive->filter = filter_accept_list_reassign;
- 
+
 +	llist_add_to(&ar_archive->accept, (char*)"data.tar");
 +	llist_add_to(&control_tar_llist, (char*)"control.tar");
  #if ENABLE_FEATURE_SEAMLESS_GZ
@@ -218,7 +218,7 @@
 +	llist_add_to(&ar_archive->accept, (char*)"data.tar.xz");
 +	llist_add_to(&control_tar_llist, (char*)"control.tar.xz");
 +#endif
- 
+
  	opt_complementary = "c--efXx:e--cfXx:f--ceXx:X--cefx:x--cefX";
  	opt = getopt32(argv, "cefXx");
 --- a/archival/gzip.c
@@ -237,10 +237,10 @@
 +//config:	  is 6. If levels 1-3 are specified, 4 is used.
 +//config:	  If this option is not selected, -N options are ignored and -9
 +//config:	  is used.
- 
+
  //applet:IF_GZIP(APPLET(gzip, BB_DIR_BIN, BB_SUID_DROP))
  //kbuild:lib-$(CONFIG_GZIP) += gzip.o
- 
+
  //usage:#define gzip_trivial_usage
 -//usage:       "[-cfd] [FILE]..."
 +//usage:       "[-cfd" IF_FEATURE_GZIP_LEVELS("123456789") "] [FILE]..."
@@ -255,7 +255,7 @@
 @@ -252,6 +265,8 @@ enum {
   * input file length plus MIN_LOOKAHEAD.
   */
- 
+
 +#ifndef ENABLE_FEATURE_GZIP_LEVELS
 +
  	max_chain_length = 4096,
@@ -267,10 +267,10 @@
   */
 +#endif /* ENABLE_FEATURE_GZIP_LEVELS */
  };
- 
- 
+
+
  struct globals {
- 
+
 +#ifdef ENABLE_FEATURE_GZIP_LEVELS
 +	unsigned max_chain_length;
 +	unsigned max_lazy_match;
@@ -283,7 +283,7 @@
 +#endif
 +
  	lng block_start;
- 
+
  /* window position at the beginning of the current output block. Gets
 @@ -417,19 +444,46 @@ static void flush_outbuf(void)
  #define put_8bit(c) \
@@ -293,7 +293,7 @@
 +	if (G1.outcnt == OUTBUFSIZ) \
 +		flush_outbuf(); \
  } while (0)
- 
+
  /* Output a 16 bit value, lsb first */
  static void put_16bit(ush w)
  {
@@ -337,7 +337,7 @@
 +		flush_outbuf();
 +	put_8bit(w);
  }
- 
+
  static void put_32bit(ulg n)
 @@ -1318,7 +1372,6 @@ static void build_tree(tree_desc * desc)
  		/* and insert the new node in the heap */
@@ -345,10 +345,10 @@
  		pqdownheap(tree, SMALLEST);
 -
  	} while (G2.heap_len >= 2);
- 
+
  	G2.heap[--G2.heap_max] = G2.heap[SMALLEST];
 @@ -1666,7 +1719,6 @@ static ulg flush_block(char *buf, ulg st
- 
+
  		copy_block(buf, (unsigned) stored_len, 0);	/* without header */
  		G2.compressed_len = stored_len << 3;
 -
@@ -357,7 +357,7 @@
  		/* The test buf != NULL is only necessary if LIT_BUFSIZE > WSIZE.
 @@ -1680,7 +1732,6 @@ static ulg flush_block(char *buf, ulg st
  		G2.compressed_len += (stored_len + 4) << 3;
- 
+
  		copy_block(buf, (unsigned) stored_len, 1);	/* with header */
 -
  	} else if (static_lenb == opt_lenb) {
@@ -366,19 +366,19 @@
 @@ -2007,7 +2058,7 @@ static void ct_init(void)
   * IN assertions: the input and output buffers are cleared.
   */
- 
+
 -static void zip(ulg time_stamp)
 +static void zip(void)
  {
  	ush deflate_flags = 0;  /* pkzip -es, -en or -ex equivalent */
- 
+
 @@ -2018,7 +2069,7 @@ static void zip(ulg time_stamp)
  	/* compression method: 8 (DEFLATED) */
  	/* general flags: 0 */
  	put_32bit(0x00088b1f);
 -	put_32bit(time_stamp);
 +	put_32bit(0);		/* Unix timestamp */
- 
+
  	/* Write deflated file to zip file */
  	G1.crc = ~0;
 @@ -2044,8 +2095,6 @@ static void zip(ulg time_stamp)
@@ -393,7 +393,7 @@
 @@ -2077,9 +2126,23 @@ IF_DESKTOP(long long) int FAST_FUNC pack
  	G2.bl_desc.max_length  = MAX_BL_BITS;
  	//G2.bl_desc.max_code    = 0;
- 
+
 +#if 0
 +	/* Saving of timestamp is disabled. Why?
 +	 * - it is not Y2038-safe.
@@ -413,7 +413,7 @@
 +#endif
  	return 0;
  }
- 
+
 @@ -2122,24 +2185,48 @@ int gzip_main(int argc UNUSED_PARAM, cha
  #endif
  {
@@ -436,7 +436,7 @@
 +
 +	SET_PTR_TO_GLOBALS((char *)xzalloc(sizeof(struct globals)+sizeof(struct globals2))
 +			+ sizeof(struct globals));
- 
+
  #if ENABLE_FEATURE_GZIP_LONG_OPTIONS
  	applet_long_options = gzip_longopts;
  #endif
@@ -469,13 +469,13 @@
 +	nice_match	 = gzip_level_config[opt].nice2 * 2;
 +#endif
 +	option_mask32 &= 0x7; /* retain only -cfv */
- 
+
  	/* Allocate all global buffers (for DYN_ALLOC option) */
  	ALLOC(uch, G1.l_buf, INBUFSIZ);
 @@ -2151,5 +2238,6 @@ int gzip_main(int argc UNUSED_PARAM, cha
  	/* Initialize the CRC32 table */
  	global_crc32_table = crc32_filltable(NULL, 0);
- 
+
 +	argv += optind;
  	return bbunpack(argv, pack_gzip, append_ext, "gz");
  }
@@ -492,11 +492,11 @@
  	get_header_tar_bz2.o \
  	get_header_tar_lzma.o \
 +	get_header_tar_xz.o \
- 
+
  INSERT
- 
+
 @@ -43,7 +45,7 @@ lib-$(CONFIG_DPKG_DEB)
- 
+
  lib-$(CONFIG_AR)                        += get_header_ar.o unpack_ar_archive.o
  lib-$(CONFIG_CPIO)                      += get_header_cpio.o
 -lib-$(CONFIG_TAR)                       += get_header_tar.o
@@ -512,7 +512,7 @@
 +lib-$(CONFIG_UNZIP)                     += open_transformer.o decompress_gunzip.o unsafe_prefix.o
  lib-$(CONFIG_RPM2CPIO)                  += open_transformer.o decompress_gunzip.o get_header_cpio.o
  lib-$(CONFIG_RPM)                       += open_transformer.o decompress_gunzip.o get_header_cpio.o
- 
+
 --- a/archival/libarchive/bz/compress.c
 +++ b/archival/libarchive/bz/compress.c
 @@ -385,7 +385,6 @@ void sendMTFValues(EState* s)
@@ -531,13 +531,13 @@
  		}
 -
  	} while (rsize > 0);
- 
+
  	if (outpos > 0) {
 --- a/archival/libarchive/filter_accept_list_reassign.c
 +++ b/archival/libarchive/filter_accept_list_reassign.c
 @@ -28,6 +28,10 @@ char FAST_FUNC filter_accept_list_reassi
  		name_ptr++;
- 
+
  		/* Modify the subarchive handler based on the extension */
 +		if (strcmp(name_ptr, "tar") == 0) {
 +			archive_handle->dpkg__action_data_subarchive = get_header_tar;
@@ -564,7 +564,7 @@
 @@ -37,7 +37,7 @@ char FAST_FUNC get_header_cpio(archive_h
  	}
  	archive_handle->offset += 110;
- 
+
 -	if (strncmp(&cpio_header[0], "07070", 5) != 0
 +	if (!is_prefixed_with(&cpio_header[0], "07070")
  	 || (cpio_header[5] != '1' && cpio_header[5] != '2')
@@ -575,7 +575,7 @@
 @@ -17,36 +17,6 @@
  typedef uint32_t aliased_uint32_t FIX_ALIASING;
  typedef off_t    aliased_off_t    FIX_ALIASING;
- 
+
 -
 -const char* FAST_FUNC strip_unsafe_prefix(const char *str)
 -{
@@ -611,7 +611,7 @@
  {
 @@ -135,7 +105,7 @@ static void process_pax_hdr(archive_hand
  		value = end + 1;
- 
+
  #if ENABLE_FEATURE_TAR_GNU_EXTENSIONS
 -		if (!global && strncmp(value, "path=", sizeof("path=") - 1) == 0) {
 +		if (!global && is_prefixed_with(value, "path=")) {
@@ -628,7 +628,7 @@
  			free(archive_handle->tar__sctx[global]);
  			archive_handle->tar__sctx[global] = xstrdup(value);
 @@ -232,7 +202,7 @@ char FAST_FUNC get_header_tar(archive_ha
- 
+
  	/* Check header has valid magic, "ustar" is for the proper tar,
  	 * five NULs are for the old tar format  */
 -	if (strncmp(tar.magic, "ustar", 5) != 0
@@ -708,11 +708,11 @@
 +++ b/archival/libarchive/lzo1x_9x.c
 @@ -71,7 +71,6 @@ typedef struct {
  	uint8_t *out;
- 
+
  	unsigned r1_lit;
 -
  } lzo1x_999_t;
- 
+
  #define getbyte(c)  ((c).ip < (c).in_end ? *((c).ip)++ : (-1))
 --- a/archival/libarchive/open_transformer.c
 +++ b/archival/libarchive/open_transformer.c
@@ -734,7 +734,7 @@
 +++ b/archival/libarchive/unpack_ar_archive.c
 @@ -12,7 +12,7 @@ void FAST_FUNC unpack_ar_archive(archive
  	char magic[7];
- 
+
  	xread(ar_archive->src_fd, magic, AR_MAGIC_LEN);
 -	if (strncmp(magic, AR_MAGIC, AR_MAGIC_LEN) != 0) {
 +	if (!is_prefixed_with(magic, AR_MAGIC)) {
@@ -794,7 +794,7 @@
  					s->lzma2.next_sequence
  							= SEQ_LZMA_PREPARE;
 @@ -1080,7 +1078,6 @@ XZ_EXTERN NOINLINE enum xz_ret XZ_FUNC x
- 
+
  				rc_reset(&s->rc);
  				s->lzma2.sequence = SEQ_CONTROL;
 -
@@ -805,11 +805,11 @@
 +++ b/archival/libarchive/unxz/xz_dec_stream.c
 @@ -353,7 +353,6 @@ static enum xz_ret XZ_FUNC crc32_validat
  			return XZ_DATA_ERROR;
- 
+
  		s->pos += 8;
 -
  	} while (s->pos < 32);
- 
+
  	s->crc32 = 0;
 @@ -753,7 +752,6 @@ XZ_EXTERN enum xz_ret XZ_FUNC xz_dec_run
  			b->in_pos = in_start;
@@ -824,7 +824,7 @@
 @@ -596,14 +596,17 @@ int unzip_main(int argc, char **argv)
  		/* Skip extra header bytes */
  		unzip_skip(zip_header.formatted.extra_len);
- 
+
 +		/* Guard against "/abspath", "/../" and similar attacks */
 +		overlapping_strcpy(dst_fn, strip_unsafe_prefix(dst_fn));
 +
@@ -918,12 +918,12 @@
  //usage:       "$ loadkmap < /etc/i18n/lang-keymap\n"
 @@ -56,7 +57,7 @@ int loadkmap_main(int argc UNUSED_PARAM,
  */
- 
+
  	xread(STDIN_FILENO, flags, 7);
 -	if (strncmp(flags, BINARY_KEYMAP_MAGIC, 7))
 +	if (!is_prefixed_with(flags, BINARY_KEYMAP_MAGIC))
  		bb_error_msg_and_die("not a valid binary keymap");
- 
+
  	xread(STDIN_FILENO, flags, MAX_NR_KEYMAPS);
 --- a/console-tools/showkey.c
 +++ b/console-tools/showkey.c
@@ -943,13 +943,13 @@
  	help
 -	  cal is used to display a monthly calender.
 +	  cal is used to display a monthly calendar.
- 
+
  config CATV
  	bool "catv"
 @@ -87,44 +87,6 @@ config CUT
  	  cut is used to print selected parts of lines from
  	  each file to stdout.
- 
+
 -config DD
 -	bool "dd"
 -	default y
@@ -994,7 +994,7 @@
 @@ -609,12 +571,6 @@ config SUM
  	help
  	  checksum and count the blocks in a file
- 
+
 -config SYNC
 -	bool "sync"
 -	default y
@@ -1003,6 +1003,21 @@
 -
  config TAC
  	bool "tac"
+ 	default y
+@@ -674,6 +630,14 @@ config UNAME
+ 	help
+ 	  uname is used to print system information.
+
++config UNAME_OSNAME
++	string "Operating system name"
++	default "GNU/Linux"
++	depends on UNAME
++	help
++	  Sets the operating system name reported by uname -o.  The
++	  default is "GNU/Linux".
++
+ config UNEXPAND
+ 	bool "unexpand"
  	default y
 --- a/coreutils/Kbuild.src
 +++ b/coreutils/Kbuild.src
@@ -1029,7 +1044,7 @@
 +++ b/coreutils/chown.c
 @@ -11,7 +11,7 @@
  /* http://www.opengroup.org/onlinepubs/007904975/utilities/chown.html */
- 
+
  //usage:#define chown_trivial_usage
 -//usage:       "[-RhLHP"IF_DESKTOP("cvf")"]... OWNER[<.|:>[GROUP]] FILE..."
 +//usage:       "[-Rh"IF_DESKTOP("LHPcvf")"]... OWNER[<.|:>[GROUP]] FILE..."
@@ -1052,7 +1067,7 @@
 @@ -8,6 +8,51 @@
   * Licensed under GPLv2 or later, see file LICENSE in this source tree.
   */
- 
+
 +//config:config DD
 +//config:	bool "dd"
 +//config:	default y
@@ -1118,7 +1133,7 @@
 @@ -50,26 +99,13 @@ enum {
  	ofd = STDOUT_FILENO,
  };
- 
+
 -static const struct suffix_mult dd_suffixes[] = {
 -	{ "c", 1 },
 -	{ "w", 2 },
@@ -1146,7 +1161,7 @@
 @@ -77,6 +113,21 @@ struct globals {
  	memset(&G, 0, sizeof(G)); \
  } while (0)
- 
+
 +enum {
 +	/* Must be in the same order as OP_conv_XXX! */
 +	/* (see "flags |= (1 << what)" below) */
@@ -1162,12 +1177,12 @@
 +	FLAG_STATUS_NONE = 1 << 7,
 +	FLAG_STATUS_NOXFER = 1 << 8,
 +};
- 
+
  static void dd_output_status(int UNUSED_PARAM cur_signal)
  {
 @@ -93,6 +144,13 @@ static void dd_output_status(int UNUSED_
  			G.out_full, G.out_part);
- 
+
  #if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 +# if ENABLE_FEATURE_DD_STATUS
 +	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
@@ -1301,7 +1316,7 @@
 +		}
 +#endif
  	} /* end of "for (argv[i])" */
- 
+
  //XXX:FIXME for huge ibs or obs, malloc'ing them isn't the brightest idea ever
 @@ -321,7 +380,7 @@ int dd_main(int argc UNUSED_PARAM, char
  	obuf = ibuf;
@@ -1315,26 +1330,26 @@
 @@ -341,12 +400,12 @@ int dd_main(int argc UNUSED_PARAM, char
  	if (outfile) {
  		int oflag = O_WRONLY | O_CREAT;
- 
+
 -		if (!seek && !(flags & FLAG_NOTRUNC))
 +		if (!seek && !(G.flags & FLAG_NOTRUNC))
  			oflag |= O_TRUNC;
- 
+
  		xmove_fd(xopen(outfile, oflag), ofd);
- 
+
 -		if (seek && !(flags & FLAG_NOTRUNC)) {
 +		if (seek && !(G.flags & FLAG_NOTRUNC)) {
  			if (ftruncate(ofd, seek * obs) < 0) {
  				struct stat st;
- 
+
 @@ -377,7 +436,7 @@ int dd_main(int argc UNUSED_PARAM, char
  			goto die_outfile;
  	}
- 
+
 -	while (!(flags & FLAG_COUNT) || (G.in_full + G.in_part != count)) {
 +	while (!(G.flags & FLAG_COUNT) || (G.in_full + G.in_part != count)) {
  		ssize_t n;
- 
+
  		n = safe_read(ifd, ibuf, ibs);
 @@ -385,7 +444,7 @@ int dd_main(int argc UNUSED_PARAM, char
  			break;
@@ -1353,7 +1368,7 @@
 +		if (G.flags & FLAG_SWAB) {
  			uint16_t *p16;
  			ssize_t n2;
- 
+
 @@ -419,12 +478,12 @@ int dd_main(int argc UNUSED_PARAM, char
  			G.in_full++;
  		else {
@@ -1372,27 +1387,27 @@
 @@ -446,7 +505,7 @@ int dd_main(int argc UNUSED_PARAM, char
  				goto out_status;
  		}
- 
+
 -		if (flags & FLAG_FSYNC) {
 +		if (G.flags & FLAG_FSYNC) {
  			if (fsync(ofd) < 0)
  				goto die_outfile;
  		}
 @@ -468,11 +527,12 @@ int dd_main(int argc UNUSED_PARAM, char
- 
+
  	exitcode = EXIT_SUCCESS;
   out_status:
 -	dd_output_status(0);
 +	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
 +		dd_output_status(0);
- 
+
  	if (ENABLE_FEATURE_CLEAN_UP) {
  		free(obuf);
 -		if (flags & FLAG_TWOBUFS)
 +		if (G.flags & FLAG_TWOBUFS)
  			free(ibuf);
  	}
- 
+
 --- a/coreutils/echo.c
 +++ b/coreutils/echo.c
 @@ -72,7 +72,7 @@ int echo_main(int argc UNUSED_PARAM, cha
@@ -1403,13 +1418,13 @@
 +		eflag = 0,  /* 0 -- disable escape sequences */
  		nflag = 1,  /* 1 -- print '\n' */
  	};
- 
+
 --- a/coreutils/false.c
 +++ b/coreutils/false.c
 @@ -10,11 +10,9 @@
  /* BB_AUDIT SUSv3 compliant */
  /* http://www.opengroup.org/onlinepubs/000095399/utilities/false.html */
- 
+
 -//usage:#define false_trivial_usage
 -//usage:       ""
 -//usage:#define false_full_usage "\n\n"
@@ -1425,11 +1440,11 @@
 +++ b/coreutils/ln.c
 @@ -134,7 +134,6 @@ int ln_main(int argc, char **argv)
  		}
- 
+
  		free(src_name);
 -
  	} while ((++argv)[1]);
- 
+
  	return status;
 --- a/coreutils/ls.c
 +++ b/coreutils/ls.c
@@ -1486,7 +1501,7 @@
  	// gcc is too dumb to initialize with constant stores,
  	// it copies initializer from rodata. Oh well.
 +	// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65410
- 
+
  	while (n_bytes--) {
  		unsigned masked_c = *(unsigned char *) block++;
 @@ -419,7 +419,7 @@ print_ascii(size_t n_bytes, const char *
@@ -1495,7 +1510,7 @@
  	// buf[N] pos:  01234 56789
 -	char buf[12] = "   x\0 0xx\0";
 +	char buf[12] = "   x\0 xxx\0";
- 
+
  	while (n_bytes--) {
  		const char *s;
 @@ -455,11 +455,9 @@ print_ascii(size_t n_bytes, const char *
@@ -1545,7 +1560,7 @@
   *
   * Licensed under GPLv2 or later, see file LICENSE in this source tree.
   */
- 
+
  /* BB_AUDIT SUSv3 N/A -- Matches GNU behavior. */
 +//config:config SYNC
 +//config:	bool "sync"
@@ -1562,7 +1577,7 @@
 +
 +//kbuild:lib-$(CONFIG_SYNC) += sync.o
 +//applet:IF_SYNC(APPLET_NOFORK(sync, sync, BB_DIR_BIN, BB_SUID_DROP, sync))
- 
+
  //usage:#define sync_trivial_usage
 -//usage:       ""
 +//usage:       ""IF_FEATURE_SYNC_FANCY("[-df] [FILE]...")
@@ -1575,9 +1590,9 @@
 +//usage:     "\n	-d	Avoid syncing metadata"
 +//usage:     "\n	-f	Sync filesystems underlying FILEs"
 +//usage:    )
- 
+
  #include "libbb.h"
- 
+
 @@ -21,10 +44,59 @@
  int sync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
  int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
@@ -1645,7 +1660,7 @@
 @@ -39,14 +39,9 @@
  //config:	help
  //config:	  Enable 64-bit support in test.
- 
+
 -/* "test --help" does not print help (POSIX compat), only "[ --help" does.
 - * We display "<applet> EXPRESSION ]" here (not "<applet> EXPRESSION")
 - * Unfortunately, it screws up generated BusyBox.html. TODO. */
@@ -1665,7 +1680,7 @@
 @@ -10,11 +10,9 @@
  /* BB_AUDIT SUSv3 compliant */
  /* http://www.opengroup.org/onlinepubs/007904975/utilities/true.html */
- 
+
 -//usage:#define true_trivial_usage
 -//usage:       ""
 -//usage:#define true_full_usage "\n\n"
@@ -1767,10 +1782,30 @@
 +
 +	return ret;
 +}
+--- a/coreutils/uname.c
++++ b/coreutils/uname.c
+@@ -74,7 +74,7 @@ typedef struct {
+ 	struct utsname name;
+ 	char processor[sizeof(((struct utsname*)NULL)->machine)];
+ 	char platform[sizeof(((struct utsname*)NULL)->machine)];
+-	char os[sizeof("GNU/Linux")];
++	char os[sizeof(CONFIG_UNAME_OSNAME)];
+ } uname_info_t;
+
+ static const char options[] ALIGN1 = "snrvmpioa";
+@@ -141,7 +141,7 @@ int uname_main(int argc UNUSED_PARAM, ch
+ #endif
+ 	strcpy(uname_info.processor, unknown_str);
+ 	strcpy(uname_info.platform, unknown_str);
+-	strcpy(uname_info.os, "GNU/Linux");
++	strcpy(uname_info.os, CONFIG_UNAME_OSNAME);
+ #if 0
+ 	/* Fedora does something like this */
+ 	strcpy(uname_info.processor, uname_info.name.machine);
 --- a/coreutils/uudecode.c
 +++ b/coreutils/uudecode.c
 @@ -46,7 +46,7 @@ static void FAST_FUNC read_stduu(FILE *s
- 
+
  		encoded_len = line[0] * 4 / 3;
  		/* Check that line is not too short. (we tolerate
 -		 * overly _long_ line to accomodate possible extra '`').
@@ -1781,7 +1816,7 @@
 @@ -110,10 +110,10 @@ int uudecode_main(int argc UNUSED_PARAM,
  		FILE *dst_stream;
  		int mode;
- 
+
 -		if (strncmp(line, "begin-base64 ", 13) == 0) {
 +		if (is_prefixed_with(line, "begin-base64 ")) {
  			line_ptr = line + 13;
@@ -1805,7 +1840,7 @@
 @@ -83,8 +83,8 @@ int who_main(int argc UNUSED_PARAM, char
  	if (opt & 2) // -H
  		printf("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST\n");
- 
+
 -	setutent();
 -	while ((ut = getutent()) != NULL) {
 +	setutxent();
@@ -1824,19 +1859,19 @@
 --- a/docs/cgi/env.html
 +++ b/docs/cgi/env.html
 @@ -38,7 +38,7 @@ fulfilled by the gateway program: <p>
- 
+
  </p><ul>
  <li> <a name="protocol"><code>SERVER_PROTOCOL</code></a> <p>
 -    The name and revision of the information protcol this request came
 +    The name and revision of the information protocol this request came
      in with. Format: protocol/revision </p><p>
- 
+
  </p></li><li> <code>SERVER_PORT</code>  <p>
 --- a/e2fsprogs/fsck.c
 +++ b/e2fsprogs/fsck.c
 @@ -199,7 +199,7 @@ static char *base_device(const char *dev
  	}
- 
+
  	/* Handle DAC 960 devices */
 -	if (strncmp(cp, "rd/", 3) == 0) {
 +	if (is_prefixed_with(cp, "rd/")) {
@@ -1878,7 +1913,7 @@
 +		cp[-1] = '\0';
  		return str;
  	}
- 
+
  	/* Now handle devfs /dev/disc or /dev/disk names */
 -	disk = 0;
 -	if (strncmp(cp, "discs/", 6) == 0)
@@ -42388,7 +42423,7 @@
 --- a/editors/awk.c
 +++ b/editors/awk.c
 @@ -1060,12 +1060,10 @@ static uint32_t next_token(uint32_t expe
- 
+
  	if (t_rollback) {
  		t_rollback = FALSE;
 -
@@ -42455,7 +42490,7 @@
  			rollback_token();
 @@ -1879,13 +1870,10 @@ static void handle_special(var *v)
  		split_f0();
- 
+
  		mk_splitter(getvar_s(v), &fsplitter);
 -
  	} else if (v == intvar[RS]) {
@@ -42471,7 +42506,7 @@
 +++ b/editors/diff.c
 @@ -363,7 +363,7 @@ static void stone(const int *a, int n, c
  }
- 
+
  struct line {
 -	/* 'serial' is not used in the begining, so we reuse it
 +	/* 'serial' is not used in the beginning, so we reuse it
@@ -42480,13 +42515,13 @@
  	union {
 @@ -658,8 +658,8 @@ static bool diff(FILE* fp[2], char *file
  				}
- 
+
  				for (j = 0; j < 2; j++)
 -					for (k = v[j].a; k < v[j].b; k++)
 -						nonempty |= (ix[j][k+1] - ix[j][k] != 1);
 +					for (k = v[j].a; k <= v[j].b; k++)
 +						nonempty |= (ix[j][k] - ix[j][k - 1] != 1);
- 
+
  				vec = xrealloc_vector(vec, 6, ++idx);
  				memcpy(vec[idx], v, sizeof(v));
 @@ -740,9 +740,10 @@ static int diffreg(char *file[2])
@@ -42509,7 +42544,7 @@
  		bufPtr = bufBase;
 -
  	} while (cc > 0);
- 
+
  	if (cc < 0) {
 --- a/editors/patch.c
 +++ b/editors/patch.c
@@ -42519,31 +42554,31 @@
  // state 3: In hunk: getting body
 +// Like GNU patch, we don't require a --- line before the +++, and
 +// also allow the --- after the +++ line.
- 
+
  int patch_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
  int patch_main(int argc UNUSED_PARAM, char **argv)
 @@ -412,7 +414,7 @@ int patch_main(int argc UNUSED_PARAM, ch
  		}
- 
+
  		// Open a new file?
 -		if (!strncmp("--- ", patchline, 4) || !strncmp("+++ ", patchline, 4)) {
 +		if (is_prefixed_with(patchline, "--- ") || is_prefixed_with(patchline, "+++ ")) {
  			char *s, **name = reverse ? &newname : &oldname;
  			int i;
- 
+
 @@ -444,7 +446,7 @@ int patch_main(int argc UNUSED_PARAM, ch
- 
+
  		// Start a new hunk?  Usually @@ -oldline,oldlen +newline,newlen @@
  		// but a missing ,value means the value is 1.
 -		} else if (state == 1 && !strncmp("@@ -", patchline, 4)) {
 +		} else if (state == 1 && is_prefixed_with(patchline, "@@ -")) {
  			int i;
  			char *s = patchline+4;
- 
+
 @@ -462,6 +464,14 @@ int patch_main(int argc UNUSED_PARAM, ch
  			TT.context = 0;
  			state = 2;
- 
+
 +			// If the --- line is missing or malformed, either oldname
 +			// or (for -R) newname could be NULL -- but not both.  Like
 +			// GNU patch, proceed based on the +++ line, and avoid SEGVs.
@@ -42563,7 +42598,7 @@
   * http://pubs.opengroup.org/onlinepubs/9699919799/utilities/sed.html
 + * http://sed.sourceforge.net/sedfaq3.html
   */
- 
+
  //config:config SED
 @@ -109,7 +110,8 @@ typedef struct sed_cmd_s {
  	regex_t *sub_match;     /* For 's/sub_match/string/' */
@@ -42572,12 +42607,12 @@
 -	int end_line;           /* 'sed 1,3p' 0 == one line only. -1 = last line ($) */
 +	int end_line;           /* 'sed 1,3p' 0 == one line only. -1 = last line ($). -2-N = +N */
 +	int end_line_orig;
- 
+
  	FILE *sw_file;          /* File (sw) command writes to, -1 for none. */
  	char *string;           /* Data string for (saicytb) commands. */
 @@ -640,10 +642,29 @@ static void add_cmd(const char *cmdstr)
  			int idx;
- 
+
  			cmdstr++;
 -			idx = get_address(cmdstr, &sed_cmd->end_line, &sed_cmd->end_match);
 -			if (!idx)
@@ -42606,11 +42641,11 @@
 -			cmdstr += idx;
 +			sed_cmd->end_line_orig = sed_cmd->end_line;
  		}
- 
+
  		/* skip whitespace before the command */
 @@ -1089,10 +1110,19 @@ static void process_files(void)
  		/* Is this line the end of the current match? */
- 
+
  		if (matched) {
 +			if (sed_cmd->end_line <= -2) {
 +				/* address2 is +N, i.e. N lines from beg_line */
@@ -42631,7 +42666,7 @@
 @@ -1551,9 +1581,10 @@ int sed_main(int argc UNUSED_PARAM, char
  			free(G.outname);
  			G.outname = NULL;
- 
+
 -			/* Re-enable disabled range matches */
 +			/* Fix disabled range matches and mangled ",+N" ranges */
  			for (sed_cmd = G.sed_cmd_head; sed_cmd; sed_cmd = sed_cmd->next) {
@@ -42674,7 +42709,7 @@
  			uintptr_t ofs = q - text;
  			size = file_insert(fn, q, 0);
 @@ -1680,10 +1683,10 @@ static char *dollar_line(char *p) // ret
- 
+
  static char *prev_line(char *p) // return pointer first char prev line
  {
 -	p = begin_line(p);	// goto begining of cur line
@@ -42685,16 +42720,16 @@
 +	p = begin_line(p);	// goto beginning of prev line
  	return p;
  }
- 
+
 @@ -1731,7 +1734,7 @@ static int count_lines(char *start, char
  	return cnt;
  }
- 
+
 -static char *find_line(int li)	// find begining of line #li
 +static char *find_line(int li)	// find beginning of line #li
  {
  	char *q;
- 
+
 @@ -2013,8 +2016,7 @@ static char *char_insert(char *p, char c
  			p--;
  		}
@@ -42708,7 +42743,7 @@
 @@ -3354,7 +3356,7 @@ static void refresh(int full_screen)
  			tp = t + 1;
  		}
- 
+
 -		// see if there are any changes between vitual screen and out_buf
 +		// see if there are any changes between virtual screen and out_buf
  		changed = FALSE;	// assume no change
@@ -42773,7 +42808,7 @@
 @@ -29,4 +29,6 @@ else
  	LDLIBS="dl m c gcc"
  fi
- 
+
 +# It's possible with newer version
 +# you need to use CFLAGS_busybox instead of EXTRA_LDFLAGS below:
  make EXTRA_LDFLAGS="$LDFLAGS" LDLIBS="$LDLIBS" "$@"
@@ -42782,7 +42817,7 @@
 @@ -19,7 +19,7 @@
  # support module loading on hotplug
  $MODALIAS=.*	root:root 660 @modprobe "$MODALIAS"
- 
+
 -# null may already exist; therefore ownership has to be changed with command
 +# null may already exist; therefore mode has to be changed with command
  null		root:root 666 @chmod 666 $MDEV
@@ -42807,7 +42842,7 @@
 +snd/midi.*	root:audio 660
 +snd/seq		root:audio 660
 +snd/timer	root:audio 660
- 
+
  adsp		root:audio 660 >sound/
  audio		root:audio 660 >sound/
 @@ -139,6 +145,6 @@ dahdi!(.*)	root:dialout 660 =dahdi/%1
@@ -42821,9 +42856,9 @@
 --- a/examples/var_service/ntpd/ntp.script
 +++ b/examples/var_service/ntpd/ntp.script
 @@ -10,12 +10,30 @@
- 
+
  dt=`date '+%Y-%m-%d %H:%M:%S'`
- 
+
 +echo "`tail -n 199 -- "$0.log" 2>/dev/null`" >"$0.log.$$"
 +
 +if test x"$1" = x"unsync" \
@@ -42855,7 +42890,7 @@
 @@ -27,7 +45,6 @@ if test x"$stratum" != x"" \
  	exec hwclock --systohc
  fi
- 
+
 -echo "`tail -n 199 -- "$0.log" 2>/dev/null`" >"$0.log.$$"
  echo "$dt: $1"\
  	"freq_drift_ppm=$freq_drift_ppm"\
@@ -42871,7 +42906,7 @@
 +			status |= EXIT_FAILURE;
  		}
  	}
- 
+
 -	IF_FEATURE_FIND_EXEC_PLUS(status = flush_exec_plus();)
 -out:
 +	IF_FEATURE_FIND_EXEC_PLUS(status |= flush_exec_plus();)
@@ -42905,7 +42940,7 @@
  char get_header_tar_bz2(archive_handle_t *archive_handle) FAST_FUNC;
  char get_header_tar_lzma(archive_handle_t *archive_handle) FAST_FUNC;
 +char get_header_tar_xz(archive_handle_t *archive_handle) FAST_FUNC;
- 
+
  void seek_by_jump(int fd, off_t amount) FAST_FUNC;
  void seek_by_read(int fd, off_t amount) FAST_FUNC;
 --- a/include/grp_.h
@@ -42927,11 +42962,11 @@
 -#define fgetgrent_r  bb_internal_fgetgrent_r
  #define getgrouplist bb_internal_getgrouplist
  #define initgroups   bb_internal_initgroups
- 
+
 -
  /* All function names below should be remapped by #defines above
   * in order to not collide with libc names. */
- 
+
 -
 -/* Rewind the group-file stream.  */
 -extern void setgrent(void);
@@ -42951,17 +42986,17 @@
 -		FILE *__restrict __f);
 -#endif
 +void FAST_FUNC endgrent(void);
- 
+
  /* Search for an entry with a matching group ID.  */
 -extern struct group *getgrgid(gid_t __gid);
 +struct group* FAST_FUNC getgrgid(gid_t __gid);
- 
+
  /* Search for an entry with a matching group name.  */
 -extern struct group *getgrnam(const char *__name);
 -
 -/* Reentrant versions of some of the functions above.
 +struct group* FAST_FUNC getgrnam(const char *__name);
- 
+
 -   PLEASE NOTE: the `getgrent_r' function is not (yet) standardized.
 -   The interface may change in later versions of this library.  But
 -   the interface is designed following the principals used for the
@@ -42990,22 +43025,22 @@
 -		char *__restrict __buffer, size_t __buflen,
 -		struct group **__restrict __result);
 +/* Reentrant versions of some of the functions above. */
- 
+
  /* Store at most *NGROUPS members of the group set for USER into
     *GROUPS.  Also include GROUP.  The actual number of groups found is
     returned in *NGROUPS.  Return -1 if the if *NGROUPS is too small.  */
 -extern int getgrouplist(const char *__user, gid_t __group,
 +int FAST_FUNC getgrouplist(const char *__user, gid_t __group,
  		gid_t *__groups, int *__ngroups);
- 
+
  /* Initialize the group set for the current user
     by reading the group database and using all groups
     of which USER is a member.  Also include GROUP.  */
 -extern int initgroups(const char *__user, gid_t __group);
 +int FAST_FUNC initgroups(const char *__user, gid_t __group);
- 
+
  POP_SAVED_FUNCTION_VISIBILITY
- 
+
 --- a/include/libbb.h
 +++ b/include/libbb.h
 @@ -84,7 +84,30 @@
@@ -43045,11 +43080,11 @@
  char *last_char_is(const char *s, int c) FAST_FUNC;
  const char* endofname(const char *name) FAST_FUNC;
 +char *is_prefixed_with(const char *string, const char *key) FAST_FUNC;
- 
+
  int ndelay_on(int fd) FAST_FUNC;
  int ndelay_off(int fd) FAST_FUNC;
 @@ -649,6 +673,7 @@ uint16_t inet_cksum(uint16_t *addr, int
- 
+
  char *xstrdup(const char *s) FAST_FUNC RETURNS_MALLOC;
  char *xstrndup(const char *s, int n) FAST_FUNC RETURNS_MALLOC;
 +void *xmemdup(const void *s, int n) FAST_FUNC RETURNS_MALLOC;
@@ -43057,8 +43092,8 @@
  char *safe_strncpy(char *dst, const char *src, size_t size) FAST_FUNC;
  char *strncpy_IFNAMSIZ(char *dst, const char *src) FAST_FUNC;
 @@ -712,7 +737,7 @@ void* xrealloc_vector_helper(void *vecto
- 
- 
+
+
  extern ssize_t safe_read(int fd, void *buf, size_t count) FAST_FUNC;
 -extern ssize_t nonblock_immune_read(int fd, void *buf, size_t count, int loop_on_EINTR) FAST_FUNC;
 +extern ssize_t nonblock_immune_read(int fd, void *buf, size_t count) FAST_FUNC;
@@ -43071,7 +43106,7 @@
  #define km_suffixes (bkm_suffixes + 1)
 +extern const struct suffix_mult cwbkMG_suffixes[];
 +#define kMG_suffixes (cwbkMG_suffixes + 3)
- 
+
  #include "xatonum.h"
  /* Specialized: */
 @@ -921,9 +948,11 @@ void die_if_bad_username(const char* nam
@@ -43084,8 +43119,8 @@
  # define update_utmp(pid, new_type, tty_name, username, hostname) ((void)0)
 +# define update_utmp_DEAD_PROCESS(pid) ((void)0)
  #endif
- 
- 
+
+
 --- a/include/platform.h
 +++ b/include/platform.h
 @@ -217,6 +217,7 @@ typedef uint64_t bb__aliased_uint64_t FI
@@ -43119,7 +43154,7 @@
  #define HAVE_STRSEP 1
 @@ -450,6 +454,8 @@ typedef unsigned smalluint;
  #endif
- 
+
  #if defined(__FreeBSD__)
 +/* users say mempcpy is not present in FreeBSD 9.x */
 +# undef HAVE_MEMPCPY
@@ -43128,7 +43163,7 @@
  # undef HAVE_MNTENT_H
 @@ -474,9 +480,17 @@ typedef unsigned smalluint;
  #endif
- 
+
  #if defined(ANDROID) || defined(__ANDROID__)
 -# undef HAVE_DPRINTF
 -# undef HAVE_GETLINE
@@ -43150,7 +43185,7 @@
 @@ -500,6 +514,11 @@ extern void *memrchr(const void *s, int
  extern char *mkdtemp(char *template) FAST_FUNC;
  #endif
- 
+
 +#ifndef HAVE_TTYNAME_R
 +#define ttyname_r bb_ttyname_r
 +extern int ttyname_r(int fd, char *buf, size_t buflen);
@@ -43162,7 +43197,7 @@
 @@ -513,6 +532,18 @@ typedef void (*sighandler_t)(int);
  extern char *stpcpy(char *p, const char *to_add) FAST_FUNC;
  #endif
- 
+
 +#ifndef HAVE_MEMPCPY
 +#include <string.h>
 +/* In case we are wrong about !HAVE_MEMPCPY, and toolchain _does_ have
@@ -43193,19 +43228,19 @@
  #define getpwnam_r  bb_internal_getpwnam_r
 -#define fgetpwent_r bb_internal_fgetpwent_r
 -
- 
+
  /* All function names below should be remapped by #defines above
   * in order to not collide with libc names. */
- 
+
 -
  /* Rewind the password-file stream.  */
 -extern void setpwent(void);
 +void FAST_FUNC setpwent(void);
- 
+
  /* Close the password-file stream.  */
 -extern void endpwent(void);
 +void FAST_FUNC endpwent(void);
- 
+
 -#ifdef UNUSED_SINCE_WE_AVOID_STATIC_BUFS
  /* Read an entry from the password-file stream, opening it if necessary.  */
 -extern struct passwd *getpwent(void);
@@ -43218,11 +43253,11 @@
 -		FILE *__restrict __f);
 -#endif
 +struct passwd* FAST_FUNC getpwent(void);
- 
+
  /* Search for an entry with a matching user ID.  */
 -extern struct passwd *getpwuid(uid_t __uid);
 +struct passwd* FAST_FUNC getpwuid(uid_t __uid);
- 
+
  /* Search for an entry with a matching username.  */
 -extern struct passwd *getpwnam(const char *__name);
 -
@@ -43248,7 +43283,7 @@
 -		char *__restrict __buffer, size_t __buflen,
 -		struct passwd **__restrict __result);
 +struct passwd* FAST_FUNC getpwnam(const char *__name);
- 
+
 -/* Read an entry from STREAM.  This function is not standardized and
 -   probably never will.  */
 -extern int fgetpwent_r(FILE *__restrict __stream,
@@ -43260,53 +43295,53 @@
 --- a/include/shadow_.h
 +++ b/include/shadow_.h
 @@ -57,48 +57,48 @@ struct spwd {
- 
+
  #ifdef UNUSED_FOR_NOW
  /* Open database for reading */
 -extern void setspent(void);
 +void FAST_FUNC setspent(void);
- 
+
  /* Close database */
 -extern void endspent(void);
 +void FAST_FUNC endspent(void);
- 
+
  /* Get next entry from database, perhaps after opening the file */
 -extern struct spwd *getspent(void);
 +struct spwd* FAST_FUNC getspent(void);
- 
+
  /* Get shadow entry matching NAME */
 -extern struct spwd *getspnam(const char *__name);
 +struct spwd* FAST_FUNC getspnam(const char *__name);
- 
+
  /* Read shadow entry from STRING */
 -extern struct spwd *sgetspent(const char *__string);
 +struct spwd* FAST_FUNC sgetspent(const char *__string);
- 
+
  /* Read next shadow entry from STREAM */
 -extern struct spwd *fgetspent(FILE *__stream);
 +struct spwd* FAST_FUNC fgetspent(FILE *__stream);
- 
+
  /* Write line containing shadow password entry to stream */
 -extern int putspent(const struct spwd *__p, FILE *__stream);
 +int FAST_FUNC putspent(const struct spwd *__p, FILE *__stream);
- 
+
  /* Reentrant versions of some of the functions above */
 -extern int getspent_r(struct spwd *__result_buf, char *__buffer,
 +int FAST_FUNC getspent_r(struct spwd *__result_buf, char *__buffer,
  		size_t __buflen, struct spwd **__result);
  #endif
- 
+
 -extern int getspnam_r(const char *__name, struct spwd *__result_buf,
 +int FAST_FUNC getspnam_r(const char *__name, struct spwd *__result_buf,
  		char *__buffer, size_t __buflen,
  		struct spwd **__result);
- 
+
  #ifdef UNUSED_FOR_NOW
 -extern int sgetspent_r(const char *__string, struct spwd *__result_buf,
 +int FAST_FUNC sgetspent_r(const char *__string, struct spwd *__result_buf,
  		char *__buffer, size_t __buflen,
  		struct spwd **__result);
- 
+
 -extern int fgetspent_r(FILE *__stream, struct spwd *__result_buf,
 +int FAST_FUNC fgetspent_r(FILE *__stream, struct spwd *__result_buf,
  		char *__buffer, size_t __buflen,
@@ -43314,17 +43349,17 @@
  /* Protect password file against multi writers */
 -extern int lckpwdf(void);
 +int FAST_FUNC lckpwdf(void);
- 
+
  /* Unlock password file */
 -extern int ulckpwdf(void);
 +int FAST_FUNC ulckpwdf(void);
  #endif
- 
+
  POP_SAVED_FUNCTION_VISIBILITY
 --- a/init/halt.c
 +++ b/init/halt.c
 @@ -74,7 +74,7 @@
- 
+
  static void write_wtmp(void)
  {
 -	struct utmp utmp;
@@ -43345,7 +43380,7 @@
 +++ b/init/init.c
 @@ -538,11 +538,7 @@ static struct init_action *mark_terminat
  	struct init_action *a;
- 
+
  	if (pid > 0) {
 -		update_utmp(pid, DEAD_PROCESS,
 -				/*tty_name:*/ NULL,
@@ -43382,7 +43417,7 @@
  		}
 -
  	} /* while (1) */
- 
+
   pe_label:
 @@ -631,7 +630,7 @@ static int busybox_main(char **argv)
  		full_write2_str(bb_banner); /* reuse const string */
@@ -43396,7 +43431,7 @@
 @@ -673,7 +672,7 @@ static int busybox_main(char **argv)
  		return 0;
  	}
- 
+
 -	if (strncmp(argv[1], "--list", 6) == 0) {
 +	if (is_prefixed_with(argv[1], "--list")) {
  		unsigned i = 0;
@@ -43405,7 +43440,7 @@
 @@ -748,23 +747,25 @@ void FAST_FUNC run_applet_no_and_exit(in
  	xfunc_error_retval = EXIT_FAILURE;
  	applet_name = APPLET_NAME(applet_no);
- 
+
 -#if defined APPLET_NO_test
  	/* Special case. POSIX says "test --help"
  	 * should be no different from e.g. "test --foo".
@@ -43446,9 +43481,9 @@
 +	if (is_prefixed_with(name, "busybox"))
  		exit(busybox_main(argv));
  }
- 
+
 @@ -817,7 +818,7 @@ int main(int argc UNUSED_PARAM, char **a
- 
+
  #if defined(SINGLE_APPLET_MAIN)
  	/* Only one applet is selected in .config */
 -	if (argv[1] && strncmp(argv[0], "busybox", 7) == 0) {
@@ -43546,9 +43581,9 @@
 --- a/libbb/compare_string_array.c
 +++ b/libbb/compare_string_array.c
 @@ -5,6 +5,24 @@
- 
+
  #include "libbb.h"
- 
+
 +char* FAST_FUNC is_prefixed_with(const char *string, const char *key)
 +{
 +#if 0	/* Two passes over key - probably slower */
@@ -43587,11 +43622,11 @@
 +++ b/libbb/in_ether.c
 @@ -51,7 +51,6 @@ int FAST_FUNC in_ether(const char *bufp,
  		} while (j);
- 
+
  		*ptr++ = val;
 -
  	} while (--i);
- 
+
  	/* Error if we aren't at end of string */
 --- a/libbb/inet_common.c
 +++ b/libbb/inet_common.c
@@ -43632,8 +43667,8 @@
  	memcpy(&s_in->sin_addr, hp->h_addr_list[0], sizeof(struct in_addr));
 @@ -74,7 +72,7 @@ int FAST_FUNC INET_resolve(const char *n
  }
- 
- 
+
+
 -/* numeric: & 0x8000: default instead of *,
 +/* numeric: & 0x8000: "default" instead of "*",
   *          & 0x4000: host instead of net,
@@ -43650,14 +43685,14 @@
  		char name[1];
  	};
  	static struct addr *cache = NULL;
- 
+
  	struct addr *pn;
  	char *name;
 -	uint32_t ad, host_ad;
 -	int host = 0;
 +	uint32_t nip;
 +	smallint is_host;
- 
+
  	if (s_in->sin_family != AF_INET) {
  #ifdef DEBUG
 @@ -102,61 +100,57 @@ char* FAST_FUNC INET_rresolve(struct soc
@@ -43687,7 +43722,7 @@
 +	}
 +
 +	is_host = ((nip & (~netmask)) != 0 || (numeric & 0x4000));
- 
+
 -	if ((ad & (~netmask)) != 0 || (numeric & 0x4000))
 -		host = 1;
  	pn = cache;
@@ -43703,7 +43738,7 @@
  		}
  		pn = pn->next;
  	}
- 
+
 -	host_ad = ntohl(ad);
  	name = NULL;
 -	if (host) {
@@ -43743,9 +43778,9 @@
 +
  	return name;
  }
- 
+
 @@ -188,9 +182,6 @@ int FAST_FUNC INET6_resolve(const char *
- 
+
  char* FAST_FUNC INET6_rresolve(struct sockaddr_in6 *sin6, int numeric)
  {
 -	char name[128];
@@ -43767,7 +43802,7 @@
 @@ -209,15 +199,7 @@ char* FAST_FUNC INET6_rresolve(struct so
  		return xstrdup("*");
  	}
- 
+
 -	s = getnameinfo((struct sockaddr *) sin6, sizeof(*sin6),
 -				name, sizeof(name),
 -				/*serv,servlen:*/ NULL, 0,
@@ -43779,7 +43814,7 @@
 -	return xstrdup(name);
 +	return xmalloc_sockaddr2host_noport((void*)sin6);
  }
- 
+
  #endif  /* CONFIG_FEATURE_IPV6 */
 --- a/libbb/lineedit.c
 +++ b/libbb/lineedit.c
@@ -43793,10 +43828,10 @@
 -	struct passwd *result;
 +	struct passwd *pw;
  	unsigned userlen;
- 
+
  	ud++; /* skip ~ */
  	userlen = strlen(ud);
- 
+
  	setpwent();
 -	while (!getpwent_r(&pwd, line_buff, sizeof(line_buff), &result)) {
 +	while ((pw = getpwent()) != NULL) {
@@ -43809,7 +43844,7 @@
  	}
 -	endpwent();
 +	endpwent(); /* don't keep password file open */
- 
+
  	return 1 + userlen;
  }
 @@ -795,7 +792,7 @@ static NOINLINE unsigned complete_cmd_di
@@ -43819,7 +43854,7 @@
 -			if (strncmp(name_found, pfind, pf_len) != 0)
 +			if (!is_prefixed_with(name_found, pfind))
  				continue; /* no */
- 
+
  			found = concat_path_file(paths[i], name_found);
 @@ -1882,15 +1879,16 @@ static void parse_and_put_prompt(const c
  						cwd_buf = xrealloc_getcwd_or_warn(NULL);
@@ -43871,13 +43906,13 @@
  {
  	int match = 1;
 -	int len;
- 
+
  	if (!t_fstype)
  		return match;
 @@ -27,10 +26,10 @@ int FAST_FUNC match_fstype(const struct
  		t_fstype += 2;
  	}
- 
+
 -	len = strlen(mt->mnt_type);
  	while (1) {
 -		if (strncmp(mt->mnt_type, t_fstype, len) == 0
@@ -43930,10 +43965,10 @@
 @@ -205,11 +205,11 @@ int FAST_FUNC procps_read_smaps(pid_t pi
  		// Rss:                 nnn kB
  		// .....
- 
+
 -		char *tp = buf, *p;
 +		char *tp, *p;
- 
+
  #define SCAN(S, X) \
 -		if (strncmp(tp, S, sizeof(S)-1) == 0) {              \
 -			tp = skip_whitespace(tp + sizeof(S)-1);      \
@@ -43991,7 +44026,7 @@
  {
  	struct pollfd pfd[1];
  	ssize_t n;
- 
+
  	while (1) {
 -		n = loop_on_EINTR ? safe_read(fd, buf, count) : read(fd, buf, count);
 +		n = safe_read(fd, buf, count);
@@ -44005,7 +44040,7 @@
 +		safe_poll(pfd, 1, -1);
  	}
  }
- 
+
 @@ -81,7 +81,7 @@ char* FAST_FUNC xmalloc_reads(int fd, si
  			p = buf + sz;
  			sz += 128;
@@ -44019,7 +44054,7 @@
 +++ b/libbb/rtc.c
 @@ -22,7 +22,7 @@ int FAST_FUNC rtc_adjtime_is_utc(void)
  		char buffer[128];
- 
+
  		while (fgets(buffer, sizeof(buffer), f)) {
 -			if (strncmp(buffer, "UTC", 3) == 0) {
 +			if (is_prefixed_with(buffer, "UTC")) {
@@ -44029,7 +44064,7 @@
 --- a/libbb/skip_whitespace.c
 +++ b/libbb/skip_whitespace.c
 @@ -33,7 +33,7 @@ char* FAST_FUNC skip_non_whitespace(cons
- 
+
  char* FAST_FUNC skip_dev_pfx(const char *tty_name)
  {
 -	if (strncmp(tty_name, "/dev/", 5) == 0)
@@ -44042,12 +44077,12 @@
 @@ -62,6 +62,8 @@ static void check_selinux_update_passwd(
      only if CONFIG_PASSWD=y and applet_name[0] == 'p' like in passwd
      or if CONFIG_CHPASSWD=y and applet_name[0] == 'c' like in chpasswd
- 
+
 + 8) delete a user from all groups: update_passwd(FILE, NULL, NULL, MEMBER)
 +
   This function does not validate the arguments fed to it
   so the calling program should take care of that.
- 
+
 @@ -82,7 +84,6 @@ int FAST_FUNC update_passwd(const char *
  	char *fnamesfx;
  	char *sfx_char;
@@ -44059,18 +44094,18 @@
 @@ -99,13 +100,13 @@ int FAST_FUNC update_passwd(const char *
  	if (filename == NULL)
  		return ret;
- 
+
 -	check_selinux_update_passwd(name);
 +	if (name)
 +		check_selinux_update_passwd(name);
- 
+
  	/* New passwd file, "/etc/passwd+" for now */
  	fnamesfx = xasprintf("%s+", filename);
  	sfx_char = &fnamesfx[strlen(fnamesfx)-1];
 -	name_colon = xasprintf("%s:", name);
 -	user_len = strlen(name_colon);
 +	name_colon = xasprintf("%s:", name ? name : "");
- 
+
  	if (shadow)
  		old_fp = fopen(filename, "r+");
 @@ -167,13 +168,45 @@ int FAST_FUNC update_passwd(const char *
@@ -44114,28 +44149,28 @@
  			fprintf(new_fp, "%s\n", line);
  			goto next;
  		}
- 
+
  		/* We have a match with "name:"... */
 -		cp = line + user_len; /* move past name: */
 +		/* cp points past "name:" */
- 
+
  #if ENABLE_FEATURE_ADDUSER_TO_GROUP || ENABLE_FEATURE_DEL_USER_FROM_GROUP
  		if (member) {
 --- a/libbb/utmp.c
 +++ b/libbb/utmp.c
 @@ -16,7 +16,7 @@ static void touch(const char *filename)
- 
+
  void FAST_FUNC write_new_utmp(pid_t pid, int new_type, const char *tty_name, const char *username, const char *hostname)
  {
 -	struct utmp utent;
 +	struct utmpx utent;
  	char *id;
  	unsigned width;
- 
+
 @@ -45,17 +45,17 @@ void FAST_FUNC write_new_utmp(pid_t pid,
  		tty_name += 3;
  	strncpy(id, tty_name, width);
- 
+
 -	touch(_PATH_UTMP);
 -	//utmpname(_PATH_UTMP);
 -	setutent();
@@ -44147,7 +44182,7 @@
 -	endutent();
 +	pututxline(&utent);
 +	endutxent();
- 
+
  #if ENABLE_FEATURE_WTMP
  	/* "man utmp" says wtmp file should *not* be created automagically */
  	/*touch(bb_path_wtmp_file);*/
@@ -44155,7 +44190,7 @@
 +	updwtmpx(bb_path_wtmp_file, &utent);
  #endif
  }
- 
+
 @@ -64,17 +64,17 @@ void FAST_FUNC write_new_utmp(pid_t pid,
   */
  void FAST_FUNC update_utmp(pid_t pid, int new_type, const char *tty_name, const char *username, const char *hostname)
@@ -44164,14 +44199,14 @@
 -	struct utmp *utp;
 +	struct utmpx utent;
 +	struct utmpx *utp;
- 
+
 -	touch(_PATH_UTMP);
 -	//utmpname(_PATH_UTMP);
 -	setutent();
 +	touch(_PATH_UTMPX);
 +	//utmpxname(_PATH_UTMPX);
 +	setutxent();
- 
+
  	/* Did init/getty/telnetd/sshd/... create an entry for us?
  	 * It should be (new_type-1), but we'd also reuse
  	 * any other potentially stale xxx_PROCESS entry */
@@ -44196,7 +44231,7 @@
 -	//endutent(); - no need, pututline can deal with (and actually likes)
 +	//endutxent(); - no need, pututxline can deal with (and actually likes)
  	//the situation when utmp file is positioned on found record
- 
+
  	if (!utp) {
  		if (new_type != DEAD_PROCESS)
  			write_new_utmp(pid, new_type, tty_name, username, hostname);
@@ -44205,15 +44240,15 @@
 +			endutxent();
  		return;
  	}
- 
+
 -	/* Make a copy. We can't use *utp, pututline's internal getutid
 +	/* Make a copy. We can't use *utp, pututxline's internal getutxid
  	 * will overwrite it before it is used! */
  	utent = *utp;
- 
+
 @@ -120,13 +120,27 @@ void FAST_FUNC update_utmp(pid_t pid, in
  	utent.ut_tv.tv_sec = time(NULL);
- 
+
  	/* Update, or append new one */
 -	//setutent();
 -	pututline(&utent);
@@ -44221,7 +44256,7 @@
 +	//setutxent();
 +	pututxline(&utent);
 +	endutxent();
- 
+
  #if ENABLE_FEATURE_WTMP
  	/* "man utmp" says wtmp file should *not* be created automagically */
  	/*touch(bb_path_wtmp_file);*/
@@ -44275,17 +44310,17 @@
 @@ -171,7 +171,7 @@ IF_NOT_FEATURE_IPV6(sa_family_t af = AF_
  	const char *cp;
  	struct addrinfo hint;
- 
+
 -	if (ENABLE_FEATURE_UNIX_LOCAL && strncmp(host, "local:", 6) == 0) {
 +	if (ENABLE_FEATURE_UNIX_LOCAL && is_prefixed_with(host, "local:")) {
  		struct sockaddr_un *sun;
- 
+
  		r = xzalloc(LSA_LEN_SIZE + sizeof(struct sockaddr_un));
 --- a/libbb/xfuncs.c
 +++ b/libbb/xfuncs.c
 @@ -207,7 +207,6 @@ off_t FAST_FUNC fdlength(int fd)
  			else bottom = pos;
- 
+
  		// If we can't, it's smaller.
 -
  		} else {
@@ -44296,7 +44331,7 @@
 @@ -112,6 +112,11 @@ char* FAST_FUNC xstrndup(const char *s,
  	return memcpy(t, s, n);
  }
- 
+
 +void* FAST_FUNC xmemdup(const void *s, int n)
 +{
 +	return memcpy(xmalloc(n), s, n);
@@ -44350,7 +44385,7 @@
 + *    implemented, if you need a particular missing function it should be
 + *    easy to write it by using the internal common code.
   */
- 
+
  #include "libbb.h"
 -#include <assert.h>
 -
@@ -44359,7 +44394,7 @@
 -
 -#define PWD_BUFFER_SIZE 256
 -#define GRP_BUFFER_SIZE 256
- 
+
 -/**********************************************************************/
 -/* Prototypes for internal functions. */
 -
@@ -44390,7 +44425,7 @@
 + * not by "is it NUL?" condition; and off[0] happens to be zero
 + * for every db anyway, so there _is_ in fact a terminating NUL there.
 + */
- 
+
 -static int FAST_FUNC bb__parsepwent(void *pw, char *line);
 -static int FAST_FUNC bb__parsegrent(void *gr, char *line);
 +/* S = string not empty, s = string maybe empty,
@@ -44442,7 +44477,7 @@
 +	sizeof(SP_DEF)-1, sizeof(struct spwd)
 +};
  #endif
- 
+
 -/**********************************************************************/
  /* We avoid having big global data. */
 -
@@ -44472,7 +44507,7 @@
 +	char *tokenize_end;
 +	unsigned string_size;
  };
- 
+
  static struct statics *ptr_to_statics;
 +#define S     (*ptr_to_statics)
 +#define has_S (ptr_to_statics)
@@ -44488,7 +44523,7 @@
 +	free(ptr_to_statics);
 +}
 +#endif
- 
+
  static struct statics *get_S(void)
  {
 -	if (!ptr_to_statics)
@@ -44506,12 +44541,12 @@
 +	}
  	return ptr_to_statics;
  }
- 
+
 -/* Always use in this order, get_S() must be called first */
 -#define RESULTBUF(name) &((S = get_S())->name##_resultbuf)
 -#define BUFFER(name)    (S->name##_buffer)
 +/* Internal functions */
- 
+
 -/**********************************************************************/
 -/* For the various fget??ent_r funcs, return
 - *
@@ -44542,7 +44577,7 @@
 +	char *p = buffer;
 +	char *s = p;
 +	int num_fields = 0;
- 
+
 -	*result = NULL;
 -
 -	rv = bb__pgsreader(bb__parsepwent, resultbuf, buffer, buflen, stream);
@@ -44571,7 +44606,7 @@
 -
 -	return rv;
  }
- 
+
 -int fgetgrent_r(FILE *__restrict stream, struct group *__restrict resultbuf,
 -				char *__restrict buffer, size_t buflen,
 -				struct group **__restrict result)
@@ -44583,7 +44618,7 @@
  {
 -	int rv;
 +	char *buf;
- 
+
 -	*result = NULL;
 +	while ((buf = xmalloc_fgetline(fp)) != NULL) {
 +		/* Skip empty lines, comment lines */
@@ -44594,7 +44629,7 @@
 +			bb_error_msg("%s: bad record", db->filename);
 +			goto free_and_next;
 +		}
- 
+
 -	rv = bb__pgsreader(bb__parsegrent, resultbuf, buffer, buflen, stream);
 -	if (!rv) {
 -		*result = resultbuf;
@@ -44609,7 +44644,7 @@
 + free_and_next:
 +		free(buf);
  	}
- 
+
 -	return rv;
 -}
 -
@@ -44643,7 +44678,7 @@
 +//bb_error_msg("+%d words = %u key:%s buf:'%s'", cnt, S.string_size, key, buf);
 +		buf = xrealloc(buf, S.string_size);
  	}
- 
+
 -	return rv;
 -}
 -#endif
@@ -44667,7 +44702,7 @@
 -	return result;
 +	return buf;
  }
- 
+
 -struct group *fgetgrent(FILE *stream)
 +static char *parse_file(struct passdb *db,
 +		const char *key, int field_pos)
@@ -44683,7 +44718,7 @@
 -#endif
 +	char *buf = NULL;
 +	FILE *fp = fopen_for_read(db->filename);
- 
+
 -#if ENABLE_USE_BB_SHADOW
 -#ifdef UNUSED_SINCE_WE_AVOID_STATIC_BUFS
 -struct spwd *fgetspent(FILE *stream)
@@ -44702,7 +44737,7 @@
 +	return buf;
  }
 -#endif
- 
+
 -#ifdef UNUSED_FOR_NOW
 -int sgetspent_r(const char *string, struct spwd *result_buf,
 -				char *buffer, size_t buflen, struct spwd **result)
@@ -44713,11 +44748,11 @@
 -	int rv = ERANGE;
 +	const char *def = db->def;
 +	const uint8_t *off = db->off;
- 
+
 -	*result = NULL;
 +	/* For consistency, zero out all fields */
 +	memset(result, 0, db->size_of);
- 
+
 -	if (buflen < PWD_BUFFER_SIZE) {
 - DO_ERANGE:
 -		errno = rv;
@@ -44725,7 +44760,7 @@
 -	}
 +	for (;;) {
 +		void *member = (char*)result + (*off++);
- 
+
 -	if (string != buffer) {
 -		if (strlen(string) >= buflen) {
 -			goto DO_ERANGE;
@@ -44810,7 +44845,7 @@
 +			*members = NULL;
 +		}
 +		/* def "r" does nothing */
- 
+
 -#define GETXXKEY_R_FUNC         getpwuid_r
 -#define GETXXKEY_R_PARSER       bb__parsepwent
 -#define GETXXKEY_R_ENTTYPE      struct passwd
@@ -44842,13 +44877,13 @@
 +			break;
 +		buffer += strlen(buffer) + 1;
 +	}
- 
+
 -	getpwuid_r(uid, resultbuf, buffer, sizeof(BUFFER(getpw)), &result);
 +	if (errno)
 +		result = NULL;
  	return result;
  }
- 
+
 -/* This one has many users */
 -struct group *getgrgid(gid_t gid)
 +static int massage_data_for_r_func(struct passdb *db,
@@ -44900,7 +44935,7 @@
 +	 */
 +	return errno;
  }
- 
+
 -/* This function is non-standard and is currently not built.
 - * Why it was added, I do not know. */
 -struct spwd *getspuid(uid_t uid)
@@ -44912,7 +44947,7 @@
 -	struct spwd *result;
 +	if (!buf)
 +		return NULL;
- 
+
 -	getspuid_r(uid, resultbuf, buffer, sizeof(BUFFER(getsp)), &result);
 -	return result;
 +	free(db->malloced);
@@ -44926,7 +44961,7 @@
 +	return convert_to_struct(db, buf + db->size_of, buf);
  }
 -#endif
- 
+
 -/* This one has many users */
 -struct passwd *getpwnam(const char *name)
 +/****** getXXnam/id_r */
@@ -44941,7 +44976,7 @@
 -	struct passwd *result;
 +	char *buf;
 +	struct passdb *db = &get_S()->db[db_and_field_pos >> 2];
- 
+
 -	getpwnam_r(name, resultbuf, buffer, sizeof(BUFFER(getpw)), &result);
 -	return result;
 +	buf = parse_file(db, name, 0 /*db_and_field_pos & 3*/);
@@ -44950,7 +44985,7 @@
 +
 +	return massage_data_for_r_func(db, buffer, buflen, result, buf);
  }
- 
+
 -/* This one has many users */
 -struct group *getgrnam(const char *name)
 +int FAST_FUNC getpwnam_r(const char *name, struct passwd *struct_buf,
@@ -44989,7 +45024,7 @@
 +	return getXXnam_r(name, (2 << 2) + 0, buffer, buflen, result);
  }
  #endif
- 
+
 -/**********************************************************************/
 -
 -/* FIXME: we don't have such CONFIG_xx - ?! */
@@ -45004,7 +45039,7 @@
 -#endif
 +#ifdef UNUSED
 +/****** getXXent_r */
- 
+
 -static FILE *pwf /*= NULL*/;
 -void setpwent(void)
 +static int FAST_FUNC getXXent_r(uintptr_t db_idx, char *buffer, size_t buflen,
@@ -45030,7 +45065,7 @@
 +		errno = ENOENT;
 +	return massage_data_for_r_func(db, buffer, buflen, result, buf);
  }
- 
+
 -void endpwent(void)
 +int FAST_FUNC getpwent_r(struct passwd *struct_buf, char *buffer, size_t buflen,
 +		struct passwd **result)
@@ -45045,9 +45080,9 @@
 +	return getXXent_r(0, buffer, buflen, result);
  }
 +#endif
- 
+
 +/****** getXXent */
- 
+
 -int getpwent_r(struct passwd *__restrict resultbuf,
 -			char *__restrict buffer, size_t buflen,
 -			struct passwd **__restrict result)
@@ -45059,7 +45094,7 @@
 -	*result = NULL;				/* In case of error... */
 +	char *buf;
 +	struct passdb *db = &get_S()->db[db_idx];
- 
+
 -	if (!pwf) {
 -		pwf = fopen_for_read(_PATH_PASSWD);
 -		if (!pwf) {
@@ -45078,14 +45113,14 @@
 -		*result = resultbuf;
 +		close_on_exec_on(fileno(db->fp));
  	}
- 
+
 - ERR:
 -	UNLOCK;
 -	return rv;
 +	buf = parse_common(db->fp, db, /*no search key:*/ NULL, -1);
 +	return massage_data_for_non_r_func(db, buf);
  }
- 
+
 -static FILE *grf /*= NULL*/;
 -void setgrent(void)
 +struct passwd* FAST_FUNC getpwent(void)
@@ -45097,7 +45132,7 @@
 -	UNLOCK;
 +	return getXXent(0);
  }
- 
+
 -void endgrent(void)
 -{
 -	LOCK;
@@ -45108,7 +45143,7 @@
 -	UNLOCK;
 -}
 +/****** getXXnam/id */
- 
+
 -int getgrent_r(struct group *__restrict resultbuf,
 -			char *__restrict buffer, size_t buflen,
 -			struct group **__restrict result)
@@ -45117,7 +45152,7 @@
 -	int rv;
 +	char *buf;
 +	struct passdb *db = &get_S()->db[db_and_field_pos >> 2];
- 
+
 -	LOCK;
 -	*result = NULL;				/* In case of error... */
 -
@@ -45141,7 +45176,7 @@
 +	buf = parse_file(db, name, db_and_field_pos & 3);
 +	return massage_data_for_non_r_func(db, buf);
  }
- 
+
 -#ifdef UNUSED_FOR_NOW
 -#if ENABLE_USE_BB_SHADOW
 -static FILE *spf /*= NULL*/;
@@ -45211,14 +45246,14 @@
 -	return result;
 +	return getXXnam(utoa(id), (1 << 2) + 2);
  }
- 
+
 -struct group *getgrent(void)
 -{
 -	static char line_buff[GRP_BUFFER_SIZE];
 -	static struct group gr;
 -	struct group *result;
 +/****** end/setXXend */
- 
+
 -	getgrent_r(&gr, line_buff, sizeof(line_buff), &result);
 -	return result;
 +void FAST_FUNC endpwent(void)
@@ -45260,7 +45295,7 @@
  }
 -#endif
 -#endif /* UNUSED_SINCE_WE_AVOID_STATIC_BUFS */
- 
+
 -static gid_t *getgrouplist_internal(int *ngroups_ptr, const char *user, gid_t gid)
 +/****** initgroups and getgrouplist */
 +
@@ -45273,13 +45308,13 @@
  	int ngroups;
 -	struct group group;
 -	char buff[PWD_BUFFER_SIZE];
- 
+
  	/* We alloc space for 8 gids at a time. */
 -	group_list = xmalloc(8 * sizeof(group_list[0]));
 +	group_list = xzalloc(8 * sizeof(group_list[0]));
  	group_list[0] = gid;
  	ngroups = 1;
- 
+
 -	grfile = fopen_for_read(_PATH_GROUP);
 -	if (grfile) {
 -		while (!bb__pgsreader(bb__parsegrent, &group, buff, sizeof(buff), grfile)) {
@@ -45313,7 +45348,7 @@
  	*ngroups_ptr = ngroups;
  	return group_list;
  }
- 
+
 -int initgroups(const char *user, gid_t gid)
 +int FAST_FUNC initgroups(const char *user, gid_t gid)
  {
@@ -45322,7 +45357,7 @@
 @@ -617,7 +545,7 @@ int initgroups(const char *user, gid_t g
  	return ngroups;
  }
- 
+
 -int getgrouplist(const char *user, gid_t gid, gid_t *groups, int *ngroups)
 +int FAST_FUNC getgrouplist(const char *user, gid_t gid, gid_t *groups, int *ngroups)
  {
@@ -45806,20 +45841,20 @@
 +++ b/loginutils/deluser.c
 @@ -11,9 +11,10 @@
   */
- 
+
  //usage:#define deluser_trivial_usage
 -//usage:       "USER"
 +//usage:       IF_LONG_OPTS("[--remove-home] ") "USER"
  //usage:#define deluser_full_usage "\n\n"
  //usage:       "Delete USER from the system"
 +//	--remove-home is self-explanatory enough to put it in --help
- 
+
  //usage:#define delgroup_trivial_usage
  //usage:	IF_FEATURE_DEL_USER_FROM_GROUP("[USER] ")"GROUP"
 @@ -37,6 +38,19 @@ int deluser_main(int argc, char **argv)
  	/* Are we deluser or delgroup? */
  	int do_deluser = (ENABLE_DELUSER && (!ENABLE_DELGROUP || applet_name[3] == 'u'));
- 
+
 +#if !ENABLE_LONG_OPTS
 +	const int opt_delhome = 0;
 +#else
@@ -45835,7 +45870,7 @@
 +
  	if (geteuid() != 0)
  		bb_error_msg_and_die(bb_msg_perm_denied_are_you_root);
- 
+
 @@ -55,10 +69,14 @@ int deluser_main(int argc, char **argv)
  	case 2:
  		if (do_deluser) {
@@ -45872,7 +45907,7 @@
 @@ -97,16 +114,22 @@ int deluser_main(int argc, char **argv)
  			}
  		} while (ENABLE_FEATURE_SHADOWPASSWDS && pfile);
- 
+
 -		if (ENABLE_DELGROUP && do_deluser > 0) {
 -			/* "deluser USER" also should try to delete
 -			 * same-named group. IOW: do "delgroup USER"
@@ -45923,7 +45958,7 @@
 +++ b/miscutils/crond.c
 @@ -438,14 +438,14 @@ static void load_crontab(const char *fil
  			log5("user:%s entry:%s", fileName, parser->data);
- 
+
  			/* check if line is setting MAILTO= */
 -			if (0 == strncmp(tokens[0], "MAILTO=", 7)) {
 +			if (is_prefixed_with(tokens[0], "MAILTO=")) {
@@ -45946,14 +45981,14 @@
  		/*free(new_fname);*/
 -
  	} /* switch */
- 
+
  	/* Bump notification file.  Handle window where crond picks file up
 --- a/miscutils/dc.c
 +++ b/miscutils/dc.c
 @@ -56,6 +56,12 @@ enum { STACK_SIZE = (COMMON_BUFSIZE - of
  } while (0)
- 
- 
+
+
 +static void check_under(void)
 +{
 +	if (pointer == 0)
@@ -45964,7 +45999,7 @@
  {
  	if (pointer >= STACK_SIZE)
 @@ -65,8 +71,7 @@ static void push(double a)
- 
+
  static double pop(void)
  {
 -	if (pointer == 0)
@@ -45972,17 +46007,17 @@
 +	check_under();
  	return stack[--pointer];
  }
- 
+
 @@ -187,6 +192,7 @@ static void print_stack_no_pop(void)
- 
+
  static void print_no_pop(void)
  {
 +	check_under();
  	print_base(stack[pointer-1]);
  }
- 
+
 @@ -244,9 +250,9 @@ static void stack_machine(const char *ar
- 
+
  	o = operators;
  	do {
 -		const size_t name_len = strlen(o->name);
@@ -46006,7 +46041,7 @@
  		NULL ,
 @@ -1425,12 +1424,11 @@ const char *get_old_name(const char *dev
  	};
- 
+
  	for (trans = translate_table; trans->match != NULL; ++trans) {
 -		len = strlen(trans->match);
 -
@@ -47469,7 +47504,7 @@
 --- a/miscutils/last.c
 +++ b/miscutils/last.c
 @@ -32,21 +32,21 @@
- 
+
  #if defined UT_LINESIZE \
  	&& ((UT_LINESIZE != 32) || (UT_NAMESIZE != 32) || (UT_HOSTSIZE != 256))
 -#error struct utmp member char[] size(s) have changed!
@@ -47479,13 +47514,13 @@
 -#error struct utmp member char[] size(s) have changed!
 +#error struct utmpx member char[] size(s) have changed!
  #endif
- 
+
  #if EMPTY != 0 || RUN_LVL != 1 || BOOT_TIME != 2 || NEW_TIME != 3 || \
  	OLD_TIME != 4
 -#error Values for the ut_type field of struct utmp changed
 +#error Values for the ut_type field of struct utmpx changed
  #endif
- 
+
  int last_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
  int last_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
  {
@@ -47514,7 +47549,7 @@
 @@ -22,6 +22,10 @@
  #define HEADER_LINE_WIDE  "USER", "TTY", \
  	INET6_ADDRSTRLEN, INET6_ADDRSTRLEN, "HOST", "LOGIN", "  TIME", ""
- 
+
 +#if !defined __UT_LINESIZE && defined UT_LINESIZE
 +# define __UT_LINESIZE UT_LINESIZE
 +#endif
@@ -47523,9 +47558,9 @@
  	NORMAL,
  	LOGGED,
 @@ -39,10 +43,10 @@ enum {
- 
+
  #define show_wide (option_mask32 & LAST_OPT_W)
- 
+
 -static void show_entry(struct utmp *ut, int state, time_t dur_secs)
 +static void show_entry(struct utmpx *ut, int state, time_t dur_secs)
  {
@@ -47542,13 +47577,13 @@
 -	snprintf(logout_time, 8, "- %s", ctime(&dur_secs) + 11);
 +	tmp = dur_secs;
 +	snprintf(logout_time, 8, "- %s", ctime(&tmp) + 11);
- 
+
  	dur_secs = MAX(dur_secs - (time_t)ut->ut_tv.tv_sec, (time_t)0);
  	/* unsigned int is easier to divide than time_t (which may be signed long) */
 @@ -103,7 +108,7 @@ static void show_entry(struct utmp *ut,
  		duration_str);
  }
- 
+
 -static int get_ut_type(struct utmp *ut)
 +static int get_ut_type(struct utmpx *ut)
  {
@@ -47557,7 +47592,7 @@
 @@ -141,7 +146,7 @@ static int get_ut_type(struct utmp *ut)
  	return ut->ut_type;
  }
- 
+
 -static int is_runlevel_shutdown(struct utmp *ut)
 +static int is_runlevel_shutdown(struct utmpx *ut)
  {
@@ -47621,7 +47656,7 @@
  //config:	default y
 @@ -98,7 +106,8 @@
  //config:	  Enables "-N" command.
- 
+
  //usage:#define less_trivial_usage
 -//usage:       "[-E" IF_FEATURE_LESS_REGEXP("I")IF_FEATURE_LESS_FLAGS("Mm") "Nh~] [FILE]..."
 +//usage:       "[-E" IF_FEATURE_LESS_REGEXP("I")IF_FEATURE_LESS_FLAGS("Mm")
@@ -47637,7 +47672,7 @@
 +//usage:     "\n	-S	Truncate long lines"
 +//usage:	)
  //usage:     "\n	-~	Suppress ~s displayed past EOF"
- 
+
  #include <sched.h>  /* sched_yield() */
 @@ -144,7 +156,7 @@ enum {
  	FLAG_N = 1 << 3,
@@ -47684,7 +47719,7 @@
 @@ -382,6 +403,14 @@ static void fill_match_lines(unsigned po
  #define fill_match_lines(pos) ((void)0)
  #endif
- 
+
 +static int at_end(void)
 +{
 +	return (option_mask32 & FLAG_S)
@@ -47751,18 +47786,20 @@
 +	else if (eof_error == 0)
 +		num_lines = max_lineno;
 +#endif
- 
+
  	fill_match_lines(old_max_fline);
  #if ENABLE_FEATURE_LESS_REGEXP
-@@ -570,18 +599,67 @@ static void read_lines(void)
+@@ -570,18 +599,61 @@ static void read_lines(void)
  }
- 
+
  #if ENABLE_FEATURE_LESS_FLAGS
 -/* Interestingly, writing calc_percent as a function saves around 32 bytes
 - * on my build. */
 -static int calc_percent(void)
 +static int safe_lineno(int fline)
-+{
+ {
+-	unsigned p = (100 * (cur_fline+max_displayed_line+1) + max_fline/2) / (max_fline+1);
+-	return p <= 100 ? p : 100;
 +	if (fline >= max_fline)
 +		fline = max_fline - 1;
 +
@@ -47775,15 +47812,14 @@
 +
 +/* count number of lines in file */
 +static void update_num_lines(void)
- {
--	unsigned p = (100 * (cur_fline+max_displayed_line+1) + max_fline/2) / (max_fline+1);
--	return p <= 100 ? p : 100;
++{
 +	int count, fd;
++	struct stat stbuf;
 +	ssize_t len, i;
 +	char buf[4096];
 +
 +	/* only do this for regular files */
-+	if (num_lines != NOT_REGULAR_FILE) {
++	if (num_lines == REOPEN_AND_COUNT || num_lines == REOPEN_STDIN) {
 +		count = 0;
 +		fd = open("/proc/self/fd/0", O_RDONLY);
 +		if (fd < 0 && num_lines == REOPEN_AND_COUNT) {
@@ -47795,17 +47831,10 @@
 +			num_lines = NOT_REGULAR_FILE;
 +			return;
 +		}
-+#if ENABLE_FEATURE_LESS_FLAGS
-+		{
-+			struct stat stbuf;
-+			if (fstat(fd, &stbuf) != 0
-+			 || !S_ISREG(stbuf.st_mode)
-+			) {
-+				num_lines = NOT_REGULAR_FILE;
-+				goto do_close;
-+			}
++		if (fstat(fd, &stbuf) != 0 || !S_ISREG(stbuf.st_mode)) {
++			num_lines = NOT_REGULAR_FILE;
++			goto do_close;
 +		}
-+#endif
 +		while ((len = safe_read(fd, buf, sizeof(buf))) > 0) {
 +			for (i = 0; i < len; ++i) {
 +				if (buf[i] == '\n' && ++count == MAXLINES)
@@ -47818,17 +47847,17 @@
 +		close(fd);
 +	}
  }
- 
+
  /* Print a status line if -M was specified */
  static void m_status_print(void)
  {
 -	int percentage;
 +	int first, last;
 +	unsigned percent;
- 
+
  	if (less_gets_pos >= 0) /* don't touch statusline while input is done! */
  		return;
-@@ -590,17 +668,26 @@ static void m_status_print(void)
+@@ -590,17 +662,26 @@ static void m_status_print(void)
  	printf(HIGHLIGHT"%s", filename);
  	if (num_files > 1)
  		printf(" (file %i of %i)", current_file, num_files);
@@ -47863,20 +47892,20 @@
 +	printf(NORMAL);
  }
  #endif
- 
-@@ -622,7 +709,7 @@ static void status_print(void)
+
+@@ -622,7 +703,7 @@ static void status_print(void)
  #endif
- 
+
  	clear_line();
 -	if (cur_fline && cur_fline < (int)(max_fline - max_displayed_line)) {
 +	if (cur_fline && !at_end()) {
  		bb_putchar(':');
  		return;
  	}
-@@ -637,23 +724,6 @@ static void status_print(void)
+@@ -637,23 +718,6 @@ static void status_print(void)
  	print_hilite(p);
  }
- 
+
 -static void cap_cur_fline(int nlines)
 -{
 -	int diff;
@@ -47897,10 +47926,10 @@
  static const char controls[] ALIGN1 =
  	/* NUL: never encountered; TAB: not converted */
  	/**/"\x01\x02\x03\x04\x05\x06\x07\x08"  "\x0a\x0b\x0c\x0d\x0e\x0f"
-@@ -665,27 +735,21 @@ static const char ctrlconv[] ALIGN1 =
+@@ -665,27 +729,21 @@ static const char ctrlconv[] ALIGN1 =
  	"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x40\x4b\x4c\x4d\x4e\x4f"
  	"\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f";
- 
+
 -static void lineno_str(char *nbuf9, const char *line)
 +static void print_lineno(const char *line)
  {
@@ -47930,20 +47959,20 @@
  	}
 +	printf(fmt, n);
  }
- 
- 
-@@ -698,7 +762,6 @@ static void print_found(const char *line
+
+
+@@ -698,7 +756,6 @@ static void print_found(const char *line
  	regmatch_t match_structs;
- 
+
  	char buf[width];
 -	char nbuf9[9];
  	const char *str = line;
  	char *p = buf;
  	size_t n;
-@@ -748,12 +811,7 @@ static void print_found(const char *line
+@@ -748,12 +805,7 @@ static void print_found(const char *line
  			match_status = 1;
  	}
- 
+
 -	lineno_str(nbuf9, line);
 -	if (!growline) {
 -		printf(CLEAR_2_EOL"%s%s\n", nbuf9, str);
@@ -47954,22 +47983,22 @@
  	free(growline);
  }
  #else
-@@ -763,13 +821,9 @@ void print_found(const char *line);
+@@ -763,13 +815,9 @@ void print_found(const char *line);
  static void print_ascii(const char *str)
  {
  	char buf[width];
 -	char nbuf9[9];
  	char *p;
  	size_t n;
- 
+
 -	lineno_str(nbuf9, str);
 -	printf(CLEAR_2_EOL"%s", nbuf9);
 -
  	while (*str) {
  		n = strcspn(str, controls);
  		if (n) {
-@@ -803,6 +857,9 @@ static void buffer_print(void)
- 
+@@ -803,6 +851,9 @@ static void buffer_print(void)
+
  	move_cursor(0, 0);
  	for (i = 0; i <= max_displayed_line; i++) {
 +		printf(CLEAR_2_EOL);
@@ -47978,19 +48007,19 @@
  		if (pattern_valid)
  			print_found(buffer[i]);
  		else
-@@ -820,7 +877,7 @@ static void buffer_print(void)
+@@ -820,7 +871,7 @@ static void buffer_print(void)
  static void buffer_fill_and_print(void)
  {
  	unsigned i;
 -#if ENABLE_FEATURE_LESS_DASHCMD
 +#if ENABLE_FEATURE_LESS_TRUNCATE
  	int fpos = cur_fline;
- 
+
  	if (option_mask32 & FLAG_S) {
-@@ -852,45 +909,112 @@ static void buffer_fill_and_print(void)
+@@ -852,45 +903,112 @@ static void buffer_fill_and_print(void)
  	buffer_print();
  }
- 
+
 +/* move cur_fline to a given line number, reading lines if necessary */
 +static void goto_lineno(int target)
 +{
@@ -48045,7 +48074,7 @@
 +	cap_cur_fline();
  	buffer_fill_and_print();
  }
- 
+
  static void buffer_up(int nlines)
  {
 -	cur_fline -= nlines;
@@ -48061,7 +48090,7 @@
  	read_lines();
  	buffer_fill_and_print();
  }
- 
+
 -static void buffer_line(int linenum)
 +/* display a given line where the argument can be either an index into
 + * the flines array or a line number */
@@ -48085,7 +48114,7 @@
 +	cap_cur_fline();
  	buffer_fill_and_print();
  }
- 
+
 +static void buffer_line(int linenum)
 +{
 +	buffer_to_line(linenum, FALSE);
@@ -48113,7 +48142,7 @@
  	}
  	readpos = 0;
  	readeof = 0;
-@@ -942,12 +1066,7 @@ static int64_t getch_nowait(void)
+@@ -942,12 +1060,7 @@ static int64_t getch_nowait(void)
  	 */
  	rd = 1;
  	/* Are we interested in stdin? */
@@ -48127,7 +48156,7 @@
  		if (eof_error > 0) /* did NOT reach eof yet */
  			rd = 0; /* yes, we are interested in stdin */
  	}
-@@ -1258,7 +1377,7 @@ static void number_process(int first_dig
+@@ -1258,7 +1371,7 @@ static void number_process(int first_dig
  	i = 1;
  	while (i < sizeof(num_input)-1) {
  		keypress = less_getch(i + 1);
@@ -48136,7 +48165,7 @@
  			break;
  		num_input[i] = keypress;
  		bb_putchar(keypress);
-@@ -1282,15 +1401,16 @@ static void number_process(int first_dig
+@@ -1282,15 +1395,16 @@ static void number_process(int first_dig
  		buffer_up(num);
  		break;
  	case 'g': case '<': case 'G': case '>':
@@ -48160,7 +48189,7 @@
  		break;
  #if ENABLE_FEATURE_LESS_REGEXP
  	case 'n':
-@@ -1330,10 +1450,12 @@ static void flag_change(void)
+@@ -1330,10 +1444,12 @@ static void flag_change(void)
  	case '~':
  		option_mask32 ^= FLAG_TILDE;
  		break;
@@ -48173,7 +48202,7 @@
  #if ENABLE_FEATURE_LESS_LINENUMS
  	case 'N':
  		option_mask32 ^= FLAG_N;
-@@ -1638,7 +1760,7 @@ int less_main(int argc, char **argv)
+@@ -1638,7 +1754,7 @@ int less_main(int argc, char **argv)
  	 * -s: condense many empty lines to one
  	 *     (used by some setups for manpage display)
  	 */
@@ -48182,7 +48211,7 @@
  	argc -= optind;
  	argv += optind;
  	num_files = argc;
-@@ -1848,7 +1970,7 @@ key and/or command line switch compatibi
+@@ -1848,7 +1964,7 @@ key and/or command line switch compatibi
          Most options may be changed either on the command line,
          or from within less by using the - or -- command.
          Options may be given in one of two forms: either a single
@@ -48195,7 +48224,7 @@
 +++ b/miscutils/man.c
 @@ -66,7 +66,7 @@ static int run_pipe(const char *pager, c
  			goto ordinary_manpage;
- 
+
  		line = xmalloc_open_zipped_read_close(man_filename, NULL);
 -		if (!line || strncmp(line, ".so ", 4) != 0) {
 +		if (!line || !is_prefixed_with(line, ".so ")) {
@@ -48220,10 +48249,10 @@
 -	struct utmp *ut;
 +	struct utmpx *ut;
  	char prev;
- 
+
 -	if (argv[1]) utmpname(argv[1]);
 +	if (argv[1]) utmpxname(argv[1]);
- 
+
 -	setutent();
 -	while ((ut = getutent()) != NULL) {
 +	setutxent();
@@ -48240,7 +48269,7 @@
  	}
 @@ -49,6 +49,6 @@ int runlevel_main(int argc UNUSED_PARAM,
  	puts("unknown");
- 
+
  	if (ENABLE_FEATURE_CLEAN_UP)
 -		endutent();
 +		endutxent();
@@ -48273,7 +48302,7 @@
  	if (do_update) {
 @@ -162,17 +164,19 @@ int ubi_tools_main(int argc UNUSED_PARAM
  	//	bb_error_msg_and_die("%s: not a char device", ubi_ctrl);
- 
+
  //usage:#define ubiattach_trivial_usage
 -//usage:       "-m MTD_NUM [-d UBI_NUM] UBI_CTRL_DEV"
 +//usage:       "-m MTD_NUM [-d UBI_NUM] [-O VID_HDR_OFF] UBI_CTRL_DEV"
@@ -48285,11 +48314,11 @@
  	if (do_attach) {
  		if (!(opts & OPTION_m))
  			bb_error_msg_and_die("%s device not specified", "MTD");
- 
+
  		attach_req.mtd_num = mtd_num;
  		attach_req.ubi_num = dev_num;
 +		attach_req.vid_hdr_offset = vid_hdr_offset;
- 
+
  		xioctl(fd, UBI_IOCATT, &attach_req);
  	} else
 --- a/miscutils/wall.c
@@ -48302,7 +48331,7 @@
 +	struct utmpx *ut;
  	char *msg;
  	int fd;
- 
+
 @@ -46,8 +46,8 @@ int wall_main(int argc UNUSED_PARAM, cha
  	msg = xmalloc_read(fd, NULL);
  	if (ENABLE_FEATURE_CLEAN_UP && argv[1])
@@ -48334,7 +48363,7 @@
  	char *image, *ptr;
  	module_info *info;
 @@ -51,13 +50,12 @@ static int FAST_FUNC parse_module(const
- 
+
  	info->dnext = info->dprev = info;
  	info->name = xstrdup(fname + 2); /* skip "./" */
 -	info->modname = xstrdup(
@@ -48349,7 +48378,7 @@
 -		if (strncmp(ptr, "depends=", 8) == 0) {
 +		if (is_prefixed_with(ptr, "depends=")) {
  			char *u;
- 
+
  			ptr += 8;
 @@ -66,15 +64,15 @@ static int FAST_FUNC parse_module(const
  					*u = '_';
@@ -48425,14 +48454,14 @@
 --- a/modutils/modprobe-small.c
 +++ b/modutils/modprobe-small.c
 @@ -116,21 +116,21 @@ static char* copy_stringbuf(void)
- 
+
  static char* find_keyword(char *ptr, size_t len, const char *word)
  {
 -	int wlen;
 -
  	if (!ptr) /* happens if xmalloc_open_zipped_read_close cannot read it */
  		return NULL;
- 
+
 -	wlen = strlen(word);
 -	len -= wlen - 1;
 +	len -= strlen(word) - 1;
@@ -48456,7 +48485,7 @@
 @@ -163,6 +163,15 @@ static char *filename2modname(const char
  	return modname;
  }
- 
+
 +static int pathname_matches_modname(const char *pathname, const char *modname)
 +{
 +	int r;
@@ -48472,7 +48501,7 @@
 @@ -295,18 +304,6 @@ static void parse_module(module_info *in
  	free(module_image);
  }
- 
+
 -static int pathname_matches_modname(const char *pathname, const char *modname)
 -{
 -	int r;
@@ -48553,14 +48582,14 @@
 @@ -15,8 +15,11 @@
  #include <sys/utsname.h>
  #include <fnmatch.h>
- 
+
 -//#define DBG(fmt, ...) bb_error_msg("%s: " fmt, __func__, ## __VA_ARGS__)
 +#if 1
  #define DBG(...) ((void)0)
 +#else
 +#define DBG(fmt, ...) bb_error_msg("%s: " fmt, __func__, ## __VA_ARGS__)
 +#endif
- 
+
  /* Note that unlike older versions of modules.dep/depmod (busybox and m-i-t),
   * we expect the full dependency list to be specified in modules.dep.
 @@ -257,7 +260,7 @@ static void add_probe(const char *name)
@@ -48577,11 +48606,11 @@
  	char *kcmdline;
  	char *kptr;
 -	int len;
- 
+
  	kcmdline_buf = xmalloc_open_read_close("/proc/cmdline", NULL);
  	if (!kcmdline_buf)
  		return options;
- 
+
  	kcmdline = kcmdline_buf;
 -	len = strlen(modulename);
  	while ((kptr = strsep(&kcmdline, "\n\t ")) != NULL) {
@@ -48612,13 +48641,13 @@
 --- a/modutils/modutils.c
 +++ b/modutils/modutils.c
 @@ -47,13 +47,14 @@ int FAST_FUNC string_to_llist(char *stri
- 
+
  char* FAST_FUNC filename2modname(const char *filename, char *modname)
  {
 +	char local_modname[MODULE_NAME_LEN];
  	int i;
  	const char *from;
- 
+
  	if (filename == NULL)
  		return NULL;
  	if (modname == NULL)
@@ -48630,25 +48659,25 @@
 @@ -63,6 +64,9 @@ char* FAST_FUNC filename2modname(const c
  		modname[i] = (from[i] == '-') ? '_' : from[i];
  	modname[i] = '\0';
- 
+
 +	if (modname == local_modname)
 +		return xstrdup(modname);
 +
  	return modname;
  }
- 
+
 --- a/networking/Config.src
 +++ b/networking/Config.src
 @@ -750,8 +750,7 @@ config TELNETD
- 
+
  	  Note that for busybox telnetd to work you need several things:
  	  First of all, your kernel needs:
 -		  UNIX98_PTYS=y
 -		  DEVPTS_FS=y
 +		  CONFIG_UNIX98_PTYS=y
- 
+
  	  Next, you need a /dev/pts directory on your root filesystem:
- 
+
 --- a/networking/arp.c
 +++ b/networking/arp.c
 @@ -68,7 +68,6 @@ struct globals {
@@ -48664,19 +48693,19 @@
 @@ -284,7 +284,6 @@ int arping_main(int argc UNUSED_PARAM, c
  	// Need to remove SUID_NEVER from applets.h for this to work
  	//xsetuid(getuid());
- 
+
 -	err_str = xasprintf("interface %s %%s", device);
  	{
  		unsigned opt;
  		char *str_timeout;
 @@ -302,7 +301,7 @@ int arping_main(int argc UNUSED_PARAM, c
  	}
- 
+
  	target = argv[optind];
 -
 +	err_str = xasprintf("interface %s %%s", device);
  	xfunc_error_retval = 2;
- 
+
  	{
 --- a/networking/dnsd.c
 +++ b/networking/dnsd.c
@@ -48703,7 +48732,7 @@
  	smallint opts;
 @@ -1193,29 +1196,23 @@ int ftpd_main(int argc UNUSED_PARAM, cha
  	signal(SIGALRM, timeout_handler);
- 
+
  #if ENABLE_FEATURE_FTP_AUTHENTICATION
 -	{
 -		struct passwd *pw = NULL;
@@ -48748,7 +48777,7 @@
 @@ -1233,6 +1230,10 @@ int ftpd_main(int argc UNUSED_PARAM, cha
  		xchroot(argv[0]);
  	}
- 
+
 +#if ENABLE_FEATURE_FTP_AUTHENTICATION
 +	change_identity(pw);
 +#endif
@@ -48787,7 +48816,7 @@
  					if (s[0] != '-' || range_start < 0) {
 @@ -2269,7 +2269,7 @@ static void handle_incoming_and_exit(con
  	tptr = urlcopy + 1;      /* skip first '/' */
- 
+
  #if ENABLE_FEATURE_HTTPD_CGI
 -	if (strncmp(tptr, "cgi-bin/", 8) == 0) {
 +	if (is_prefixed_with(tptr, "cgi-bin/")) {
@@ -48815,12 +48844,12 @@
  						varvalue = get_var("netmask", 7, ifd);
  						if (varvalue) {
 @@ -1159,12 +1159,12 @@ static char *run_mapping(char *physical,
- 
+
  static llist_t *find_iface_state(llist_t *state_list, const char *iface)
  {
 -	unsigned iface_len = strlen(iface);
  	llist_t *search = state_list;
- 
+
  	while (search) {
 -		if ((strncmp(search->data, iface, iface_len) == 0)
 -		 && (search->data[iface_len] == '=')
@@ -48835,7 +48864,7 @@
  		bool okay = 0;
  		int cmds_ret;
 +		bool curr_failure = 0;
- 
+
  		iface = xstrdup(target_list->data);
  		target_list = target_list->link;
 @@ -1304,11 +1305,11 @@ int ifupdown_main(int argc UNUSED_PARAM,
@@ -48851,12 +48880,12 @@
 -					any_failures = 1;
 +					any_failures = curr_failure = 1;
  				}
- 
+
  				currif->iface = oldiface;
 @@ -1329,7 +1330,7 @@ int ifupdown_main(int argc UNUSED_PARAM,
  			llist_t *state_list = read_iface_state();
  			llist_t *iface_state = find_iface_state(state_list, iface);
- 
+
 -			if (cmds == iface_up && !any_failures) {
 +			if (cmds == iface_up && !curr_failure) {
  				char *newiface = xasprintf("%s=%s", iface, liface);
@@ -48866,7 +48895,7 @@
 +++ b/networking/inetd.c
 @@ -645,7 +645,7 @@ static servtab_t *dup_servtab(servtab_t
  }
- 
+
  /* gcc generates much more code if this is inlined */
 -static servtab_t *parse_one_line(void)
 +static NOINLINE servtab_t *parse_one_line(void)
@@ -48915,7 +48944,7 @@
 @@ -1654,7 +1656,7 @@ static void FAST_FUNC daytime_stream(int
  {
  	time_t t;
- 
+
 -	t = time(NULL);
 +	time(&t);
  	fdprintf(s, "%.24s\r\n", ctime(&t));
@@ -48926,7 +48955,7 @@
 @@ -91,9 +91,9 @@ static const char* FAST_FUNC INET_sprint
  {
  	static char *buff; /* defaults to NULL */
- 
+
 -	free(buff);
  	if (sap->sa_family == 0xFFFF || sap->sa_family == 0)
  		return "[NONE SET]";
@@ -48937,7 +48966,7 @@
 @@ -173,9 +173,9 @@ static const char* FAST_FUNC INET6_sprin
  {
  	static char *buff;
- 
+
 -	free(buff);
  	if (sap->sa_family == 0xFFFF || sap->sa_family == 0)
  		return "[NONE SET]";
@@ -48956,11 +48985,23 @@
  //usage:       "ipaddr {show|flush} [dev STRING] [scope SCOPE-ID]\n"
  //usage:       "	[to PREFIX] [label PATTERN]\n"
  //usage:       "	IFADDR := PREFIX | ADDR peer PREFIX\n"
+--- a/networking/ipcalc.c
++++ b/networking/ipcalc.c
+@@ -13,7 +13,8 @@
+  */
+
+ //usage:#define ipcalc_trivial_usage
+-//usage:       "[OPTIONS] ADDRESS[[/]NETMASK] [NETMASK]"
++//usage:       "[OPTIONS] ADDRESS"
++//usage:       IF_FEATURE_IPCALC_FANCY("[/PREFIX]") " [NETMASK]"
+ //usage:#define ipcalc_full_usage "\n\n"
+ //usage:       "Calculate IP network settings from a IP address\n"
+ //usage:	IF_FEATURE_IPCALC_LONG_OPTIONS(
 --- a/networking/libiproute/ipaddress.c
 +++ b/networking/libiproute/ipaddress.c
 @@ -598,7 +598,7 @@ static int default_scope(inet_prefix *lc
  }
- 
+
  /* Return value becomes exitcode. It's okay to not return at all */
 -static int ipaddr_modify(int cmd, char **argv)
 +static int ipaddr_modify(int cmd, int flags, char **argv)
@@ -48969,13 +49010,13 @@
  		"peer\0""remote\0""broadcast\0""brd\0"
 @@ -622,7 +622,7 @@ static int ipaddr_modify(int cmd, char *
  	memset(&req, 0, sizeof(req));
- 
+
  	req.n.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifaddrmsg));
 -	req.n.nlmsg_flags = NLM_F_REQUEST;
 +	req.n.nlmsg_flags = NLM_F_REQUEST | flags;
  	req.n.nlmsg_type = cmd;
  	req.ifa.ifa_family = preferred_family;
- 
+
 @@ -701,7 +701,7 @@ static int ipaddr_modify(int cmd, char *
  		/* There was no "dev IFACE", but we need that */
  		bb_error_msg_and_die("need \"dev IFACE\"");
@@ -48984,7 +49025,7 @@
 +	if (l && !is_prefixed_with(l, d)) {
  		bb_error_msg_and_die("\"dev\" (%s) must match \"label\" (%s)", d, l);
  	}
- 
+
 @@ -749,16 +749,24 @@ static int ipaddr_modify(int cmd, char *
  int FAST_FUNC do_ipaddr(char **argv)
  {
@@ -49055,7 +49096,7 @@
 @@ -228,12 +228,12 @@ static long extract_socket_inode(const c
  {
  	long inode = -1;
- 
+
 -	if (strncmp(lname, "socket:[", sizeof("socket:[")-1) == 0) {
 +	if (is_prefixed_with(lname, "socket:[")) {
  		/* "socket:[12345]", extract the "12345" as inode */
@@ -49068,7 +49109,7 @@
  		inode = bb_strtoul(lname + sizeof("[0000]:")-1, NULL, 0);
  		if (errno) /* not NUL terminated? */
 @@ -622,7 +622,7 @@ static int FAST_FUNC unix_do_one(char *l
- 
+
  	/* TODO: currently we stop at first NUL byte. Is it a problem? */
  	line += path_ofs;
 -	*strchrnul(line, '\n') = '\0';
@@ -49140,7 +49181,7 @@
 + * purpose. It is provided "as is" without express or implied warranty.
   ***********************************************************************
   */
- 
+
 @@ -37,14 +50,15 @@
  //usage:     "\n	-q	Quit after clock is set"
  //usage:     "\n	-N	Run at high priority"
@@ -49160,7 +49201,7 @@
 +//usage:     "\n	-l	Also run as server on port 123"
 +//usage:     "\n	-I IFACE Bind server to IFACE, implies -l"
  //usage:	)
- 
+
  // -l and -p options are not compatible with "standard" ntpd:
 @@ -363,8 +377,6 @@ struct globals {
  	 */
@@ -49168,17 +49209,17 @@
  	uint8_t  stratum;
 -	/* Bool. After set to 1, never goes back to 0: */
 -	smallint initial_poll_complete;
- 
+
  #define STATE_NSET      0       /* initial state, "nothing is set" */
  //#define STATE_FSET    1       /* frequency set from file */
 @@ -1071,7 +1083,7 @@ select_and_cluster(void)
- 
+
  	num_points = 0;
  	item = G.ntp_peers;
 -	if (G.initial_poll_complete) while (item != NULL) {
 +	while (item != NULL) {
  		double rd, offset;
- 
+
  		p = (peer_t *) item->data;
 @@ -1485,7 +1497,6 @@ update_local_clock(peer_t *p)
  #endif
@@ -49186,12 +49227,12 @@
  		set_new_values(STATE_SYNC, offset, recv_time);
 -
  	} else { /* abs_offset <= STEP_THRESHOLD */
- 
+
  		/* The ratio is calculated before jitter is updated to make
 @@ -1636,7 +1647,7 @@ update_local_clock(peer_t *p)
  	if (G.ntp_status & LI_MINUSSEC)
  		tmx.status |= STA_DEL;
- 
+
 -	tmx.constant = G.poll_exp - 4;
 +	tmx.constant = (int)G.poll_exp - 4 > 0 ? (int)G.poll_exp - 4 : 0;
  	/* EXPERIMENTAL.
@@ -50221,12 +50262,12 @@
  #define RTF_REJECT      0x0200	/* Reject route                 */
 +#define RTF_NONEXTHOP   0x00200000 /* route with no nexthop	*/
  #endif
- 
+
  #if defined(SIOCADDRTOLD) || defined(RTF_IRTT)	/* route */
 @@ -128,7 +129,7 @@ static const char tbl_ipvx[] ALIGN1 =
  	"\013\043reinstate"			/* Since last, we can save a byte. */
  ;
- 
+
 -static const int flags_ipvx[] = { /* MUST match tbl_ipvx[] values above. */
 +static const uint16_t flags_ipvx[] = { /* MUST match tbl_ipvx[] values above. */
  #ifdef RTF_REJECT
@@ -50235,7 +50276,7 @@
 @@ -449,7 +450,11 @@ static NOINLINE void INET6_setroute(int
  }
  #endif
- 
+
 -static const unsigned flagvals[] = { /* Must agree with flagchars[]. */
 +static const
 +IF_NOT_FEATURE_IPV6(uint16_t)
@@ -50270,11 +50311,11 @@
  ;
 +#define IPV4_MASK (RTF_UP|RTF_GATEWAY|RTF_HOST|RTF_REINSTATE|RTF_DYNAMIC|RTF_MODIFIED)
 +#define IPV6_MASK (RTF_UP|RTF_GATEWAY|RTF_HOST|RTF_DEFAULT|RTF_ADDRCONF|RTF_CACHE|RTF_REJECT|RTF_NONEXTHOP)
- 
+
  static void set_flags(char *flagstr, int flags)
  {
  	int i;
- 
+
 -	*flagstr++ = 'U';
 -
  	for (i = 0; (*flagstr = flagchars[i]) != 0; i++) {
@@ -50291,7 +50332,7 @@
 @@ -501,20 +505,24 @@ void FAST_FUNC bb_displayroutes(int nore
  		"Destination     Gateway         Genmask         Flags %s Iface\n",
  			netstatfmt ? "  MSS Window  irtt" : "Metric Ref    Use");
- 
+
 -	if (fscanf(fp, "%*[^\n]\n") < 0) { /* Skip the first line. */
 -		goto ERROR;                /* Empty or missing line, or read error. */
 +	/* Skip the first line. */
@@ -50316,7 +50357,7 @@
 -			bb_error_msg_and_die("fscanf");
 +			bb_perror_msg_and_die(bb_msg_read_error);
  		}
- 
+
  		if (!(flgs & RTF_UP)) { /* Skip interfaces that are down. */
 @@ -574,13 +582,13 @@ static void INET6_displayroutes(void)
  		int r;
@@ -50332,24 +50373,24 @@
 -			bb_error_msg_and_die("fscanf");
 +			bb_perror_msg_and_die(bb_msg_read_error);
  		}
- 
+
  		/* Do the addr6x shift-and-insert changes to ':'-delimit addresses.
 @@ -606,10 +614,6 @@ static void INET6_displayroutes(void)
  			} while (i < 40+28+7);
  		}
- 
+
 -		if (!(iflags & RTF_UP)) { /* Skip interfaces that are down. */
 -			continue;
 -		}
 -
  		set_flags(flags, (iflags & IPV6_MASK));
- 
+
  		r = 0;
 --- a/networking/tc.c
 +++ b/networking/tc.c
 @@ -151,17 +151,17 @@ static void print_rate(char *buf, int le
  	double tmp = (double)rate*8;
- 
+
  	if (use_iec) {
 -		if (tmp >= 1000.0*1024.0*1024.0)
 -			snprintf(buf, len, "%.0fMibit", tmp/1024.0*1024.0);
@@ -50414,8 +50455,8 @@
 +++ b/networking/traceroute.c
 @@ -387,15 +387,6 @@ struct globals {
  #define outudp  ((struct udphdr *)(outip + 1))
- 
- 
+
+
 -/* libbb candidate? tftp uses this idiom too */
 -static len_and_sockaddr* dup_sockaddr(const len_and_sockaddr *lsa)
 -{
@@ -50431,7 +50472,7 @@
 @@ -1074,7 +1065,7 @@ common_traceroute_main(int op, char **ar
  		printf(" from %s", source);
  	printf(", %d hops max, %d byte packets\n", max_ttl, packlen);
- 
+
 -	from_lsa = dup_sockaddr(dest_lsa);
 +	from_lsa = xmemdup(dest_lsa, LSA_LEN_SIZE + dest_lsa->len);
  	lastaddr = xzalloc(dest_lsa->len);
@@ -50446,7 +50487,7 @@
 -	return memcpy(xmalloc(opt[3] + 4), opt, opt[3] + 4);
 +	return xmemdup(opt, opt[3] + 4);
  }
- 
+
  static void *d6_store_blob(void *dst, const void *src, unsigned len)
 --- a/networking/udhcp/dhcpc.c
 +++ b/networking/udhcp/dhcpc.c
@@ -50478,13 +50519,13 @@
 +					/* Something went wrong. Back to discover state */
 +					timeout = already_waited_sec = 0;
 +				}
- 
+
  				state = BOUND;
  				change_listen_mode(LISTEN_NONE);
 --- a/networking/udhcp/dhcpd.c
 +++ b/networking/udhcp/dhcpd.c
 @@ -413,7 +413,8 @@ int udhcpd_main(int argc UNUSED_PARAM, c
- 
+
  		max_sock = udhcp_sp_fd_set(&rfds, server_socket);
  		if (server_config.auto_time) {
 -			tv.tv_sec = timeout_end - monotonic_sec();
@@ -50496,7 +50537,7 @@
 --- a/networking/wget.c
 +++ b/networking/wget.c
 @@ -1050,7 +1050,6 @@ However, in real world it was observed t
- 
+
  		/* For HTTP, data is pumped over the same connection */
  		dfp = sfp;
 -
@@ -50505,15 +50546,701 @@
  		 *  FTP session
 --- a/networking/zcip.c
 +++ b/networking/zcip.c
-@@ -521,7 +521,7 @@ int zcip_main(int argc UNUSED_PARAM, cha
- 			target_ip_conflict = 0;
- 
- 			if (memcmp(&p.arp.arp_sha, &eth_addr, ETH_ALEN) != 0) {
--				if (memcmp(p.arp.arp_spa, &ip.s_addr, sizeof(struct in_addr))) {
-+				if (memcmp(p.arp.arp_spa, &ip.s_addr, sizeof(struct in_addr)) == 0) {
- 					/* A probe or reply with source_ip == chosen ip */
- 					source_ip_conflict = 1;
+@@ -56,26 +56,23 @@ struct arp_packet {
+ } PACKED;
+
+ enum {
+-/* 169.254.0.0 */
+-	LINKLOCAL_ADDR = 0xa9fe0000,
+-
+-/* protocol timeout parameters, specified in seconds */
++	/* 0-1 seconds before sending 1st probe */
+ 	PROBE_WAIT = 1,
++	/* 1-2 seconds between probes */
+ 	PROBE_MIN = 1,
+ 	PROBE_MAX = 2,
+-	PROBE_NUM = 3,
+-	MAX_CONFLICTS = 10,
+-	RATE_LIMIT_INTERVAL = 60,
+-	ANNOUNCE_WAIT = 2,
+-	ANNOUNCE_NUM = 2,
+-	ANNOUNCE_INTERVAL = 2,
+-	DEFEND_INTERVAL = 10
++	PROBE_NUM = 3,		/* total probes to send */
++	ANNOUNCE_INTERVAL = 2,  /* 2 seconds between announces */
++	ANNOUNCE_NUM = 3,	/* announces to send */
++	/* if probe/announce sees a conflict, multiply RANDOM(NUM_CONFLICT) by... */
++	CONFLICT_MULTIPLIER = 2,
++	/* if we monitor and see a conflict, how long is defend state? */
++	DEFEND_INTERVAL = 10,
+ };
+
+ /* States during the configuration process. */
+ enum {
+ 	PROBE = 0,
+-	RATE_LIMIT_PROBE,
+ 	ANNOUNCE,
+ 	MONITOR,
+ 	DEFEND
+@@ -89,13 +86,11 @@ enum {
+ };
+
+ struct globals {
+-	struct sockaddr saddr;
+-	struct ether_addr eth_addr;
++	struct sockaddr iface_sockaddr;
++	struct ether_addr our_ethaddr;
+ 	uint32_t localnet_ip;
+ } FIX_ALIASING;
+ #define G (*(struct globals*)&bb_common_bufsiz1)
+-#define saddr    (G.saddr   )
+-#define eth_addr (G.eth_addr)
+ #define INIT_G() do { } while (0)
+
+
+@@ -113,17 +108,24 @@ static uint32_t pick_nip(void)
+ 	return htonl((G.localnet_ip + 0x0100) + tmp);
+ }
+
++static const char *nip_to_a(uint32_t nip)
++{
++	struct in_addr in;
++	in.s_addr = nip;
++	return inet_ntoa(in);
++}
++
+ /**
+  * Broadcast an ARP packet.
+  */
+-static void arp(
++static void send_arp_request(
+ 	/* int op, - always ARPOP_REQUEST */
+-	/* const struct ether_addr *source_eth, - always &eth_addr */
+-					struct in_addr source_ip,
+-	const struct ether_addr *target_eth, struct in_addr target_ip)
++	/* const struct ether_addr *source_eth, - always &G.our_ethaddr */
++					uint32_t source_nip,
++	const struct ether_addr *target_eth, uint32_t target_nip)
+ {
+ 	enum { op = ARPOP_REQUEST };
+-#define source_eth (&eth_addr)
++#define source_eth (&G.our_ethaddr)
+
+ 	struct arp_packet p;
+ 	memset(&p, 0, sizeof(p));
+@@ -140,18 +142,18 @@ static void arp(
+ 	p.arp.arp_pln = 4;
+ 	p.arp.arp_op = htons(op);
+ 	memcpy(&p.arp.arp_sha, source_eth, ETH_ALEN);
+-	memcpy(&p.arp.arp_spa, &source_ip, sizeof(p.arp.arp_spa));
++	memcpy(&p.arp.arp_spa, &source_nip, 4);
+ 	memcpy(&p.arp.arp_tha, target_eth, ETH_ALEN);
+-	memcpy(&p.arp.arp_tpa, &target_ip, sizeof(p.arp.arp_tpa));
++	memcpy(&p.arp.arp_tpa, &target_nip, 4);
+
+ 	// send it
+-	// Even though sock_fd is already bound to saddr, just send()
++	// Even though sock_fd is already bound to G.iface_sockaddr, just send()
+ 	// won't work, because "socket is not connected"
+ 	// (and connect() won't fix that, "operation not supported").
+-	// Thus we sendto() to saddr. I wonder which sockaddr
++	// Thus we sendto() to G.iface_sockaddr. I wonder which sockaddr
+ 	// (from bind() or from sendto()?) kernel actually uses
+ 	// to determine iface to emit the packet from...
+-	xsendto(sock_fd, &p, sizeof(p), &saddr, sizeof(saddr));
++	xsendto(sock_fd, &p, sizeof(p), &G.iface_sockaddr, sizeof(G.iface_sockaddr));
+ #undef source_eth
+ }
+
+@@ -159,18 +161,18 @@ static void arp(
+  * Run a script.
+  * argv[0]:intf argv[1]:script_name argv[2]:junk argv[3]:NULL
+  */
+-static int run(char *argv[3], const char *param, struct in_addr *ip)
++static int run(char *argv[3], const char *param, uint32_t nip)
+ {
+ 	int status;
+-	char *addr = addr; /* for gcc */
++	const char *addr = addr; /* for gcc */
+ 	const char *fmt = "%s %s %s" + 3;
+
+ 	argv[2] = (char*)param;
+
+ 	VDBG("%s run %s %s\n", argv[0], argv[1], argv[2]);
+
+-	if (ip) {
+-		addr = inet_ntoa(*ip);
++	if (nip != 0) {
++		addr = nip_to_a(nip);
+ 		xsetenv("ip", addr);
+ 		fmt -= 3;
+ 	}
+@@ -191,7 +193,7 @@ static int run(char *argv[3], const char
+  */
+ static ALWAYS_INLINE unsigned random_delay_ms(unsigned secs)
+ {
+-	return rand() % (secs * 1000);
++	return (unsigned)rand() % (secs * 1000);
+ }
+
+ /**
+@@ -200,41 +202,34 @@ static ALWAYS_INLINE unsigned random_del
+ int zcip_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ int zcip_main(int argc UNUSED_PARAM, char **argv)
+ {
+-	int state;
+ 	char *r_opt;
+ 	const char *l_opt = "169.254.0.0";
++	int state;
++	int nsent;
+ 	unsigned opts;
+
+-	// ugly trick, but I want these zeroed in one go
++	// Ugly trick, but I want these zeroed in one go
+ 	struct {
+-		const struct in_addr null_ip;
+-		const struct ether_addr null_addr;
+-		struct in_addr ip;
++		const struct ether_addr null_ethaddr;
+ 		struct ifreq ifr;
+-		int timeout_ms; /* must be signed */
+-		unsigned conflicts;
+-		unsigned nprobes;
+-		unsigned nclaims;
+-		int ready;
++		uint32_t chosen_nip;
++		int conflicts;
++		int timeout_ms; // must be signed
+ 		int verbose;
+ 	} L;
+-#define null_ip    (L.null_ip   )
+-#define null_addr  (L.null_addr )
+-#define ip         (L.ip        )
+-#define ifr        (L.ifr       )
+-#define timeout_ms (L.timeout_ms)
+-#define conflicts  (L.conflicts )
+-#define nprobes    (L.nprobes   )
+-#define nclaims    (L.nclaims   )
+-#define ready      (L.ready     )
+-#define verbose    (L.verbose   )
++#define null_ethaddr (L.null_ethaddr)
++#define ifr          (L.ifr         )
++#define chosen_nip   (L.chosen_nip  )
++#define conflicts    (L.conflicts   )
++#define timeout_ms   (L.timeout_ms  )
++#define verbose      (L.verbose     )
+
+ 	memset(&L, 0, sizeof(L));
+ 	INIT_G();
+
+ #define FOREGROUND (opts & 1)
+ #define QUIT       (opts & 2)
+-	// parse commandline: prog [options] ifname script
++	// Parse commandline: prog [options] ifname script
+ 	// exactly 2 args; -v accumulates and implies -f
+ 	opt_complementary = "=2:vv:vf";
+ 	opts = getopt32(argv, "fqr:l:v", &r_opt, &l_opt, &verbose);
+@@ -243,7 +238,7 @@ int zcip_main(int argc UNUSED_PARAM, cha
+ 	if (!FOREGROUND)
+ 		bb_daemonize_or_rexec(0 /*was: DAEMON_CHDIR_ROOT*/, argv);
+ #endif
+-	// open an ARP socket
++	// Open an ARP socket
+ 	// (need to do it before openlog to prevent openlog from taking
+ 	// fd 3 (sock_fd==3))
+ 	xmove_fd(xsocket(AF_PACKET, SOCK_PACKET, htons(ETH_P_ARP)), sock_fd);
+@@ -264,11 +259,13 @@ int zcip_main(int argc UNUSED_PARAM, cha
+ 		G.localnet_ip = ntohl(net.s_addr);
+ 	}
+ 	if (opts & 4) { // -r n.n.n.n
++		struct in_addr ip;
+ 		if (inet_aton(r_opt, &ip) == 0
+ 		 || (ntohl(ip.s_addr) & IN_CLASSB_NET) != G.localnet_ip
+ 		) {
+ 			bb_error_msg_and_die("invalid link address");
+ 		}
++		chosen_nip = ip.s_addr;
+ 	}
+ 	argv += optind - 1;
+
+@@ -281,26 +278,26 @@ int zcip_main(int argc UNUSED_PARAM, cha
+
+ 	xsetenv("interface", argv_intf);
+
+-	// initialize the interface (modprobe, ifup, etc)
+-	if (run(argv, "init", NULL))
++	// Initialize the interface (modprobe, ifup, etc)
++	if (run(argv, "init", 0))
+ 		return EXIT_FAILURE;
+
+-	// initialize saddr
+-	// saddr is: { u16 sa_family; u8 sa_data[14]; }
+-	//memset(&saddr, 0, sizeof(saddr));
++	// Initialize G.iface_sockaddr
++	// G.iface_sockaddr is: { u16 sa_family; u8 sa_data[14]; }
++	//memset(&G.iface_sockaddr, 0, sizeof(G.iface_sockaddr));
+ 	//TODO: are we leaving sa_family == 0 (AF_UNSPEC)?!
+-	safe_strncpy(saddr.sa_data, argv_intf, sizeof(saddr.sa_data));
++	safe_strncpy(G.iface_sockaddr.sa_data, argv_intf, sizeof(G.iface_sockaddr.sa_data));
+
+-	// bind to the interface's ARP socket
+-	xbind(sock_fd, &saddr, sizeof(saddr));
++	// Bind to the interface's ARP socket
++	xbind(sock_fd, &G.iface_sockaddr, sizeof(G.iface_sockaddr));
+
+-	// get the interface's ethernet address
++	// Get the interface's ethernet address
+ 	//memset(&ifr, 0, sizeof(ifr));
+ 	strncpy_IFNAMSIZ(ifr.ifr_name, argv_intf);
+ 	xioctl(sock_fd, SIOCGIFHWADDR, &ifr);
+-	memcpy(&eth_addr, &ifr.ifr_hwaddr.sa_data, ETH_ALEN);
++	memcpy(&G.our_ethaddr, &ifr.ifr_hwaddr.sa_data, ETH_ALEN);
+
+-	// start with some stable ip address, either a function of
++	// Start with some stable ip address, either a function of
+ 	// the hardware address or else the last address we used.
+ 	// we are taking low-order four bytes, as top-order ones
+ 	// aren't random enough.
+@@ -308,17 +305,14 @@ int zcip_main(int argc UNUSED_PARAM, cha
+ 	// depending on when we detect conflicts.
+ 	{
+ 		uint32_t t;
+-		move_from_unaligned32(t, ((char *)&eth_addr + 2));
++		move_from_unaligned32(t, ((char *)&G.our_ethaddr + 2));
+ 		srand(t);
+ 	}
+-	if (ip.s_addr == 0)
+-		ip.s_addr = pick_nip();
+-
+ 	// FIXME cases to handle:
+ 	//  - zcip already running!
+ 	//  - link already has local address... just defend/update
+
+-	// daemonize now; don't delay system startup
++	// Daemonize now; don't delay system startup
+ 	if (!FOREGROUND) {
+ #if BB_MMU
+ 		bb_daemonize(0 /*was: DAEMON_CHDIR_ROOT*/);
+@@ -326,12 +320,14 @@ int zcip_main(int argc UNUSED_PARAM, cha
+ 		bb_info_msg("start, interface %s", argv_intf);
+ 	}
+
+-	// run the dynamic address negotiation protocol,
++	// Run the dynamic address negotiation protocol,
+ 	// restarting after address conflicts:
+ 	//  - start with some address we want to try
+ 	//  - short random delay
+ 	//  - arp probes to see if another host uses it
++	//    00:04:e2:64:23:c2 > ff:ff:ff:ff:ff:ff arp who-has 169.254.194.171 tell 0.0.0.0
+ 	//  - arp announcements that we're claiming it
++	//    00:04:e2:64:23:c2 > ff:ff:ff:ff:ff:ff arp who-has 169.254.194.171 (00:04:e2:64:23:c2) tell 169.254.194.171
+ 	//  - use it
+ 	//  - defend it, within limits
+ 	// exit if:
+@@ -339,263 +335,191 @@ int zcip_main(int argc UNUSED_PARAM, cha
+ 	//   run "<script> config", then exit with exitcode 0
+ 	// - poll error (when does this happen?)
+ 	// - read error (when does this happen?)
+-	// - sendto error (in arp()) (when does this happen?)
++	// - sendto error (in send_arp_request()) (when does this happen?)
+ 	// - revents & POLLERR (link down). run "<script> deconfig" first
++	if (chosen_nip == 0) {
++ new_nip_and_PROBE:
++		chosen_nip = pick_nip();
++	}
++	nsent = 0;
+ 	state = PROBE;
+ 	while (1) {
+ 		struct pollfd fds[1];
+ 		unsigned deadline_us;
+ 		struct arp_packet p;
+-		int source_ip_conflict;
+-		int target_ip_conflict;
++		int ip_conflict;
++		int n;
+
+ 		fds[0].fd = sock_fd;
+ 		fds[0].events = POLLIN;
+ 		fds[0].revents = 0;
+
+-		// poll, being ready to adjust current timeout
++		// Poll, being ready to adjust current timeout
+ 		if (!timeout_ms) {
+ 			timeout_ms = random_delay_ms(PROBE_WAIT);
+ 			// FIXME setsockopt(sock_fd, SO_ATTACH_FILTER, ...) to
+ 			// make the kernel filter out all packets except
+ 			// ones we'd care about.
+ 		}
+-		// set deadline_us to the point in time when we timeout
++		// Set deadline_us to the point in time when we timeout
+ 		deadline_us = MONOTONIC_US() + timeout_ms * 1000;
+
+-		VDBG("...wait %d %s nprobes=%u, nclaims=%u\n",
+-				timeout_ms, argv_intf, nprobes, nclaims);
++		VDBG("...wait %d %s nsent=%u\n",
++				timeout_ms, argv_intf, nsent);
+
+-		switch (safe_poll(fds, 1, timeout_ms)) {
+-
+-		default:
++		n = safe_poll(fds, 1, timeout_ms);
++		if (n < 0) {
+ 			//bb_perror_msg("poll"); - done in safe_poll
+ 			return EXIT_FAILURE;
+-
+-		// timeout
+-		case 0:
+-			VDBG("state = %d\n", state);
++		}
++		if (n == 0) { // timed out?
++			VDBG("state:%d\n", state);
+ 			switch (state) {
+ 			case PROBE:
+-				// timeouts in the PROBE state mean no conflicting ARP packets
+-				// have been received, so we can progress through the states
+-				if (nprobes < PROBE_NUM) {
+-					nprobes++;
++				// No conflicting ARP packets were seen:
++				// we can progress through the states
++				if (nsent < PROBE_NUM) {
++					nsent++;
+ 					VDBG("probe/%u %s@%s\n",
+-							nprobes, argv_intf, inet_ntoa(ip));
++							nsent, argv_intf, nip_to_a(chosen_nip));
+ 					timeout_ms = PROBE_MIN * 1000;
+ 					timeout_ms += random_delay_ms(PROBE_MAX - PROBE_MIN);
+-					arp(/* ARPOP_REQUEST, */
+-							/* &eth_addr, */ null_ip,
+-							&null_addr, ip);
++					send_arp_request(0, &null_ethaddr, chosen_nip);
++					continue;
  				}
+-				else {
+-					// Switch to announce state.
+-					state = ANNOUNCE;
+-					nclaims = 0;
+-					VDBG("announce/%u %s@%s\n",
+-							nclaims, argv_intf, inet_ntoa(ip));
+-					timeout_ms = ANNOUNCE_INTERVAL * 1000;
+-					arp(/* ARPOP_REQUEST, */
+-							/* &eth_addr, */ ip,
+-							&eth_addr, ip);
+-				}
+-				break;
+-			case RATE_LIMIT_PROBE:
+-				// timeouts in the RATE_LIMIT_PROBE state mean no conflicting ARP packets
+-				// have been received, so we can move immediately to the announce state
++  				// Switch to announce state
++				nsent = 0;
+ 				state = ANNOUNCE;
+-				nclaims = 0;
+-				VDBG("announce/%u %s@%s\n",
+-						nclaims, argv_intf, inet_ntoa(ip));
+-				timeout_ms = ANNOUNCE_INTERVAL * 1000;
+-				arp(/* ARPOP_REQUEST, */
+-						/* &eth_addr, */ ip,
+-						&eth_addr, ip);
+-				break;
++				goto send_announce;
+ 			case ANNOUNCE:
+-				// timeouts in the ANNOUNCE state mean no conflicting ARP packets
+-				// have been received, so we can progress through the states
+-				if (nclaims < ANNOUNCE_NUM) {
+-					nclaims++;
++				// No conflicting ARP packets were seen:
++				// we can progress through the states
++				if (nsent < ANNOUNCE_NUM) {
++ send_announce:
++					nsent++;
+ 					VDBG("announce/%u %s@%s\n",
+-							nclaims, argv_intf, inet_ntoa(ip));
++							nsent, argv_intf, nip_to_a(chosen_nip));
+ 					timeout_ms = ANNOUNCE_INTERVAL * 1000;
+-					arp(/* ARPOP_REQUEST, */
+-							/* &eth_addr, */ ip,
+-							&eth_addr, ip);
+-				}
+-				else {
+-					// Switch to monitor state.
+-					state = MONITOR;
+-					// link is ok to use earlier
+-					// FIXME update filters
+-					run(argv, "config", &ip);
+-					ready = 1;
+-					conflicts = 0;
+-					timeout_ms = -1; // Never timeout in the monitor state.
+-
+-					// NOTE: all other exit paths
+-					// should deconfig ...
+-					if (QUIT)
+-						return EXIT_SUCCESS;
++					send_arp_request(chosen_nip, &G.our_ethaddr, chosen_nip);
++					continue;
+ 				}
+-				break;
+-			case DEFEND:
+-				// We won!  No ARP replies, so just go back to monitor.
+-				state = MONITOR;
+-				timeout_ms = -1;
+-				conflicts = 0;
+-				break;
++				// Switch to monitor state
++				// FIXME update filters
++				run(argv, "config", chosen_nip);
++				// NOTE: all other exit paths should deconfig...
++				if (QUIT)
++					return EXIT_SUCCESS;
++				// fall through: switch to MONITOR
+ 			default:
+-				// Invalid, should never happen.  Restart the whole protocol.
+-				state = PROBE;
+-				ip.s_addr = pick_nip();
+-				timeout_ms = 0;
+-				nprobes = 0;
+-				nclaims = 0;
+-				break;
+-			} // switch (state)
+-			break; // case 0 (timeout)
+-
+-		// packets arriving, or link went down
+-		case 1:
+-			// We need to adjust the timeout in case we didn't receive
+-			// a conflicting packet.
+-			if (timeout_ms > 0) {
+-				unsigned diff = deadline_us - MONOTONIC_US();
+-				if ((int)(diff) < 0) {
+-					// Current time is greater than the expected timeout time.
+-					// Should never happen.
+-					VDBG("missed an expected timeout\n");
+-					timeout_ms = 0;
+-				} else {
+-					VDBG("adjusting timeout\n");
+-					timeout_ms = (diff / 1000) | 1; /* never 0 */
+-				}
++			// case DEFEND:
++			// case MONITOR: (shouldn't happen, MONITOR timeout is infinite)
++				// Defend period ended with no ARP replies - we won
++				timeout_ms = -1; // never timeout in monitor state
++				state = MONITOR;
++				continue;
+ 			}
++		}
+
+-			if ((fds[0].revents & POLLIN) == 0) {
+-				if (fds[0].revents & POLLERR) {
+-					// FIXME: links routinely go down;
+-					// this shouldn't necessarily exit.
+-					bb_error_msg("iface %s is down", argv_intf);
+-					if (ready) {
+-						run(argv, "deconfig", &ip);
+-					}
+-					return EXIT_FAILURE;
+-				}
+-				continue;
++		// Packet arrived, or link went down.
++		// We need to adjust the timeout in case we didn't receive
++		// a conflicting packet.
++		if (timeout_ms > 0) {
++			unsigned diff = deadline_us - MONOTONIC_US();
++			if ((int)(diff) < 0) {
++				// Current time is greater than the expected timeout time.
++				diff = 0;
+ 			}
++			VDBG("adjusting timeout\n");
++			timeout_ms = (diff / 1000) | 1; // never 0
++		}
+
+-			// read ARP packet
+-			if (safe_read(sock_fd, &p, sizeof(p)) < 0) {
+-				bb_perror_msg_and_die(bb_msg_read_error);
++		if ((fds[0].revents & POLLIN) == 0) {
++			if (fds[0].revents & POLLERR) {
++				// FIXME: links routinely go down;
++				// this shouldn't necessarily exit.
++				bb_error_msg("iface %s is down", argv_intf);
++				if (state >= MONITOR) {
++					// Only if we are in MONITOR or DEFEND
++					run(argv, "deconfig", chosen_nip);
++				}
++				return EXIT_FAILURE;
+ 			}
+-			if (p.eth.ether_type != htons(ETHERTYPE_ARP))
+-				continue;
++			continue;
++		}
++
++		// Read ARP packet
++		if (safe_read(sock_fd, &p, sizeof(p)) < 0) {
++			bb_perror_msg_and_die(bb_msg_read_error);
++		}
++
++		if (p.eth.ether_type != htons(ETHERTYPE_ARP))
++			continue;
++		if (p.arp.arp_op != htons(ARPOP_REQUEST)
++		 && p.arp.arp_op != htons(ARPOP_REPLY)
++		) {
++			continue;
++		}
+ #ifdef DEBUG
+-			{
+-				struct ether_addr *sha = (struct ether_addr *) p.arp.arp_sha;
+-				struct ether_addr *tha = (struct ether_addr *) p.arp.arp_tha;
+-				struct in_addr *spa = (struct in_addr *) p.arp.arp_spa;
+-				struct in_addr *tpa = (struct in_addr *) p.arp.arp_tpa;
+-				VDBG("%s recv arp type=%d, op=%d,\n",
+-					argv_intf, ntohs(p.eth.ether_type),
+-					ntohs(p.arp.arp_op));
+-				VDBG("\tsource=%s %s\n",
+-					ether_ntoa(sha),
+-					inet_ntoa(*spa));
+-				VDBG("\ttarget=%s %s\n",
+-					ether_ntoa(tha),
+-					inet_ntoa(*tpa));
+-			}
++		{
++			struct ether_addr *sha = (struct ether_addr *) p.arp.arp_sha;
++			struct ether_addr *tha = (struct ether_addr *) p.arp.arp_tha;
++			struct in_addr *spa = (struct in_addr *) p.arp.arp_spa;
++			struct in_addr *tpa = (struct in_addr *) p.arp.arp_tpa;
++			VDBG("source=%s %s\n", ether_ntoa(sha),	inet_ntoa(*spa));
++			VDBG("target=%s %s\n", ether_ntoa(tha),	inet_ntoa(*tpa));
++		}
+ #endif
+-			if (p.arp.arp_op != htons(ARPOP_REQUEST)
+-			 && p.arp.arp_op != htons(ARPOP_REPLY)
++		ip_conflict = 0;
++		if (memcmp(&p.arp.arp_sha, &G.our_ethaddr, ETH_ALEN) != 0) {
++			if (memcmp(p.arp.arp_spa, &chosen_nip, 4) == 0) {
++				// A probe or reply with source_ip == chosen ip
++				ip_conflict = 1;
++			}
++			if (p.arp.arp_op == htons(ARPOP_REQUEST)
++			 && memcmp(p.arp.arp_spa, &const_int_0, 4) == 0
++			 && memcmp(p.arp.arp_tpa, &chosen_nip, 4) == 0
+ 			) {
+-				continue;
++				// A probe with source_ip == 0.0.0.0, target_ip == chosen ip:
++				// another host trying to claim this ip!
++				ip_conflict |= 2;
+ 			}
++		}
++		VDBG("state:%d ip_conflict:%d\n", state, ip_conflict);
++		if (!ip_conflict)
++			continue;
++
++		// Either src or target IP conflict exists
++		if (state <= ANNOUNCE) {
++			// PROBE or ANNOUNCE
++			conflicts++;
++			timeout_ms = PROBE_MIN * 1000
++				+ CONFLICT_MULTIPLIER * random_delay_ms(conflicts);
++			goto new_nip_and_PROBE;
++		}
+
+-			source_ip_conflict = 0;
+-			target_ip_conflict = 0;
+-
+-			if (memcmp(&p.arp.arp_sha, &eth_addr, ETH_ALEN) != 0) {
+-				if (memcmp(p.arp.arp_spa, &ip.s_addr, sizeof(struct in_addr))) {
+-					/* A probe or reply with source_ip == chosen ip */
+-					source_ip_conflict = 1;
+-				}
+-				if (p.arp.arp_op == htons(ARPOP_REQUEST)
+-				 && memcmp(p.arp.arp_spa, &null_ip, sizeof(struct in_addr)) == 0
+-				 && memcmp(p.arp.arp_tpa, &ip.s_addr, sizeof(struct in_addr)) == 0
+-				) {
+-					/* A probe with source_ip == 0.0.0.0, target_ip == chosen ip:
+-					 * another host trying to claim this ip!
+-					 */
+-					target_ip_conflict = 1;
+-				}
++		// MONITOR or DEFEND: only src IP conflict is a problem
++		if (ip_conflict & 1) {
++			if (state == MONITOR) {
++				// Src IP conflict, defend with a single ARP probe
++				VDBG("monitor conflict - defending\n");
++				timeout_ms = DEFEND_INTERVAL * 1000;
++				state = DEFEND;
++				send_arp_request(chosen_nip, &G.our_ethaddr, chosen_nip);
++				continue;
+ 			}
+-
+-			VDBG("state = %d, source ip conflict = %d, target ip conflict = %d\n",
+-				state, source_ip_conflict, target_ip_conflict);
+-			switch (state) {
+-			case PROBE:
+-			case ANNOUNCE:
+-				// When probing or announcing, check for source IP conflicts
+-				// and other hosts doing ARP probes (target IP conflicts).
+-				if (source_ip_conflict || target_ip_conflict) {
+-					conflicts++;
+-					if (conflicts >= MAX_CONFLICTS) {
+-						VDBG("%s ratelimit\n", argv_intf);
+-						timeout_ms = RATE_LIMIT_INTERVAL * 1000;
+-						state = RATE_LIMIT_PROBE;
+-					}
+-
+-					// restart the whole protocol
+-					ip.s_addr = pick_nip();
+-					timeout_ms = 0;
+-					nprobes = 0;
+-					nclaims = 0;
+-				}
+-				break;
+-			case MONITOR:
+-				// If a conflict, we try to defend with a single ARP probe.
+-				if (source_ip_conflict) {
+-					VDBG("monitor conflict -- defending\n");
+-					state = DEFEND;
+-					timeout_ms = DEFEND_INTERVAL * 1000;
+-					arp(/* ARPOP_REQUEST, */
+-						/* &eth_addr, */ ip,
+-						&eth_addr, ip);
+-				}
+-				break;
+-			case DEFEND:
+-				// Well, we tried.  Start over (on conflict).
+-				if (source_ip_conflict) {
+-					state = PROBE;
+-					VDBG("defend conflict -- starting over\n");
+-					ready = 0;
+-					run(argv, "deconfig", &ip);
+-
+-					// restart the whole protocol
+-					ip.s_addr = pick_nip();
+-					timeout_ms = 0;
+-					nprobes = 0;
+-					nclaims = 0;
+-				}
+-				break;
+-			default:
+-				// Invalid, should never happen.  Restart the whole protocol.
+-				VDBG("invalid state -- starting over\n");
+-				state = PROBE;
+-				ip.s_addr = pick_nip();
+-				timeout_ms = 0;
+-				nprobes = 0;
+-				nclaims = 0;
+-				break;
+-			} // switch state
+-			break; // case 1 (packets arriving)
+-		} // switch poll
++			// state == DEFEND
++			// Another src IP conflict, start over
++			VDBG("defend conflict - starting over\n");
++			run(argv, "deconfig", chosen_nip);
++			conflicts = 0;
++			timeout_ms = 0;
++			goto new_nip_and_PROBE;
++		}
++		// Note: if we only have a target IP conflict here (ip_conflict & 2),
++		// IOW: if we just saw this sort of ARP packet:
++		//  aa:bb:cc:dd:ee:ff > xx:xx:xx:xx:xx:xx arp who-has <chosen_nip> tell 0.0.0.0
++		// we expect _kernel_ to respond to that, because <chosen_nip>
++		// is (expected to be) configured on this iface.
+ 	} // while (1)
+ #undef argv_intf
+ }
 --- a/printutils/lpd.c
 +++ b/printutils/lpd.c
 @@ -204,7 +204,7 @@ int lpd_main(int argc UNUSED_PARAM, char
@@ -50530,7 +51257,7 @@
 @@ -44,11 +44,28 @@ static unsigned long long scale(unsigned
  	return ((unsigned long long)d * G.mem_unit) >> G_unit_steps;
  }
- 
+
 +static unsigned long parse_cached_kb(void)
 +{
 +	char buf[60]; /* actual lines we expect are ~30 chars or less */
@@ -50547,15 +51274,15 @@
 +
 +	return cached;
 +}
- 
+
  int free_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
  int free_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
  {
  	struct sysinfo info;
 +	unsigned long long cached;
- 
+
  	INIT_G();
- 
+
 @@ -73,49 +90,47 @@ int free_main(int argc UNUSED_PARAM, cha
  		}
  	}
@@ -50579,7 +51306,7 @@
 -		 */
 +		"shared", "buffers", "cached" /* swap and total don't have these columns */
  	);
- 
+
 -#define FIELDS_5 "%13llu%13llu%13llu%13llu%13llu\n"
 -#define FIELDS_3 (FIELDS_5 + 2*6)
 -#define FIELDS_2 (FIELDS_5 + 3*6)
@@ -50641,12 +51368,12 @@
 @@ -522,13 +522,11 @@ static void get_irqs_from_stat(struct st
  	FILE *fp;
  	char buf[1024];
- 
+
 -	fp = fopen_for_read(PROCFS_STAT);
 -	if (!fp)
 -		return;
 +	fp = xfopen_for_read(PROCFS_STAT);
- 
+
  	while (fgets(buf, sizeof(buf), fp)) {
  		//bb_error_msg("/proc/stat:'%s'", buf);
 -		if (strncmp(buf, "intr ", 5) == 0) {
@@ -50657,7 +51384,7 @@
 @@ -644,9 +642,7 @@ static void get_uptime(data_t *uptime)
  	char buf[sizeof(long)*3 * 2 + 4]; /* enough for long.long */
  	unsigned long uptime_sec, decimal;
- 
+
 -	fp = fopen_for_read(PROCFS_UPTIME);
 -	if (!fp)
 -		return;
@@ -50669,7 +51396,7 @@
 +++ b/procps/powertop.c
 @@ -360,7 +360,7 @@ static void process_irq_counts(void)
  		}
- 
+
  		name = p;
 -		strchrnul(name, '\n')[0] = '\0';
 +		chomp(p);
@@ -50679,7 +51406,7 @@
 @@ -458,9 +458,9 @@ static NOINLINE int process_timer_stats(
  			//	func = "Load balancing tick";
  			//}
- 
+
 -			if (strncmp(func, "tick_nohz_", 10) == 0)
 +			if (is_prefixed_with(func, "tick_nohz_"))
  				continue;
@@ -50691,10 +51418,10 @@
 @@ -470,7 +470,7 @@ static NOINLINE int process_timer_stats(
  				process = idx < 2 ? "[kernel module]" : "<kernel core>";
  			}
- 
+
 -			strchrnul(p, '\n')[0] = '\0';
 +			chomp(p);
- 
+
  			// 46D\01136\0kondemand/1\0do_dbs_timer (delayed_work_timer_fn)
  			// ^          ^            ^
 @@ -674,7 +674,7 @@ static void show_timerstats(void)
@@ -50703,7 +51430,7 @@
  //usage:#define powertop_full_usage "\n\n"
 -//usage:       "Analyze power consumption on Intel-based laptops\n"
 +//usage:       "Analyze power consumption on Intel-based laptops"
- 
+
  int powertop_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
  int powertop_main(int UNUSED_PARAM argc, char UNUSED_PARAM **argv)
 --- a/procps/ps.c
@@ -50720,7 +51447,7 @@
  	/* If we support any options, parse argv */
  #if ENABLE_SELINUX || ENABLE_FEATURE_SHOW_THREADS || ENABLE_FEATURE_PS_WIDE || ENABLE_FEATURE_PS_LONG
 @@ -786,9 +786,11 @@ int ps_main(int argc UNUSED_PARAM, char
- 
+
  		{
  			int sz = terminal_width - len;
 -			char buf[sz + 1];
@@ -50742,9 +51469,9 @@
  //usage:#define pwdx_full_usage "\n\n"
 -//usage:       "Show current directory for PIDs\n"
 +//usage:       "Show current directory for PIDs"
- 
+
  #include "libbb.h"
- 
+
 @@ -41,7 +41,7 @@ int pwdx_main(int argc UNUSED_PARAM, cha
  		// Allowed on the command line:
  		// /proc/NUM
@@ -50752,12 +51479,12 @@
 -		if (strncmp(arg, "/proc/", 6) == 0)
 +		if (is_prefixed_with(arg, "/proc/"))
  			arg += 6;
- 
+
  		pid = bb_strtou(arg, NULL, 10);
 --- a/procps/uptime.c
 +++ b/procps/uptime.c
 @@ -81,10 +81,10 @@ int uptime_main(int argc UNUSED_PARAM, c
- 
+
  #if ENABLE_FEATURE_UPTIME_UTMP_SUPPORT
  	{
 -		struct utmp *ut;
@@ -50805,12 +51532,12 @@
 +	int need_rescan;
 +	bool i_am_init;
  	char *opt_s_argv[3];
- 
+
  	INIT_G();
 @@ -238,18 +233,21 @@ int runsvdir_main(int argc UNUSED_PARAM,
  	getopt32(argv, "Ps:", &opt_s_argv[0]);
  	argv += optind;
- 
+
 +	i_am_init = (getpid() == 1);
  	bb_signals(0
  		| (1 << SIGTERM)
@@ -50833,7 +51560,7 @@
 +		| (i_am_init ? ((1 << SIGUSR1) | (1 << SIGUSR2) | (1 << SIGINT)) : 0)
  		, record_signo);
  	svdir = *argv++;
- 
+
 @@ -257,8 +255,7 @@ int runsvdir_main(int argc UNUSED_PARAM,
  	/* setup log */
  	if (*argv) {
@@ -50846,11 +51573,11 @@
  			warnx("can't create pipe for log");
 @@ -287,11 +284,16 @@ int runsvdir_main(int argc UNUSED_PARAM,
  	close_on_exec_on(curdir);
- 
+
  	stampcheck = monotonic_sec();
 +	need_rescan = 1;
 +	last_mtime = 0;
- 
+
  	for (;;) {
 +		unsigned now;
 +		unsigned sig;
@@ -50882,7 +51609,7 @@
 -		sig_unblock(SIGCHLD);
 +				sleep(deadline);
 +		}
- 
+
  #if ENABLE_FEATURE_RUNSVDIR_LOG
  		if (pfd[0].revents & POLLIN) {
 @@ -361,21 +363,25 @@ int runsvdir_main(int argc UNUSED_PARAM,
@@ -50902,7 +51629,7 @@
 +		if (!sig)
  			continue;
 +		bb_got_signal = 0;
- 
+
  		/* -s SCRIPT: useful if we are init.
  		 * In this case typically script never returns,
  		 * it halts/powers off/reboots the system. */
@@ -50918,7 +51645,7 @@
 @@ -385,17 +391,16 @@ int runsvdir_main(int argc UNUSED_PARAM,
  			}
  		}
- 
+
 -		if (bb_got_signal == SIGHUP) {
 +		if (sig == SIGHUP) {
  			for (i = 0; i < svnum; i++)
@@ -50931,7 +51658,7 @@
 -			return (SIGHUP == bb_got_signal) ? 111 : EXIT_SUCCESS;
 +		if (!i_am_init)
 +			return (SIGHUP == sig) ? 111 : EXIT_SUCCESS;
- 
+
  		/* init continues to monitor services forever */
 -		bb_got_signal = 0;
  	} /* for (;;) */
@@ -50941,7 +51668,7 @@
 @@ -264,7 +264,7 @@ void singfunc(char * filename, char * li
  	vec[idx++] = KERNELDOC;
  	vec[idx++] = DOCBOOK;
- 
+
 -	/* Split line up in individual parameters preceeded by FUNCTION */
 +	/* Split line up in individual parameters preceded by FUNCTION */
  	for (i=0; line[i]; i++) {
@@ -50975,7 +51702,7 @@
 +++ b/scripts/trylink
 @@ -46,19 +46,19 @@ try() {
  }
- 
+
  check_cc() {
 -    local tempname="/tmp/temp.$$.$RANDOM"
 +    local tempname="$(mktemp)"
@@ -50990,7 +51717,7 @@
 -    rm "$tempname".o 2>/dev/null
 +    rm -f "$tempname" "$tempname".o
  }
- 
+
  check_libc_is_glibc() {
 -    local tempname="/tmp/temp.$$.$RANDOM"
 +    local tempname="$(mktemp)"
@@ -51010,7 +51737,7 @@
 -    rm "$tempname".c "$tempname".o 2>/dev/null
 +    rm -f "$tempname" "$tempname".[co]
  }
- 
+
  EXE="$1"
 --- a/selinux/Config.src
 +++ b/selinux/Config.src
@@ -51020,7 +51747,7 @@
  	help
 -	  Enable support to run command in speficied security context.
 +	  Enable support to run command in specified security context.
- 
+
  config FEATURE_RUNCON_LONG_OPTIONS
  	bool "Enable long options"
 --- a/selinux/setfiles.c
@@ -51049,18 +51776,18 @@
  #define VSTYPE  0x0f            /* type of variable substitution */
  #define VSNUL   0x10            /* colon--treat the empty string as unset */
 -#define VSQUOTE 0x80            /* inside double quotes--suppress splitting */
- 
+
  /* values of VSTYPE field */
  #define VSNORMAL        0x1     /* normal variable:  $var or ${var} */
 @@ -628,8 +625,9 @@ out2str(const char *p)
  #endif
- 
+
  static const char dolatstr[] ALIGN1 = {
 -	CTLVAR, VSNORMAL|VSQUOTE, '@', '=', '\0'
 +	CTLQUOTEMARK, CTLVAR, VSNORMAL, '@', '=', CTLQUOTEMARK, '\0'
  };
 +#define DOLATSTRLEN 6
- 
+
  #define NCMD      0
  #define NPIPE     1
 @@ -865,9 +863,7 @@ trace_puts_quoted(char *s)
@@ -51083,7 +51810,7 @@
  			shtree(bqlist->n, -1, NULL, fp);
 @@ -2030,7 +2025,7 @@ varcmp(const char *p, const char *q)
  	int c, d;
- 
+
  	while ((c = *p) == (d = *q)) {
 -		if (!c || c == '=')
 +		if (c == '\0' || c == '=')
@@ -51092,7 +51819,7 @@
  		q++;
 @@ -2247,7 +2242,7 @@ setvar(const char *name, const char *val
  }
- 
+
  static void FAST_FUNC
 -setvar2(const char *name, const char *val)
 +setvar0(const char *name, const char *val)
@@ -51142,12 +51869,12 @@
  	clear_traps();
 @@ -5505,7 +5493,7 @@ ash_arith(const char *s)
  	arith_t result;
- 
+
  	math_state.lookupvar = lookupvar;
 -	math_state.setvar    = setvar2;
 +	math_state.setvar    = setvar0;
  	//math_state.endofname = endofname;
- 
+
  	INT_OFF;
 @@ -5526,18 +5514,23 @@ ash_arith(const char *s)
  #define EXP_VARTILDE    0x4     /* expand tildes in an assignment */
@@ -51173,7 +51900,7 @@
 +#define QUOTES_ESC     (EXP_FULL | EXP_CASE | EXP_QPAT | EXP_REDIR)
 +/* Do not skip NUL characters. */
 +#define QUOTES_KEEPNUL EXP_TILDE
- 
+
  /*
   * Structure specifying which parts of the string should be searched
 @@ -5602,14 +5595,16 @@ esclen(const char *start, const char *p)
@@ -51183,22 +51910,22 @@
 -	static const char qchars[] ALIGN1 = { CTLESC, CTLQUOTEMARK, '\0' };
 +	static const char qchars[] ALIGN1 = {
 +		IF_ASH_BASH_COMPAT('/',) CTLESC, CTLQUOTEMARK, '\0' };
- 
+
  	char *p, *q, *r;
  	unsigned inquotes;
  	unsigned protect_against_glob;
  	unsigned globbing;
 +	IF_ASH_BASH_COMPAT(unsigned slash = flag & RMESCAPE_SLASH;)
- 
+
 -	p = strpbrk(str, qchars);
 +	p = strpbrk(str, qchars IF_ASH_BASH_COMPAT(+ !slash));
  	if (!p)
  		return str;
- 
+
 @@ -5636,13 +5631,11 @@ rmescapes(char *str, int flag)
  		}
  	}
- 
+
 -	inquotes = (flag & RMESCAPE_QUOTED) ^ RMESCAPE_QUOTED;
 +	inquotes = 0;
  	globbing = flag & RMESCAPE_GLOB;
@@ -51254,7 +51981,7 @@
 -	return rmescapes((char *)pattern, flag);
 +	return rmescapes((char *)pattern, flag | RMESCAPE_GLOB);
  }
- 
+
  /*
 @@ -5695,29 +5690,36 @@ preglob(const char *pattern, int quoted,
  static void
@@ -51262,13 +51989,13 @@
  {
 -	char *q = expdest;
 +	char *q;
- 
+
 -	q = makestrspace(quotes ? len * 2 : len, q);
 +	if (!len)
 +		return;
 +
 +	q = makestrspace((quotes & QUOTES_ESC) ? len * 2 : len, expdest);
- 
+
 -	while (len--) {
 +	do {
  		unsigned char c = *p++;
@@ -51289,10 +52016,10 @@
  		USTPUTC(c, q);
 -	}
 +	} while (--len);
- 
+
  	expdest = q;
  }
- 
+
 -static void
 +static size_t
  strtodest(const char *p, int syntax, int quotes)
@@ -51302,7 +52029,7 @@
 +	memtodest(p, len, syntax, quotes);
 +	return len;
  }
- 
+
  /*
 @@ -5790,8 +5792,7 @@ exptilde(char *startp, char *p, int flag
  	char *name;
@@ -51311,9 +52038,9 @@
 -	int quotes = flags & (EXP_FULL | EXP_CASE | EXP_REDIR);
 -	int startloc;
 +	int quotes = flags & QUOTES_ESC;
- 
+
  	name = p + 1;
- 
+
 @@ -5823,9 +5824,7 @@ exptilde(char *startp, char *p, int flag
  	if (!home || !*home)
  		goto lose;
@@ -51340,7 +52067,7 @@
 -	int syntax = quoted ? DQSYNTAX : BASESYNTAX;
 +	int syntax = flag & EXP_QUOTED ? DQSYNTAX : BASESYNTAX;
  	struct stackmark smark;
- 
+
  	INT_OFF;
 @@ -5922,11 +5921,11 @@ expbackq(union node *cmd, int quoted, in
  	if (i == 0)
@@ -51359,7 +52086,7 @@
 @@ -5946,7 +5945,7 @@ expbackq(union node *cmd, int quoted, in
  		STUNPUTC(dest);
  	expdest = dest;
- 
+
 -	if (quoted == 0)
 +	if (!(flag & EXP_QUOTED))
  		recordregion(startloc, dest - (char *)stackblock(), 0);
@@ -51376,24 +52103,24 @@
  	int begoff;
 -	int flag;
  	int len;
- 
+
  	/* ifsfree(); */
 @@ -6002,16 +6000,14 @@ expari(int quotes)
- 
+
  	removerecordregions(begoff);
- 
+
 -	flag = p[1];
 -
  	expdest = p;
- 
+
 -	if (quotes)
 -		rmescapes(p + 2, 0);
 +	if (flag & QUOTES_ESC)
 +		rmescapes(p + 1, 0);
- 
+
 -	len = cvtnum(ash_arith(p + 2));
 +	len = cvtnum(ash_arith(p + 1));
- 
+
 -	if (flag != '"')
 +	if (!(flag & EXP_QUOTED))
  		recordregion(begoff, begoff + len, 0);
@@ -51488,7 +52215,7 @@
 @@ -6289,60 +6284,17 @@ varunset(const char *end, const char *va
  	ash_msg_and_raise_error("%.*s: %s%s", (int)(end - var - 1), var, msg, tail);
  }
- 
+
 -#if ENABLE_ASH_BASH_COMPAT
 -static char *
 -parse_sub_pattern(char *arg, int varflags)
@@ -51551,7 +52278,7 @@
  	int amount, resetloc;
 @@ -6354,7 +6306,8 @@ subevalvar(char *p, char *varname, int s
  	//		p, varname, strloc, subtype, startloc, varflags, quotes);
- 
+
  	herefd = -1;
 -	argstr(p, (subtype != VSASSIGN && subtype != VSQUESTION) ? EXP_CASE : 0,
 +	argstr(p, EXP_TILDE | (subtype != VSASSIGN && subtype != VSQUESTION ?
@@ -51560,7 +52287,7 @@
  	STPUTC('\0', expdest);
  	herefd = saveherefd;
 @@ -6363,7 +6316,7 @@ subevalvar(char *p, char *varname, int s
- 
+
  	switch (subtype) {
  	case VSASSIGN:
 -		setvar2(varname, startp);
@@ -51584,12 +52311,12 @@
 +	preglob(str, IF_ASH_BASH_COMPAT(
 +		(subtype == VSREPLACE || subtype == VSREPLACEALL) && !repl ?
 +			RMESCAPE_SLASH :) 0);
- 
+
  #if ENABLE_ASH_BASH_COMPAT
  	workloc = expdest - (char *)stackblock();
 @@ -6474,11 +6437,12 @@ subevalvar(char *p, char *varname, int s
  		char *idx, *end;
- 
+
  		if (!repl) {
 -			repl = parse_sub_pattern(str, varflags);
 -			//bb_error_msg("repl:'%s'", repl);
@@ -51600,7 +52327,7 @@
  				repl = nullstr;
  		}
 +		//bb_error_msg("str:'%s' repl:'%s'", str, repl);
- 
+
  		/* If there's no pattern to match, return the expansion unmolested */
  		if (str[0] == '\0')
 @@ -6611,13 +6575,16 @@ varvalue(char *name, int varflags, int f
@@ -51617,7 +52344,7 @@
 +	int discard = subtype == VSPLUS || subtype == VSLENGTH;
 +	int quotes = (discard ? 0 : (flags & QUOTES_ESC)) | QUOTES_KEEPNUL;
  	int syntax = quoted ? DQSYNTAX : BASESYNTAX;
- 
+
 +	sep = quoted ? ((flags & EXP_FULL) << CHAR_BIT) : 0;
 +
  	switch (*name) {
@@ -51629,7 +52356,7 @@
  		char **ap;
 -		int sep;
 +		char sepc;
- 
+
  		if (quoted && (flags & EXP_FULL)) {
  			/* note: this is not meant as PEOF value */
 @@ -6662,39 +6629,20 @@ varvalue(char *name, int varflags, int f
@@ -51653,7 +52380,7 @@
 -			if (!(subtype == VSPLUS || subtype == VSLENGTH))
 -				memtodest(p, partlen, syntax, quotes);
 +			len += strtodest(p, syntax, quotes);
- 
+
  			if (*ap && sep) {
 -				char *q;
 -
@@ -51679,7 +52406,7 @@
 @@ -6743,9 +6691,7 @@ varvalue(char *name, int varflags, int f
  		if (!p)
  			return -1;
- 
+
 -		len = strlen(p);
 -		if (!(subtype == VSPLUS || subtype == VSLENGTH))
 -			memtodest(p, len, syntax, quotes);
@@ -51694,7 +52421,7 @@
 -		return len;
 +		break;
  	}
- 
+
 -	if (subtype == VSPLUS || subtype == VSLENGTH)
 +	if (discard)
  		STADJUST(-len, expdest);
@@ -51710,7 +52437,7 @@
  	char *var;
  	int patloc;
 @@ -6780,7 +6726,7 @@ evalvar(char *p, int flags, struct strli
- 
+
  	varflags = (unsigned char) *p++;
  	subtype = varflags & VSTYPE;
 -	quoted = varflags & VSQUOTE;
@@ -51759,7 +52486,7 @@
  			} else if (c == CTLVAR) {
 @@ -7230,7 +7173,7 @@ expandmeta(struct strlist *str /*, int f
  		savelastp = exparg.lastp;
- 
+
  		INT_OFF;
 -		p = preglob(str->text, 0, RMESCAPE_ALLOC | RMESCAPE_HEAP);
 +		p = preglob(str->text, RMESCAPE_ALLOC | RMESCAPE_HEAP);
@@ -51774,7 +52501,7 @@
 +	expandarg(arg, (struct arglist *)NULL, EXP_QUOTED);
  	full_write(fd, stackblock(), expdest - (char *)stackblock());
  }
- 
+
 @@ -7330,7 +7273,7 @@ expandhere(union node *arg, int fd)
  static int
  patmatch(char *pattern, const char *string)
@@ -51782,7 +52509,7 @@
 -	return pmatch(preglob(pattern, 0, 0), string);
 +	return pmatch(preglob(pattern, 0), string);
  }
- 
+
  /*
 @@ -8583,7 +8526,7 @@ evalfor(union node *n, int flags)
  	arglist.list = NULL;
@@ -51817,7 +52544,7 @@
  	struct var **vpp;
  	struct var *vp;
 +	char *eq = strchr(name, '=');
- 
+
  	INT_OFF;
 -	lvp = ckzalloc(sizeof(struct localvar));
 +	/* Cater for duplicate "local". Examples:
@@ -51877,7 +52604,7 @@
  		break;
 -
  	} /* switch */
- 
+
   out:
 @@ -9494,7 +9456,7 @@ evalcommand(union node *cmd, int flags)
  		 * '_' in 'vi' command mode during line editing...
@@ -51904,11 +52631,11 @@
 -	nr = nonblock_immune_read(g_parsefile->pf_fd, buf, IBUFSIZ - 1, /*loop_on_EINTR:*/ 1);
 +	nr = nonblock_immune_read(g_parsefile->pf_fd, buf, IBUFSIZ - 1);
  #endif
- 
+
  #if 0 /* disabled: nonblock_immune_read() handles this problem */
 @@ -10511,7 +10473,6 @@ struct heredoc {
  };
- 
+
  static smallint tokpushback;           /* last token pushed back */
 -static smallint parsebackquote;        /* nonzero if we are inside backquotes */
  static smallint quoteflag;             /* set if (part of) last token was quoted */
@@ -51921,11 +52648,11 @@
 -static char peektoken(void);
 +static char nexttoken_ends_list(void);
  static int readtoken(void);
- 
+
  static union node *
 @@ -10566,7 +10527,7 @@ list(int nlflag)
  	int tok;
- 
+
  	checkkwd = CHKNL | CHKKWD | CHKALIAS;
 -	if (nlflag == 2 && peektoken())
 +	if (nlflag == 2 && nexttoken_ends_list())
@@ -51950,9 +52677,9 @@
  		case TEOF:
  			if (heredoclist)
 @@ -11164,19 +11132,6 @@ readtoken1(int c, int syntax, char *eofm
- 
+
  	IF_ASH_BASH_COMPAT(smallint bash_dollar_squote = 0;)
- 
+
 -#if __GNUC__
 -	/* Avoid longjmp clobbering */
 -	(void) &out;
@@ -52040,7 +52767,7 @@
 +	char *str;
  	size_t savelen;
  	smallint saveprompt = 0;
- 
+
 -#ifdef __GNUC__
 -	(void) &saveprompt;
 -#endif
@@ -52070,7 +52797,7 @@
  	*nlpp = stzalloc(sizeof(**nlpp));
  	/* (*nlpp)->next = NULL; - stzalloc did it */
 -	parsebackquote = oldstyle;
- 
+
  	if (oldstyle) {
  		saveprompt = doprompt;
 @@ -11774,17 +11704,8 @@ parsebackq: {
@@ -52114,21 +52841,21 @@
  #endif
 -
  } /* end of readtoken */
- 
+
  /*
 @@ -12046,7 +11956,7 @@ readtoken(void)
  }
- 
+
  static char
 -peektoken(void)
 +nexttoken_ends_list(void)
  {
  	int t;
- 
+
 @@ -12124,7 +12034,7 @@ expandstr(const char *ps)
  	n.narg.text = wordtext;
  	n.narg.backquote = backquotelist;
- 
+
 -	expandarg(&n, NULL, 0);
 +	expandarg(&n, NULL, EXP_QUOTED);
  	return stackblock();
@@ -52146,7 +52873,7 @@
 @@ -13042,14 +12952,14 @@ init(void)
  			}
  		}
- 
+
 -		setvar2("PPID", utoa(getppid()));
 +		setvar0("PPID", utoa(getppid()));
  #if ENABLE_ASH_BASH_COMPAT
@@ -52308,7 +53035,7 @@
  			break;
 -
  		} /* switch (char after <SPECIAL_VAR_SYMBOL>) */
- 
+
  		if (val && val[0]) {
 @@ -5884,7 +5883,7 @@ static FILE *generate_stream_from_string
  		 * Our solution: ONLY bare $(trap) or `trap` is special.
@@ -52422,13 +53149,13 @@
  		}
 -
  	} /* while (there are options) */
- 
+
  	return 0;
 --- a/sysklogd/logread.c
 +++ b/sysklogd/logread.c
 @@ -10,10 +10,11 @@
   */
- 
+
  //usage:#define logread_trivial_usage
 -//usage:       "[-f]"
 +//usage:       "[-fF]"
@@ -52436,7 +53163,7 @@
  //usage:       "Show messages in syslogd's circular buffer\n"
  //usage:     "\n	-f	Output data as log grows"
 +//usage:     "\n	-F	Same as -f, but dump buffer first"
- 
+
  #include "libbb.h"
  #include <sys/ipc.h>
 @@ -83,7 +84,7 @@ int logread_main(int argc UNUSED_PARAM,
@@ -52445,13 +53172,13 @@
  	int log_shmid; /* ipc shared memory id */
 -	smallint follow = getopt32(argv, "f");
 +	int follow = getopt32(argv, "fF");
- 
+
  	INIT_G();
- 
+
 @@ -106,7 +107,7 @@ int logread_main(int argc UNUSED_PARAM,
  	/* Max possible value for tail is shbuf->size - 1 */
  	cur = shbuf->tail;
- 
+
 -	/* Loop for logread -f, one pass if there was no -f */
 +	/* Loop for -f or -F, one pass otherwise */
  	do {
@@ -52460,7 +53187,7 @@
 @@ -129,7 +130,12 @@ int logread_main(int argc UNUSED_PARAM,
  			printf("cur:%u tail:%u size:%u\n",
  					cur, shbuf_tail, shbuf_size);
- 
+
 -		if (!follow) {
 +		if (!(follow & 1)) { /* not -f */
 +			/* if -F, "convert" it to -f, so that we dont
@@ -52493,18 +53220,18 @@
 --- a/testsuite/bzcat.tests
 +++ b/testsuite/bzcat.tests
 @@ -2,8 +2,6 @@
- 
+
  FAILCOUNT=0
- 
+
 -ext=bz2
 -
  bb="busybox "
- 
+
  unset LC_ALL
 @@ -11,6 +9,11 @@ unset LC_MESSAGES
  unset LANG
  unset LANGUAGE
- 
+
 +hello_Z() {
 +    # Compressed "HELLO\n"
 +    $ECHO -ne "\x1f\x9d\x90\x48\x8a\x30\x61\xf2\x44\x01"
@@ -52516,7 +53243,7 @@
 @@ -25,32 +28,34 @@ hello_bz2() {
      $ECHO -ne "\x17\x72\x45\x38\x50\x90\x5b\xb8\xe8\xa3"
  }
- 
+
 -prep() {
 -    rm -f t*
 -    hello_$ext >t1.$ext
@@ -52571,13 +53298,13 @@
 +    )
 +    rm -rf testdir
 +done
- 
- 
+
+
  # Copyright 2011 by Denys Vlasenko
 @@ -60,6 +65,8 @@ rm -rf testdir
- 
+
  # testing "test name" "command" "expected result" "file input" "stdin"
- 
+
 +## bzip algorithm
 +
  # "input" file is bzipped file with "a\n" data
@@ -52586,7 +53313,7 @@
 @@ -79,6 +86,25 @@ testing "bzcat can handle compressed zer
  "0\n" \
  "\x42\x5a\x68\x39\x17\x72\x45\x38\x50\x90\x00\x00\x00\x00" ""
- 
+
 +## compress algorithm
 +
 +# "input" file is compressed (.Z) file with "a\n" data
@@ -52606,8 +53333,8 @@
 +"0\n" \
 +"\x1f\x9d\x90\x00" ""
 +
- 
- 
+
+
  exit $((FAILCOUNT <= 255 ? FAILCOUNT : 255))
 --- /dev/null
 +++ b/testsuite/dc.tests
@@ -52673,7 +53400,7 @@
 @@ -44,6 +44,17 @@ testing "diff of stdin, twice" \
  	"" \
  	"stdin"
- 
+
 +testing "diff of empty file against stdin" \
 +	"diff -u - input | $TRIM_TAB" \
 +"\
@@ -52691,7 +53418,7 @@
 @@ -87,6 +98,18 @@ testing "diff -B does not ignore changes
  	"a\n" \
  	"\nb\n\n"
- 
+
 +testing "diff -B ignores blank single line change" \
 +	'diff -qB - input; echo $?' \
 +	"0\n" \
@@ -52712,7 +53439,7 @@
 @@ -333,6 +333,38 @@ testing "sed s///NUM test" \
  	"sed -e 's/a/b/2; s/a/c/g'" \
  	"cb\n" "" "aa\n"
- 
+
 +testing "sed /regex/,N{...} addresses work" \
 +	"sed /^2/,2{d}" \
 +	"1\n3\n4\n5\n" \
@@ -52746,14 +53473,14 @@
 +	"1\n2\n4\n5\n6\n7\n8\n" \
 +
  # testing "description" "commands" "result" "infile" "stdin"
- 
+
  exit $FAILCOUNT
 --- a/util-linux/Config.src
 +++ b/util-linux/Config.src
 @@ -434,94 +434,6 @@ config MORE
  	  you will probably find this utility very helpful. If you don't have
  	  any need to reading text files, you can leave this disabled.
- 
+
 -config MOUNT
 -	bool "mount"
 -	default y
@@ -52850,19 +53577,19 @@
 @@ -121,10 +121,8 @@ static void process_event(const char *ev
  	char *handler = xasprintf("./%s", event);
  	const char *args[] = { "run-parts", handler, NULL };
- 
+
 -	// debug info
 -	if (option_mask32 & OPT_d) {
 -		bb_error_msg("%s", event);
 -	}
 +	// log the event
 +	bb_error_msg("%s", event);
- 
+
  	// spawn handler
  	// N.B. run-parts would require scripts to have #!/bin/sh
 @@ -153,7 +151,7 @@ static const char *find_action(struct in
  		}
- 
+
  		if (buf) {
 -			if (strncmp(buf, evt_tab[i].desc, strlen(buf)) == 0) {
 +			if (is_prefixed_with(evt_tab[i].desc, buf)) {
@@ -52882,7 +53609,7 @@
 +++ b/util-linux/fbset.c
 @@ -349,10 +349,10 @@ static int read_mode_db(struct fb_var_sc
  			int transp_offset, transp_length;
- 
+
  			sscanf(p, "%d/%d,%d/%d,%d/%d,%d/%d",
 -				&red_offset, &red_length,
 -				&green_offset, &green_length,
@@ -52900,11 +53627,11 @@
 @@ -2781,14 +2781,14 @@ is_ide_cdrom_or_tape(const char *device)
  	   the process hangs on the attempt to read a music CD.
  	   So try to be careful. This only works since 2.1.73. */
- 
+
 -	if (strncmp("/dev/hd", device, 7))
 +	if (!is_prefixed_with(device, "/dev/hd"))
  		return 0;
- 
+
  	snprintf(buf, sizeof(buf), "/proc/ide/%s/media", device+5);
  	procf = fopen_for_read(buf);
  	if (procf != NULL && fgets(buf, sizeof(buf), procf))
@@ -52918,9 +53645,9 @@
 --- a/util-linux/fdisk_osf.c
 +++ b/util-linux/fdisk_osf.c
 @@ -854,7 +854,7 @@ xbsd_initlabel(struct partition *p)
- 
+
  	d->d_magic = BSD_DISKMAGIC;
- 
+
 -	if (strncmp(disk_device, "/dev/sd", 7) == 0)
 +	if (is_prefixed_with(disk_device, "/dev/sd"))
  		d->d_type = BSD_DTYPE_SCSI;
@@ -52930,7 +53657,7 @@
 +++ b/util-linux/fdisk_sgi.c
 @@ -440,7 +440,7 @@ sgi_write_table(void)
  		(unsigned int*)sgilabel, sizeof(*sgilabel)) == 0);
- 
+
  	write_sector(0, sgilabel);
 -	if (!strncmp((char*)sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
 +	if (is_prefixed_with((char*)sgilabel->directory[0].vol_file_name, "sgilabel")) {
@@ -52942,7 +53669,7 @@
 @@ -27,7 +27,7 @@ int findfs_main(int argc UNUSED_PARAM, c
  	if (!dev)
  		bb_show_usage();
- 
+
 -	if (strncmp(dev, "/dev/", 5) == 0) {
 +	if (is_prefixed_with(dev, "/dev/")) {
  		/* Just pass any /dev/xxx name right through.
@@ -52957,7 +53684,7 @@
 -//usage:     "\n	-v,		Print number of discarded bytes"
 +//usage:     "\n	-v		Print number of discarded bytes"
  //usage:	)
- 
+
  #include "libbb.h"
 --- a/util-linux/hwclock.c
 +++ b/util-linux/hwclock.c
@@ -52968,7 +53695,7 @@
 -	strchrnul(cp, '\n')[0] = '\0';
 +	chomp(cp);
  #endif
- 
+
  #if !SHOW_HWCLOCK_DIFF
 --- a/util-linux/mdev.c
 +++ b/util-linux/mdev.c
@@ -52997,7 +53724,7 @@
 -	if (strstr(path, "/block/") || (G.subsystem && strncmp(G.subsystem, "block", 5) == 0))
 +	if (strstr(path, "/block/") || (G.subsystem && is_prefixed_with(G.subsystem, "block")))
  		type = S_IFBLK;
- 
+
  #if ENABLE_FEATURE_MDEV_CONF
 @@ -923,7 +923,11 @@ static char *curtime(void)
  {
@@ -53011,7 +53738,7 @@
 +	);
  	return G.timestr;
  }
- 
+
 @@ -943,7 +947,7 @@ static void open_mdev_log(const char *se
   * Active mdev pokes us with SIGCHLD to check the new file.
   */
@@ -53022,13 +53749,13 @@
  	/* We time out after 2 sec */
  	static const struct timespec ts = { 0, 32*1000*1000 };
 @@ -958,12 +962,14 @@ wait_for_seqfile(const char *seq)
- 
+
  	for (;;) {
  		int seqlen;
 -		char seqbuf[sizeof(int)*3 + 2];
 +		char seqbuf[sizeof(long)*3 + 2];
 +		unsigned seqbufnum;
- 
+
  		if (seq_fd < 0) {
  			seq_fd = open("mdev.seq", O_RDWR);
  			if (seq_fd < 0)
@@ -53082,22 +53809,22 @@
 +		unsigned seqnum = seqnum; /* for compiler */
  		int seq_fd;
  		smalluint op;
- 
+
 @@ -1096,7 +1111,11 @@ int mdev_main(int argc UNUSED_PARAM, cha
  		my_pid = getpid();
  		open_mdev_log(seq, my_pid);
- 
+
 -		seq_fd = seq ? wait_for_seqfile(seq) : -1;
 +		seq_fd = -1;
 +		if (seq) {
 +			seqnum = atoll(seq);
 +			seq_fd = wait_for_seqfile(seqnum);
 +		}
- 
+
  		dbg1("%s "
  			"ACTION:%s SUBSYSTEM:%s DEVNAME:%s DEVPATH:%s"
 @@ -1124,7 +1143,7 @@ int mdev_main(int argc UNUSED_PARAM, cha
- 
+
  		dbg1("%s exiting", curtime());
  		if (seq_fd >= 0) {
 -			xwrite_str(seq_fd, utoa(xatou(seq) + 1));
@@ -53108,7 +53835,7 @@
 --- a/util-linux/mkfs_reiser.c
 +++ b/util-linux/mkfs_reiser.c
 @@ -66,7 +66,7 @@ struct reiserfs_super_block {
- 
+
  	char s_magic[10];               /* 52 "ReIsErFs" or "ReIsEr2Fs" or "ReIsEr3Fs" */
  	uint16_t sb_fs_state;           /* 62 it is set to used by fsck to mark which phase of rebuilding is done (used for fsck debugging) */
 -	uint32_t sb_hash_function_code; /* 64 code of fuction which was/is/will be used to sort names in a directory. See codes in above */
@@ -53121,7 +53848,7 @@
 @@ -17,8 +17,103 @@
  // mount_it_now() does the actual mount.
  //
- 
+
 +//config:config MOUNT
 +//config:	bool "mount"
 +//config:	default y
@@ -53247,8 +53974,8 @@
  //usage:
 @@ -167,7 +265,7 @@ enum {
  };
- 
- 
+
+
 -#define OPTION_STR "o:t:rwanfvsiO:"
 +#define OPTION_STR "o:t:rwanfvsiO:" IF_FEATURE_MOUNT_OTHERTAB("T:")
  enum {
@@ -53260,11 +53987,11 @@
  	OPT_O = (1 << 10),
 +	OPT_T = (1 << 11),
  };
- 
+
  #if ENABLE_FEATURE_MTAB_SUPPORT
 @@ -542,7 +641,7 @@ static llist_t *get_block_backed_filesys
  		if (!f) continue;
- 
+
  		while ((buf = xmalloc_fgetline(f)) != NULL) {
 -			if (strncmp(buf, "nodev", 5) == 0 && isspace(buf[5]))
 +			if (is_prefixed_with(buf, "nodev") && isspace(buf[5]))
@@ -53294,7 +54021,7 @@
  			}
 @@ -1880,7 +1979,7 @@ static int singlemount(struct mntent *mp
  	}
- 
+
  	// Might this be an NFS filesystem?
 -	if ((!mp->mnt_type || strncmp(mp->mnt_type, "nfs", 3) == 0)
 +	if ((!mp->mnt_type || is_prefixed_with(mp->mnt_type, "nfs"))
@@ -53321,7 +54048,7 @@
 @@ -2128,8 +2228,10 @@ int mount_main(int argc UNUSED_PARAM, ch
  		return rc;
  	}
- 
+
 +	// A malicious user could overmount /usr without this.
 +	if (ENABLE_FEATURE_MOUNT_OTHERTAB && nonroot)
 +		fstabname = "/etc/fstab";
@@ -53342,18 +54069,18 @@
 +//usage:       "Get and possibly set system time from a remote HOST\n"
 +//usage:     "\n	-s	Set system time (default)"
 +//usage:     "\n	-p	Print time"
- 
+
  #include "libbb.h"
- 
+
 @@ -36,7 +36,7 @@ static time_t askremotedate(const char *
  	fd = create_and_connect_stream_or_die(host, bb_lookup_port("time", "tcp", 37));
- 
+
  	if (safe_read(fd, &nett, 4) != 4)    /* read time from server */
 -		bb_error_msg_and_die("%s did not send the complete time", host);
 +		bb_error_msg_and_die("%s: %s", host, "short read");
  	if (ENABLE_FEATURE_CLEAN_UP)
  		close(fd);
- 
+
 --- a/util-linux/rtcwake.c
 +++ b/util-linux/rtcwake.c
 @@ -32,18 +32,18 @@
@@ -53379,22 +54106,22 @@
 +//usage:     "\n	-s SEC	Set timeout in SEC seconds from now"
 +//usage:     "\n	-t TIME	Set timeout to TIME seconds from epoch"
  //usage:	)
- 
+
  #include "libbb.h"
 @@ -66,7 +66,7 @@ static NOINLINE bool may_wakeup(const ch
  		return false;
- 
+
  	/* wakeup events could be disabled or not supported */
 -	return strncmp(buf, "enabled\n", 8) == 0;
 +	return is_prefixed_with(buf, "enabled\n") != NULL;
  }
- 
+
  static NOINLINE void setup_alarm(int fd, time_t *wakeup, time_t rtc_time)
 --- a/util-linux/swaponoff.c
 +++ b/util-linux/swaponoff.c
 @@ -8,7 +8,7 @@
   */
- 
+
  //usage:#define swapon_trivial_usage
 -//usage:       "[-a]" IF_FEATURE_SWAPON_DISCARD(" [-d[POL]]") IF_FEATURE_SWAPON_PRI(" [-p PRI]") " [DEVICE]"
 +//usage:       "[-a] [-e]" IF_FEATURE_SWAPON_DISCARD(" [-d[POL]]") IF_FEATURE_SWAPON_PRI(" [-p PRI]") " [DEVICE]"
@@ -53417,7 +54144,7 @@
  //usage:       "Stop swapping on DEVICE\n"
  //usage:     "\n	-a	Stop swapping on all swap devices"
 +//usage:     "\n	-e	Silently skip devices that do not exist"
- 
+
  #include "libbb.h"
  #include <mntent.h>
 @@ -77,15 +79,18 @@ struct globals {
@@ -53432,20 +54159,20 @@
  	OPT_d = IF_FEATURE_SWAPON_DISCARD((1 << OPTBIT_d)) + 0,
  	OPT_p = IF_FEATURE_SWAPON_PRI    ((1 << OPTBIT_p)) + 0,
  };
- 
+
  #define OPT_ALL      (option_mask32 & OPT_a)
  #define OPT_DISCARD  (option_mask32 & OPT_d)
 +#define OPT_IFEXISTS (option_mask32 & OPT_e)
  #define OPT_PRIO     (option_mask32 & OPT_p)
- 
+
  static int swap_enable_disable(char *device)
 @@ -95,6 +100,8 @@ static int swap_enable_disable(char *dev
  	struct stat st;
- 
+
  	resolve_mount_spec(&device);
 +	if (!OPT_IFEXISTS)
 +		xstat(device, &st);
- 
+
  	if (do_swapoff) {
  		err = swapoff(device);
 @@ -112,7 +119,8 @@ static int swap_enable_disable(char *dev
@@ -53457,20 +54184,20 @@
 +			quiet = (OPT_ALL && errno == EBUSY) || (OPT_IFEXISTS && errno == ENOENT);
  		}
  	}
- 
+
 @@ -229,7 +237,7 @@ static int do_all_in_proc_swaps(void)
  	return err;
  }
- 
+
 -#define OPTSTR_SWAPON "a" \
 +#define OPTSTR_SWAPON "ae" \
  	IF_FEATURE_SWAPON_DISCARD("d::") \
  	IF_FEATURE_SWAPON_PRI("p:")
- 
+
 @@ -242,7 +250,7 @@ int swap_on_off_main(int argc UNUSED_PAR
- 
+
  	INIT_G();
- 
+
 -	getopt32(argv, do_swapoff ? "a" : OPTSTR_SWAPON
 +	getopt32(argv, do_swapoff ? "ae" : OPTSTR_SWAPON
  			IF_FEATURE_SWAPON_DISCARD(, &discard)
@@ -53611,12 +54338,12 @@
 @@ -302,9 +302,9 @@ int resolve_mount_spec(char **fsname)
  {
  	char *tmp = *fsname;
- 
+
 -	if (strncmp(*fsname, "UUID=", 5) == 0)
 +	if (is_prefixed_with(*fsname, "UUID="))
  		tmp = get_devname_from_uuid(*fsname + 5);
 -	else if (strncmp(*fsname, "LABEL=", 6) == 0)
 +	else if (is_prefixed_with(*fsname, "LABEL="))
  		tmp = get_devname_from_label(*fsname + 6);
- 
+
  	if (tmp == *fsname)
