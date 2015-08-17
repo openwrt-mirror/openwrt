@@ -3,8 +3,8 @@
 /include/ "rt3050.dtsi"
 
 / {
-	compatible = "3G300M", "ralink,rt3050-soc";
-	model = "Tenda 3G300M";
+	compatible = "W150M", "ralink,rt3050-soc";
+	model = "Tenda W150M";
 
 	pinctrl {
 		state_default: pinctrl0 {
@@ -18,7 +18,6 @@
 	cfi@1f000000 {
 		compatible = "cfi-flash";
 		reg = <0x1f000000 0x800000>;
-
 		bank-width = <2>;
 		device-width = <2>;
 		#address-cells = <1>;
@@ -50,28 +49,34 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		3grouter {
-			label = "tenda:blue:3grouter";
+			label = "w150m:blue:3grouter";
 			gpios = <&gpio0 11 1>;
 		};
+
 		ap {
-			label = "tenda:blue:ap";
+			label = "w150m:blue:ap";
 			gpios = <&gpio0 12 1>;
 		};
+
 		wisprouter {
-			label = "tenda:blue:wisprouter";
+			label = "w150m:blue:wisprouter";
 			gpios = <&gpio0 9 1>;
 		};
+
 		wirelessrouter {
-			label = "tenda:blue:wirelessrouter";
+			label = "w150m:blue:wirelessrouter";
 			gpios = <&gpio0 13 1>;
 		};
+
 		3g {
-			label = "tenda:blue:3g";
+			label = "w150m:blue:3g";
 			gpios = <&gpio0 7 1>;
 		};
+
 		wpsreset {
-			label = "tenda:blue:wpsreset";
+			label = "w150m:blue:wpsreset";
 			gpios = <&gpio0 14 1>;
 		};
 	};
@@ -81,11 +86,13 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 0 1>;
 			linux,code = <0x198>;
 		};
+
 		mode {
 			label = "mode";
 			gpios = <&gpio0 10 1>;

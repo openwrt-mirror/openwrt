@@ -78,8 +78,9 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		power {
-			label = "mzkdp150n:green:power";
+			label = "mzk-dp150n:green:power";
 			gpios = <&gpio0 9 1>;
 		};
 	};
@@ -89,6 +90,7 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 10 1>;

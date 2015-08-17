@@ -8,6 +8,6 @@ http://sourceware.org/ml/crossgcc/2008-05/msg00009.html
  #undef  SUBTARGET_CPU_DEFAULT
 -#define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm10tdmi
 +#define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm9tdmi
- 
+
  /* TARGET_BIG_ENDIAN_DEFAULT is set in
     config.gcc for big endian configurations.  */

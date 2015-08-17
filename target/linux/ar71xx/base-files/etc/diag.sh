@@ -41,6 +41,9 @@ get_status_led() {
 	aw-nr580)
 		status_led="aw-nr580:green:ready"
 		;;
+	bsb)
+		status_led="bsb:red:sys"
+		;;
 	bullet-m | rocket-m | rocket-m-xw | nano-m | nanostation-m | nanostation-m-xw | loco-m-xw)
 		status_led="ubnt:green:link4"
 		;;
@@ -286,6 +289,9 @@ get_status_led() {
 		;;
 	tl-wr2543n)
 		status_led="tp-link:green:wps"
+		;;
+	tl-wdr6500-v2)
+		status_led="tp-link:white:system"
 		;;
 	tube2h)
 		status_led="alfa:green:signal4"

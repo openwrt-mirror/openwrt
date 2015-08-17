@@ -14,17 +14,17 @@
 --- a/libjava/classpath/ltconfig
 +++ b/libjava/classpath/ltconfig
 @@ -603,7 +603,7 @@ host_os=`echo $host | sed 's/^\([^-]*\)-
- 
+
  # Transform linux* to *-*-linux-gnu*, to support old configure scripts.
  case $host_os in
 -linux-gnu*) ;;
 +linux-gnu*|linux-uclibc*) ;;
  linux*) host=`echo $host | sed 's/^\(.*-.*-linux\)\(.*\)$/\1-gnu\2/'`
  esac
- 
+
 @@ -1247,7 +1247,7 @@ linux-gnuoldld* | linux-gnuaout* | linux
    ;;
- 
+
  # This must be Linux ELF.
 -linux-gnu*)
 +linux*)

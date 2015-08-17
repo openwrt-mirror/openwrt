@@ -243,6 +243,9 @@ tplink_board_detect() {
 	"49000002")
 		model="TP-Link TL-WDR4900"
 		;;
+	"65000002")
+		model="TP-Link TL-WDR6500"
+		;;
 	"453000"*)
 		model="MERCURY MW4530R"
 		;;
@@ -679,6 +682,9 @@ ar71xx_board_detect() {
 	*"SMART-300")
 		name="smart-300"
 		;;
+	"Smart Electronics Black Swift board"*)
+		name="bsb"
+		;;
 	*TEW-632BRP)
 		name="tew-632brp"
 		;;
@@ -771,6 +777,9 @@ ar71xx_board_detect() {
 		;;
 	*"TL-WDR4900 v2")
 		name="tl-wdr4900-v2"
+		;;
+	*"TL-WDR6500 v2")
+		name="tl-wdr6500-v2"
 		;;
 	*TL-WR741ND)
 		name="tl-wr741nd"

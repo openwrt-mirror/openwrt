@@ -5,255 +5,169 @@
 . /lib/ramips.sh
 
 get_status_led() {
-	case $(ramips_board_name) in
-	3g-6200n)
-		status_led="edimax:green:power"
+	board=$(ramips_board_name)
+
+	case $board in
+	3g150b|\
+	3g300m|\
+	w150m)
+		status_led="$board:blue:ap"
 		;;
-	3g150b | 3g300m | w150m)
-		status_led="tenda:blue:ap"
+	3g-6200n|\
+	ar670w|\
+	ar725w|\
+	asl26555|\
+	br-6425|\
+	br-6475nd|\
+	e1700|\
+	fonera20n|\
+	mzk-dp150n|\
+	mzk-w300nh2|\
+	nbg-419n|\
+	pwh2004|\
+	wnce2001|\
+	x5|\
+	x8|\
+	xdxrn502j)
+		status_led="$board:green:power"
 		;;
-	a5-v11)
-		status_led="a5-v11:red:power"
+	a5-v11|\
+	d105|\
+	dcs-930l-b1|\
+	hlk-rm04|\
+	mpr-a1|\
+	mpr-a2)
+		status_led="$board:red:power"
 		;;
-	ai-br100)
-		status_led="aigale:blue:wlan"
-		;;
-	ar670w)
-		status_led="ar670w:green:power"
-		;;
-	ar725w)
-		status_led="ar725w:green:power"
-		;;
-	awapn2403)
-		status_led="asiarf:green:wps"
-		;;
-	argus-atp52b)
-		status_led="argus-atp52b:green:run"
-		;;
-	asl26555)
-		status_led="asl26555:green:power"
-		;;
-	br6524n)
-		status_led="edimax:blue:power"
-		;;
-	br6425 | br-6475nd)
-		status_led="edimax:green:power"
-		;;
-	cf-wr800n)
-		status_led="comfast:white:wps"
-		;;
-	cy-swr1100)
-		status_led="samsung:blue:wps"
-		;;
-	d105)
-		status_led="d105:red:power"
-		;;
-	dcs-930 | dir-300-b1 | dir-600-b1 | dir-600-b2 | dir-610-a1 | dir-615-h1 | dir-615-d | dir-620-a1| dir-620-d1| dir-300-b7| dir-320-b1)
-		status_led="d-link:green:status"
-		;;
-	dcs-930l-b1)
-		status_led="d-link:red:power"
-		;;
-	dir-645)
-		status_led="d-link:green:wps"
-		;;
-	dap-1350)
-		status_led="d-link:blue:power"
-		;;
-	e1700)
-		status_led="linksys:green:power"
-		;;
-	esr-9753)
-		status_led="esr-9753:orange:power"
-		;;
-	f5d8235-v2)
-		status_led="f5d8235v2:blue:router"
-		;;
-	fonera20n)
-		status_led="fonera20n:green:power"
-		;;
-	ip2202)
-		status_led="ip2202:green:run"
-		;;
-	rt-n13u)
-		status_led="rt-n13u:power"
-		;;
-	hlk-rm04)
-		status_led="hlk-rm04:red:power"
-		;;
+	ai-br100|\
 	ht-tm02)
-		status_led="ht-tm02:blue:wlan"
+		status_led="$board:blue:wlan"
 		;;
 	all0239-3g|\
-	hw550-3g)
-		status_led="hw550-3g:green:status"
+	dcs-930|\
+	dir-300-b1|\
+	dir-300-b7|\
+	dir-320-b1|\
+	dir-600-b1|\
+	dir-600-b2|\
+	dir-610-a1|\
+	dir-615-d|\
+	dir-615-h1|\
+	dir-620-a1|\
+	dir-620-d1|\
+	hpm|\
+	hw550-3g|\
+	miniembwifi|\
+	mofi3500-3gn|\
+	rut5xx|\
+	v11st-fe|\
+	vocore|\
+	wmr-300)
+		status_led="$board:green:status"
+		;;
+	atp-52b|\
+	ip2202)
+		status_led="$board:green:run"
+		;;
+	awapn2403|\
+	dir-645)
+		status_led="$board:green:wps"
+		;;
+	cf-wr800n)
+		status_led="$board:white:wps"
+		;;
+	cy-swr1100|\
+	w502u)
+		status_led="$board:blue:wps"
+		;;
+	dap-1350|\
+	na930|\
+	rt-n13u|\
+	rt-n14u|\
+	rt-n15|\
+	rt-n56u|\
+	wl-330n|\
+	wl-330n3g|\
+	wli-tx4-ag300n|\
+	wt3020|\
+	y1|\
+	y1s)
+		status_led="$board:blue:power"
+		;;
+	esr-9753)
+		status_led="$board:orange:power"
+		;;
+	f5d8235-v2)
+		status_led="$board:blue:router"
+		;;
+	f7c027)
+		status_led="$board:orange:status"
 		;;
 	m2m)
-		status_led="m2m:blue:wifi"
+		status_led="$board:blue:wifi"
 		;;
-	m3)
-		status_led="m3:blue:status"
-		;;
+	m3|\
 	m4)
-		status_led="m4:blue:status"
+		status_led="$board:blue:status"
+		;;
+	miwifi-mini|\
+	zte-q7)
+		status_led="$board:red:status"
 		;;
 	mlw221|\
 	mlwg2)
-		status_led="kingston:blue:system"
-		;;
-	mofi3500-3gn)
-		status_led="mofi3500-3gn:green:status"
-		;;
-	mpr-a1)
-		status_led="hame:red:power"
-		;;
-	mpr-a2)
-		status_led="hame:red:power"
+		status_led="$board:blue:system"
 		;;
 	mr-102n)
-		status_led="mr-102n:amber:status"
-		;;
-	nbg-419n)
-		status_led="nbg-419n:green:power"
+		status_led="$board:amber:status"
 		;;
 	nw718)
-		status_led="nw718:amber:cpu"
+		status_led="$board:amber:cpu"
 		;;
-	omni-emb|\
-	omni-emb-hpm)
-		status_led="emb:green:status"
+	oy-0001|\
+	sl-r7205)
+		status_led="$board:green:wifi"
 		;;
-	pbr-m1)
-		status_led="pbr-m1:green:sys"
+	pbr-m1|\
+	w306r-v20|\
+	zbt-wr8305rt)
+		status_led="$board:green:sys"
 		;;
 	psr-680w)
-		status_led="psr-680w:red:wan"
+		status_led="$board:red:wan"
 		;;
-	pwh2004)
-		status_led="pwh2004:green:power"
+	px-4885|\
+	re6500|\
+	whr-1166d|\
+	whr-300hp2|\
+	whr-600d)
+		status_led="$board:orange:wifi"
 		;;
-	px4885)
-		status_led="7links:orange:wifi"
-		;;
-	re6500)
-		status_led="linksys:orange:wifi"
-		;;
-	rt-n15)
-		status_led="rt-n15:blue:power"
-		;;
-	rt-n10-plus)
-		status_led="asus:green:wps"
-		;;
-	rt-n14u | rt-n56u | wl-330n | wl-330n3g)
-		status_led="asus:blue:power"
-		;;
-	rut5xx)
-		status_led="rut5xx:green:status"
+	rt-n10-plus|\
+	tew-691gr|\
+	tew-692gr|\
+	ur-326n4g|\
+	ur-336un|\
+	wr512-3gn)
+		status_led="$board:green:wps"
 		;;
 	sap-g3200u3)
-		status_led="storylink:green:usb"
-		;;
-	sl-r7205)
-		status_led="sl-r7205:green:status"
-		;;
-	tew-691gr|\
-	tew-692gr)
-		status_led="trendnet:green:wps"
-		;;
-	v11st-fe)
-		status_led="v11st-fe:green:status"
+		status_led="$board:green:usb"
 		;;
 	v22rw-2x2)
-		status_led="v22rw-2x2:green:security"
+		status_led="$board:green:security"
 		;;
-	vocore)
-		status_led="vocore:green:status"
-		;;
-	w306r-v20)
-		status_led="w306r-v20:green:sys"
-		;;
-	w502u)
-		status_led="alfa:blue:wps"
-		;;
-	wcr-150gn)
-		status_led="wcr150gn:amber:power"
-		;;
-	whr-g300n)
-		status_led="whr-g300n:green:router"
-		;;
-	wmr300)
-		status_led="buffalo:green:status"
-		;;
-	wli-tx4-ag300n)
-		status_led="buffalo:blue:power"
-		;;
-	wzr-agl300nh)
-		status_led="buffalo:green:router"
-		;;
+	wcr-150gn|\
 	wl-351)
-		status_led="wl-351:amber:power"
+		status_led="$board:amber:power"
 		;;
-	wr512-3gn)
-		status_led="wr512:green:wps"
+	whr-g300n|\
+	wzr-agl300nh)
+		status_led="$board:green:router"
 		;;
-	wr8305rt)
-		status_led="wr8305rt:sys"
-		;;
-	whr-300hp2 | \
-	whr-600d | \
-	whr-1166d | \
-	wsr-600 | \
-	wsr-1166)
-		status_led="buffalo:orange:diag"
-		;;
-	wnce2001)
-		status_led="netgear:green:power"
-		;;
-	nexx-wt1520)
-		status_led="nexx-wt1520:white:power"
-		;;
-	wt3020)
-		status_led="nexx:blue:power"
-		;;
-	mzk-w300nh2)
-		status_led="mzkw300nh2:green:power"
-		;;
-	ur-326n4g)
-		status_led="ur326:green:wps"
-		;;
-	ur-336un)
-		status_led="ur336:green:wps"
-		;;
-	x5)
-		status_led="x5:green:power"
-		;;
-	x8)
-		status_led="x8:green:power"
-		;;
-	xdxrn502j)
-		status_led="xdxrn502j:green:power"
-		;;
-	xiaomi-mini)
-		status_led="xiaomi:red:status"
-		;;
-	f7c027)
-		status_led="belkin:orange:status"
-		;;
-	oy-0001)
-		status_led="oy:green:wifi"
-		;;
-	na930)
-		status_led="na930:blue:power"
-		;;
-	y1 | \
-	y1s)
-		status_led="lenovo:blue:power"
-		;;
-	zte-q7)
-		status_led="zte:red:status"
-		;;
-	mzk-dp150n)
-		status_led="mzkdp150n:green:power"
+	wsr-1166|\
+	wsr-600)
+		status_led="$board:orange:diag"
 		;;
 	esac
 }
