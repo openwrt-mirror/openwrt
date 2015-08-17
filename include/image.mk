@@ -15,6 +15,7 @@ override MAKE:=$(_SINGLE)$(SUBMAKE)
 override NO_TRACE_MAKE:=$(_SINGLE)$(NO_TRACE_MAKE)
 
 KDIR=$(KERNEL_BUILD_DIR)
+KDIR_TMP=$(KDIR)/tmp
 DTS_DIR:=$(LINUX_DIR)/arch/$(ARCH)/boot/dts/
 BUILD_DATE_PREFIX := $(shell date +'%F')
 
@@ -299,8 +300,32 @@ define Build/uImage
 	@mv $@.new $@
 endef
 
+define Build/netgear-chk
+	$(STAGING_DIR_HOST)/bin/mkchkimg \
+		-o $@.new \
+		-k $@ \
+		-b $(NETGEAR_BOARD_ID) \
+		-r $(NETGEAR_REGION)
+	mv $@.new $@
+endef
+
+define Build/fit
+	$(TOPDIR)/scripts/mkits.sh \
+		-D $(DEVICE_NAME) -o $@.its -k $@ \
+		$(if $(word 2,$(1)),-d $(word 2,$(1))) -C $(word 1,$(1)) \
+		-a $(KERNEL_LOADADDR) -e $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR)) \
+		-A $(ARCH) -v $(LINUX_VERSION)
+	PATH=$(LINUX_DIR)/scripts/dtc:$(PATH) mkimage -f $@.its $@.new
+	@mv $@.new $@
+endef
+
 define Build/lzma
 	$(STAGING_DIR_HOST)/bin/lzma e $@ -lc1 -lp2 -pb2 $(1) $@.new
+	@mv $@.new $@
+endef
+
+define Build/gzip
+	gzip -9n -c $@ $(1) > $@.new
 	@mv $@.new $@
 endef
 
@@ -358,6 +383,7 @@ endef
 
 define Device/Init
   PROFILES := $(PROFILE)
+  DEVICE_NAME := $(1)
   KERNEL:=
   KERNEL_INITRAMFS = $$(KERNEL)
   KERNEL_SIZE:=
@@ -382,7 +408,7 @@ define Device/ExportVar
 
 endef
 define Device/Export
-  $(foreach var,$(DEVICE_VARS) KERNEL KERNEL_INITRAMFS,$(call Device/ExportVar,$(1),$(var)))
+  $(foreach var,$(DEVICE_VARS) DEVICE_NAME KERNEL KERNEL_INITRAMFS,$(call Device/ExportVar,$(1),$(var)))
   $(1) : FILESYSTEM:=$(2)
 endef
 
@@ -425,6 +451,7 @@ define Device/Build/kernel
   _KERNEL_IMAGES += $(KDIR)/$$(KERNEL_NAME)
   $(KDIR)/$$(KERNEL_NAME): image_prepare
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
+  $(call Device/Export,$(KDIR)/$$(KERNEL_IMAGE),$(1))
   $(BIN_DIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_IMAGE)
 	cp $$^ $$@
   ifndef IB
@@ -440,7 +467,6 @@ endef
 
 define Device/Build/image
   $$(_TARGET): $(BIN_DIR)/$(call IMAGE_NAME,$(1),$(2))
-  $(eval $(call Device/Export,$(KDIR)/$(KERNEL_IMAGE),$(1)))
   $(eval $(call Device/Export,$(KDIR)/tmp/$(call IMAGE_NAME,$(1),$(2)),$(1)))
   $(KDIR)/tmp/$(call IMAGE_NAME,$(1),$(2)): $(KDIR)/$$(KERNEL_IMAGE) $(KDIR)/root.$(1)
 	@rm -f $$@
