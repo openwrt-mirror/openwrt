@@ -11,6 +11,7 @@ start_vpn() {
 	[ "$enable" = 1 ] || return 0
 	config_get server $1 server
 	config_get port $1 port
+	config_get user_token $1 user_token
 	config_get password $1 password
 	config_get concurrency $1 concurrency
 	config_get net $1 net
@@ -19,21 +20,25 @@ start_vpn() {
 	: ${server:?}
 	: ${port:?}
 	: ${password:?}
+	: ${user_token:=0000000000000000}
 	mkdir -p $(dirname $CONFIG)
 	cat <<-EOF >$CONFIG
 		server=$server
 		port=$port
 		password=$password
 		mode=client
-		concurrency=${concurrency:-1}
-		net=${net:-10.7.0.1/31}
-		mtu=${mtu:-1440}
+		concurrency=1
+		net=${net:-10.7.0.2/24}
+		mtu=${mtu:-1432}
 		intf=${intf:-tun0}
 		up=/etc/shadowvpn/client_up.sh
 		down=/etc/shadowvpn/client_down.sh
 		pidfile=/var/run/shadowvpn.pid
 		logfile=/var/log/shadowvpn.log
 EOF
+	if [ "$user_token" != "0000000000000000" ]; then
+		echo "user_token=$user_token" >>$CONFIG
+	fi
 	/usr/bin/shadowvpn -c $CONFIG -s start
 }
 
