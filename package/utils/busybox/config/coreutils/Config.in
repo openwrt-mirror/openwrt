@@ -829,6 +829,14 @@ config BUSYBOX_CONFIG_UNAME
 	help
 	  uname is used to print system information.
 
+config BUSYBOX_CONFIG_UNAME_OSNAME
+	string "Operating system name"
+	default BUSYBOX_DEFAULT_UNAME_OSNAME
+	depends on BUSYBOX_CONFIG_UNAME
+	help
+	  Sets the operating system name reported by uname -o.  The
+	  default is "GNU/Linux".
+
 config BUSYBOX_CONFIG_UNEXPAND
 	bool "unexpand"
 	default BUSYBOX_DEFAULT_UNEXPAND
