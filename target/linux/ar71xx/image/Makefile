@@ -172,6 +172,14 @@ define Device/Default
   IMAGE/sysupgrade.bin = append-kernel $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
 endef
 
+define Device/bsb
+  BOARDNAME = BSB
+  IMAGE_SIZE = 16000k
+  CONSOLE = ttyATH0,115200
+  MTDPARTS = spi0.0:128k(u-boot)ro,64k(u-boot-env)ro,16128k(firmware),64k(art)ro
+endef
+TARGET_DEVICES += bsb
+
 define Device/carambola2
   BOARDNAME = CARAMBOLA2
   IMAGE_SIZE = 16000k
@@ -1805,6 +1813,37 @@ define Image/Build/TPLINK-LZMA/initramfs
 		-o $(call imgname,$(1),$(2))-uImage.bin
 endef
 
+Image/Build/TPLINK-64K/buildkernel=$(call PatchKernelLzma,$(2),$(3))
+
+define Image/Build/TPLINK-64K
+	-$(STAGING_DIR_HOST)/bin/mkimage \
+		-A mips -O linux -T kernel -a 0x80060000 -C lzma \
+		-e 0x80060000 -n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
+		-d $$(KDIR_TMP)/vmlinux-$(2).bin.lzma $(KDIR_TMP)/vmlinux-$(2).bin.lzma.img
+	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
+		-H $(4) -W $(5) -F $(6) -N OpenWrt -m 2 -V $(REVISION) $(7) \
+		-X 0x20000 \
+		-k $(KDIR_TMP)/vmlinux-$(2).bin.lzma.img \
+		-r $(KDIR)/root.$(1) \
+		-a $(call rootfs_align,$(1)) -j \
+		-o $(call factoryname,$(1),$(2))
+	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
+		-H $(4) -W $(5) -F $(6) -N OpenWrt -m 2 -V $(REVISION) $(7) -s \
+		-X 0x20000 \
+		-k $(KDIR_TMP)/vmlinux-$(2).bin.lzma.img \
+		-r $(KDIR)/root.$(1) \
+		-a $(call rootfs_align,$(1)) -j \
+		-o $(call sysupname,$(1),$(2))
+endef
+
+define Image/Build/TPLINK-64K/initramfs
+	$(call PatchKernelLzma,$(2),$(3),,-initramfs)
+	-$(STAGING_DIR_HOST)/bin/mktplinkfw -c \
+		-H $(4) -W $(5) -F $(6) -N OpenWrt -m 2 -V $(REVISION) $(7) -s \
+		-k $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma.img \
+		-o $(call imgname,$(1),$(2))-uImage.bin
+endef
+
 
 Image/Build/TPLINK-SAFELOADER/loader = $(call Image/BuildLoaderPatched,$(1),elf,$(2) $(3))
 
@@ -2233,6 +2272,8 @@ $(eval $(call SingleProfile,TPLINK,64kraw,TLWR1043V1,tl-wr1043nd-v1,TL-WR1043ND,
 
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
+
+$(eval $(call SingleProfile,TPLINK-64K,64kraw,TLWDR6500V2,tl-wdr6500-v2,TL-WDR6500-v2,ttyS0,115200,0x65000002,1,8Mlzma))
 
 $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
 

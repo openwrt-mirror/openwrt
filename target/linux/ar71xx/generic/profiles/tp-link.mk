@@ -296,6 +296,16 @@ define Profile/TLWDR6300V1/Description
 endef
 $(eval $(call Profile,TLWDR6300V1))
 
+define Profile/TLWDR6500V2
+	NAME:=TP-LINK TL-WDR6500v2
+	PACKAGES:=kmod-usb-core kmod-usb2 kmod-ledtrig-usbdev kmod-ath10k
+endef
+
+define Profile/TLWDR6500V2/Description
+	Package set optimized for the TP-LINK TL-WDR6500v2.
+endef
+$(eval $(call Profile,TLWDR6500V2))
+
 
 define Profile/TLWR740
 	NAME:=TP-LINK TL-WR740N/ND
