@@ -2,7 +2,7 @@ diff --git a/arch/mips/ath79/Kconfig b/arch/mips/ath79/Kconfig
 index bbada57..6b818ff 100644
 --- a/arch/mips/ath79/Kconfig
 +++ b/arch/mips/ath79/Kconfig
-@@ -1043,6 +1043,16 @@ config ATH79_MACH_TL_WDR4300
+@@ -1064,6 +1064,16 @@ config ATH79_MACH_TL_WDR4300
  	select ATH79_DEV_USB
  	select ATH79_DEV_WMAC
  
@@ -28,9 +28,9 @@ index 09bf7f6..8a94d78 100644
  obj-$(CONFIG_ATH79_MACH_TL_WDR3500)     += mach-tl-wdr3500.o
  obj-$(CONFIG_ATH79_MACH_TL_WDR4300)     += mach-tl-wdr4300.o
 +obj-$(CONFIG_ATH79_MACH_TL_WDR6300)     += mach-tl-wdr6300.o
+ obj-$(CONFIG_ATH79_MACH_TL_WDR6500_V2)  += mach-tl-wdr6500-v2.o
  obj-$(CONFIG_ATH79_MACH_TL_WR741ND)	+= mach-tl-wr741nd.o
  obj-$(CONFIG_ATH79_MACH_TL_WR741ND_V4)	+= mach-tl-wr741nd-v4.o
- obj-$(CONFIG_ATH79_MACH_TL_WR841N_V1)	+= mach-tl-wr841n.o
 diff --git a/arch/mips/ath79/machtypes.h b/arch/mips/ath79/machtypes.h
 index 2fbcba5..df8cbf8 100644
 --- a/arch/mips/ath79/machtypes.h
@@ -40,6 +40,6 @@ index 2fbcba5..df8cbf8 100644
  	ATH79_MACH_TL_WDR3500,		/* TP-LINK TL-WDR3500 */
  	ATH79_MACH_TL_WDR4300,		/* TP-LINK TL-WDR4300 */
 +	ATH79_MACH_TL_WDR6300,		/* TP-LINK TL-WDR6300 */
+ 	ATH79_MACH_TL_WDR6500_V2,	/* TP-LINK TL-WDR6500 v2 */
  	ATH79_MACH_TL_WDR4900_V2,	/* TP-LINK TL-WDR4900 v2 */
  	ATH79_MACH_TL_WR1041N_V2,	/* TP-LINK TL-WR1041N v2 */
- 	ATH79_MACH_TL_WR1043ND,		/* TP-LINK TL-WR1043ND */
