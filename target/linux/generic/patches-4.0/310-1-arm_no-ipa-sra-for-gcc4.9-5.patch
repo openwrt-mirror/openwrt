@@ -1,0 +1,12 @@
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -123,7 +123,8 @@ AFLAGS_ISA	:=$(CFLAGS_ISA)
+ endif
+ 
+ # Need -Uarm for gcc < 3.x
+-KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
++# Maybe we need -fno-ipa-sra for gcc > 4.9.x
++KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm -fno-ipa-sra
+ KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
+ 
+ CHECKFLAGS	+= -D__arm__
