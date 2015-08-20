@@ -1,6 +1,6 @@
 --- a/Tests/RunCMake/CMakeLists.txt
 +++ b/Tests/RunCMake/CMakeLists.txt
-@@ -159,14 +159,6 @@ add_RunCMake_test(interface_library)
+@@ -143,14 +143,6 @@ add_RunCMake_test(interface_library)
  add_RunCMake_test(no_install_prefix)
  add_RunCMake_test(configure_file)
  
@@ -17,7 +17,7 @@
  if(PKG_CONFIG_FOUND)
 --- a/Tests/CMakeLists.txt
 +++ b/Tests/CMakeLists.txt
-@@ -358,9 +358,6 @@ if(BUILD_TESTING)
+@@ -318,9 +318,6 @@ if(BUILD_TESTING)
  
    list(APPEND TEST_BUILD_DIRS ${CMake_TEST_INSTALL_PREFIX})
  
@@ -27,11 +27,11 @@
  
    if(QT4_FOUND)
      # test whether the Qt4 which has been found works, on some machines
-@@ -1219,7 +1216,6 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev
-     set(QtAutogen_BUILD_OPTIONS -DCMAKE_BUILD_TYPE=$<CONFIGURATION>)
+@@ -1143,7 +1140,6 @@ ${CMake_BINARY_DIR}/bin/cmake -DDIR=dev
+     set(run_autouic_test QtAutoUicInterface)
    endif()
  
 -  find_package(Qt5Widgets QUIET NO_MODULE)
    if(Qt5Widgets_FOUND)
-     add_test(NAME Qt5Autogen COMMAND ${CMAKE_CTEST_COMMAND}
+     add_test(Qt5Autogen ${CMAKE_CTEST_COMMAND}
        --build-and-test
