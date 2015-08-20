@@ -757,9 +757,6 @@ config BUSYBOX_DEFAULT_TTY
 config BUSYBOX_DEFAULT_UNAME
 	bool
 	default y
-config BUSYBOX_DEFAULT_UNAME_OSNAME
-	string
-	default "GNU/Linux"
 config BUSYBOX_DEFAULT_UNEXPAND
 	bool
 	default n
