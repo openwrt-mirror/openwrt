@@ -128,11 +128,7 @@ config wifi-iface
 	option device   radio$devidx
 	option network  lan
 	option mode     ap
-<<<<<<< HEAD
 	option ssid     MakeBlaze_$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
-=======
-	option ssid     OpenWrt${ssid_5ghz}-$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
->>>>>>> 4e54810d60cc8c5e99e65f6003e48054e4cac0cd
 	option encryption none
 	option wds 1
 

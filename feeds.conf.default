@@ -1,20 +1,14 @@
-<<<<<<< HEAD
-src-git packages https://github.com/openwrt/packages.git
+#src-git packages https://github.com/openwrt/packages.git
 #src-git luci http://git.openwrt.org/project/luci.git
-=======
 src-git packages https://github.com/981213/packages.git
 src-git luci https://github.com/981213/luci-1.git
->>>>>>> 4e54810d60cc8c5e99e65f6003e48054e4cac0cd
 src-git routing https://github.com/openwrt-routing/packages.git
 src-git telephony https://github.com/openwrt/telephony.git
 src-git management https://github.com/openwrt-management/packages.git
 src-git targets https://github.com/openwrt/targets.git
 src-git oldpackages http://git.openwrt.org/packages.git
-<<<<<<< HEAD
-src-git ramod git://github.com/ravageralpha/my_openwrt_mod.git
-=======
+src-git ramod https://github.com/981213/packages.git 
 #src-git luci2 git://git.openwrt.org/project/luci2/ui.git
->>>>>>> 4e54810d60cc8c5e99e65f6003e48054e4cac0cd
 #src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package
 #src-svn phone svn://svn.openwrt.org/openwrt/feeds/phone
 #src-svn efl svn://svn.openwrt.org/openwrt/feeds/efl
