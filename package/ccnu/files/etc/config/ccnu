@@ -1,0 +1,7 @@
+
+config control
+	option enabled '1'
+
+config userinfo
+	option username 'username'
+	option password 'password'

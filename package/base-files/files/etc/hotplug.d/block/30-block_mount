@@ -1,0 +1,274 @@
+#!/bin/sh
+
+#---------------------------------------------------------------------
+# Filename:    30-block_mount
+# Revision:    0.5.1
+# Data:        Jul. 7, 2014
+# Email:       kevinyu@vip.qq.com
+# Contacts:    QQ/TM 389191 or mail address above
+# Licensing:   General Public License v2
+# Description: Created for automatic mount block devices on OpenWRT
+# Usage:       Put this script into directory /etc/hotplug.d/block
+#---------------------------------------------------------------------
+
+## Global settings of auto-mount script ##
+
+# Turn on|off auto-mount function for disk volumes
+VOL_ENABLED=1  # <0|1  0-Disable, 1-Enable>
+
+# Turn on|off auto-mount function for sawp partition  
+SWAP_ENABLED=1  # <0|1  0-Disable, 1-Enable>
+
+# Set which method you want to name the mounted volumes
+USE_VLABEL=1  # <0|1  0-Use device name, 1-Use volume label>  Eg. /mnt/sda1 | /mnt/DataDisk
+#
+# Note that if you choose name mount point by volume label but the volume's label is empty,
+# the volume will be named to 'volume_$PARTUUID', such as the /mnt/volume_31173116-01
+# Also, if exist more than one device which have the same volume label, it will be renamed 
+# as the original name + sequence number, such as the /mnt/DataDisk_n (n=1,2,3..9)
+
+# Show filesystem type as the prefix of mount point, requires set USE_VLABEL=1
+FSTYPE_IN_VLABEL=1  # <0|1  0-Disable, 1-Enable>  Eg. /mnt/[ntfs]-DataDisk
+
+# Set access the mounted device with read-write or read-only permission
+FS_READONLY=0  # <0|1  0-Read Write, 1-Read Only>
+
+# Exclusion list of auto-mount function
+# Allows mixing the device name, volume label and UUID, each item must be separated by space(s)
+# Eg. EXCLUDE_LIST="sda1 DataDisk f32b2ea6-4d42-43a5-bcec-7d818a163d07" 
+EXCLUDE_LIST=""  # Default: empty string
+
+# Specify a directory for mounts
+MOUNTS_PATH="/mnt"  # Default: /mnt , don't need include the trailing slash (/)
+
+# Define the add-ons scripts directory for automatic execute
+ADDSH_PATH="/etc/hotplug.d/user"  # Script naming rule: [0-9][0-9]-xxxxx, Eg. 20-backup-sdcard
+
+## End of global settings ##
+
+# Purge the directory MOUNTS_PATH
+purge_mnts()
+{
+local i RETVAL
+[ -d $MOUNTS_PATH ] || return 1
+for i in $MOUNTS_PATH/* ; do
+    if [ -d $i ] ; then
+        if [ -z "`ls -A $i 2>&-`" ] ; then
+            `grep -qs "$i" /proc/mounts` || { rm -rf $i 2>/dev/null; RETVAL=$?; }
+            if [ $RETVAL -eq 0 ] ; then
+                logger -t Auto-Mount "[Notice] Unused mount point $i was removed"
+                [ "$CLI" = "yes" ] && echo "[Notice] Unused mount point '$i' was removed"
+            else
+                logger -t Auto-Mount "[Error] Remove unused mount point $i failed"
+                [ "$CLI" = "yes" ] && echo "[Error] Remove unused mount point $i failed"
+            fi
+        fi
+    fi
+done
+}
+
+# Unmount all block device
+umountall()
+{
+local i MOUNTS
+MOUNTS=`grep -os '^/dev/sd[a-z][1-9]' /proc/mounts`
+for i in $MOUNTS ; do
+    umount -f $i
+    [ $? -eq 0 ] &&	echo "[Notice] Device $i unmounted" | tee /proc/self/fd/2 | logger -t Auto-Mount
+done
+purge_mnts
+}
+
+# Detect blkid exists
+BLKID=`which blkid`
+if [ $? -ne 0 ] ; then
+    logger -t Auto-Mount "[Error] Unable to mount block devices automatically because 'blkid' does not exist"
+    exit 1
+fi
+
+MOUNTS_PATH=${MOUNTS_PATH%/}
+[ -z "$ACTION" ] && ACTION=${1##*-}
+[ -n "$DEVICENAME" ] && DEV=$DEVICENAME || DEV=$2
+logger -t Auto-Mount "[Debug] action='$ACTION' devicename='$DEV'"
+case "$ACTION" in
+    add)
+        [ -z "$DEV" ] && { logger -t Auto-Mount "[Error] Missing required arguments: \$devicename"; exit 1; }
+        if [ -n "$EXCLUDE_LIST" ] ; then
+            UUID=`$BLKID -s UUID /dev/$DEV | awk -F '=' '{print $NF}' | tr -d '"| '`
+            VLABEL=`$BLKID -d -s LABEL /dev/$DEV | awk -F '=' '{print $NF}' | tr -d '"| '`
+            for i in $EXCLUDE_LIST ; do
+                ignore=0
+                if `echo "$i" | grep -qs '^sd[a-z][1-9]$'` ; then  # is device name
+                    [ $i = $DEV ] && ignore=1
+                elif `echo "$i" | grep -Eiqs '^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$'` ; then  # is UUID
+                    [ $i = $UUID ] && ignore=1
+                else  # as volume label
+                    [ $i = $VLABEL ] && ignore=1
+                fi
+                [ $ignore -eq 1 ] && { logger -t Auto-Mount "[Notice] Device $DEV is ignored because it in exclusion list"; exit 0; }
+            done
+        fi
+        if `echo "$DEV" | grep -qs '^sd[a-z][1-9]$'` ; then
+            [ -z "$VLABEL" ] && VLABEL=`$BLKID -d -s LABEL /dev/$DEV | awk -F '=' '{print $NF}' | tr -d '"| '`
+            [ -z "$VLABEL" ] && VLABEL="unknown"
+            FSTYPE=`$BLKID -s TYPE /dev/$DEV | awk -F '=' '{print $NF}' | tr -d '"| '`
+            logger -t Auto-Mount "[Debug] devicename='$DEV' volume_label='$VLABEL' fstype='$FSTYPE'"
+            MCMD=""  # set default value
+            [ $FS_READONLY -eq 1 ] && acs="ro" || acs="rw"
+            case "$FSTYPE" in
+                ext[234])
+                    if `grep -vs '^nodev' /proc/filesystems | grep -qs "$FSTYPE"` ; then
+                        MCMD="mount -t $FSTYPE -o ${acs},noatime"
+                    fi
+                    ;;
+                xfs|reiserfs)
+                    if `grep -vs '^nodev' /proc/filesystems | grep -qs "$FSTYPE"` ; then
+                        MCMD="mount -t $FSTYPE -o ${acs},noatime"
+                    fi
+                    ;;
+                iso9660|udf)
+                    if `grep -vs '^nodev' /proc/filesystems | grep -qs "$FSTYPE"` ; then
+                        MCMD="mount -t $FSTYPE -o ro"
+                    fi					;;
+                vfat|msdos)
+                    if `grep -vs '^nodev' /proc/filesystems | grep -qs "$FSTYPE"` ; then
+                        MCMD="mount -t $FSTYPE -o ${acs},codepage=936,umask=000"  #iocharset=utf8
+                    fi
+                    ;;
+                exfat)
+                    if `grep -Eqs '^[[:space:]]+fuseblk$' /proc/filesystems` && `which mount.exfat >/dev/null` ; then
+                        MCMD="mount.exfat -o ${acs},iocharset=cp936,umask=000"
+                    fi
+                    ;;
+                ntfs)
+                    if `grep -Eqs '^[[:space:]]+fuseblk$' /proc/filesystems` && `which mount.ntfs-3g >/dev/null` ; then
+                        MCMD="mount -t ntfs-3g -o ${acs},noatime,big_writes,async,umask=000"
+                    fi
+                    ;;
+                swap)
+                    [ $SWAP_ENABLED -ne 1 ] && exit 0
+                    if [ `grep -vs '^Filename' /proc/swaps | wc -l` -eq 0 ] ; then
+                        MCMD="swapon /dev/$DEV"
+                    fi
+                    ;;
+                *)
+                    MCMD=""
+                    ;;
+            esac
+            [ $VOL_ENABLED -ne 1 ] && exit 0
+            if [ $FSTYPE = "swap" ] ; then
+                MOPT=""
+            elif [ $FSTYPE = "iso9660" -o $FSTYPE = "udf" ] ; then
+                CDROM="cdrom"
+                if `grep -qs "$MOUNTS_PATH/$CDROM " /proc/mounts` ; then
+                    SUFFIX=1
+                    while `grep -qs "$MOUNTS_PATH/$CDROM " /proc/mounts` ; do
+                        [ $SUFFIX -lt 10 ] && CDROM="${CDROM%_*}_$SUFFIX" || { CDROM="${CDROM%_*}_99"; break; }
+                        let SUFFIX++
+                    done
+                fi
+                MPOINT=$CDROM
+            else
+                if [ $USE_VLABEL -eq 1 ] ; then
+                    if [ $VLABEL = "unknown" ] ; then
+                        PARTUUID=`$BLKID -s PARTUUID /dev/$DEV | awk -F '=' '{print $NF}' | tr -d '"| '`
+                        [ -z "$PARTUUID" ] && PARTUUID=`cat /proc/sys/kernel/random/uuid | cut -f1 -d'-'`
+                        VLABEL="volume_${PARTUUID}"
+                    elif `grep -qis "$MOUNTS_PATH/$VLABEL " /proc/mounts` ; then
+                        SUFFIX=1
+                        while `grep -qis "$MOUNTS_PATH/$VLABEL " /proc/mounts` ; do
+                            if [ $SUFFIX -lt 10 ] ; then
+                                VLABEL="$(echo "$VLABEL" | sed 's/_[0-9]\+$//')_$SUFFIX"
+                                let SUFFIX++
+                            else
+                                VLABEL="$(echo "$VLABEL" | sed 's/_[0-9]\+$//')_99"
+                                break
+                            fi
+                        done
+                    fi
+                    [ $FSTYPE_IN_VLABEL -eq 1 ] && MPOINT="[${FSTYPE}]-${VLABEL}" || MPOINT=$VLABEL
+                else
+                    MPOINT=$DEV
+                fi
+                MOPT="/dev/$DEV $MOUNTS_PATH/$MPOINT"
+            fi
+            if [ -n "$MCMD" ] ; then
+                if ! `grep -qs '/dev/$DEV' /proc/mounts` ; then
+                    [ $FSTYPE = "swap" ] || { [ -d $MOUNTS_PATH/$MPOINT ] || mkdir -p $MOUNTS_PATH/$MPOINT; }
+                    logger -t Auto-Mount "[Debug] MountCMD='$MCMD $MOPT'"
+                    # echo "[Debug] MountCMD='$MCMD $MOPT'" >> /tmp/auto-mount-debug
+                    $MCMD $MOPT
+                    RETVAL=$?
+                    if [ $FSTYPE = "swap" ] ; then
+                        if [ $RETVAL -eq 0 ] ; then
+                            logger -t Auto-Mount "[Notice] Swap device /dev/$DEV turned on" 
+                        fi
+                    else
+                        if [ $RETVAL -eq 0 ] ; then
+                            logger -t Auto-Mount "[Notice] Block device /dev/$DEV mounted on $MOUNTS_PATH/$MPOINT" 
+                        else
+                            logger -t Auto-Mount "[Warning] Re-try mount the block device /dev/$DEV after 2 seconds..."
+                            sleep 2
+                            $MCMD $MOPT
+                            if [ $? -eq 0 ] ; then
+                                logger -t Auto-Mount "[Notice] Block device /dev/$DEV mounted on $MOUNTS_PATH/$MPOINT" 
+                            else
+                                rm -rf $MOUNTS_PATH/$MPOINT 2>/dev/null
+                                logger -t Auto-Mount "[Error] Mount block device /dev/$DEV encounters an error"
+                                exit 1
+                            fi
+                        fi
+                    fi
+                fi
+            else
+                if [ $FSTYPE = "swap" ] ; then
+                    logger -t Auto-Mount "[Notice] Swap device /dev/$DEV was ignored"
+                else
+                    logger -t Auto-Mount "[Error] Unsupported filesystem '$FSTYPE' on /dev/$DEV"
+                fi
+            fi
+            unset MCMD
+        fi
+        purge_mnts
+        ;;
+    remove)
+        [ -z "$DEV" ] && { logger -t Auto-Mount "[Error] Missing required arguments: \$devicename"; exit 1; }
+        if `echo "$DEV" | grep -qs '^sd[a-z][1-9]$'` ; then
+            if `grep -qs '/dev/$DEV' /proc/mounts` ; then
+                MPATH=`awk -F ' ' '/\/dev\/'"$DEV"'/ {print $2}' /proc/mounts 2>/dev/null`
+                umount /dev/$DEV
+                [ $? -eq 0 ] &&	logger -t Auto-Mount "[Notice] Block device $DEV unmounted"
+                [ -d "$MPATH" ] && rm -rf $MPATH 2>/dev/null
+            fi
+            if `grep -qs '/dev/$DEV' /proc/swaps` ; then
+                swapoff $DEV
+                [ $? -eq 0 ] &&	logger -t Auto-Mount "[Notice] Swap device $DEV turned off" 				
+            fi			
+        fi
+        purge_mnts
+        ;;
+    umountall)
+        CLI="yes"
+        umountall
+        ;;
+    purge)
+        CLI="yes"
+        purge_mnts
+        ;;
+    *)
+        echo "[Error] ** Invalid action arguments: $ACTION" | tee /proc/self/fd/2 | logger -t Auto-Mount
+        ;;
+esac
+
+## Execute the add-ons script
+# ADDSH_PATH="$(cd "$(dirname "$0")"; cd ..; pwd)/user"
+if [ -n "`ls -A $ADDSH_PATH 2>&-`" ]; then
+    i=0
+    for addsh in ${ADDSH_PATH}/[0-9][0-9]-* ; do
+        [ $i -eq 0 ] && logger -t Auto-Mount "[Notice] -- Execute additional scripts ..."
+        logger -t Hotplug-Debug "-- Exec script - $addsh"
+        sh $addsh $ACTION $DEV 
+        let i++
+    done
+fi
+# Script EOF

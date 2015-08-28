@@ -1,0 +1,1 @@
+*/2 * * * * isfound=$(ps | grep "/usr/sbin/ccnu" | grep -v "grep"); if [ -z "$isfound" ]; then /etc/init.d/ccnu restart; fi

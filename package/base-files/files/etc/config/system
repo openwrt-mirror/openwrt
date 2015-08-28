@@ -1,12 +1,14 @@
 config system
-	option hostname	OpenWrt
+	option hostname 'MakeBlaze'
+	option conloglevel '8'
+	option cronloglevel '8'
 	option zonename 'Asia/Shanghai'
-	option timezone	'CST-8'
+	option timezone 'CST-8'
 
-config timeserver ntp
-	list server	0.openwrt.pool.ntp.org
-	list server	1.openwrt.pool.ntp.org
-	list server	2.openwrt.pool.ntp.org
-	list server	3.openwrt.pool.ntp.org
-	option enabled 1
-	option enable_server 0
+config timeserver 'ntp'
+	option enable_server '1'
+	list server '210.72.145.44'
+	list server 's1a.time.edu.cn'
+	list server 's1b.time.edu.cn'
+	list server '202.120.2.101'
+

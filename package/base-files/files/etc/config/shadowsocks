@@ -1,0 +1,15 @@
+
+config shadowsocks 'config'
+	option whitelist_enabled '0'
+	option blacklist_enabled '0'
+	option remote_port '2048'
+	option password 'pkowG59J'
+	option cipher 'aes-256-cfb'
+	option redir_port '12344'
+	option remote_server '192.227.162.122'
+	option dnsforward_enabled '1'
+	option dnsforward_type 'ChinaDNS-C'
+	option redir_enabled '1'
+	option enabled '1'
+	option local_port '1080'
+

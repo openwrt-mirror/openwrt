@@ -596,6 +596,13 @@ start_service() {
 	DNS_SERVERS="$DNS_SERVERS 127.0.0.1"
 	for DNS_SERVER in $DNS_SERVERS ; do
 		echo "nameserver $DNS_SERVER" >> /tmp/resolv.conf
+		echo "nameserver 114.114.114.114" >> /tmp/resolv.conf
+		echo "nameserver 223.5.5.5" >> /tmp/resolv.conf
+		echo "nameserver 223.6.6.6" >> /tmp/resolv.conf
+		echo "nameserver 114.114.115.115" >> /tmp/resolv.conf
+		echo "nameserver 112.124.47.27" >> /tmp/resolv.conf
+		echo "nameserver 199.91.73.222" >> /tmp/resolv.conf
+		echo "nameserver 178.79.131.110" >> /tmp/resolv.conf		
 	done
 }
 

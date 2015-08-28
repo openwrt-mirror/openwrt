@@ -1,0 +1,60 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2013-2014 nanpuyue@gmail.com
+
+START=90
+
+unset SERVICE_QUIET
+
+local current username password macaddr device iface
+
+section_enabled() {
+	local result
+	config_get_bool result "$1" 'enabled' 0
+	[ $result -eq 1 ]
+}
+
+get_userinfo() {
+	config_get username $1 'username'
+	if [ $username = $current ];then
+		config_get password $1 'password'
+		config_get macaddr $1 'macaddr' 'default'
+	fi
+}
+
+get_device() {
+	local type=$(uci -q get "network.$1.type")
+	if [ "$type" = 'bridge' ];then
+		device="br-$1"
+	else
+		device=$(uci -q get "network.$1.ifname")
+	fi
+}
+
+change_macaddr() {
+	local orig_macaddr=$(uci -q get "network.$1.macaddr")
+	if [ "$orig_macaddr" != "$2" ];then
+		uci set "network.$1.macaddr=$2"
+		uci commit 'network'
+		/etc/init.d/network restart
+	fi
+}
+
+start_instance() {
+	section_enabled "$1" || return 1
+	config_get current $1 'current'
+	config_get iface "$1" 'iface'
+	get_device "$iface"
+	config_foreach get_userinfo 'userinfo'
+	[ "$macaddr" = 'default' ] || change_macaddr "$iface" "$macaddr"
+	service_start /usr/sbin/ccnu "$current" "$password" "$device"
+}
+
+start() {
+	config_load 'ccnu'
+	config_foreach start_instance 'control'
+}
+
+stop() {
+	SERVICE_QUIET=1 \
+	service_stop /usr/sbin/ccnu
+}
