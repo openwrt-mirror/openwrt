@@ -70,6 +70,33 @@ tplink_get_image_boot_size() {
 	get_image "$@" | dd bs=4 count=1 skip=37 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
 }
 
+tplink_pharos_check_image() {
+	local magic_long="$(get_magic_long "$1")"
+	[ "$magic_long" != "7f454c46" ] && {
+		echo "Invalid image magic '$magic_long'"
+		return 1
+	}
+
+	local model_string="$(tplink_pharos_get_model_string)"
+	local line
+
+	# Here $1 is given to dd directly instead of get_image as otherwise the skip
+	# will take almost a second (as dd can't seek then)
+	#
+	# This will fail if the image isn't local, but that's fine: as the
+	# read loop won't be executed at all, it will return true, so the image
+	# is accepted (loading the first 1.5M of a remote image for this check seems
+	# a bit extreme)
+	dd if="$1" bs=1 skip=1511432 count=1024 2>/dev/null | while read line; do
+		[ "$line" == "$model_string" ] && break
+	done || {
+		echo "Unsupported image (model not in support-list)"
+		return 1
+	}
+
+	return 0
+}
+
 seama_get_type_magic() {
 	get_image "$@" | dd bs=1 count=4 skip=53 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
 }
@@ -152,10 +179,15 @@ platform_check_image() {
 	ap136-010 | \
 	ap136-020 | \
 	ap135-020 | \
+	ap147-010 | \
 	ap96 | \
-	db120 | \
-	hornet-ub | \
 	bxu2000n-2-a1 | \
+	db120 | \
+	f9k1115v2 |\
+	hornet-ub | \
+	mr12 | \
+	mr16 | \
+	wpj558 | \
 	zcn-1523h-2 | \
 	zcn-1523h-5)
 		[ "$magic_long" != "68737173" -a "$magic_long" != "19852003" ] && {
@@ -167,15 +199,22 @@ platform_check_image() {
 	ap81 | \
 	ap83 | \
 	ap132 | \
+	dgl-5500-a1 |\
+	dhp-1565-a1 |\
 	dir-505-a1 | \
 	dir-600-a1 | \
 	dir-615-c1 | \
 	dir-615-e1 | \
 	dir-615-e4 | \
+	dir-615-i1 | \
 	dir-825-c1 | \
 	dir-835-a1 | \
+	dlan-pro-500-wp | \
+	dlan-pro-1200-ac | \
 	dragino2 | \
+	epg5000 | \
 	esr1750 | \
+	esr900 | \
 	ew-dorin | \
 	ew-dorin-router | \
 	hiwifi-hc6361 | \
@@ -189,15 +228,21 @@ platform_check_image() {
 	airgateway | \
 	airrouter | \
 	bullet-m | \
+	loco-m-xw | \
 	nanostation-m | \
 	rocket-m | \
+	rocket-m-xw | \
+	rocket-m-ti | \
 	nanostation-m-xw | \
 	rw2458n | \
+	wpj531 | \
 	wndap360 | \
+	wpj344 | \
 	wzr-hp-g300nh2 | \
 	wzr-hp-g300nh | \
 	wzr-hp-g450h | \
 	wzr-hp-ag300h | \
+	wzr-450hp2 | \
 	whr-g301n | \
 	whr-hp-g300n | \
 	whr-hp-gn | \
@@ -213,6 +258,12 @@ platform_check_image() {
 		return 0
 		;;
 
+	cpe510)
+		tplink_pharos_check_image "$1" && return 0
+		return 1
+		;;
+
+	bsb | \
 	dir-825-b1 | \
 	tew-673gru)
 		dir825b_check_image "$1" && return 0
@@ -224,6 +275,7 @@ platform_check_image() {
 		return 1
 		;;
 
+	qihoo-c301 | \
 	mynet-n600 | \
 	mynet-n750)
 		[ "$magic_long" != "5ea3a417" ] && {
@@ -241,25 +293,33 @@ platform_check_image() {
 		;;
 	mr600 | \
 	mr600v2 | \
+	mr900 | \
+	mr900v2 | \
 	om2p | \
 	om2pv2 | \
 	om2p-hs | \
 	om2p-hsv2 | \
 	om2p-lc | \
-	om5p)
+	om5p | \
+	om5p-an)
 		platform_check_image_openmesh "$magic_long" "$1" && return 0
 		return 1
 		;;
 
+	antminer-s1 | \
+	antminer-s3 | \
 	archer-c5 | \
 	archer-c7 | \
 	el-m150 | \
 	el-mini | \
 	gl-inet | \
+	mc-mac1200r | \
+	onion-omega | \
 	oolite | \
 	smart-300 | \
 	tl-mr10u | \
 	tl-mr11u | \
+	tl-mr12u | \
 	tl-mr13u | \
 	tl-mr3020 | \
 	tl-mr3040 | \
@@ -268,6 +328,8 @@ platform_check_image() {
 	tl-mr3220-v2 | \
 	tl-mr3420 | \
 	tl-mr3420-v2 | \
+	tl-wa701nd-v2 | \
+	tl-wa7210n-v2 | \
 	tl-wa7510n | \
 	tl-wa750re | \
 	tl-wa850re | \
@@ -276,9 +338,13 @@ platform_check_image() {
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
+    tl-wdr3320-v2 | \
 	tl-wdr3500 | \
+    mw4530r | \
 	tl-wdr4300 | \
 	tl-wdr4900-v2 | \
+	tl-wdr6300 | \
+	tl-wdr6500-v2 | \
 	tl-wr703n | \
 	tl-wr710n | \
 	tl-wr720n-v3 | \
@@ -290,12 +356,23 @@ platform_check_image() {
 	tl-wr841n-v8 | \
 	tl-wr841n-v9 | \
 	tl-wr842n-v2 | \
+	tl-wr882n-v1 | \
 	tl-wr941nd | \
+	tl-wr941nd-v7 | \
+	tl-wr941nd-v5 | \
 	tl-wr1041n-v2 | \
 	tl-wr1043nd | \
 	tl-wr1043nd-v2 | \
 	tl-wr2543n)
-		[ "$magic" != "0100" ] && {
+		local magic_ver="0100"
+
+		case "$board" in
+		tl-wdr6500-v2)
+			magic_ver="0200"
+			;;
+		esac
+
+		[ "$magic" != "$magic_ver" ] && {
 			echo "Invalid image type."
 			return 1
 		}
@@ -327,6 +404,7 @@ platform_check_image() {
 		return 1
 		;;
 
+	unifi-outdoor-plus | \
 	uap-pro)
 		[ "$magic_long" != "19852003" ] && {
 			echo "Invalid image type."
@@ -336,7 +414,8 @@ platform_check_image() {
 		;;
 	wndr3700 | \
 	wnr2000-v3 | \
-	wnr612-v2)
+	wnr612-v2 | \
+	wnr1000-v2)
 		local hw_magic
 
 		hw_magic="$(ar71xx_get_mtd_part_magic firmware)"
@@ -347,6 +426,7 @@ platform_check_image() {
 		return 0
 		;;
 	nbg6716 | \
+	r6100 | \
 	wndr3700v4 | \
 	wndr4300 )
 		nand_do_platform_check $board $1
@@ -381,10 +461,31 @@ platform_check_image() {
 		fi
 		return 0
 		;;
+    wnr2000-v4)
+		[ "$magic_long" != "32303034" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+		return 0
+		;;
+
 	esac
 
 	echo "Sysupgrade is not yet supported on $board."
 	return 1
+}
+
+platform_pre_upgrade() {
+	local board=$(ar71xx_board_name)
+
+	case "$board" in
+	nbg6716 | \
+	r6100 | \
+	wndr3700v4 | \
+	wndr4300 )
+		nand_do_upgrade "$1"
+		;;
+	esac
 }
 
 platform_do_upgrade() {
@@ -423,14 +524,18 @@ platform_do_upgrade() {
 		;;
 	mr600 | \
 	mr600v2 | \
+	mr900 | \
+	mr900v2 | \
 	om2p | \
 	om2pv2 | \
 	om2p-hs | \
 	om2p-hsv2 | \
 	om2p-lc | \
-	om5p)
+	om5p | \
+	om5p-an)
 		platform_do_upgrade_openmesh "$ARGV"
 		;;
+	unifi-outdoor-plus | \
 	uap-pro)
 		MTD_CONFIG_ARGS="-s 0x180000"
 		default_do_upgrade "$ARGV"

@@ -22,6 +22,26 @@ endef
 
 $(eval $(call KernelPackage,rtc-sunxi))
 
+define KernelPackage/sunxi-ir
+    SUBMENU:=$(OTHER_MENU)
+    TITLE:=Sunxi SoC built-in IR support (A20)
+    DEPENDS:=@TARGET_sunxi +kmod-input-core
+    $(call AddDepends/rtc)
+    KCONFIG:= \
+	CONFIG_MEDIA_SUPPORT=y \
+	CONFIG_MEDIA_RC_SUPPORT=y \
+	CONFIG_RC_DEVICES=y \
+	CONFIG_IR_SUNXI
+    FILES:=$(LINUX_DIR)/drivers/media/rc/sunxi-cir.ko
+    AUTOLOAD:=$(call AutoLoad,50,sunxi-cir)
+endef
+
+define KernelPackage/sunxi-ir/description
+ Support for the AllWinner sunXi SoC's onboard IR (A20)
+endef
+
+$(eval $(call KernelPackage,sunxi-ir))
+
 define KernelPackage/eeprom-sunxi
     SUBMENU:=$(OTHER_MENU)
     TITLE:=AllWinner Security ID fuse support
@@ -41,10 +61,8 @@ $(eval $(call KernelPackage,eeprom-sunxi))
 define KernelPackage/ata-sunxi
     TITLE:=AllWinner sunXi AHCI SATA support
     SUBMENU:=$(BLOCK_MENU)
-    DEPENDS:=@TARGET_sunxi +kmod-scsi-core
-    KCONFIG:=\
-	CONFIG_AHCI_SUNXI \
-	CONFIG_SATA_AHCI_PLATFORM
+    DEPENDS:=@TARGET_sunxi +kmod-ata-ahci-platform +kmod-scsi-core
+    KCONFIG:=CONFIG_AHCI_SUNXI
     FILES:=$(LINUX_DIR)/drivers/ata/ahci_sunxi.ko
     AUTOLOAD:=$(call AutoLoad,41,ahci_sunxi,1)
 endef
@@ -82,3 +100,20 @@ endef
 
 $(eval $(call KernelPackage,wdt-sunxi))
 
+
+define KernelPackage/sound-soc-sunxi
+  TITLE:=AllWinner built-in SoC sound support
+  KCONFIG:= \
+	CONFIG_SND_SUNXI_SOC_CODEC
+  FILES:= \
+	$(LINUX_DIR)/sound/soc/sunxi/sunxi-codec.ko
+  AUTOLOAD:=$(call AutoLoad,65,sunxi-codec)
+  DEPENDS:=@TARGET_sunxi +kmod-sound-soc-core @LINUX_4_1
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-soc-sunxi/description
+  Kernel support for AllWinner built-in SoC audio
+endef
+
+$(eval $(call KernelPackage,sound-soc-sunxi))

@@ -13,8 +13,10 @@ DEVICE_TYPE?=router
 
 # Default packages - the really basic set
 DEFAULT_PACKAGES:=base-files libc libgcc busybox dropbear mtd uci opkg netifd fstools
+# For nas targets
+DEFAULT_PACKAGES.nas:=block-mount fdisk lsblk mdadm
 # For router targets
-DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe kmod-ipt-nathelper firewall odhcpd odhcp6c
+DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe kmod-nf-nathelper firewall odhcpd odhcp6c
 DEFAULT_PACKAGES.bootloader:=
 
 ifneq ($(DUMP),)
@@ -63,8 +65,8 @@ ifndef Profile
 define Profile
   $(eval $(call Profile/Default))
   $(eval $(call Profile/$(1)))
-  $(eval $(call shexport,Profile/$(1)/Config))
-  $(eval $(call shexport,Profile/$(1)/Description))
+  dumpinfo : $(call shexport,Profile/$(1)/Config)
+  dumpinfo : $(call shexport,Profile/$(1)/Description)
   DUMPINFO += \
 	echo "Target-Profile: $(1)"; \
 	echo "Target-Profile-Name: $(NAME)"; \
@@ -73,10 +75,10 @@ define Profile
 		echo "Target-Profile-Kconfig: yes"; \
 	fi; \
 	echo "Target-Profile-Config: "; \
-	$(SH_FUNC) getvar "$(call shvar,Profile/$(1)/Config)"; \
+	echo "$$$$$$$$$(call shvar,Profile/$(1)/Config)"; \
 	echo "@@"; \
 	echo "Target-Profile-Description:"; \
-	$(SH_FUNC) getvar "$(call shvar,Profile/$(1)/Description)"; \
+	echo "$$$$$$$$$(call shvar,Profile/$(1)/Description)"; \
 	echo "@@"; \
 	echo;
   ifeq ($(CONFIG_TARGET_$(call target_conf,$(BOARD)_$(if $(SUBTARGET),$(SUBTARGET)_))$(1)),y)
@@ -103,8 +105,6 @@ else
     $(eval $(call IncludeProfiles))
   endif
 endif
-
-$(eval $(call shexport,Target/Description))
 
 ifneq ($(TARGET_BUILD)$(if $(DUMP),,1),)
   include $(INCLUDE_DIR)/kernel-version.mk
@@ -222,6 +222,7 @@ ifeq ($(DUMP),1)
   ifeq ($(ARCH),i386)
     CPU_TYPE ?= i486
     CPU_CFLAGS_i486 = -march=i486
+    CPU_CFLAGS_pentium4 = -march=pentium4
     CPU_CFLAGS_geode = -march=geode -mmmx -m3dnow
   endif
   ifneq ($(findstring arm,$(ARCH)),)
@@ -230,6 +231,7 @@ ifeq ($(DUMP),1)
     CPU_CFLAGS_arm926ej-s = -march=armv5te -mtune=arm926ej-s
     CPU_CFLAGS_arm1136j-s = -march=armv6 -mtune=arm1136j-s
     CPU_CFLAGS_arm1176jzf-s = -march=armv6 -mtune=arm1176jzf-s
+    CPU_CFLAGS_cortex-a5 = -march=armv7-a -mtune=cortex-a5
     CPU_CFLAGS_cortex-a7 = -march=armv7-a -mtune=cortex-a7
     CPU_CFLAGS_cortex-a8 = -march=armv7-a -mtune=cortex-a8
     CPU_CFLAGS_cortex-a9 = -march=armv7-a -mtune=cortex-a9
@@ -253,11 +255,16 @@ ifeq ($(DUMP),1)
     CPU_TYPE = sparc
     CPU_CFLAGS_ultrasparc = -mcpu=ultrasparc
   endif
+  ifeq ($(ARCH),aarch64)
+    CPU_TYPE ?= armv8-a
+    CPU_CFLAGS_armv8-a = -mcpu=armv8-a
+  endif
   DEFAULT_CFLAGS=$(strip $(CPU_CFLAGS) $(CPU_CFLAGS_$(CPU_TYPE)) $(CPU_CFLAGS_$(CPU_SUBTYPE)))
 endif
 
 define BuildTargets/DumpCurrent
   .PHONY: dumpinfo
+  dumpinfo : export DESCRIPTION=$$(Target/Description)
   dumpinfo:
 	@echo 'Target: $(TARGETID)'; \
 	 echo 'Target-Board: $(BOARD)'; \
@@ -272,9 +279,9 @@ define BuildTargets/DumpCurrent
 	 echo 'Linux-Version: $(LINUX_VERSION)'; \
 	 echo 'Linux-Release: $(LINUX_RELEASE)'; \
 	 echo 'Linux-Kernel-Arch: $(LINUX_KARCH)'; \
-	$(if $(SUBTARGET),,$(if $(DEFAULT_SUBTARGET), echo 'Default-Subtarget: $(DEFAULT_SUBTARGET)'; ))
+	$(if $(SUBTARGET),,$(if $(DEFAULT_SUBTARGET), echo 'Default-Subtarget: $(DEFAULT_SUBTARGET)'; )) \
 	 echo 'Target-Description:'; \
-	 $(SH_FUNC) getvar $(call shvar,Target/Description); \
+	 echo "$$$$DESCRIPTION"; \
 	 echo '@@'; \
 	 echo 'Default-Packages: $(DEFAULT_PACKAGES) $(call extra_packages,$(DEFAULT_PACKAGES))'; \
 	 $(DUMPINFO)

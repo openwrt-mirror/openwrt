@@ -8,7 +8,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://libbsd.freedesktop.org/releases
 #PKG_MD5SUM:=d0870f2de55d59c1c8419f36e8fac150
 
-PKG_LICENSE:=BSD-4c
+PKG_LICENSE:=BSD-4-Clause
 PKG_LICENSE_FILES:=COPYING
 
 include $(INCLUDE_DIR)/package.mk
@@ -18,7 +18,7 @@ PKG_INSTALL:=1
 define Package/libbsd
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=@USE_EGLIBC
+  DEPENDS:=@USE_GLIBC
   TITLE:=common BSD library
 endef
 
@@ -39,7 +39,7 @@ define Build/InstallDev
 		$(PKG_INSTALL_DIR)/usr/include/* \
 		$(1)/usr/include/
 
-	( cd $(1)/lib ; ln -s libbsd.so.$(PKG_VERSION) libbsd.so )
+	( cd $(1)/lib ; $(LN) libbsd.so.$(PKG_VERSION) libbsd.so )
 endef
 
 define Package/libbsd/install
@@ -50,7 +50,7 @@ define Package/libbsd/install
 		$(PKG_INSTALL_DIR)/lib/libbsd.so* \
 		$(1)/lib/
 
-	( cd $(1)/lib ; ln -s libbsd.so.$(PKG_VERSION) libbsd.so )
+	( cd $(1)/lib ; $(LN) libbsd.so.$(PKG_VERSION) libbsd.so )
 endef
 
 $(eval $(call BuildPackage,libbsd))

@@ -38,7 +38,7 @@ $(eval $(call KernelPackage,pwm-atmel))
 define KernelPackage/at91-adc
   SUBMENU:=$(OTHER_MENU)
   TITLE:=ADC on atmel SoC
-  DEPENDS:=@TARGET_at91 +kmod-iio-core
+  DEPENDS:=@TARGET_at91 +kmod-iio-core +kmod-input-core
   KCONFIG:=CONFIG_AT91_ADC
   FILES:=$(LINUX_DIR)/drivers/iio/adc/at91_adc.ko
   AUTOLOAD:=$(call AutoLoad,40,at91_adc)
@@ -50,6 +50,24 @@ endef
 
 $(eval $(call KernelPackage,at91-adc))
 
+define KernelPackage/at91-udc
+  SUBMENU:=$(USB_MENU)
+  TITLE:=USB Device Controller on atmel SoC
+  DEPENDS:=@TARGET_at91 +kmod-usb-gadget
+  KCONFIG:=CONFIG_USB_AT91
+ifneq ($(wildcard $(LINUX_DIR)/drivers/usb/gadget/udc/at91_udc.ko),)
+  FILES:=$(LINUX_DIR)/drivers/usb/gadget/udc/at91_udc.ko
+else
+  FILES:=$(LINUX_DIR)/drivers/usb/gadget/at91_udc.ko
+endif
+  AUTOLOAD:=$(call AutoLoad,51,at91_udc)
+endef
+
+define KernelPackage/at91-adc/description
+ Kernel module to use the USB Device controller for Atmel AT91
+endef
+
+$(eval $(call KernelPackage,at91-udc))
 
 I2C_AT91_MODULES:=\
   CONFIG_I2C_AT91:drivers/i2c/busses/i2c-at91

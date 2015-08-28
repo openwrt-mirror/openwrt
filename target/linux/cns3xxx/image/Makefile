@@ -18,10 +18,6 @@ define BuildFirmware/Generic
 	sh $(TOPDIR)/scripts/combined-image.sh \
 		$(KDIR)/uImage.pad \
 		$(KDIR)/root.$(1).pad \
-		$(BIN_DIR)/$(IMG_PREFIX)-$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))-uboot-sysupgrade.bin
-	sh $(TOPDIR)/scripts/combined-image.sh \
-		$(KDIR)/uImage.pad \
-		$(KDIR)/root.$(1).pad \
 		$(BIN_DIR)/$(IMG_PREFIX)-$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))-sysupgrade.bin
 endef
 
@@ -36,7 +32,7 @@ define Image/Build
 endef
 
 define Image/Build/jffs2-64k
-	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/openwrt-$(BOARD)-$(1).img bs=64k conv=sync
+	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-$(1).img bs=64k conv=sync
 	( \
 	dd if=$(KDIR)/uImage bs=2048k conv=sync; \
 	dd if=$(KDIR)/root.$(1) bs=64k conv=sync; \
@@ -44,7 +40,7 @@ define Image/Build/jffs2-64k
 endef
 
 define Image/Build/jffs2-128k
-	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/openwrt-$(BOARD)-$(1).img bs=128k conv=sync
+	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-$(1).img bs=128k conv=sync
 	( \
 	dd if=$(KDIR)/uImage bs=2048k conv=sync; \
 	dd if=$(KDIR)/root.$(1) bs=128k conv=sync; \
@@ -53,7 +49,7 @@ endef
 
 define Image/Build/squashfs
 	$(call prepare_generic_squashfs,$(KDIR)/root.$(1))
-	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/openwrt-$(BOARD)-$(1).img bs=128k conv=sync
+	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-$(1).img bs=128k conv=sync
 	( \
 	dd if=$(KDIR)/uImage bs=2048k conv=sync; \
 	dd if=$(KDIR)/root.$(1) bs=128k conv=sync; \

@@ -13,14 +13,16 @@ endef
 
 define Image/BuildKernel/Template
 
+ ifneq ($(1),)
 	$(CP) $(DTS_DIR)/$(1).dtb $(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb
 
 	$(call Image/BuildKernel/MkFIT,$(1),$(KDIR)/zImage,$(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb,none,0x10008000,0x10008000)
 	$(CP) $(KDIR)/fit-$(1).itb $(BIN_DIR)/$(IMG_PREFIX)-$(1)-fit-uImage.itb
 
- ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+  ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(call Image/BuildKernel/MkFIT,$(1),$(KDIR)/zImage-initramfs,$(BIN_DIR)/$(IMG_PREFIX)-$(1).dtb,none,0x10008000,0x10008000,-initramfs)
 	$(CP) $(KDIR)/fit-$(1)-initramfs.itb $(BIN_DIR)/$(IMG_PREFIX)-$(1)-fit-uImage-initramfs.itb
+  endif
  endif
 
 	$(CP) $(KDIR)/zImage $(BIN_DIR)/$(IMG_PREFIX)-zImage
@@ -42,9 +44,9 @@ endef
 
 define Image/InstallKernel/Template
 
- ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_KERNEL),)
+ ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_KERNEL)$(CONFIG_TARGET_imx6_VENTANA),)
 	$(INSTALL_DIR) $(TARGET_DIR)/boot
-   ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_UIMAGE),)
+   ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_UIMAGE)$(CONFIG_TARGET_imx6_VENTANA),)
 	$(CP) $(BIN_DIR)/$(IMG_PREFIX)-uImage $(TARGET_DIR)/boot/
 	ln -sf $(IMG_PREFIX)-uImage $(TARGET_DIR)/boot/uImage
    endif
@@ -59,7 +61,7 @@ define Image/InstallKernel/Template
    endif
  endif
 
- ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB),)
+ ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB)$(CONFIG_TARGET_imx6_VENTANA),)
 	$(INSTALL_DIR) $(TARGET_DIR)/boot
 	$(foreach dts,$(shell echo $(1)), \
 		$(CP) $(BIN_DIR)/$(IMG_PREFIX)-$(dts).dtb $(TARGET_DIR)/boot/ ; \
@@ -71,10 +73,10 @@ endef
 define Image/Build/squashfs
 	$(call prepare_generic_squashfs,$(KDIR)/root.$(1))
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-$(1).bin bs=128k conv=sync
-	( \
+	[ -f "$(BIN_DIR)/$(IMG_PREFIX)-$(call sanitize_profile_name)-fit-uImage.itb" ] && ( \
 		dd if=$(BIN_DIR)/$(IMG_PREFIX)-$(call sanitize_profile_name)-fit-uImage.itb bs=2048k conv=sync; \
 		dd if=$(KDIR)/root.$(1) bs=128k conv=sync; \
-	) > $(BIN_DIR)/$(IMG_PREFIX)-$(call sanitize_profile_name)-fit-$(1).bin
+	) > $(BIN_DIR)/$(IMG_PREFIX)-$(call sanitize_profile_name)-fit-$(1).bin || true
 endef
 
 define Image/mkfs/targz
@@ -107,8 +109,8 @@ define Image/Build/ubi
 endef
 
 
-Image/BuildKernel/Template/generic=$(call Image/BuildKernel/Template)
-Image/InstallKernel/Template/generic=$(call Image/InstallKernel/Template)
+Image/BuildKernel/Template/Generic=$(call Image/BuildKernel/Template)
+Image/InstallKernel/Template/Generic=$(call Image/InstallKernel/Template)
 
 Image/BuildKernel/Template/IMX6DL_WANDBOARD=$(call Image/BuildKernel/Template,imx6dl-wandboard)
 Image/InstallKernel/Template/IMX6DL_WANDBOARD=$(call Image/InstallKernel/Template,imx6dl-wandboard)

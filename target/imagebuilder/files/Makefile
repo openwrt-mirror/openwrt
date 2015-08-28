@@ -1,6 +1,6 @@
 # Makefile for OpenWrt
 #
-# Copyright (C) 2007-2010 OpenWrt.org
+# Copyright (C) 2007-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -54,16 +54,17 @@ help: FORCE
 # override variables from rules.mk
 PACKAGE_DIR:=$(TOPDIR)/packages
 OPKG:= \
-  IPKG_TMP="$(TOPDIR)/tmp/ipkgtmp" \
+  IPKG_NO_SCRIPT=1 \
+  IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
   IPKG_INSTROOT="$(TARGET_DIR)" \
-  IPKG_CONF_DIR="$(TOPDIR)/tmp" \
+  IPKG_CONF_DIR="$(TMP_DIR)" \
   IPKG_OFFLINE_ROOT="$(TARGET_DIR)" \
   $(STAGING_DIR_HOST)/bin/opkg \
 	-f $(TOPDIR)/repositories.conf \
 	--force-depends \
 	--force-overwrite \
 	--force-postinstall \
-	--cache $(TOPDIR)/dl \
+	--cache $(DL_DIR) \
 	--offline-root $(TARGET_DIR) \
 	--add-dest root:/ \
 	--add-arch all:100 \
@@ -77,6 +78,7 @@ define Profile
   endif
   $(1)_NAME:=$(NAME)
   $(1)_PACKAGES:=$(PACKAGES)
+  PROFILE_NAMES += $(1)
   PROFILE_LIST += \
   	echo '$(1):'; [ -z '$(NAME)' ] || echo '	$(NAME)'; echo '	Packages: $(PACKAGES)';
 endef
@@ -99,13 +101,13 @@ _call_image:
 	echo 'Packages: $(BUILD_PACKAGES)'
 	echo
 	rm -rf $(TARGET_DIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR)
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(DL_DIR)
 	if [ ! -f "$(PACKAGE_DIR)/Packages" ] || [ ! -f "$(PACKAGE_DIR)/Packages.gz" ] || [ "`find $(PACKAGE_DIR) -cnewer $(PACKAGE_DIR)/Packages.gz`" ]; then \
 		echo "Package list missing or not up-to-date, generating it.";\
 		$(MAKE) package_index; \
 	else \
 		mkdir -p $(TARGET_DIR)/tmp; \
-		$(OPKG) update; \
+		$(OPKG) update || true; \
 	fi
 	$(MAKE) package_install
 ifneq ($(USER_FILES),)
@@ -117,11 +119,11 @@ endif
 package_index: FORCE
 	@echo
 	@echo Building package index...
-	@mkdir -p $(TOPDIR)/tmp $(TOPDIR)/dl $(TARGET_DIR)/tmp
+	@mkdir -p $(TMP_DIR) $(TARGET_DIR)/tmp
 	(cd $(PACKAGE_DIR); $(SCRIPT_DIR)/ipkg-make-index.sh . > Packages && \
-		gzip -9c Packages > Packages.gz \
+		gzip -9nc Packages > Packages.gz \
 	) >/dev/null 2>/dev/null
-	$(OPKG) update
+	$(OPKG) update || true
 
 package_install: FORCE
 	@echo
@@ -142,13 +144,14 @@ package_postinst: FORCE
 	@rm -f $(TARGET_DIR)/tmp/opkg.lock
 	@echo
 	@echo Activating init scripts
+	@mkdir -p $(TARGET_DIR)/etc/rc.d
 	@( \
 		cd $(TARGET_DIR); \
-		for script in ./etc/init.d/*; do \
-			grep '#!/bin/sh /etc/rc.common' $$script >/dev/null || continue; \
-			IPKG_INSTROOT=$(TARGET_DIR) $(which bash) ./etc/rc.common $$script enable; \
-		done || true; \
+		for script in ./usr/lib/opkg/info/*.postinst; do \
+			IPKG_INSTROOT=$(TARGET_DIR) $$(which bash) $$script; \
+		done || true \
 	)
+	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.postinst
 	$(if $(CONFIG_CLEAN_IPKG),rm -rf $(TARGET_DIR)/usr/lib/opkg)
 
 build_image: FORCE
@@ -158,13 +161,20 @@ build_image: FORCE
 		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
 
 clean:
-	rm -rf $(TOPDIR)/tmp $(TOPDIR)/dl $(TARGET_DIR) $(BIN_DIR)
+	rm -rf $(TMP_DIR) $(DL_DIR) $(TARGET_DIR) $(BIN_DIR)
 
 
 info:
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; $(MAKE) -s _call_info)
 
 image:
+ifneq ($(PROFILE),)
+  ifeq ($(filter $(PROFILE),$(PROFILE_NAMES)),)
+	@echo 'Profile "$(PROFILE)" does not exist!'
+	@echo 'Use "make info" to get a list of available profile names.'
+	@exit 1
+  endif
+endif
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
 	$(MAKE) _call_image \
 		$(if $(PROFILE),USER_PROFILE="$(PROFILE)") \

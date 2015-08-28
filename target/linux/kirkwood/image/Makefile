@@ -4,10 +4,11 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
+
+NAND_BLOCKSIZE := 2048-128k
+
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
-
-NAND_BLOCKSIZE := 2048:128k
 
 define sanitize_profile_name
 $(shell echo $(PROFILE) | tr '[:upper:]' '[:lower:]')
@@ -117,8 +118,14 @@ Image/InstallKernel/Template/Generic=$(call Image/InstallKernel/Template)
 Image/BuildKernel/Template/DOCKSTAR=$(call Image/BuildKernel/Template,dockstar)
 Image/InstallKernel/Template/DOCKSTAR=$(call Image/InstallKernel/Template,dockstar)
 
+Image/BuildKernel/Template/EA3500=$(call Image/BuildKernel/Template,ea3500)
+Image/InstallKernel/Template/EA3500=$(call Image/InstallKernel/Template,ea3500)
+
 Image/BuildKernel/Template/EA4500=$(call Image/BuildKernel/Template,ea4500)
 Image/InstallKernel/Template/EA4500=$(call Image/InstallKernel/Template,ea4500)
+
+Image/BuildKernel/Template/GOFLEXHOME=$(call Image/BuildKernel/Template,goflexhome)
+Image/InstallKernel/Template/GOFLEXHOME=$(call Image/InstallKernel/Template,goflexhome)
 
 Image/BuildKernel/Template/GOFLEXNET=$(call Image/BuildKernel/Template,goflexnet)
 Image/InstallKernel/Template/GOFLEXNET=$(call Image/InstallKernel/Template,goflexnet)
@@ -129,8 +136,23 @@ Image/InstallKernel/Template/IB62X0=$(call Image/InstallKernel/Template,ib62x0)
 Image/BuildKernel/Template/ICONNECT=$(call Image/BuildKernel/Template,iconnect)
 Image/InstallKernel/Template/ICONNECT=$(call Image/InstallKernel/Template,iconnect)
 
+Image/BuildKernel/Template/IOMEGA_IX2_200=$(call Image/BuildKernel/Template,iomega_ix2_200)
+Image/InstallKernel/Template/IOMEGA_IX2_200=$(call Image/InstallKernel/Template,iomega_ix2_200)
+
 Image/BuildKernel/Template/POGOE02=$(call Image/BuildKernel/Template,pogo_e02)
 Image/InstallKernel/Template/POGOE02=$(call Image/InstallKernel/Template,pogo_e02)
+
+Image/BuildKernel/Template/SHEEVAPLUG=$(call Image/BuildKernel/Template,sheevaplug)
+Image/InstallKernel/Template/SHEEVAPLUG=$(call Image/InstallKernel/Template,sheevaplug)
+
+Image/BuildKernel/Template/SHEEVAPLUGSATA=$(call Image/BuildKernel/Template,sheevaplug-esata)
+Image/InstallKernel/Template/SHEEVAPLUGSATA=$(call Image/InstallKernel/Template,sheevaplug-esata)
+
+Image/BuildKernel/Template/GuruplugServerPlus=$(call Image/BuildKernel/Template,guruplug-server-plus)
+Image/InstallKernel/Template/GuruplugServerPlus=$(call Image/InstallKernel/Template,guruplug-server-plus)
+
+Image/BuildKernel/Template/Topkick1281P2=$(call Image/BuildKernel/Template,topkick)
+Image/InstallKernel/Template/Topkick1281P2=$(call Image/InstallKernel/Template,topkick)
 
 define Image/BuildKernel
 	$(call Image/BuildKernel/Template/$(PROFILE))

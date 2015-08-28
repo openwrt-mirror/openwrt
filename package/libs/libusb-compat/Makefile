@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010-2013 OpenWrt.org
+# Copyright (C) 2010-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libusb-compat
 PKG_VERSION:=0.1.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=@SF/libusb
@@ -17,6 +17,7 @@ PKG_MD5SUM:=2ca521fffadd0c28fdf174e6ec73865b
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
+PKG_LICENSE:=LGPL-2.1
 
 PKG_MAINTAINER := Felix Fietkau <nbd@openwrt.org>
 
@@ -38,10 +39,10 @@ endef
 TARGET_CFLAGS += $(FPIC)
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(STAGING_DIR)/host/bin
-
+	$(INSTALL_DIR) $(1)
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
-	$(CP) $(PKG_INSTALL_DIR)/usr/bin/libusb-config $(STAGING_DIR)/host/bin
+	$(INSTALL_DIR) $(2)/bin
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/libusb-config $(2)/bin/
 endef
 
 define Package/libusb-compat/install

@@ -23,7 +23,7 @@
 	palmbus@10000000 {
 		compatible = "palmbus";
 		reg = <0x10000000 0x200000>;
-                ranges = <0x0 0x10000000 0x1FFFFF>;
+		ranges = <0x0 0x10000000 0x1FFFFF>;
 
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -202,14 +202,17 @@
 		compatible = "ralink,rt2880-pinmux";
 		pinctrl-names = "default";
 		pinctrl-0 = <&state_default>;
+
 		state_default: pinctrl0 {
 		};
+
 		spi_pins: spi {
 			spi {
 				ralink,group = "spi";
 				ralink,function = "spi";
 			};
 		};
+
 		uartlite_pins: uartlite {
 			uart {
 				ralink,group = "uartlite";
@@ -223,8 +226,9 @@
 		#reset-cells = <1>;
 	};
 
-	usbphy {
+	usbphy: usbphy {
 		compatible = "ralink,mt7620a-usbphy";
+		#phy-cells = <1>;
 
 		resets = <&rstctrl 22 &rstctrl 25>;
 		reset-names = "host", "device";
@@ -255,6 +259,9 @@
 		compatible = "ralink,mt7620a-gsw";
 		reg = <0x10110000 8000>;
 
+		resets = <&rstctrl 23>;
+		reset-names = "esw";
+
 		interrupt-parent = <&intc>;
 		interrupts = <17>;
 		ralink,port4 = "gmac";
@@ -267,12 +274,18 @@
 		interrupt-parent = <&intc>;
 		interrupts = <18>;
 
+		phys = <&usbphy 1>;
+		phy-names = "usb";
+
 		status = "disabled";
 	};
 
 	ohci@101c1000 {
 		compatible = "ralink,rt3xxx-ohci";
 		reg = <0x101c1000 0x1000>;
+
+		phys = <&usbphy 1>;
+		phy-names = "usb";
 
 		interrupt-parent = <&intc>;
 		interrupts = <18>;

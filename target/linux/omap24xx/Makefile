@@ -13,13 +13,13 @@ MAINTAINER:=Michael Buesch <m@bues.ch>
 FEATURES:=targz squashfs jffs2_nand usb usbgadget display gpio audio broken
 CPU_TYPE:=arm1136j-s
 
-LINUX_VERSION:=3.3.8
+KERNEL_PATCHVER:=4.0
 
 define Target/Description
 	TI OMAP-24xx
 endef
 
-KERNELNAME:="zImage"
+KERNELNAME:=zImage
 
 include $(INCLUDE_DIR)/target.mk
 

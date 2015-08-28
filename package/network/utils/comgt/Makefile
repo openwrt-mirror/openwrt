@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2014 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,25 +9,42 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=comgt
 PKG_VERSION:=0.32
-PKG_RELEASE:=22
+PKG_RELEASE:=25
 
 PKG_SOURCE:=$(PKG_NAME).$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=@SF/comgt
 PKG_MD5SUM:=db2452680c3d953631299e331daf49ef
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_LICENSE:=GPL-2.0+
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME).$(PKG_VERSION)
 PKG_CHECK_FORMAT_SECURITY:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/comgt
+define Package/comgt/Default
   SECTION:=utils
   CATEGORY:=Utilities
+endef
+
+define Package/comgt
+$(call Package/comgt/Default)
   TITLE:=Option/Vodafone 3G/GPRS control tool
   DEPENDS:=+chat
   URL:=http://www.pharscape.org/comgt.html
+endef
+
+define Package/comgt-directip
+$(call Package/comgt/Default)
+  TITLE:=Sierra Wireless Direct-IP support
+  DEPENDS:=+comgt +kmod-usb-serial +kmod-usb-serial-sierrawireless +kmod-usb-net +kmod-usb-net-sierrawireless
+endef
+
+define Package/comgt-ncm
+$(call Package/comgt/Default)
+  TITLE+=NCM 3G/4G Support
+  DEPENDS:=+comgt +wwan
 endef
 
 define Package/comgt/description
@@ -47,7 +64,7 @@ endef
 define Package/comgt/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/comgt $(1)/usr/bin/
-	ln -s comgt $(1)/usr/bin/gcom
+	$(LN) comgt $(1)/usr/bin/gcom
 	$(INSTALL_DIR) $(1)/etc/chatscripts
 	$(INSTALL_DATA) ./files/3g.chat $(1)/etc/chatscripts/3g.chat
 	$(INSTALL_DATA) ./files/evdo.chat $(1)/etc/chatscripts/evdo.chat
@@ -65,4 +82,22 @@ define Package/comgt/install
 	$(INSTALL_BIN) ./files/3g.sh $(1)/lib/netifd/proto/3g.sh
 endef
 
+define Package/comgt-directip/install
+	$(INSTALL_DIR) $(1)/etc/gcom
+	$(INSTALL_DATA) ./files/directip.gcom $(1)/etc/gcom/directip.gcom
+	$(INSTALL_DATA) ./files/directip-stop.gcom $(1)/etc/gcom/directip-stop.gcom
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) ./files/directip.sh $(1)/lib/netifd/proto/directip.sh
+endef
+
+define Package/comgt-ncm/install
+	$(INSTALL_DIR) $(1)/etc/gcom
+	$(INSTALL_DATA) ./files/ncm.json $(1)/etc/gcom/ncm.json
+	$(INSTALL_DATA) ./files/runcommand.gcom $(1)/etc/gcom/runcommand.gcom
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) ./files/ncm.sh $(1)/lib/netifd/proto/ncm.sh
+endef
+
 $(eval $(call BuildPackage,comgt))
+$(eval $(call BuildPackage,comgt-directip))
+$(eval $(call BuildPackage,comgt-ncm))

@@ -8,15 +8,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ds-lite
-PKG_VERSION:=4
+PKG_VERSION:=7
 PKG_RELEASE:=1
+PKG_LICENSE:=GPL-2.0
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/ds-lite
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+kmod-ipv6 +kmod-ip6-tunnel
+  DEPENDS:=+kmod-ipv6 +kmod-ip6-tunnel +resolveip
   TITLE:=Dual-Stack Lite (DS-Lite) configuration support
   MAINTAINER:=Steven Barth <steven@midlink.org>
   PKGARCH:=all

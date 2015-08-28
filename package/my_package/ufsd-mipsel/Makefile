@@ -23,7 +23,7 @@ define KernelPackage/ufsd-mipsel
   TITLE:=Paragon ufsd for mipsel
   DEPENDS:=@TARGET_ramips
 #  DEFAULT:=y if (CONFIG_TARGET_ramips_mt7620n || CONFIG_TARGET_ramips_mt7620a)
-  FILES:=$(PKG_BUILD_DIR)ufsd.ko
+  FILES:=$(PKG_BUILD_DIR)/ufsd.ko
   AUTOLOAD:=$(call AutoLoad,50,ufsd)
 endef
 

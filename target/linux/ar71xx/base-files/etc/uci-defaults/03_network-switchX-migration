@@ -34,7 +34,7 @@ migrate_switch_name() {
 	config_foreach do_change_switch_name switch name $oldname $newname
 	config_foreach do_change_switch_name switch_vlan device $oldname $newname
 
-	[ "$SWITCH_NAME_CHANGED" == "1" ] && {
+	[ "$SWITCH_NAME_CHANGED" = "1" ] && {
 		logger -t migrate-switchX "Switch names updated, saving network configuration"
 		uci commit network
 	}
@@ -61,6 +61,8 @@ dir-615-c1|\
 dir-615-e1|\
 dir-615-e4|\
 ja76pf|\
+mr-12|\
+mr-16|\
 rb-750|\
 rb-751|\
 tew-632brp|\
@@ -71,6 +73,7 @@ tl-mr3420|\
 tl-wr741nd|\
 tl-wr741nd-v4|\
 tl-wr841n-v7|\
+tl-wr941nd-v7|\
 whr-g301n|\
 whr-hp-g300n|\
 whr-hp-gn|\

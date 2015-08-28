@@ -19,9 +19,11 @@ lookup_phy() {
 
 	local macaddr="$(config_get "$device" macaddr | tr 'A-Z' 'a-z')"
 	[ -n "$macaddr" ] && {
-		for _phy in $(ls /sys/class/ieee80211 2>/dev/null); do
-			[ "$macaddr" = "$(cat /sys/class/ieee80211/${_phy}/macaddress)" ] || continue
-			phy="$_phy"
+		for _phy in /sys/class/ieee80211/*; do
+			[ -e "$_phy" ] || continue
+
+			[ "$macaddr" = "$(cat ${_phy}/macaddress)" ] || continue
+			phy="${_phy##*/}"
 			return
 		done
 	}
@@ -65,7 +67,12 @@ detect_mac80211() {
 		[ -n "$type" ] || break
 		devidx=$(($devidx + 1))
 	done
-	for dev in $(ls /sys/class/ieee80211); do
+
+	for _dev in /sys/class/ieee80211/*; do
+		[ -e "$_dev" ] || continue
+
+		dev="${_dev##*/}"
+
 		found=0
 		config_foreach check_mac80211_device wifi-device
 		[ "$found" -gt 0 ] && continue
@@ -76,23 +83,34 @@ detect_mac80211() {
 		ht_capab=""
 
 		iw phy "$dev" info | grep -q 'Capabilities:' && htmode=HT40
-		iw phy "$dev" info | grep -q '2412 MHz' || { mode_band="a"; channel="auto"; }
+		iw phy "$dev" info | grep -q '2412 MHz' || { mode_band="a"; channel="157"; }
 
 		vht_cap=$(iw phy "$dev" info | grep -c 'VHT Capabilities')
-		[ "$vht_cap" -gt 0 ] && {
+		cap_5ghz=$(iw phy "$dev" info | grep -c "Band 2")
+		[ "$vht_cap" -gt 0 -a "$cap_5ghz" -gt 0 ] && {
 			mode_band="a";
-			channel="auto"
+			channel="157"
 			htmode="VHT80"
 		}
 
 		[ -n $htmode ] && append ht_capab "	option htmode	$htmode" "$N"
 
-		if [ -x /usr/bin/readlink ]; then
+		if [ -x /usr/bin/readlink -a -h /sys/class/ieee80211/${dev} ]; then
 			path="$(readlink -f /sys/class/ieee80211/${dev}/device)"
+		else
+			path=""
+		fi
+		if [ -n "$path" ]; then
 			path="${path##/sys/devices/}"
 			dev_id="	option path	'$path'"
 		else
 			dev_id="	option macaddr	$(cat /sys/class/ieee80211/${dev}/macaddress)"
+		fi
+
+		if [ x$mode_band == x"a" ]; then
+			ssid_5ghz="-5GHz"
+		else
+			ssid_5ghz="-2.4GHz"
 		fi
 
 		cat <<EOF
@@ -103,13 +121,18 @@ config wifi-device  radio$devidx
 $dev_id
 $ht_capab
 	option noscan   1
+	option smps	0
 	option country CN
 
 config wifi-iface
 	option device   radio$devidx
 	option network  lan
 	option mode     ap
+<<<<<<< HEAD
 	option ssid     MakeBlaze_$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
+=======
+	option ssid     OpenWrt${ssid_5ghz}-$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
+>>>>>>> 4e54810d60cc8c5e99e65f6003e48054e4cac0cd
 	option encryption none
 	option wds 1
 

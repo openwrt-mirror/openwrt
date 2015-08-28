@@ -2,20 +2,10 @@
 
 choice
 	prompt "GCC compiler Version" if TOOLCHAINOPTS
-	default GCC_USE_VERSION_4_4_7 if avr32
 	default GCC_USE_VERSION_4_6_LINARO if TARGET_octeon
 	default GCC_USE_VERSION_4_8_LINARO
 	help
 	  Select the version of gcc you wish to use.
-
-	config GCC_USE_VERSION_4_4_7
-		select GCC_VERSION_4_4_7
-		bool "gcc 4.4.7"
-		depends on avr32
-
-	config GCC_USE_VERSION_4_8_0
-		select GCC_VERSION_4_8_0
-		bool "gcc 4.8.0"
 
 	config GCC_USE_VERSION_4_6_LINARO
 		select GCC_VERSION_4_6_LINARO
@@ -24,6 +14,16 @@ choice
 	config GCC_USE_VERSION_4_8_LINARO
 		select GCC_VERSION_4_8_LINARO
 		bool "gcc 4.8.x with Linaro enhancements"
+
+	config GCC_USE_VERSION_4_9_LINARO
+		select GCC_VERSION_4_9_LINARO
+		bool "gcc 4.9.x with Linaro enhancements"
+		depends on BROKEN
+
+	config GCC_USE_VERSION_5
+		select GCC_VERSION_5
+		bool "gcc 5.x"
+		depends on BROKEN
 
 endchoice
 
@@ -47,7 +47,8 @@ config EXTRA_GCC_CONFIG_OPTIONS
 config SSP_SUPPORT
 	bool
 	prompt "Enable Stack-Smashing Protection support" if TOOLCHAINOPTS
-	default n
+	depends on !USE_MUSL
+	default y if !USE_MUSL
 	help
 	    Enable Stack-Smashing Protection support
 

@@ -7,14 +7,17 @@
 #
 
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/version.mk
 include $(INCLUDE_DIR)/kernel.mk
+include $(INCLUDE_DIR)/version.mk
 
 PKG_NAME:=base-files
-PKG_RELEASE:=156
+PKG_RELEASE:=157
 
 PKG_FILE_DEPENDS:=$(PLATFORM_DIR)/ $(GENERIC_PLATFORM_DIR)/base-files/
-PKG_BUILD_DEPENDS:=opkg/host
+PKG_BUILD_DEPENDS:=opkg/host usign/host
+PKG_LICENSE:=GPL-2.0
+
+PKG_CONFIG_DEPENDS := CONFIG_SIGNED_PACKAGES
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -28,19 +31,23 @@ endif
 define Package/base-files
   SECTION:=base
   CATEGORY:=Base system
-  DEPENDS:=+netifd +libc +procd +jsonfilter
+  DEPENDS:=+netifd +libc +procd +jsonfilter +SIGNED_PACKAGES:usign
   TITLE:=Base filesystem for OpenWrt
   URL:=http://openwrt.org/
   VERSION:=$(PKG_RELEASE)-$(REVISION)
 endef
 
 define Package/base-files/conffiles
+/etc/config/network
+/etc/config/system
 /etc/hosts
 /etc/inittab
 /etc/group
 /etc/passwd
 /etc/shadow
 /etc/profile
+/etc/protocols
+/etc/services
 /etc/shells
 /etc/sysctl.conf
 /etc/rc.local
@@ -48,6 +55,8 @@ define Package/base-files/conffiles
 /etc/config/
 /etc/dropbear/
 /etc/crontabs/
+/etc/sysctl.d/local.conf
+/etc/sysctl.d/
 $(call $(TARGET)/conffiles)
 endef
 
@@ -82,8 +91,23 @@ define Build/Compile/Default
 endef
 Build/Compile = $(Build/Compile/Default)
 
+ifdef CONFIG_SIGNED_PACKAGES
+  define Build/Configure
+	[ -s $(BUILD_KEY) -a -s $(BUILD_KEY).pub ] || \
+		$(STAGING_DIR_HOST)/bin/usign -G -s $(BUILD_KEY) -p $(BUILD_KEY).pub -c "Local build key"
+
+  endef
+
+  define Package/base-files/install-key
+	mkdir -p $(1)/etc/opkg/keys
+	$(CP) $(BUILD_KEY).pub $(1)/etc/opkg/keys/`$(STAGING_DIR_HOST)/bin/usign -F -p $(BUILD_KEY).pub`
+
+  endef
+endif
+
 define Package/base-files/install
 	$(CP) ./files/* $(1)/
+	$(Package/base-files/install-key)
 	if [ -d $(GENERIC_PLATFORM_DIR)/base-files/. ]; then \
 		$(CP) $(GENERIC_PLATFORM_DIR)/base-files/* $(1)/; \
 	fi
@@ -122,21 +146,21 @@ define Package/base-files/install
 	mkdir -p $(1)/etc/rc.d
 	mkdir -p $(1)/overlay
 	mkdir -p $(1)/lib/firmware
-	$(if $(LIB_SUFFIX),-ln -s lib $(1)/lib$(LIB_SUFFIX))
+	$(if $(LIB_SUFFIX),-$(LN) lib $(1)/lib$(LIB_SUFFIX))
 	mkdir -p $(1)/mnt
 	mkdir -p $(1)/proc
 	mkdir -p $(1)/tmp
 	mkdir -p $(1)/usr/lib
-	$(if $(LIB_SUFFIX),-ln -s lib $(1)/usr/lib$(LIB_SUFFIX))
+	$(if $(LIB_SUFFIX),-$(LN) lib $(1)/usr/lib$(LIB_SUFFIX))
 	mkdir -p $(1)/usr/bin
 	mkdir -p $(1)/sys
 	mkdir -p $(1)/www
 	mkdir -p $(1)/root
-	ln -sf /proc/mounts $(1)/etc/mtab
+	$(LN) /proc/mounts $(1)/etc/mtab
 	rm -f $(1)/var
-	ln -sf /tmp $(1)/var
+	$(LN) /tmp $(1)/var
 	mkdir -p $(1)/etc
-	ln -sf /tmp/resolv.conf /tmp/fstab /tmp/TZ $(1)/etc/
+	$(LN) /tmp/resolv.conf /tmp/fstab /tmp/TZ $(1)/etc/
 
 	chmod 0600 $(1)/etc/shadow
 	chmod 1777 $(1)/tmp

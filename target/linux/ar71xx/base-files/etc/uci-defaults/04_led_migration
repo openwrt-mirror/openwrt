@@ -26,7 +26,7 @@ do_led_update_sysfs()
 
 		new_sysfs=$(echo ${sysfs} | sed "s/${old}/${new}/")
 
-		[ "${new_sysfs}" == "${sysfs}" ] && continue
+		[ "$new_sysfs" = "$sysfs" ] && continue
 
 		uci set system.${cfg}.sysfs="${new_sysfs}"
 		LED_OPTIONS_CHANGED=1
@@ -46,6 +46,7 @@ migrate_leds()
 board=$(ar71xx_board_name)
 
 case "$board" in
+dhp-1565-a1|\
 dir-825-c1|\
 dir-835-a1)
 	migrate_leds ":orange:=:amber:" ":wifi_bgn=:wlan2g"
@@ -76,10 +77,14 @@ wnr612-v2)
 	migrate_leds "wnr612v2:=netgear:"
 	;;
 
+wnr1000-v2)
+	migrate_leds "wnr1000v2:=netgear:"
+	;;
+
 *)
 	;;
 esac
 
-[ "$LED_OPTIONS_CHANGED" == "1" ] && uci commit system
+[ "$LED_OPTIONS_CHANGED" = "1" ] && uci commit system
 
 exit 0

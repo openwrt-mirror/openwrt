@@ -26,25 +26,27 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <stdint.h>
 
 #if __BYTE_ORDER == __BIG_ENDIAN
-#define cpu_to_le16(x) bswap_16(x)
+#define cpu_to_le32(x) bswap_32(x)
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
-#define cpu_to_le16(x) (x)
+#define cpu_to_le32(x) (x)
 #else
 #error unknown endianness!
 #endif
 
 /* Partition table entry */
-struct pte { 
-	unsigned char active;
-	unsigned char chs_start[3];
-	unsigned char type;
-	unsigned char chs_end[3];
-	unsigned int start;
-	unsigned int length;
+struct pte {
+	uint8_t active;
+	uint8_t chs_start[3];
+	uint8_t type;
+	uint8_t chs_end[3];
+	uint32_t start;
+	uint32_t length;
 };
 
 struct partinfo {
@@ -124,7 +126,7 @@ static inline unsigned long round_to_kb(long sect) {
 }
 
 /* check the partition sizes and write the partition table */
-static int gen_ptable(int nr)
+static int gen_ptable(uint32_t signature, int nr)
 {
 	struct pte pte[4];
 	unsigned long sect = 0; 
@@ -141,11 +143,11 @@ static int gen_ptable(int nr)
 		start = sect + sectors;
 		if (kb_align != 0)
 			start = round_to_kb(start);
-		pte[i].start = cpu_to_le16(start);
+		pte[i].start = cpu_to_le32(start);
 		sect = start + parts[i].size * 2;
 		if (kb_align == 0)
 			sect = round_to_cyl(sect);
-		pte[i].length = cpu_to_le16(len = sect - start);
+		pte[i].length = cpu_to_le32(len = sect - start);
 		to_chs(start, pte[i].chs_start);
 		to_chs(start + len - 1, pte[i].chs_end);
 		if (verbose)
@@ -157,6 +159,12 @@ static int gen_ptable(int nr)
 	if ((fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC, 0644)) < 0) {
 		fprintf(stderr, "Can't open output file '%s'\n",filename);
 		return -1;
+	}
+
+	lseek(fd, 440, SEEK_SET);
+	if (write(fd, &signature, sizeof(signature)) != sizeof(signature)) {
+		fprintf(stderr, "write failed.\n");
+		goto fail;
 	}
 
 	lseek(fd, 446, SEEK_SET);
@@ -187,8 +195,9 @@ int main (int argc, char **argv)
 	char type = 0x83;
 	int ch;
 	int part = 0;
+	uint32_t signature = 0x5452574F; /* 'OWRT' */
 
-	while ((ch = getopt(argc, argv, "h:s:p:a:t:o:vl:")) != -1) {
+	while ((ch = getopt(argc, argv, "h:s:p:a:t:o:vl:S:")) != -1) {
 		switch (ch) {
 		case 'o':
 			filename = optarg;
@@ -221,6 +230,9 @@ int main (int argc, char **argv)
 		case 'l':
 			kb_align = (int) strtoul(optarg, NULL, 0) * 2;
 			break;
+		case 'S':
+			signature = strtoul(optarg, NULL, 0);
+			break;
 		case '?':
 		default:
 			usage(argv[0]);
@@ -229,6 +241,6 @@ int main (int argc, char **argv)
 	argc -= optind;
 	if (argc || (heads <= 0) || (sectors <= 0) || !filename) 
 		usage(argv[0]);
-	
-	return gen_ptable(part);
+
+	return gen_ptable(signature, part);
 }

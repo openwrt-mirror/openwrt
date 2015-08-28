@@ -1,11 +1,15 @@
 / {
 	#address-cells = <1>;
 	#size-cells = <1>;
-	compatible = "ralink,mtk7620a-soc";
+	compatible = "mediatek,mtk7621-soc";
 
 	cpus {
 		cpu@0 {
-			compatible = "mips,mips24KEc";
+			compatible = "mips,mips1004Kc";
+		};
+
+		cpu@1 {
+			compatible = "mips,mips1004Kc";
 		};
 	};
 
@@ -19,7 +23,7 @@
 	palmbus@1E000000 {
 		compatible = "palmbus";
 		reg = <0x1E000000 0x100000>;
-                ranges = <0x0 0x1E000000 0x0FFFFF>;
+		ranges = <0x0 0x1E000000 0x0FFFFF>;
 
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -92,46 +96,106 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-/*			pinctrl-names = "default";
-			pinctrl-0 = <&spi_pins>;*/
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi_pins>;
 
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "en25q64";
 				reg = <0 0>;
-				linux,modalias = "m25p80", "en25q64";
 				spi-max-frequency = <10000000>;
+				m25p,chunked-io = <32>;
+			};
+		};
+	};
 
-				m25p,chunked-io;
+	pinctrl {
+		compatible = "ralink,rt2880-pinmux";
+		pinctrl-names = "default";
+		pinctrl-0 = <&state_default>;
 
-				partition@0 {
-					label = "u-boot";
-					reg = <0x0 0x30000>;
-					read-only;
-				};
+		state_default: pinctrl0 {
+		};
 
-				partition@30000 {
-					label = "u-boot-env";
-					reg = <0x30000 0x10000>;
-					read-only;
-				};
+		spi_pins: spi {
+			spi {
+				ralink,group = "spi";
+				ralink,function = "spi";
+			};
+		};
 
-				factory: partition@40000 {
-					label = "factory";
-					reg = <0x40000 0x10000>;
-					read-only;
-				};
+		i2c_pins: i2c {
+			i2c {
+				ralink,group = "i2c";
+				ralink,function = "i2c";
+			};
+		};
 
-				partition@50000 {
-					label = "firmware";
-					reg = <0x50000 0x7a0000>;
-				};
+		uart1_pins: uart1 {
+			uart1 {
+				ralink,group = "uart1";
+				ralink,function = "uart";
+			};
+		};
 
-				partition@7f0000 {
-					label = "test";
-					reg = <0x7f0000 0x10000>;
-				};
+		uart2_pins: uart2 {
+			uart2 {
+				ralink,group = "uart2";
+				ralink,function = "uart";
+			};
+		};
+
+		uart3_pins: uart3 {
+			uart3 {
+				ralink,group = "uart3";
+				ralink,function = "uart";
+			};
+		};
+
+		rgmii1_pins: rgmii1 {
+			rgmii1 {
+				ralink,group = "rgmii1";
+				ralink,function = "rgmii";
+			};
+		};
+
+		rgmii2_pins: rgmii2 {
+			rgmii2 {
+				ralink,group = "rgmii2";
+				ralink,function = "rgmii";
+			};
+		};
+
+		mdio_pins: mdio {
+			mdio {
+				ralink,group = "mdio";
+				ralink,function = "mdio";
+			};
+		};
+
+		pcie_pins: pcie {
+			pcie {
+				ralink,group = "pcie";
+				ralink,function = "pcie rst";
+			};
+		};
+
+		nand_pins: nand {
+			spi-nand {
+				ralink,group = "spi";
+				ralink,function = "nand";
+			};
+
+			sdhci-nand {
+				ralink,group = "sdhci";
+				ralink,function = "nand";
+			};
+		};
+
+		sdhci_pins: sdhci {
+			sdhci {
+				ralink,group = "sdhci";
+				ralink,function = "sdhci";
 			};
 		};
 	};
@@ -142,7 +206,7 @@
 	};
 
 	sdhci@1E130000 {
-		compatible = "ralink,mt7620a-sdhci";
+		compatible = "ralink,mt7620-sdhci";
 		reg = <0x1E130000 4000>;
 
 		interrupt-parent = <&gic>;
@@ -150,7 +214,9 @@
 	};
 
 	xhci@1E1C0000 {
-		compatible = "xhci-platform1";
+		status = "disabled";
+
+		compatible = "xhci-platform";
 		reg = <0x1E1C0000 4000>;
 
 		interrupt-parent = <&gic>;
@@ -180,14 +246,17 @@
 			label = "uboot";
 			reg = <0x00000 0x80000>; /* 64 KB */
 		};
+
 		partition@80000 {
 			label = "uboot_env";
 			reg = <0x80000 0x80000>; /* 64 KB */
 		};
+
 		partition@100000 {
 			label = "factory";
 			reg = <0x100000 0x40000>;
 		};
+
 		partition@140000 {
 			label = "rootfs";
 			reg = <0x140000 0xec0000>;
@@ -201,28 +270,12 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		ralink,port-map = "llllw";
-		
+		resets = <&rstctrl 6 &rstctrl 23>;
+		reset-names = "fe", "eth";
+
 		interrupt-parent = <&gic>;
 		interrupts = <3>;
 
-/*		resets = <&rstctrl 21 &rstctrl 23>;
-		reset-names = "fe", "esw";
-
-		port@4 {
-			compatible = "ralink,mt7620a-gsw-port", "ralink,eth-port";
-			reg = <4>;
-
-			status = "disabled";
-		};
-
-		port@5 {
-			compatible = "ralink,mt7620a-gsw-port", "ralink,eth-port";
-			reg = <5>;
-
-			status = "disabled";
-		};
-*/
 		mdio-bus {
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -230,9 +283,6 @@
 			phy1f: ethernet-phy@1f {
 				reg = <0x1f>;
 				phy-mode = "rgmii";
-		
-				interrupt-parent = <&gic>;
-				interrupts = <23>;
 			};
 		};
 	};
@@ -240,6 +290,56 @@
 	gsw@1e110000 {
 		compatible = "ralink,mt7620a-gsw";
 		reg = <0x1e110000 8000>;
+		interrupt-parent = <&gic>;
+		interrupts = <23>;
+	};
 
+	pcie@1e140000 {
+		compatible = "mediatek,mt7621-pci";
+		reg = <0x1e140000 0x100
+			0x1e142000 0x100>;
+
+		#address-cells = <3>;
+		#size-cells = <2>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pcie_pins>;
+
+		device_type = "pci";
+
+		bus-range = <0 255>;
+		ranges = <
+			0x02000000 0 0x00000000 0x60000000 0 0x10000000 /* pci memory */
+			0x01000000 0 0x00000000 0x1e160000 0 0x00010000 /* io space */
+		>;
+
+		status = "okay";
+
+		pcie0 {
+			reg = <0x0000 0 0 0 0>;
+
+			#address-cells = <3>;
+			#size-cells = <2>;
+
+			device_type = "pci";
+		};
+
+		pcie1 {
+			reg = <0x0800 0 0 0 0>;
+
+			#address-cells = <3>;
+			#size-cells = <2>;
+
+			device_type = "pci";
+		};
+
+		pcie2 {
+			reg = <0x1000 0 0 0 0>;
+
+			#address-cells = <3>;
+			#size-cells = <2>;
+
+			device_type = "pci";
+		};
 	};
 };

@@ -52,10 +52,13 @@
 
 #define AG71XX_TX_MTU_LEN	1540
 
-#define AG71XX_TX_RING_SIZE_DEFAULT	32
+#define AG71XX_TX_RING_SPLIT		512
+#define AG71XX_TX_RING_DS_PER_PKT	DIV_ROUND_UP(AG71XX_TX_MTU_LEN, \
+						     AG71XX_TX_RING_SPLIT)
+#define AG71XX_TX_RING_SIZE_DEFAULT	48
 #define AG71XX_RX_RING_SIZE_DEFAULT	128
 
-#define AG71XX_TX_RING_SIZE_MAX		32
+#define AG71XX_TX_RING_SIZE_MAX		48
 #define AG71XX_RX_RING_SIZE_MAX		128
 
 #ifdef CONFIG_AG71XX_DEBUG
@@ -87,7 +90,6 @@ struct ag71xx_buf {
 		struct sk_buff	*skb;
 		void		*rx_buf;
 	};
-	struct ag71xx_desc	*desc;
 	union {
 		dma_addr_t	dma_addr;
 		unsigned long	timestamp;
@@ -99,7 +101,8 @@ struct ag71xx_ring {
 	struct ag71xx_buf	*buf;
 	u8			*descs_cpu;
 	dma_addr_t		descs_dma;
-	unsigned int		desc_size;
+	u16			desc_split;
+	u16			desc_size;
 	unsigned int		curr;
 	unsigned int		dirty;
 	unsigned int		size;
@@ -197,6 +200,12 @@ static inline struct ag71xx_platform_data *ag71xx_get_pdata(struct ag71xx *ag)
 static inline int ag71xx_desc_empty(struct ag71xx_desc *desc)
 {
 	return (desc->ctrl & DESC_EMPTY) != 0;
+}
+
+static inline struct ag71xx_desc *
+ag71xx_ring_desc(struct ag71xx_ring *ring, int idx)
+{
+	return (struct ag71xx_desc *) &ring->descs_cpu[idx * ring->desc_size];
 }
 
 /* Register offsets */

@@ -25,9 +25,12 @@ $(eval $(call KernelPackage,aoe))
 define KernelPackage/ata-core
   SUBMENU:=$(BLOCK_MENU)
   TITLE:=Serial and Parallel ATA support
-  DEPENDS:=@PCI_SUPPORT +kmod-scsi-core
+  DEPENDS:=@PCI_SUPPORT||TARGET_sunxi +kmod-scsi-core
   KCONFIG:=CONFIG_ATA
   FILES:=$(LINUX_DIR)/drivers/ata/libata.ko
+ifneq ($(wildcard $(LINUX_DIR)/drivers/ata/libahci.ko),)
+  FILES+=$(LINUX_DIR)/drivers/ata/libahci.ko
+endif
 endef
 
 $(eval $(call KernelPackage,ata-core))
@@ -43,8 +46,7 @@ define KernelPackage/ata-ahci
   TITLE:=AHCI Serial ATA support
   KCONFIG:=CONFIG_SATA_AHCI
   FILES:= \
-    $(LINUX_DIR)/drivers/ata/ahci.ko \
-    $(LINUX_DIR)/drivers/ata/libahci.ko
+    $(LINUX_DIR)/drivers/ata/ahci.ko
   AUTOLOAD:=$(call AutoLoad,41,libahci ahci,1)
   $(call AddDepends/ata)
 endef
@@ -54,6 +56,23 @@ define KernelPackage/ata-ahci/description
 endef
 
 $(eval $(call KernelPackage,ata-ahci))
+
+
+define KernelPackage/ata-ahci-platform
+  TITLE:=AHCI Serial ATA Platform support
+  KCONFIG:=CONFIG_SATA_AHCI_PLATFORM
+  FILES:= \
+    $(LINUX_DIR)/drivers/ata/ahci_platform.ko \
+    $(LINUX_DIR)/drivers/ata/libahci_platform.ko
+  AUTOLOAD:=$(call AutoLoad,40,libahci libahci_platform ahci_platform,1)
+  $(call AddDepends/ata,@TARGET_ipq806x||TARGET_mvebu||TARGET_sunxi)
+endef
+
+define KernelPackage/ata-ahci-platform/description
+ Platform support for AHCI Serial ATA controllers
+endef
+
+$(eval $(call KernelPackage,ata-ahci-platform))
 
 
 define KernelPackage/ata-artop
@@ -105,6 +124,22 @@ endef
 $(eval $(call KernelPackage,ata-marvell-sata))
 
 
+define KernelPackage/ata-mvebu-ahci
+  TITLE:=Marvell EBU AHCI support
+  DEPENDS:=@TARGET_mvebu +kmod-ata-ahci-platform
+  KCONFIG:=CONFIG_AHCI_MVEBU
+  FILES:=$(LINUX_DIR)/drivers/ata/ahci_mvebu.ko
+  AUTOLOAD:=$(call AutoLoad,41,ahci_mvebu,1)
+  $(call AddDepends/ata)
+endef
+
+define KernelPackage/ata-mvebu-ahci/description
+ AHCI support for Marvell EBU SoCs
+endef
+
+$(eval $(call KernelPackage,ata-mvebu-ahci))
+
+
 define KernelPackage/ata-nvidia-sata
   TITLE:=Nvidia Serial ATA support
   KCONFIG:=CONFIG_SATA_NV
@@ -114,6 +149,22 @@ define KernelPackage/ata-nvidia-sata
 endef
 
 $(eval $(call KernelPackage,ata-nvidia-sata))
+
+
+define KernelPackage/ata-oxnas-sata
+  TITLE:=oxnas Serial ATA support
+  KCONFIG:=CONFIG_SATA_OXNAS
+  DEPENDS:=@TARGET_oxnas
+  FILES:=$(LINUX_DIR)/drivers/ata/sata_oxnas.ko
+  AUTOLOAD:=$(call AutoLoad,41,sata_oxnas,1)
+  $(call AddDepends/ata)
+endef
+
+define KernelPackage/ata-oxnas-sata/description
+ SATA support for OX934 core found in the OX82x/PLX782x SoCs
+endef
+
+$(eval $(call KernelPackage,ata-oxnas-sata))
 
 
 define KernelPackage/ata-pdc202xx-old
@@ -218,6 +269,8 @@ define KernelPackage/dm
 	CONFIG_DM_DEBUG=n \
 	CONFIG_DM_UEVENT=n \
 	CONFIG_DM_DELAY=n \
+	CONFIG_DM_LOG_WRITES=n \
+	CONFIG_DM_MQ_DEFAULT=n \
 	CONFIG_DM_MULTIPATH=n \
 	CONFIG_DM_ZERO=n \
 	CONFIG_DM_SNAPSHOT=n \
@@ -565,9 +618,9 @@ define KernelPackage/scsi-core
 	CONFIG_SCSI \
 	CONFIG_BLK_DEV_SD
   FILES:= \
-	$(if $(findstring y,$(CONFIG_SCSI)),,$(LINUX_DIR)/drivers/scsi/scsi_mod.ko) \
+	$(LINUX_DIR)/drivers/scsi/scsi_mod.ko \
 	$(LINUX_DIR)/drivers/scsi/sd_mod.ko
-  AUTOLOAD:=$(call AutoLoad,40,sd_mod,1)
+  AUTOLOAD:=$(call AutoLoad,40,scsi_mod sd_mod,1)
 endef
 
 $(eval $(call KernelPackage,scsi-core))

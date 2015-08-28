@@ -102,14 +102,19 @@ add_uci_conffiles() {
 	local file="$1"
 	( find $(sed -ne '/^[[:space:]]*$/d; /^#/d; p' \
 		/etc/sysupgrade.conf /lib/upgrade/keep.d/* 2>/dev/null) \
-		-type f 2>/dev/null;
+		-type f -o -type l 2>/dev/null;
 	  opkg list-changed-conffiles ) | sort -u > "$file"
 	return 0
 }
 
 add_overlayfiles() {
 	local file="$1"
-	find /overlay/etc/ -type f | sed \
+	if [ -d /overlay/upper ]; then
+		local overlaydir="/overlay/upper"
+	else
+		local overlaydir="/overlay"
+	fi
+	find $overlaydir/etc/ -type f -o -type l | sed \
 		-e 's,^/overlay/,/,' \
 		-e '\,/META_[a-zA-Z0-9]*$,d' \
 		-e '\,/functions.sh$,d' \
@@ -209,6 +214,14 @@ if [ $TEST -eq 1 ]; then
 fi
 
 run_hooks "" $sysupgrade_pre_upgrade
+
+# Some platforms/devices may want different sysupgrade process, e.g. without
+# killing processes yet or calling ubus system upgrade method.
+# This is needed e.g. on NAND devices where we just want to trigger stage1 at
+# this point.
+if type 'platform_pre_upgrade' >/dev/null 2>/dev/null; then
+	platform_pre_upgrade "$ARGV"
+fi
 
 ubus call system upgrade
 touch /tmp/sysupgrade

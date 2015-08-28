@@ -274,6 +274,58 @@ mtd_erase(const char *mtd)
 }
 
 static int
+mtd_dump(const char *mtd, int part_offset, int size)
+{
+	int ret = 0, offset = 0;
+	int fd;
+	char *buf;
+
+	if (quiet < 2)
+		fprintf(stderr, "Dumping %s ...\n", mtd);
+
+	fd = mtd_check_open(mtd);
+	if(fd < 0) {
+		fprintf(stderr, "Could not open mtd device: %s\n", mtd);
+		return -1;
+	}
+
+	if (!size)
+		size = mtdsize;
+
+	if (part_offset)
+		lseek(fd, part_offset, SEEK_SET);
+
+	buf = malloc(erasesize);
+	if (!buf)
+		return -1;
+
+	do {
+		int len = (size > erasesize) ? (erasesize) : (size);
+		int rlen = read(fd, buf, len);
+
+		if (rlen < 0) {
+			if (errno == EINTR)
+				continue;
+			ret = -1;
+			goto out;
+		}
+		if (!rlen || rlen != len)
+			break;
+		if (mtd_block_is_bad(fd, offset)) {
+			fprintf(stderr, "skipping bad block at 0x%08x\n", offset);
+		} else {
+			size -= rlen;
+			write(1, buf, rlen);
+		}
+		offset += rlen;
+	} while (size > 0);
+
+out:
+	close(fd);
+	return ret;
+}
+
+static int
 mtd_verify(const char *mtd, char *file)
 {
 	uint32_t f_md5[4], m_md5[4];
@@ -285,7 +337,7 @@ mtd_verify(const char *mtd, char *file)
 	if (quiet < 2)
 		fprintf(stderr, "Verifying %s against %s ...\n", mtd, file);
 
-	if (stat(file, &s) || md5sum(file, f_md5)) {
+	if (stat(file, &s) || md5sum(file, f_md5) < 0) {
 		fprintf(stderr, "Failed to hash %s\n", file);
 		return -1;
 	}
@@ -505,7 +557,7 @@ resume:
 
 				if (mtd_block_is_bad(fd, e)) {
 					if (!quiet)
-						fprintf(stderr, "\nSkipping bad block at 0x%08x   ", e);
+						fprintf(stderr, "\nSkipping bad block at 0x%08zx   ", e);
 
 					skip_bad_blocks += erasesize;
 					e += erasesize;
@@ -563,7 +615,6 @@ resume:
 	if (!quiet)
 		fprintf(stderr, "\b\b\b\b    ");
 
-done:
 	if (quiet < 2)
 		fprintf(stderr, "\n");
 
@@ -589,6 +640,10 @@ static void usage(void)
 	"        verify <imagefile>|-    verify <imagefile> (use - for stdin) to device\n"
 	"        write <imagefile>|-     write <imagefile> (use - for stdin) to device\n"
 	"        jffs2write <file>       append <file> to the jffs2 partition on the device\n");
+	if (mtd_resetbc) {
+	    fprintf(stderr,
+	"        resetbc <device>        reset the uboot boot counter\n");
+	}
 	if (mtd_fixtrx) {
 	    fprintf(stderr,
 	"        fixtrx                  fix the checksum in a trx header on first boot\n");
@@ -597,7 +652,7 @@ static void usage(void)
 	    fprintf(stderr,
 	"        fixseama                fix the checksum in a seama header on first boot\n");
 	}
-    fprintf(stderr,
+	fprintf(stderr,
 	"Following options are available:\n"
 	"        -q                      quiet mode (once: no [w] on writing,\n"
 	"                                           twice: no status messages)\n"
@@ -608,11 +663,12 @@ static void usage(void)
 	"        -d <name>               directory for jffs2write, defaults to \"tmp\"\n"
 	"        -j <name>               integrate <file> into jffs2 data when writing an image\n"
 	"        -s <number>             skip the first n bytes when appending data to the jffs2 partiton, defaults to \"0\"\n"
-	"        -p                      write beginning at partition offset\n");
+	"        -p                      write beginning at partition offset\n"
+	"        -l <length>             the length of data that we want to dump\n");
 	if (mtd_fixtrx) {
 	    fprintf(stderr,
 	"        -o offset               offset of the image header in the partition(for fixtrx)\n");
-    }
+	}
 	fprintf(stderr,
 #ifdef FIS_SUPPORT
 	"        -F <part>[:<size>[:<entrypoint>]][,<part>...]\n"
@@ -644,7 +700,7 @@ int main (int argc, char **argv)
 	int ch, i, boot, imagefd = 0, force, unlocked;
 	char *erase[MAX_ARGS], *device = NULL;
 	char *fis_layout = NULL;
-	size_t offset = 0, part_offset = 0;
+	size_t offset = 0, part_offset = 0, dump_len = 0;
 	enum {
 		CMD_ERASE,
 		CMD_WRITE,
@@ -653,6 +709,8 @@ int main (int argc, char **argv)
 		CMD_FIXTRX,
 		CMD_FIXSEAMA,
 		CMD_VERIFY,
+		CMD_DUMP,
+		CMD_RESETBC,
 	} cmd = -1;
 
 	erase[0] = NULL;
@@ -666,7 +724,7 @@ int main (int argc, char **argv)
 #ifdef FIS_SUPPORT
 			"F:"
 #endif
-			"frnqe:d:s:j:p:o:")) != -1)
+			"frnqe:d:s:j:p:o:l:")) != -1)
 		switch (ch) {
 			case 'f':
 				force = 1;
@@ -710,11 +768,15 @@ int main (int argc, char **argv)
 					usage();
 				}
 				break;
-			case 'o':
-				if (!mtd_fixtrx) {
-					fprintf(stderr, "-o: is not available on this platform\n");
+			case 'l':
+				errno = 0;
+				dump_len = strtoul(optarg, 0, 0);
+				if (errno) {
+					fprintf(stderr, "-l: illegal numeric string\n");
 					usage();
 				}
+				break;
+			case 'o':
 				errno = 0;
 				offset = strtoul(optarg, 0, 0);
 				if (errno) {
@@ -743,6 +805,9 @@ int main (int argc, char **argv)
 	} else if ((strcmp(argv[0], "erase") == 0) && (argc == 2)) {
 		cmd = CMD_ERASE;
 		device = argv[1];
+	} else if (((strcmp(argv[0], "resetbc") == 0) && (argc == 2)) && mtd_resetbc) {
+		cmd = CMD_RESETBC;
+		device = argv[1];
 	} else if (((strcmp(argv[0], "fixtrx") == 0) && (argc == 2)) && mtd_fixtrx) {
 		cmd = CMD_FIXTRX;
 		device = argv[1];
@@ -753,6 +818,9 @@ int main (int argc, char **argv)
 		cmd = CMD_VERIFY;
 		imagefile = argv[1];
 		device = argv[2];
+	} else if ((strcmp(argv[0], "dump") == 0) && (argc == 2)) {
+		cmd = CMD_DUMP;
+		device = argv[1];
 	} else if ((strcmp(argv[0], "write") == 0) && (argc == 3)) {
 		cmd = CMD_WRITE;
 		device = argv[2];
@@ -810,6 +878,9 @@ int main (int argc, char **argv)
 		case CMD_VERIFY:
 			mtd_verify(device, imagefile);
 			break;
+		case CMD_DUMP:
+			mtd_dump(device, offset, dump_len);
+			break;
 		case CMD_ERASE:
 			if (!unlocked)
 				mtd_unlock(device);
@@ -828,6 +899,10 @@ int main (int argc, char **argv)
 		case CMD_FIXTRX:
 		    if (mtd_fixtrx) {
 			    mtd_fixtrx(device, offset);
+            }
+		case CMD_RESETBC:
+		    if (mtd_resetbc) {
+			    mtd_resetbc(device);
             }
 		case CMD_FIXSEAMA:
 			if (mtd_fixseama)

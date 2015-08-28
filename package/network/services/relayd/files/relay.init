@@ -15,8 +15,6 @@ validate_proto_relayd()
 		'table:range(0, 65535):16800' \
 		'forward_bcast:bool:1' \
 		'forward_dhcp:bool:1'
-
-	return $?
 }
 
 resolve_ifname() {
@@ -41,7 +39,10 @@ start_relay() {
 	local ifaces=""
 
 	config_get proto "$cfg" proto
-	[[ "$proto" == relay ]] || return 0
+	[ "$proto" = "relay" ] || return 0
+
+	config_get_bool disabled "$cfg" disabled 0
+	[ "$disabled" -gt 0 ] && return 0
 
 	SERVICE_DAEMONIZE=1
 	SERVICE_WRITE_PID=1

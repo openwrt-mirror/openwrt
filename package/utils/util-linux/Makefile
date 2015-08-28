@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2014 OpenWrt.org
+# Copyright (C) 2007-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,18 +8,23 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=util-linux
-PKG_VERSION:=2.24.1
-PKG_RELEASE:=1
+PKG_VERSION:=2.25.2
+PKG_RELEASE:=4
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=@KERNEL/linux/utils/$(PKG_NAME)/v2.24
-PKG_MD5SUM:=88d46ae23ca599ac5af9cf96b531590f
+PKG_SOURCE_URL:=@KERNEL/linux/utils/$(PKG_NAME)/v2.25
+PKG_MD5SUM:=cab3d7be354000f629bc601238b629b3
 
-PKG_LICENSE:=GPLv2 LGPLv2.1 BSD-3c
+PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING getopt/COPYING libblkid/COPYING libmount/COPYING Documentation/licenses/COPYING.GPLv2 Documentation/licenses/COPYING.LGPLv2.1 libuuid/COPYING Documentation/licenses/COPYING.BSD-3
 
 PKG_BUILD_PARALLEL:=1
-PKG_BUILD_DEPENDS:=libncurses
+
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_PACKAGE_cal \
+	CONFIG_PACKAGE_cfdisk \
+	CONFIG_PACKAGE_setterm
+
 PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
@@ -31,13 +36,15 @@ define Package/util-linux/Default
 endef
 
 CONFIGURE_ARGS += \
+	--disable-rpath \
 	--enable-new-mount	\
-	--with-ncurses		\
 	--disable-tls		\
 	--disable-sulogin	\
-	--without-udev
+	--without-python	\
+	--without-udev		\
+	$(if $(CONFIG_PACKAGE_cal)$(CONFIG_PACKAGE_cfdisk)$(CONFIG_PACKAGE_setterm),--with-ncurses,--without-ncurses)
 
-TARGET_CFLAGS += $(FPIC)
+TARGET_CFLAGS += $(FPIC) -std=gnu99
 
 define Build/InstallDev
 	$(MAKE) -C $(PKG_BUILD_DIR) \
@@ -48,6 +55,7 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_BUILD_DIR)/libblkid/blkid.pc $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_BUILD_DIR)/libmount/mount.pc $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_BUILD_DIR)/libsmartcols/smartcols.pc $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_BUILD_DIR)/libuuid/uuid.pc $(1)/usr/lib/pkgconfig
 
 	$(INSTALL_DIR) $(1)/usr/include/blkid
@@ -56,11 +64,14 @@ define Build/InstallDev
 	$(CP) $(PKG_BUILD_DIR)/libmount/src/libmount.h $(1)/usr/include/libmount
 	$(INSTALL_DIR) $(1)/usr/include/uuid
 	$(CP) $(PKG_BUILD_DIR)/libuuid/src/uuid.h $(1)/usr/include/uuid
+	$(INSTALL_DIR) $(1)/usr/include/smartcols
+	$(CP) $(PKG_BUILD_DIR)/libsmartcols/src/libsmartcols.h $(1)/usr/include/smartcols
 
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_BUILD_DIR)/.libs/libblkid.{a,so*} $(1)/usr/lib
 	$(CP) $(PKG_BUILD_DIR)/.libs/libmount.{a,so*} $(1)/usr/lib
 	$(CP) $(PKG_BUILD_DIR)/.libs/libuuid.{a,so*} $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/.libs/libsmartcols.{a,so*} $(1)/usr/lib
 endef
 
 define Package/libblkid
@@ -105,6 +116,17 @@ define Package/libuuid/description
  Foundation (OSF) Distributed Computing Environment (DCE) utility.
 endef
 
+define Package/libsmartcols
+$(call Package/util-linux/Default)
+  TITLE:=table or tree library
+  SECTION:=libs
+  CATEGORY:=Libraries
+endef
+
+define Package/libsmartcols/description
+ The smartcols library is used to print tables and trees in a pretty way.
+endef
+
 define Package/agetty
 $(call Package/util-linux/Default)
   TITLE:=alternative Linux getty
@@ -119,7 +141,7 @@ endef
 define Package/blkid
 $(call Package/util-linux/Default)
   TITLE:=locate/print block device attributes
-  DEPENDS:= +libblkid
+  DEPENDS:= +libblkid +libuuid
   SUBMENU=disc
 endef
 
@@ -141,7 +163,7 @@ endef
 define Package/cfdisk
 $(call Package/util-linux/Default)
   TITLE:=display or manipulate disk partition table
-  DEPENDS:= +libblkid +libncurses
+  DEPENDS:= +libblkid +libncurses +libsmartcols
   SUBMENU:=disc
 endef
 
@@ -152,6 +174,7 @@ endef
 define Package/dmesg
 $(call Package/util-linux/Default)
   TITLE:=print or control the kernel ring buffer
+  DEPENDS:= +librt
 endef
 
 define Package/dmesg/description
@@ -161,7 +184,7 @@ endef
 define Package/fdisk
 $(call Package/util-linux/Default)
   TITLE:=manipulate disk partition table
-  DEPENDS:= +libblkid
+  DEPENDS:= +libblkid +libsmartcols
   SUBMENU=disc
 endef
 
@@ -231,6 +254,7 @@ endef
 define Package/losetup
 $(call Package/util-linux/Default)
   TITLE:=set up and control loop devices
+  DEPENDS:= +libsmartcols
 endef
 
 define Package/losetup/description
@@ -241,7 +265,7 @@ endef
 define Package/lsblk
 $(call Package/util-linux/Default)
   TITLE:=list block devices
-  DEPENDS:= +libblkid +libmount
+  DEPENDS:= +libblkid +libmount +libsmartcols
   SUBMENU=disc
 endef
 
@@ -262,7 +286,7 @@ endef
 define Package/mount-utils
 $(call Package/util-linux/Default)
   TITLE:=related (u)mount utilities
-  DEPENDS+= +libmount
+  DEPENDS+= +libmount +libsmartcols
 endef
 
 define Package/mount-utils/description
@@ -292,7 +316,7 @@ endef
 define Package/partx-utils
 $(call Package/util-linux/Default)
   TITLE:=inform kernel about the presence and numbering of on-disk partitions
-  DEPENDS:= +libblkid
+  DEPENDS:= +libblkid +libsmartcols
   SUBMENU=disc
 endef
 
@@ -404,18 +428,23 @@ define Package/wipefs/description
 endef
 
 define Package/libblkid/install
-        $(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/.libs/libblkid.so.* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/.libs/libblkid.so* $(1)/usr/lib/
 endef
 
 define Package/libmount/install
-        $(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/.libs/libmount.so.* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/.libs/libmount.so* $(1)/usr/lib/
+endef
+
+define Package/libsmartcols/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/.libs/libsmartcols.so* $(1)/usr/lib/
 endef
 
 define Package/libuuid/install
-        $(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/.libs/libuuid.so.* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/.libs/libuuid.so* $(1)/usr/lib/
 endef
 
 define Package/agetty/install
@@ -436,6 +465,11 @@ endef
 define Package/cfdisk/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/.libs/cfdisk $(1)/usr/sbin/
+endef
+
+define Package/dmesg/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dmesg $(1)/usr/sbin/
 endef
 
 define Package/fdisk/install
@@ -475,7 +509,7 @@ endef
 
 define Package/losetup/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/losetup $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/.libs/losetup $(1)/usr/sbin/
 endef
 
 define Package/lsblk/install
@@ -561,6 +595,7 @@ endef
 
 $(eval $(call BuildPackage,libblkid))
 $(eval $(call BuildPackage,libmount))
+$(eval $(call BuildPackage,libsmartcols))
 $(eval $(call BuildPackage,libuuid))
 $(eval $(call BuildPackage,agetty))
 $(eval $(call BuildPackage,blkid))

@@ -10,14 +10,13 @@ PKG_NAME:=qemu
 PKG_VERSION:=0.14.1
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=http://download.savannah.gnu.org/releases/qemu/
+PKG_SOURCE_URL:=@SAVANNAH/qemu
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_MD5SUM:=b6c713a8db638e173af53a62d5178640
 
 include $(INCLUDE_DIR)/host-build.mk
 
 HOST_CFLAGS += -I$(STAGING_DIR_HOST)/include/e2fsprogs
-HOST_LDFLAGS += $(HOST_STATIC_LINKING)
 
 define Host/Configure
 	(cd $(HOST_BUILD_DIR); \

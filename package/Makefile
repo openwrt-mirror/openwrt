@@ -41,7 +41,7 @@ ifdef CONFIG_USE_MKLIBS
 		--sysroot $(STAGING_DIR_ROOT) \
 		`cat $(TMP_DIR)/mklibs-libs | sed 's:/*[^/]\+/*$$::' | uniq | sed 's:^$(STAGING_DIR_ROOT):-L :'` \
 		--ldlib $(patsubst $(STAGING_DIR_ROOT)/%,/%,$(firstword $(wildcard \
-			$(foreach name,ld-uClibc.so.* ld-linux.so.* ld-*.so, \
+			$(foreach name,ld-uClibc.so.* ld-linux.so.* ld-*.so ld-musl-*.so.*, \
 			  $(STAGING_DIR_ROOT)/lib/$(name) \
 			)))) \
 		--target $(REAL_GNU_TARGET_NAME) \
@@ -59,6 +59,7 @@ endif
 
 # where to build (and put) .ipk packages
 OPKG:= \
+  IPKG_NO_SCRIPT=1 \
   IPKG_TMP=$(TMP_DIR)/ipkg \
   IPKG_INSTROOT=$(TARGET_DIR) \
   IPKG_CONF_DIR=$(STAGING_DIR)/etc \
@@ -108,6 +109,9 @@ $(curdir)/install: $(TMP_DIR)/.build
 	@mkdir -p $(TARGET_DIR)/etc/rc.d
 	@( \
 		cd $(TARGET_DIR); \
+		for script in ./usr/lib/opkg/info/*.postinst; do \
+			IPKG_INSTROOT=$(TARGET_DIR) $$(which bash) $$script; \
+		done; \
 		for script in ./etc/init.d/*; do \
 			grep '#!/bin/sh /etc/rc.common' $$script >/dev/null || continue; \
 			IPKG_INSTROOT=$(TARGET_DIR) $$(which bash) ./etc/rc.common $$script enable; \
@@ -116,7 +120,8 @@ $(curdir)/install: $(TMP_DIR)/.build
 	@-find $(TARGET_DIR) -name CVS   | $(XARGS) rm -rf
 	@-find $(TARGET_DIR) -name .svn  | $(XARGS) rm -rf
 	@-find $(TARGET_DIR) -name '.#*' | $(XARGS) rm -f
-	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.postinst
+	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.postinst*
+	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.prerm*
 	$(if $(CONFIG_CLEAN_IPKG),rm -rf $(TARGET_DIR)/usr/lib/opkg)
 	$(call mklibs)
 
@@ -131,17 +136,29 @@ endif
 
 PACKAGE_SUBDIRS=.
 ifneq ($(CONFIG_PER_FEED_REPO),)
-  PACKAGE_SUBDIRS=base $(FEEDS_ENABLED)
+  ifneq ($(CONFIG_PER_FEED_REPO_ADD_DISABLED),)
+    PACKAGE_SUBDIRS=base $(FEEDS_AVAILABLE)
+  else
+    PACKAGE_SUBDIRS=base $(FEEDS_ENABLED)
+  endif
 endif
 
 $(curdir)/index: FORCE
 	@echo Generating package index...
 	@for d in $(PACKAGE_SUBDIRS); do ( \
+		mkdir -p $(PACKAGE_DIR)/$$d; \
+		cd $(PACKAGE_DIR)/$$d || continue; \
+		$(SCRIPT_DIR)/ipkg-make-index.sh . 2>&1 > Packages && \
+			gzip -9nc Packages > Packages.gz; \
+	); done
+ifdef CONFIG_SIGNED_PACKAGES
+	@echo Signing package index...
+	@for d in $(PACKAGE_SUBDIRS); do ( \
 		[ -d $(PACKAGE_DIR)/$$d ] && \
 			cd $(PACKAGE_DIR)/$$d || continue; \
-		$(SCRIPT_DIR)/ipkg-make-index.sh . 2>&1 > Packages && \
-			gzip -9c Packages > Packages.gz; \
+		$(STAGING_DIR_HOST)/bin/usign -S -m Packages -s $(BUILD_KEY); \
 	); done
+else
 ifeq ($(call qstrip,$(CONFIG_OPKGSMIME_KEY)),)
 	@echo Signing key has not been configured
 else
@@ -158,6 +175,7 @@ else
 			-inkey $(CONFIG_OPKGSMIME_KEY) \
 			$(PASSOPT) $(PASSARG); \
 	); done
+endif
 endif
 endif
 

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2014 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=broadcom-wl
 PKG_VERSION:=5.10.56.27.3
-PKG_RELEASE:=7
+PKG_RELEASE:=8
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)_$(ARCH).tar.bz2
 PKG_SOURCE_URL:=http://downloads.openwrt.org/sources
@@ -166,8 +166,8 @@ endef
 define Package/nas/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nas $(1)/usr/sbin/
-	ln -sf nas $(1)/usr/sbin/nas4not
-	ln -sf nas $(1)/usr/sbin/nas4wds
+	$(LN) nas $(1)/usr/sbin/nas4not
+	$(LN) nas $(1)/usr/sbin/nas4wds
 endef
 
 $(eval $(call KernelPackage,brcm-wl))

@@ -5,6 +5,17 @@
 # See /LICENSE for more information.
 #
 
+define Profile/DHP1565A1
+	NAME:=D-Link DHP-1565 rev. A1
+	PACKAGES:=kmod-usb-core kmod-usb2
+endef
+
+define Profile/DHP1565A1/Description
+	Package set optimized for the D-Link DHP-1565 rev. A1.
+endef
+
+$(eval $(call Profile,DHP1565A1))
+
 define Profile/DIR505A1
 	NAME:=D-Link DIR-505 rev. A1
 	PACKAGES:=kmod-usb-core kmod-usb2 kmod-ledtrig-usbdev
@@ -82,6 +93,16 @@ endef
 
 $(eval $(call Profile,DIR615E4))
 
+define Profile/DIR615IX
+	NAME:=D-Link DIR-615 rev. I1
+	PACKAGES:=
+endef
+
+define Profile/DIR615IX/Description
+	Package set optimized for the D-Link DIR-615 rev. I1.
+endef
+
+$(eval $(call Profile,DIR615IX))
 
 define Profile/DIR825B1
 	NAME:=D-Link DIR-825 rev. B1
@@ -115,3 +136,15 @@ define Profile/DIR835A1/Description
 endef
 
 $(eval $(call Profile,DIR835A1))
+
+
+define Profile/DGL5500A1
+	NAME:=D-Link DGL-5500 rev. A1
+	PACKAGES:=kmod-usb-core kmod-usb2 kmod-ath10k
+endef
+
+define Profile/DIR5500A1/Description
+	Package set optimized for the D-Link DGL-5500 rev. A1.
+endef
+
+$(eval $(call Profile,DGL5500A1))

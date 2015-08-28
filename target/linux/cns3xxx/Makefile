@@ -14,7 +14,7 @@ CPU_TYPE:=mpcore
 CPU_SUBTYPE:=vfp
 MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
 
-LINUX_VERSION:=3.10.49
+KERNEL_PATCHVER:=3.18
 
 include $(INCLUDE_DIR)/target.mk
 
@@ -23,7 +23,7 @@ define Target/Description
 	eg. the Gateworks Laguna family
 endef
 
-KERNELNAME:="zImage"
+KERNELNAME:=zImage
 
 DEFAULT_PACKAGES += kmod-ath9k kmod-usb2 wpad-mini
 

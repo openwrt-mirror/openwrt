@@ -198,6 +198,8 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 	case ATH79_SOC_AR9330:
 	case ATH79_SOC_AR9331:
 	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		mdio_dev = &ath79_mdio1_device;
 		mdio_data = &ath79_mdio1_data;
 		break;
@@ -256,6 +258,8 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 		break;
 
 	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		mdio_data->builtin_switch = 1;
 		break;
 
@@ -571,6 +575,8 @@ static void __init ath79_init_eth_pll_data(unsigned int id)
 	case ATH79_SOC_QCA9533:
 	case ATH79_SOC_QCA9556:
 	case ATH79_SOC_QCA9558:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		pll_10 = AR934X_PLL_VAL_10;
 		pll_100 = AR934X_PLL_VAL_100;
 		pll_1000 = AR934X_PLL_VAL_1000;
@@ -627,6 +633,8 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
 		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_QCA9561:
+		case ATH79_SOC_TP9343:
 			pdata->phy_if_mode = PHY_INTERFACE_MODE_MII;
 			break;
 
@@ -687,7 +695,8 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR7241:
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
-		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_QCA9561:
+		case ATH79_SOC_TP9343:
 			pdata->phy_if_mode = PHY_INTERFACE_MODE_GMII;
 			break;
 
@@ -697,6 +706,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR9341:
 		case ATH79_SOC_AR9342:
 		case ATH79_SOC_AR9344:
+		case ATH79_SOC_QCA9533:
 			switch (pdata->phy_if_mode) {
 			case PHY_INTERFACE_MODE_MII:
 			case PHY_INTERFACE_MODE_GMII:
@@ -761,6 +771,32 @@ void __init ath79_setup_ar934x_eth_cfg(u32 mask)
 	       AR934X_ETH_CFG_SW_PHY_SWAP);
 
 	t |= mask;
+
+	__raw_writel(t, base + AR934X_GMAC_REG_ETH_CFG);
+	/* flush write */
+	__raw_readl(base + AR934X_GMAC_REG_ETH_CFG);
+
+	iounmap(base);
+}
+
+void __init ath79_setup_ar934x_eth_rx_delay(unsigned int rxd,
+					    unsigned int rxdv)
+{
+	void __iomem *base;
+	u32 t;
+
+	rxd &= AR934X_ETH_CFG_RXD_DELAY_MASK;
+	rxdv &= AR934X_ETH_CFG_RDV_DELAY_MASK;
+
+	base = ioremap(AR934X_GMAC_BASE, AR934X_GMAC_SIZE);
+
+	t = __raw_readl(base + AR934X_GMAC_REG_ETH_CFG);
+
+	t &= ~(AR934X_ETH_CFG_RXD_DELAY_MASK << AR934X_ETH_CFG_RXD_DELAY_SHIFT |
+	       AR934X_ETH_CFG_RDV_DELAY_MASK << AR934X_ETH_CFG_RDV_DELAY_SHIFT);
+
+	t |= (rxd << AR934X_ETH_CFG_RXD_DELAY_SHIFT |
+	      rxdv << AR934X_ETH_CFG_RDV_DELAY_SHIFT);
 
 	__raw_writel(t, base + AR934X_GMAC_REG_ETH_CFG);
 	/* flush write */
@@ -940,13 +976,13 @@ void __init ath79_register_eth(unsigned int id)
 			pdata->set_speed = ath79_set_speed_dummy;
 
 			pdata->speed = SPEED_1000;
+			pdata->has_gbit = 1;
 			pdata->duplex = DUPLEX_FULL;
 			pdata->switch_data = &ath79_switch_data;
 
 			ath79_switch_data.phy_poll_mask |= BIT(4);
 		}
 
-		pdata->has_gbit = 1;
 		pdata->is_ar724x = 1;
 
 		if (!pdata->fifo_cfg1)
@@ -960,6 +996,7 @@ void __init ath79_register_eth(unsigned int id)
 	case ATH79_SOC_AR9341:
 	case ATH79_SOC_AR9342:
 	case ATH79_SOC_AR9344:
+	case ATH79_SOC_QCA9533:
 		if (id == 0) {
 			pdata->reset_bit = AR934X_RESET_GE0_MAC |
 					   AR934X_RESET_GE0_MDIO;
@@ -991,7 +1028,8 @@ void __init ath79_register_eth(unsigned int id)
 			pdata->fifo_cfg3 = 0x01f00140;
 		break;
 
-	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		if (id == 0) {
 			pdata->reset_bit = AR933X_RESET_GE0_MAC |
 					   AR933X_RESET_GE0_MDIO;
@@ -1097,6 +1135,8 @@ void __init ath79_register_eth(unsigned int id)
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
 		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_QCA9561:
+		case ATH79_SOC_TP9343:
 			pdata->mii_bus_dev = &ath79_mdio1_device.dev;
 			break;
 
@@ -1113,10 +1153,10 @@ void __init ath79_register_eth(unsigned int id)
 
 	/* Reset the device */
 	ath79_device_reset_set(pdata->reset_bit);
-	mdelay(100);
+	msleep(100);
 
 	ath79_device_reset_clear(pdata->reset_bit);
-	mdelay(100);
+	msleep(100);
 
 	platform_device_register(pdev);
 	ath79_eth_instance++;

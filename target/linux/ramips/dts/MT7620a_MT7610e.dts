@@ -7,12 +7,6 @@
 	model = "Ralink MT7620A evaluation board";
 
 	palmbus@10000000 {
-		sysc@0 {
-			ralink,gpiomux = "i2c", "jtag";
-			ralink,uartmux = "gpio";
-			ralink,wdtmux = <1>;
-		};
-
 		gpio0: gpio@600 {
 			status = "okay";
 		};
@@ -56,10 +50,8 @@
 
 	ethernet@10100000 {
 		status = "okay";
-
 		pinctrl-names = "default";
 		pinctrl-0 = <&ephy_pins>;
-
 		ralink,port-map = "llllw";
 	};
 
@@ -80,11 +72,13 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		wps {
 			label = "wps";
 			gpios = <&gpio0 12 1>;
 			linux,code = <0x100>;
 		};
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 13 1>;

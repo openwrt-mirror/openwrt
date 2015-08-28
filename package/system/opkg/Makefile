@@ -12,7 +12,7 @@ include $(INCLUDE_DIR)/feeds.mk
 PKG_NAME:=opkg
 PKG_REV:=9c97d5ecd795709c8584e972bfdf3aee3a5b846d
 PKG_VERSION:=$(PKG_REV)
-PKG_RELEASE:=7
+PKG_RELEASE:=8
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(PKG_REV)
@@ -23,8 +23,10 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSI
 PKG_FIXUP:=autoreconf
 PKG_REMOVE_FILES = autogen.sh aclocal.m4
 
-PKG_LICENSE:=GPLv2
+PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
+
+PKG_CONFIG_DEPENDS := CONFIG_SIGNED_PACKAGES
 
 PKG_BUILD_PARALLEL:=1
 HOST_BUILD_PARALLEL:=1
@@ -62,6 +64,8 @@ endef
 
 define Package/opkg/conffiles
 /etc/opkg.conf
+/etc/opkg/keys/
+/etc/opkg/customfeeds.conf
 endef
 
 
@@ -87,11 +91,16 @@ EXTRA_CFLAGS += $(TARGET_CPPFLAGS)
 CONFIGURE_ARGS += \
 	--disable-curl \
 	--disable-gpg \
+	--enable-sha256 \
 	--with-opkgetcdir=/etc \
 	--with-opkglockfile=/var/lock/opkg.lock
 
 ifeq ($(BUILD_VARIANT),smime)
-	CONFIGURE_ARGS += --enable-openssl --enable-sha256
+	CONFIGURE_ARGS += --enable-openssl --disable-usign
+else
+  ifndef CONFIG_SIGNED_PACKAGES
+    CONFIGURE_ARGS += --disable-usign
+  endif
 endif
 
 MAKE_FLAGS = \
@@ -103,25 +112,24 @@ MAKE_FLAGS = \
 define Package/opkg/Default/install
 	$(INSTALL_DIR) $(1)/usr/lib/opkg
 	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/opkg
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_DATA) ./files/customfeeds.conf $(1)/etc/opkg/customfeeds.conf
 	$(INSTALL_DATA) ./files/opkg$(2).conf $(1)/etc/opkg.conf
-  ifeq ($(CONFIG_PER_FEED_REPO),)
-	echo "src/gz %n %U" >> $(1)/etc/opkg.conf
-  else
-	for d in base $(FEEDS_ENABLED); do \
-		echo "src/gz %n_$$$$d %U/$$$$d" >> $(1)/etc/opkg.conf; \
-	done
-    ifneq ($(CONFIG_PER_FEED_REPO_ADD_DISABLED),)
-	for d in $(FEEDS_DISABLED); do \
-		echo "# src/gz %n_$$$$d %U/$$$$d" >> $(1)/etc/opkg.conf; \
-	done
-    endif
-  endif
-	$(VERSION_SED) $(1)/etc/opkg.conf
+	$(call FeedSourcesAppend,$(1)/etc/opkg/distfeeds.conf)
+	$(VERSION_SED) $(1)/etc/opkg/distfeeds.conf
+	$(INSTALL_BIN) ./files/20_migrate-feeds $(1)/etc/uci-defaults/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/opkg-cl $(1)/bin/opkg
 endef
 
-Package/opkg/install = $(call Package/opkg/Default/install,$(1),)
+define Package/opkg/install
+	$(call Package/opkg/Default/install,$(1),)
+  ifneq ($(CONFIG_SIGNED_PACKAGES),)
+	echo "option check_signature 1" >> $(1)/etc/opkg.conf
+  endif
+	mkdir $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/opkg-key $(1)/usr/sbin/
+endef
 
 define Package/opkg-smime/install
 	$(call Package/opkg/Default/install,$(1),-smime)
@@ -138,6 +146,7 @@ endef
 HOST_CONFIGURE_ARGS+= \
 	--disable-curl \
 	--disable-gpg \
+	--enable-sha256 \
 	--with-opkgetcdir=/etc \
 	--with-opkglockfile=/tmp/opkg.lock
 

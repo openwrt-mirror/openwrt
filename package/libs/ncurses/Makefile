@@ -9,20 +9,23 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ncurses
 PKG_VERSION:=5.9
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@GNU/ncurses
 PKG_MD5SUM:=8cb9c412e5f2d96bc6f459aa8c6282a1
 
-PKG_LICENSE:=FREE
+PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=README
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 
+PKG_BUILD_DEPENDS:=ncurses/host
+
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
 
 define Package/libncurses
   SECTION:=libs
@@ -58,14 +61,27 @@ CONFIGURE_ARGS += \
 	--disable-rpath \
 	--without-ada \
 	--without-debug \
+	--without-manpages \
 	--without-profile \
 	--without-progs \
+	--without-tests \
 	--disable-big-core \
 	--disable-home-terminfo \
 	--with-normal \
 	--with-shared \
 	--with-terminfo-dirs=/usr/share/terminfo \
 	--with-default-terminfo-dir=/usr/share/terminfo
+
+HOST_CONFIGURE_ARGS += \
+	--without-cxx \
+	--without-cxx-binding \
+	--without-ada \
+	--without-debug \
+	--without-manpages \
+	--without-profile \
+	--without-tests \
+	--without-curses-h
+
 
 ifeq ($(HOST_OS),FreeBSD)
 	CONFIGURE_ARGS +=
@@ -149,6 +165,17 @@ define Build/InstallDev
 endef
 endif
 
+
+define Host/Compile
+	$(MAKE) -C $(HOST_BUILD_DIR) libs
+	$(MAKE) -C $(HOST_BUILD_DIR)/progs tic
+endef
+
+define Host/Install
+	$(INSTALL_BIN) $(HOST_BUILD_DIR)/progs/tic $(STAGING_DIR_HOST)/bin/tic
+endef
+
+$(eval $(call HostBuild))
 $(eval $(call BuildPackage,terminfo))
 $(eval $(call BuildPackage,libncurses))
 $(eval $(call BuildPackage,libncursesw))

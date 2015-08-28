@@ -9,11 +9,11 @@ include $(TOPDIR)/rules.mk
 ARCH:=arm
 BOARD:=mcs814x
 BOARDNAME:=Moschip MCS814x
-FEATURES:=usb squashfs
+FEATURES:=usb squashfs low_mem
 CPU_TYPE:=arm926ej-s
 MAINTAINER:=Florian Fainelli <florian@openwrt.org>
 
-LINUX_VERSION:=3.3.8
+KERNEL_PATCHVER:=3.18
 
 DEVICE_TYPE:=other
 
@@ -26,6 +26,6 @@ DEFAULT_PACKAGES := $(filter-out ppp%,$(DEFAULT_PACKAGES)) \
 		  kmod-nls-utf8 \
 		  kmod-mcs814x-wdt kmod-ledtrig-usbdev
 
-KERNELNAME:="zImage dtbs"
+KERNELNAME:=zImage dtbs
 
 $(eval $(call BuildTarget))

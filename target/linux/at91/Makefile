@@ -10,13 +10,13 @@ ARCH:=arm
 BOARD:=at91
 MAINTAINER:=Claudio Mignanti <c.mignanti@gmail.com>
 BOARDNAME:=Atmel AT91
-FEATURES:=squashfs targz ext2 usb
-CPU_TYPE:=arm926ej-s
+FEATURES:=squashfs targz ext2 usb usbgadget ubifs
+SUBTARGETS:=legacy sama5d3
 
-LINUX_VERSION:=3.10.49
+KERNEL_PATCHVER:=3.18
 
 include $(INCLUDE_DIR)/target.mk
 
-DEFAULT_PACKAGES += kmod-usb-ohci
+DEFAULT_PACKAGES += kmod-usb-ohci kmod-at91-udc kmod-usb-eth-gadget
 
 $(eval $(call BuildTarget))

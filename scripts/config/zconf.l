@@ -14,6 +14,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <glob.h>
+#include <libgen.h>
 
 #include "lkc.h"
 
@@ -28,8 +29,8 @@ static char *text;
 static int text_size, text_asize;
 
 struct buffer {
-        struct buffer *parent;
-        YY_BUFFER_STATE state;
+	struct buffer *parent;
+	YY_BUFFER_STATE state;
 };
 
 struct buffer *current_buf;
@@ -69,7 +70,6 @@ static void alloc_string(const char *str, int size)
 }
 %}
 
-ws	[ \n\t]
 n	[A-Za-z0-9_]
 
 %%
@@ -343,6 +343,7 @@ void zconf_nextfile(const char *name)
 	glob_t gl;
 	int err;
 	int i;
+	char path[PATH_MAX], *p;
 
 	err = glob(name, GLOB_ERR | GLOB_MARK, NULL, &gl);
 
@@ -350,6 +351,15 @@ void zconf_nextfile(const char *name)
 	if (err == GLOB_NOMATCH && strchr(name, '*')) {
 		err = 0;
 		gl.gl_pathc = 0;
+	}
+
+	if (err == GLOB_NOMATCH) {
+		p = strdup(current_file->name);
+		if (p) {
+			snprintf(path, sizeof(path), "%s/%s", dirname(p), name);
+			err = glob(path, GLOB_ERR | GLOB_MARK, NULL, &gl);
+			free(p);
+		}
 	}
 
 	if (err) {

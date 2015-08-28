@@ -16,17 +16,19 @@ board=$(ar71xx_board_name)
 case "$board" in
 all0258n | \
 cap4200ag | \
+carambola2 | \
 eap300v2 | \
 hornet-ub | \
 hornet-ub-x2 | \
 mr600 | \
 mr600v2 | \
+mr900 | \
+mr900v2 | \
+nbg6716 | \
+om5p-an | \
 om5p | \
 tube2h | \
 wndr3700)
-	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x10000" "0x10000"
-	;;
-nbg6716)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x10000" "0x10000"
 	;;
 alfa-ap96 | \
@@ -40,6 +42,12 @@ om2p-lc)
 	;;
 wzr-hp-ag300h)
 	ubootenv_add_uci_config "/dev/mtd3" "0x0" "0x10000" "0x10000"
+	;;
+qihoo-c301)
+	if cat /proc/mtd | grep action_image_config; then
+		local mtd=$(cat /proc/mtd | grep action_image_config | sed 's/mtd\([0-9]*\):.*/\1/g')
+		ubootenv_add_uci_config "/dev/mtd${mtd}" "0x0" "0x10000" "0x10000"
+	fi
 	;;
 esac
 

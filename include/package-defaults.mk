@@ -1,11 +1,11 @@
-# 
+#
 # Copyright (C) 2006 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
 
-PKG_DEFAULT_DEPENDS = +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread
+PKG_DEFAULT_DEPENDS = +libc +SSP_SUPPORT:libssp +USE_GLIBC:librt +USE_GLIBC:libpthread
 
 ifneq ($(PKG_NAME),toolchain)
   PKG_FIXUP_DEPENDS = $(if $(filter kmod-%,$(1)),$(2),$(PKG_DEFAULT_DEPENDS) $(filter-out $(PKG_DEFAULT_DEPENDS),$(2)))
@@ -19,6 +19,7 @@ define Package/Default
   CATEGORY:=Extra packages
   DEPENDS:=
   MDEPENDS:=
+  CONFLICTS:=
   PROVIDES:=
   EXTRA_DEPENDS:=
   MAINTAINER:=$(PKG_MAINTAINER)
@@ -53,6 +54,8 @@ define Package/Default
   HIDDEN:=
   URL:=
   VARIANT:=
+  DEFAULT_VARIANT:=
+  USERID:=
 endef
 
 Build/Patch:=$(Build/Patch/Default)
@@ -64,7 +67,11 @@ ifneq ($(strip $(PKG_UNPACK)),)
 endif
 
 EXTRA_CXXFLAGS = $(EXTRA_CFLAGS)
-DISABLE_NLS:=--disable-nls
+ifeq ($(CONFIG_BUILD_NLS),y)
+    DISABLE_NLS:=
+else
+    DISABLE_NLS:=--disable-nls
+endif
 
 CONFIGURE_PREFIX:=/usr
 CONFIGURE_ARGS = \
@@ -97,7 +104,9 @@ CONFIGURE_VARS = \
 CONFIGURE_PATH = .
 CONFIGURE_CMD = ./configure
 
-replace_script=$(FIND) $(1) -name $(2) | $(XARGS) chmod u+w; $(FIND) $(1) -name $(2) | $(XARGS) -n1 cp $(SCRIPT_DIR)/$(2);
+replace_script=$(FIND) $(1) -name $(2) | $(XARGS) chmod u+w; \
+	       $(FIND) $(1) -name $(2) | $(XARGS) -n1 cp --remove-destination \
+	       $(SCRIPT_DIR)/$(2);
 
 define Build/Configure/Default
 	(cd $(PKG_BUILD_DIR)/$(CONFIGURE_PATH)/$(strip $(3)); \

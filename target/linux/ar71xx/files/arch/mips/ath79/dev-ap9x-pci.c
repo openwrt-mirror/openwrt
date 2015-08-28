@@ -103,10 +103,10 @@ __init void ap91_pci_init(u8 *cal_data, u8 *mac_addr)
 		ap9x_wmac0_data.macaddr = ap9x_wmac0_mac;
 	}
 
+    pci_enable_ath9k_fixup(0, ap9x_wmac0_data.eeprom_data);
+
 	ath79_pci_set_plat_dev_init(ap91_pci_plat_dev_init);
 	ath79_register_pci();
-
-	pci_enable_ath9k_fixup(0, ap9x_wmac0_data.eeprom_data);
 }
 
 __init void ap91_pci_init_simple(void)

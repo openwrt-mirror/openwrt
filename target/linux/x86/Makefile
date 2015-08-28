@@ -10,10 +10,10 @@ ARCH:=i386
 BOARD:=x86
 BOARDNAME:=x86
 FEATURES:=squashfs ext4 vdi vmdk pcmcia targz
-SUBTARGETS=generic olpc xen_domu ep80579 net5501 kvm_guest geos alix2 thincan \
-	   rdc
+SUBTARGETS=generic xen_domu ep80579 geode kvm_guest rdc 64
+MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
 
-LINUX_VERSION:=3.10.49
+KERNEL_PATCHVER:=3.18
 
 KERNELNAME:=bzImage
 

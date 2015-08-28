@@ -1,12 +1,21 @@
 --- a/Makefile
 +++ b/Makefile
+@@ -5,7 +5,7 @@
+ ifeq ($(KERNELRELEASE),)
+ 
+ MAKEFLAGS += --no-print-directory
+-SHELL := /bin/bash
++SHELL := /usr/bin/env bash
+ BACKPORT_DIR := $(shell pwd)
+ 
+ KMODDIR ?= updates
 @@ -19,6 +19,7 @@ KLIB_BUILD ?= $(KLIB)/build/
  KERNEL_CONFIG := $(KLIB_BUILD)/.config
  KERNEL_MAKEFILE := $(KLIB_BUILD)/Makefile
  CONFIG_MD5 := $(shell md5sum $(KERNEL_CONFIG) 2>/dev/null | sed 's/\s.*//')
 +STAMP_KERNEL_CONFIG := .kernel_config_md5_$(CONFIG_MD5)
  
- export KLIB KLIB_BUILD BACKPORT_PWD KMODDIR KMODPATH_ARG
+ export KLIB KLIB_BUILD BACKPORT_DIR KMODDIR KMODPATH_ARG
  
 @@ -36,7 +37,8 @@ mrproper:
  	@rm -f .kernel_config_md5 Kconfig.versions Kconfig.kernel
@@ -18,7 +27,7 @@
  	@set -e ; test -f .local-symbols || (						\
  	echo "/--------------"								;\
  	echo "| You shouldn't run make in the backports tree, but only in"		;\
-@@ -60,56 +62,60 @@ mrproper:
+@@ -60,57 +62,61 @@ mrproper:
  	echo "| (that isn't currently running.)"					;\
  	echo "\\--"									;\
  	false)
@@ -47,15 +56,16 @@
 -			done								\
 -		) > Kconfig.kernel							;\
 -		kver=$$($(MAKE) --no-print-directory -C $(KLIB_BUILD) kernelversion |	\
--			sed 's/^\(\(3\|2\.6\)\.[0-9]\+\).*/\1/;t;d')			;\
+-			sed 's/^\(\([3-4]\|2\.6\)\.[0-9]\+\).*/\1/;t;d')		;\
 -		test "$$kver" != "" || echo "Kernel version parse failed!"		;\
 -		test "$$kver" != ""							;\
 -		kvers="$$(seq 14 39 | sed 's/^/2.6./')"					;\
--		kvers="$$kvers $$(seq 0 99 | sed 's/^/3./')"				;\
+-		kvers="$$kvers $$(seq 0 19 | sed 's/^/3./')"				;\
+-		kvers="$$kvers $$(seq 0 99 | sed 's/^/4./')"				;\
 -		print=0									;\
 -		for v in $$kvers ; do							\
 -			if [ "$$print" = "1" ] ; then					\
--				echo config BACKPORT_KERNEL_$$(echo $$v | tr . _)	;\
+-				echo config KERNEL_$$(echo $$v | tr . _)	;\
 -				echo "    def_bool y"					;\
 -			fi								;\
 -			if [ "$$v" = "$$kver" ] ; then print=1 ; fi			;\
@@ -102,15 +112,16 @@
 +
 +Kconfig.versions: Kconfig.kernel
 +	@kver=$$($(MAKE) --no-print-directory -C $(KLIB_BUILD) kernelversion |	\
-+		sed 's/^\(\(3\|2\.6\)\.[0-9]\+\).*/\1/;t;d')			;\
++		sed 's/^\(\([3-4]\|2\.6\)\.[0-9]\+\).*/\1/;t;d')		;\
 +	test "$$kver" != "" || echo "Kernel version parse failed!"		;\
 +	test "$$kver" != ""							;\
 +	kvers="$$(seq 14 39 | sed 's/^/2.6./')"					;\
-+	kvers="$$kvers $$(seq 0 99 | sed 's/^/3./')"				;\
++	kvers="$$kvers $$(seq 0 19 | sed 's/^/3./')"				;\
++	kvers="$$kvers $$(seq 0 99 | sed 's/^/4./')"				;\
 +	print=0									;\
 +	for v in $$kvers ; do							\
 +		if [ "$$print" = "1" ] ; then					\
-+			echo config BACKPORT_KERNEL_$$(echo $$v | tr . _)	;\
++			echo config KERNEL_$$(echo $$v | tr . _)	;\
 +			echo "    def_bool y"					;\
 +		fi								;\
 +		if [ "$$v" = "$$kver" ] ; then print=1 ; fi			;\

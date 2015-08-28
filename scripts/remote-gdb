@@ -14,7 +14,7 @@ if( opendir SD, "$Bin/../staging_dir" )
 {
 	my ( $tid, $arch, $libc, @arches );
 
-	if( $ARGV[1] =~ m!\btarget-(.+?)_(([^_]+libc|musl)[^/]+)\b!i )
+	if( $ARGV[1] =~ m!\btarget-(.+?)_(([^/_]+libc|musl)[^/]+)\b!i )
 	{
 		print("Using target $1 ($2)\n");
 		($arch, $libc) = ($1, $2);
@@ -26,7 +26,7 @@ if( opendir SD, "$Bin/../staging_dir" )
 
 		while( defined( my $e = readdir SD ) )
 		{
-			if( -d "$Bin/../staging_dir/$e" && $e =~ /^target-(.+?)_(([^_]+.libc|musl)+)/i )
+			if( -d "$Bin/../staging_dir/$e" && $e =~ /^target-(.+?)_(([^_]+libc|musl).+)/i )
 			{
 				push @arches, [ $1, $2 ];
 				printf(" %2d) %s (%s)\n", @arches + 0, $1, $2);
@@ -61,9 +61,14 @@ if( opendir SD, "$Bin/../staging_dir" )
 		my ($sysroot) = glob("$Bin/../staging_dir/target-${arch}_${libc}/root-*/");
 
 		print $fh "set sysroot $sysroot\n" if $sysroot;
-		my $cmd = "target remote";
+		my $cmd = "target extended-remote";
 		-f $ARGV[0] and $cmd = "core-file";
 		print $fh "$cmd $ARGV[0]\n";
+
+		# History settings
+		print $fh "set history filename $Bin/../tmp/.gdb_history\n";
+		print $fh "set history size 100000000\n";
+		print $fh "set history save on\n";
 
 		my $file = -f "$sysroot/$ARGV[1]" ? "$sysroot/$ARGV[1]" : $ARGV[1];
 		system($gdb, '-x', $fp, $file);

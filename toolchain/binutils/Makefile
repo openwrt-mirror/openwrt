@@ -10,27 +10,12 @@ PKG_NAME:=binutils
 PKG_VERSION:=$(call qstrip,$(CONFIG_BINUTILS_VERSION))
 BIN_VERSION:=$(PKG_VERSION)
 
-ifeq ($(findstring linaro, $(CONFIG_BINUTILS_VERSION)),linaro)
-  PKG_SOURCE_URL:=https://releases.linaro.org/13.12/components/toolchain/binutils-linaro/
-  PKG_REV:=2.24-2013.12
-  PKG_SOURCE:=$(PKG_NAME)-linaro-$(PKG_REV).tar.xz
-  PKG_MD5SUM:=4f0fe947895a260b8386de63b09feb18
-  BINUTILS_DIR:=$(PKG_NAME)-linaro-$(PKG_REV)
-  HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(BINUTILS_DIR)
-else
-  PKG_SOURCE_URL:=@GNU/binutils/
-  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-
-  ifeq ($(PKG_VERSION),2.20.1)
-    PKG_MD5SUM:=9cdfb9d6ec0578c166d3beae5e15c4e5
-  endif
-  ifeq ($(PKG_VERSION),2.22)
-    PKG_MD5SUM:=ee0f10756c84979622b992a4a61ea3f5
-  endif
-  ifeq ($(PKG_VERSION),2.23.1)
-    PKG_MD5SUM:=33adb18c3048d057ac58d07a3f1adb38
-  endif
-endif
+PKG_SOURCE_URL:=https://releases.linaro.org/14.09/components/toolchain/binutils-linaro/
+PKG_REV:=2.24.0-2014.09
+PKG_SOURCE:=$(PKG_NAME)-linaro-$(PKG_REV).tar.xz
+PKG_MD5SUM:=8f9b2b2e049d59b1b86ce9657802a353
+BINUTILS_DIR:=$(PKG_NAME)-linaro-$(PKG_REV)
+HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(BINUTILS_DIR)
 
 HOST_BUILD_PARALLEL:=1
 
@@ -47,6 +32,8 @@ BINUTILS_CONFIGURE:= \
 		--host=$(GNU_HOST_NAME) \
 		--target=$(REAL_GNU_TARGET_NAME) \
 		--with-sysroot=$(TOOLCHAIN_DIR) \
+		--enable-deterministic-archives \
+		--enable-plugins \
 		--disable-multilib \
 		--disable-werror \
 		--disable-nls \
@@ -69,8 +56,9 @@ endif
 
 define Host/Prepare
 	$(call Host/Prepare/Default)
-	ln -snf $(PKG_NAME)-$(PKG_VERSION) $(BUILD_DIR_TOOLCHAIN)/$(PKG_NAME)
+	ln -snf $(notdir $(HOST_BUILD_DIR)) $(BUILD_DIR_TOOLCHAIN)/$(PKG_NAME)
 	$(CP) $(SCRIPT_DIR)/config.{guess,sub} $(HOST_BUILD_DIR)/
+	$(SED) 's, " Linaro.*,,' $(HOST_BUILD_DIR)/bfd/version.h
 endef
 
 define Host/Configure
@@ -88,8 +76,11 @@ define Host/Install
 	$(MAKE) -C $(HOST_BUILD_DIR) \
 		prefix=$(TOOLCHAIN_DIR)/initial \
 		install
+	$(MAKE) -C $(HOST_BUILD_DIR) \
+		prefix=$(TOOLCHAIN_DIR) \
+		install
 	$(call FixupLibdir,$(TOOLCHAIN_DIR)/initial)
-	$(CP) $(TOOLCHAIN_DIR)/initial/. $(TOOLCHAIN_DIR)/
+	$(RM) $(TOOLCHAIN_DIR)/initial/lib/libiberty.a
 	$(CP) $(TOOLCHAIN_DIR)/bin/$(REAL_GNU_TARGET_NAME)-readelf $(REAL_STAGING_DIR_HOST)/bin/readelf
 endef
 

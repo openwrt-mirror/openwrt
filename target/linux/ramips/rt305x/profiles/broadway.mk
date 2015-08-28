@@ -8,12 +8,11 @@
 define Profile/BROADWAY
 	NAME:=Hauppauge Broadway
 	PACKAGES:=\
-		kmod-usb-core kmod-usb-rt305x-dwc_otg \
+		kmod-usb-core kmod-usb-dwc2 \
 		kmod-ledtrig-usbdev
 endef
 
 define Profile/BROADWAY/Description
 	Package set for Hauppauge Broadway
 endef
-
 $(eval $(call Profile,BROADWAY))

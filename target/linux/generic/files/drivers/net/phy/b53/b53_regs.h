@@ -31,12 +31,12 @@
 #define B53_MEM_ACCESS_PAGE		0x08 /* Memory access */
 
 /* PHY Registers */
-#define B53_PORT_MII_PAGE(i)		(0x10 + i) /* Port i MII Registers */
+#define B53_PORT_MII_PAGE(i)		(0x10 + (i)) /* Port i MII Registers */
 #define B53_IM_PORT_PAGE		0x18 /* Inverse MII Port (to EMAC) */
 #define B53_ALL_PORT_PAGE		0x19 /* All ports MII (broadcast) */
 
 /* MIB registers */
-#define B53_MIB_PAGE(i)			(0x20 + i)
+#define B53_MIB_PAGE(i)			(0x20 + (i))
 
 /* Quality of Service (QoS) Registers */
 #define B53_QOS_PAGE			0x30
@@ -50,19 +50,22 @@
 /* Jumbo Frame Registers */
 #define B53_JUMBO_PAGE			0x40
 
+/* CFP Configuration Registers Page */
+#define B53_CFP_PAGE			0xa1
+
 /*************************************************************************
  * Control Page registers
  *************************************************************************/
 
 /* Port Control Register (8 bit) */
-#define B53_PORT_CTRL(i)		(0x00 + i)
+#define B53_PORT_CTRL(i)		(0x00 + (i))
 #define   PORT_CTRL_RX_DISABLE		BIT(0)
 #define   PORT_CTRL_TX_DISABLE		BIT(1)
 #define   PORT_CTRL_RX_BCST_EN		BIT(2) /* Broadcast RX (P8 only) */
 #define   PORT_CTRL_RX_MCST_EN		BIT(3) /* Multicast RX (P8 only) */
 #define   PORT_CTRL_RX_UCST_EN		BIT(4) /* Unicast RX (P8 only) */
 #define	  PORT_CTRL_STP_STATE_S		5
-#define   PORT_CTRL_STP_STATE_MASK	(0x3 << PORT_CTRL_STP_STATE_S)
+#define   PORT_CTRL_STP_STATE_MASK	(0x7 << PORT_CTRL_STP_STATE_S)
 
 /* SMP Control Register (8 bit) */
 #define B53_SMP_CTRL			0x0a
@@ -75,7 +78,7 @@
 /* IMP Port state override register (8 bit) */
 #define B53_PORT_OVERRIDE_CTRL		0x0e
 #define   PORT_OVERRIDE_LINK		BIT(0)
-#define   PORT_OVERRIDE_HALF_DUPLEX	BIT(1) /* 0 = Full Duplex */
+#define   PORT_OVERRIDE_FULL_DUPLEX	BIT(1) /* 0 = Half Duplex */
 #define   PORT_OVERRIDE_SPEED_S		2
 #define   PORT_OVERRIDE_SPEED_10M	(0 << PORT_OVERRIDE_SPEED_S)
 #define   PORT_OVERRIDE_SPEED_100M	(1 << PORT_OVERRIDE_SPEED_S)
@@ -83,6 +86,7 @@
 #define   PORT_OVERRIDE_RV_MII_25	BIT(4) /* BCM5325 only */
 #define   PORT_OVERRIDE_RX_FLOW		BIT(4)
 #define   PORT_OVERRIDE_TX_FLOW		BIT(5)
+#define   PORT_OVERRIDE_SPEED_2000M	BIT(6) /* BCM5301X only, requires setting 1000M */
 #define   PORT_OVERRIDE_EN		BIT(7) /* Use the register contents */
 
 /* Power-down mode control */
@@ -98,6 +102,25 @@
 #define B53_UC_FLOOD_MASK		0x32
 #define B53_MC_FLOOD_MASK		0x34
 #define B53_IPMC_FLOOD_MASK		0x36
+
+/*
+ * Override Ports 0-7 State on devices with xMII interfaces (8 bit)
+ *
+ * For port 8 still use B53_PORT_OVERRIDE_CTRL
+ * Please note that not all ports are available on every hardware, e.g. BCM5301X
+ * don't include overriding port 6, BCM63xx also have some limitations.
+ */
+#define B53_GMII_PORT_OVERRIDE_CTRL(i)	(0x58 + (i))
+#define   GMII_PO_LINK			BIT(0)
+#define   GMII_PO_FULL_DUPLEX		BIT(1) /* 0 = Half Duplex */
+#define   GMII_PO_SPEED_S		2
+#define   GMII_PO_SPEED_10M		(0 << GMII_PO_SPEED_S)
+#define   GMII_PO_SPEED_100M		(1 << GMII_PO_SPEED_S)
+#define   GMII_PO_SPEED_1000M		(2 << GMII_PO_SPEED_S)
+#define   GMII_PO_RX_FLOW		BIT(4)
+#define   GMII_PO_TX_FLOW		BIT(5)
+#define   GMII_PO_EN			BIT(6) /* Use the register contents */
+#define   GMII_PO_SPEED_2000M		BIT(7) /* BCM5301X only, requires setting 1000M */
 
 /* Software reset register (8 bit) */
 #define B53_SOFTRESET			0x79
@@ -155,6 +178,10 @@
 #define   GC_FRM_MGMT_PORT_M		0xC0
 #define   GC_FRM_MGMT_PORT_04		0x00
 #define   GC_FRM_MGMT_PORT_MII		0x80
+
+/* Broadcom Header control register (8 bit) */
+#define B53_BRCM_HDR			0x03
+#define   BRCM_HDR_EN			BIT(0) /* Enable tagging on IMP port */
 
 /* Device ID register (8 or 32 bit) */
 #define B53_DEVICE_ID			0x30
@@ -309,5 +336,12 @@
 #define B53_JUMBO_MAX_SIZE_63XX		0x08
 #define   JMS_MIN_SIZE			1518
 #define   JMS_MAX_SIZE			9724
+
+/*************************************************************************
+ * CFP Configuration Page Registers
+ *************************************************************************/
+
+/* CFP Control Register with ports map (8 bit) */
+#define B53_CFP_CTRL			0x00
 
 #endif /* !__B53_REGS_H */

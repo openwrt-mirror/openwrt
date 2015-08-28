@@ -58,6 +58,9 @@
 #define HWID_PORAY_X5_X6	0x35353335
 #define HWID_PORAY_X8		0x36353335
 #define HWID_PORAY_X1		0x38353335
+#define HWID_NEXX_WT1520	0x30353332
+#define HWID_NEXX_WT3020	0x30323033
+#define HWID_A5_V11		0x32473352
 
 /* Recognized XOR obfuscation keys */
 #define KEY_HAME		0
@@ -65,6 +68,9 @@
 #define KEY_PORAY_2		2
 #define KEY_PORAY_3		3
 #define KEY_PORAY_4		4
+#define KEY_NEXX_1		5
+#define KEY_NEXX_2		6
+#define KEY_A5_V11		7
 
 /* XOR key length */
 #define KEY_LEN			15
@@ -117,6 +123,9 @@ static uint8_t key[][KEY_LEN] = {
   {0xC9, 0x1C, 0x3A, 0x93, 0x92, 0x95, 0xC3, 0x63, 0xD0, 0xA3, 0x9C, 0x92, 0x2E, 0xE6, 0xC7},
   {0x19, 0x1B, 0x3A, 0x93, 0x92, 0x95, 0xC3, 0x63, 0xD0, 0xA3, 0x9C, 0x92, 0x2E, 0xE6, 0xC7},
   {0x79, 0x7B, 0x7A, 0x93, 0x92, 0x95, 0xC3, 0x63, 0xD0, 0xA3, 0x9C, 0x92, 0x2E, 0xE6, 0xC7},
+  {0x19, 0x1C, 0x4A, 0x93, 0x96, 0x95, 0xC3, 0x63, 0xD0, 0xA3, 0x9C, 0x92, 0x2E, 0x16, 0xC6},
+  {0x39, 0x1C, 0x4A, 0x93, 0x96, 0x95, 0xC3, 0x63, 0xD0, 0xA3, 0x9C, 0x92, 0x2E, 0x16, 0xC6},
+  {0xC8, 0x3C, 0x3A, 0x93, 0xA2, 0x95, 0xC3, 0x63, 0x48, 0x45, 0x58, 0x09, 0x20, 0x11, 0x08},
 };
 
 static struct flash_layout layouts[] = {
@@ -133,6 +142,11 @@ static struct flash_layout layouts[] = {
 
 static struct board_info boards[] = {
 	{
+		.id             = "A5-V11",
+		.hw_id          = HWID_A5_V11,
+		.layout_id      = "4M",
+		.key            = KEY_A5_V11,
+        }, {
 		.id		= "MPR-A1",
 		.hw_id		= HWID_HAME_MPR_A1_L8,
 		.layout_id	= "4M",
@@ -198,6 +212,30 @@ static struct board_info boards[] = {
 		.layout_id	= "8M",
 		.key		= KEY_PORAY_1,
 	}, {
+		.id		= "WT1520",
+		.hw_id		= HWID_NEXX_WT1520,
+		.layout_id	= "4M",
+		.key		= KEY_NEXX_1,
+	}, {
+		.id		= "WT1520",
+		.hw_id		= HWID_NEXX_WT1520,
+		.layout_id	= "8M",
+		.key		= KEY_NEXX_1,
+        }, {
+                .id             = "WT3020",
+                .hw_id          = HWID_NEXX_WT3020,
+                .layout_id      = "4M",
+                .key            = KEY_NEXX_2,
+        }, {
+                .id             = "WT3020",
+                .hw_id          = HWID_NEXX_WT3020,
+                .layout_id      = "8M",
+                .key            = KEY_NEXX_2,
+        }, {
+
+
+
+
 		/* terminating entry */
 	}
 };

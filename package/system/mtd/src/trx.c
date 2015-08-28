@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <endian.h>
 #include <string.h>
 #include <errno.h>
 
@@ -101,13 +102,14 @@ err:
 	return -1;
 }
 
+#ifndef target_ar71xx
 int
 trx_check(int imagefd, const char *mtd, char *buf, int *len)
 {
 	const struct trx_header *trx = (const struct trx_header *) buf;
 	int fd;
 
-	if (strcmp(mtd, "linux") != 0)
+	if (strcmp(mtd, "firmware") != 0)
 		return 1;
 
 	*len = read(imagefd, buf, 32);
@@ -141,6 +143,7 @@ trx_check(int imagefd, const char *mtd, char *buf, int *len)
 	close(fd);
 	return 1;
 }
+#endif
 
 int
 mtd_fixtrx(const char *mtd, size_t offset)

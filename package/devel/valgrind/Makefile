@@ -8,14 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=valgrind
-PKG_VERSION:=3.8.1
+PKG_VERSION:=3.10.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://valgrind.org/downloads/
-PKG_MD5SUM:=288758010b271119a0ffc0183f1d6e38
+PKG_MD5SUM:=60ddae962bc79e7c95cfc4667245707f
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_LICENSE:=GPL-2.0+
 
 PKG_FIXUP = autoreconf
 PKG_INSTALL := 1
@@ -100,7 +101,8 @@ CONFIGURE_ARGS += \
 	--disable-valgrindmi \
 	--disable-tui \
 	--disable-valgrindtk \
-	--without-included-gettext
+	--without-included-gettext \
+	--with-pagesize=4 \
 
 define Package/valgrind/install	
 	$(INSTALL_DIR) $(1)/usr/bin

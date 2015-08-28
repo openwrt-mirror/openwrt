@@ -8,12 +8,11 @@
 define Profile/HW550-3G
 	NAME:=Aztech HW550-3G
 	PACKAGES:=\
-		kmod-usb-core kmod-usb-rt305x-dwc_otg \
+		kmod-usb-core kmod-usb-dwc2 \
 		kmod-ledtrig-usbdev
 endef
 
 define Profile/HW550-3G/Description
 	Package set for Aztech HW550-3G
 endef
-
 $(eval $(call Profile,HW550-3G))

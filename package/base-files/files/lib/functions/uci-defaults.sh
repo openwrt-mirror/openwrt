@@ -2,6 +2,7 @@
 # Copyright (C) 2011 OpenWrt.org
 
 UCIDEF_LEDS_CHANGED=0
+UCIDEF_GPIO_SWITCHES_CHANGED=0
 
 ucidef_set_led_netdev() {
 	local cfg="led_$1"
@@ -120,6 +121,63 @@ EOF
 	UCIDEF_LEDS_CHANGED=1
 }
 
+ucidef_set_led_timer() {
+	local cfg="led_$1"
+	local name=$2
+	local sysfs=$3
+	local delayon=$4
+	local delayoff=$5
+
+	uci -q get system.$cfg && return 0
+
+	uci batch <<EOF
+set system.$cfg='led'
+set system.$cfg.name='$name'
+set system.$cfg.sysfs='$sysfs'
+set system.$cfg.trigger='timer'
+set system.$cfg.delayon='$delayon'
+set system.$cfg.delayoff='$delayoff'
+EOF
+	UCIDEF_LEDS_CHANGED=1
+}
+
+ucidef_set_led_mmc() {
+	local cfg="led_$1"
+	local name=$2
+	local sysfs=$3
+	local trigger=$4
+
+	uci -q get system.$cfg && return 0
+
+	uci batch <<EOF
+set system.$cfg='led'
+set system.$cfg.name='$name'
+set system.$cfg.sysfs='$sysfs'
+set system.$cfg.trigger='$trigger'
+EOF
+	UCIDEF_LEDS_CHANGED=1
+}
+
+ucidef_set_led_trigger_gpio() {
+	local cfg="led_$1"
+	local name=$2
+	local sysfs=$3
+	local gpio=$4
+	local inverted=$5
+
+	uci -q get system.$cfg && return 0
+
+	uci batch <<EOF
+set system.$cfg='led'
+set system.$cfg.name='$name'
+set system.$cfg.sysfs='$sysfs'
+set system.$cfg.trigger='gpio'
+set system.$cfg.gpio='$gpio'
+set system.$cfg.inverted='$inverted'
+EOF
+	UCIDEF_LEDS_CHANGED=1
+}
+
 ucidef_set_rssimon() {
 	local dev="$1"
 	local refresh="$2"
@@ -140,7 +198,30 @@ EOF
 
 ucidef_commit_leds()
 {
-	[ "$UCIDEF_LEDS_CHANGED" == "1" ] && uci commit system
+	[ "$UCIDEF_LEDS_CHANGED" = "1" ] && uci commit system
+}
+
+ucidef_set_gpio_switch() {
+	local cfg="gpio_switch_$1"
+	local name="$2"
+	local gpio_pin="$3"
+	# use "0" as default value
+	local default="${4:-0}"
+
+	uci -q get "system.$cfg" && return 0
+
+	uci batch <<EOF
+set system.$cfg='gpio_switch'
+set system.$cfg.name='$name'
+set system.$cfg.gpio_pin='$gpio_pin'
+set system.$cfg.value='$default'
+EOF
+	UCIDEF_GPIO_SWITCHES_CHANGED=1
+}
+
+ucidef_commit_gpio_switches()
+{
+	[ "$UCIDEF_GPIO_SWITCHES_CHANGED" = "1" ] && uci commit system
 }
 
 ucidef_set_interface_loopback() {
@@ -158,11 +239,12 @@ EOF
 ucidef_set_interface_raw() {
 	local cfg=$1
 	local ifname=$2
+	local proto=${3:-"none"}
 
 	uci batch <<EOF
 set network.$cfg='interface'
 set network.$cfg.ifname='$ifname'
-set network.$cfg.proto='none'
+set network.$cfg.proto='$proto'
 EOF
 }
 
@@ -189,7 +271,7 @@ set network.wan='interface'
 set network.wan.ifname='$ifname'
 set network.wan.proto='dhcp'
 set network.wan6='interface'
-set network.wan6.ifname='@wan'
+set network.wan6.ifname='$ifname'
 set network.wan6.proto='dhcpv6'
 EOF
 }

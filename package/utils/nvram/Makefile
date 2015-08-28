@@ -19,7 +19,7 @@ define Package/nvram
   CATEGORY:=Base system
   TITLE:=Userspace port of the Broadcom NVRAM manipulation tool
   MAINTAINER:=Jo-Philipp Wich <xm@subsignal.org>
-  DEPENDS:=@TARGET_brcm47xx||@TARGET_ar71xx
+  DEPENDS:=@TARGET_brcm47xx||@TARGET_bcm53xx||@TARGET_ar71xx
 endef
 
 define Package/nvram/description
@@ -42,19 +42,11 @@ define Build/Compile
 		LDFLAGS="$(TARGET_LDFLAGS)"
 endef
 
-define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libnvram.so.0.1 $(1)/usr/lib/
-	ln -s libnvram.so.0.1 $(1)/usr/lib/libnvram.so
-endef
-
 define Package/nvram/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/nvram.init $(1)/etc/init.d/nvram
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nvram $(1)/usr/sbin/
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libnvram.so.0.1 $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,nvram))

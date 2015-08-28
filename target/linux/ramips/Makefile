@@ -9,10 +9,11 @@ include $(TOPDIR)/rules.mk
 ARCH:=mipsel
 BOARD:=ramips
 BOARDNAME:=Ralink RT288x/RT3xxx
-SUBTARGETS:=rt305x mt7620a mt7620n mt7621 rt3883 rt288x
+SUBTARGETS:=rt305x mt7620 mt7621 mt7628 mt7688 rt3883 rt288x
 FEATURES:=squashfs gpio
+MAINTAINER:=John Crispin <blogic@openwrt.org>
 
-LINUX_VERSION:=3.10.49
+KERNEL_PATCHVER:=3.18
 
 include $(INCLUDE_DIR)/target.mk
 DEFAULT_PACKAGES += \

@@ -19,11 +19,14 @@ boot() {
 			"om2pv2"|"om2p-lc")
 				service_start /sbin/om-watchdog 26
 				;;
-			"om5p")
+			"om5p"|"om5p-an")
 				service_start /sbin/om-watchdog 11
 				;;
 			"mr600v2")
 				service_start /sbin/om-watchdog 15
+				;;
+			"mr900"|"mr900v2")
+				service_start /sbin/om-watchdog 16
 				;;
 		esac
 	else

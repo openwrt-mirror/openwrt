@@ -28,20 +28,32 @@ board=$(kirkwood_board_name)
 ucidef_set_interface_loopback
 
 case "$board" in
-"dockstar")
-	set_lan_dhcp "eth0"
-	;;
-"iconnect")
-	set_lan_dhcp "eth0"
-	;;
-"ib62x0")
-	set_lan_dhcp "eth0"
-	;;
+"dockstar"|\
+"goflexhome"|\
+"goflexnet"|\
+"iconnect"|\
+"ib62x0"|\
 "pogo_e02")
 	set_lan_dhcp "eth0"
 	;;
+"ea3500")
+	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5"
+	ucidef_add_switch_vlan "switch0" "2" "4 6"
+	;;
 "ea4500")
 	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5"
+	ucidef_add_switch_vlan "switch0" "2" "4 6"
+	;;
+"guruplug-server-plus")
+	set_lan_dhcp "eth0" "eth1"
+	;;
+"sheevaplug" | \
+"sheevaplug-esata")
+	set_lan_dhcp "eth0"
 	;;
 *)
 	ucidef_set_interface_lan "eth0"

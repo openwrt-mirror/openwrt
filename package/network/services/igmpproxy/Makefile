@@ -19,12 +19,13 @@ PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
 include $(INCLUDE_DIR)/package.mk
 
 PKG_FIXUP:=autoreconf
+PKG_LICENSE:=GPL-2.0+
 
 define Package/igmpproxy
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
-  DEPENDS:=+USE_EGLIBC:librt
+  DEPENDS:=+USE_GLIBC:librt
   TITLE:=Multicast Routing Daemon
   URL:=http://sourceforge.net/projects/igmpproxy
 endef

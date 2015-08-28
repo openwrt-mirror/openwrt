@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ustream-ssl
-PKG_VERSION:=2014-03-25
+PKG_VERSION:=2015-07-09
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://nbd.name/ustream-ssl.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=fc0b5ec804ee43c532978dd04ab0509c34baefb0
+PKG_SOURCE_VERSION:=c2d73c22618e8ee444e8d346695eca908ecb72d3
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 CMAKE_INSTALL:=1
 
@@ -32,14 +32,14 @@ endef
 define Package/libustream-openssl
   $(Package/libustream/default)
   TITLE += (openssl)
-  DEPENDS += +libopenssl
+  DEPENDS += +PACKAGE_libustream-openssl:libopenssl
   VARIANT:=openssl
 endef
 
 define Package/libustream-cyassl
   $(Package/libustream/default)
   TITLE += (cyassl)
-  DEPENDS += +libcyassl
+  DEPENDS += +PACKAGE_libustream-cyassl:libcyassl
   VARIANT:=cyassl
 endef
 
@@ -48,10 +48,11 @@ define Package/libustream-polarssl
   TITLE += (polarssl)
   DEPENDS += +libpolarssl
   VARIANT:=polarssl
+  DEFAULT_VARIANT:=1
 endef
 
 ifeq ($(BUILD_VARIANT),cyassl)
-  TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/cyassl
+  TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/cyassl -DHAVE_SNI
   CMAKE_OPTIONS += -DCYASSL=on
 endif
 ifeq ($(BUILD_VARIANT),polarssl)

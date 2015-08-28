@@ -2,7 +2,7 @@ package metadata;
 use base 'Exporter';
 use strict;
 use warnings;
-our @EXPORT = qw(%package %srcpackage %category %subdir %preconfig %features clear_packages parse_package_metadata get_multiline);
+our @EXPORT = qw(%package %srcpackage %category %subdir %preconfig %features %overrides clear_packages parse_package_metadata parse_target_metadata get_multiline);
 
 our %package;
 our %preconfig;
@@ -10,6 +10,7 @@ our %srcpackage;
 our %category;
 our %subdir;
 our %features;
+our %overrides;
 
 sub get_multiline {
 	my $fh = shift;
@@ -23,6 +24,93 @@ sub get_multiline {
 	return $str ? $str : "";
 }
 
+sub confstr($) {
+	my $conf = shift;
+	$conf =~ tr#/\.\-/#___#;
+	return $conf;
+}
+
+sub parse_target_metadata($) {
+	my $file = shift;
+	my ($target, @target, $profile);
+	my %target;
+	my $makefile;
+
+	open FILE, "<$file" or do {
+		warn "Can't open file '$file': $!\n";
+		return;
+	};
+	while (<FILE>) {
+		chomp;
+		/^Source-Makefile: \s*((.+\/)([^\/]+)\/Makefile)\s*$/ and $makefile = $1;
+		/^Target:\s*(.+)\s*$/ and do {
+			my $name = $1;
+			$target = {
+				id => $name,
+				board => $name,
+				makefile => $makefile,
+				boardconf => confstr($name),
+				conf => confstr($name),
+				profiles => [],
+				features => [],
+				depends => [],
+				subtargets => []
+			};
+			push @target, $target;
+			$target{$name} = $target;
+			if ($name =~ /([^\/]+)\/([^\/]+)/) {
+				push @{$target{$1}->{subtargets}}, $2;
+				$target->{board} = $1;
+				$target->{boardconf} = confstr($1);
+				$target->{subtarget} = 1;
+				$target->{parent} = $target{$1};
+			}
+		};
+		/^Target-Name:\s*(.+)\s*$/ and $target->{name} = $1;
+		/^Target-Path:\s*(.+)\s*$/ and $target->{path} = $1;
+		/^Target-Arch:\s*(.+)\s*$/ and $target->{arch} = $1;
+		/^Target-Arch-Packages:\s*(.+)\s*$/ and $target->{arch_packages} = $1;
+		/^Target-Features:\s*(.+)\s*$/ and $target->{features} = [ split(/\s+/, $1) ];
+		/^Target-Depends:\s*(.+)\s*$/ and $target->{depends} = [ split(/\s+/, $1) ];
+		/^Target-Description:/ and $target->{desc} = get_multiline(*FILE);
+		/^Target-Optimization:\s*(.+)\s*$/ and $target->{cflags} = $1;
+		/^CPU-Type:\s*(.+)\s*$/ and $target->{cputype} = $1;
+		/^Linux-Version:\s*(.+)\s*$/ and $target->{version} = $1;
+		/^Linux-Release:\s*(.+)\s*$/ and $target->{release} = $1;
+		/^Linux-Kernel-Arch:\s*(.+)\s*$/ and $target->{karch} = $1;
+		/^Default-Subtarget:\s*(.+)\s*$/ and $target->{def_subtarget} = $1;
+		/^Default-Packages:\s*(.+)\s*$/ and $target->{packages} = [ split(/\s+/, $1) ];
+		/^Target-Profile:\s*(.+)\s*$/ and do {
+			$profile = {
+				id => $1,
+				name => $1,
+				packages => []
+			};
+			push @{$target->{profiles}}, $profile;
+		};
+		/^Target-Profile-Name:\s*(.+)\s*$/ and $profile->{name} = $1;
+		/^Target-Profile-Packages:\s*(.*)\s*$/ and $profile->{packages} = [ split(/\s+/, $1) ];
+		/^Target-Profile-Description:\s*(.*)\s*/ and $profile->{desc} = get_multiline(*FILE);
+		/^Target-Profile-Config:/ and $profile->{config} = get_multiline(*FILE, "\t");
+		/^Target-Profile-Kconfig:/ and $profile->{kconfig} = 1;
+	}
+	close FILE;
+	foreach my $target (@target) {
+		if (@{$target->{subtargets}} > 0) {
+			$target->{profiles} = [];
+			next;
+		}
+		@{$target->{profiles}} > 0 or $target->{profiles} = [
+			{
+				id => 'Default',
+				name => 'Default',
+				packages => []
+			}
+		];
+	}
+	return @target;
+}
+
 sub clear_packages() {
 	%subdir = ();
 	%preconfig = ();
@@ -30,6 +118,7 @@ sub clear_packages() {
 	%srcpackage = ();
 	%category = ();
 	%features = ();
+	%overrides = ();
 }
 
 sub parse_package_metadata($) {
@@ -40,6 +129,7 @@ sub parse_package_metadata($) {
 	my $preconfig;
 	my $subdir;
 	my $src;
+	my $override;
 
 	open FILE, "<$file" or do {
 		warn "Cannot open '$file': $!\n";
@@ -54,7 +144,12 @@ sub parse_package_metadata($) {
 			$subdir =~ s/^package\///;
 			$subdir{$src} = $subdir;
 			$srcpackage{$src} = [];
+			$override = "";
 			undef $pkg;
+		};
+		/^Override: \s*(.+?)\s*$/ and do {
+			$override = $1;
+			$overrides{$src} = 1;
 		};
 		next unless $src;
 		/^Package:\s*(.+?)\s*$/ and do {
@@ -70,6 +165,7 @@ sub parse_package_metadata($) {
 			$pkg->{buildtypes} = [];
 			$pkg->{subdir} = $subdir;
 			$pkg->{tristate} = 1;
+			$pkg->{override} = $override;
 			$package{$1} = $pkg;
 			push @{$srcpackage{$src}}, $pkg;
 		};
@@ -97,6 +193,8 @@ sub parse_package_metadata($) {
 		/^Submenu: \s*(.+)\s*$/ and $pkg->{submenu} = $1;
 		/^Submenu-Depends: \s*(.+)\s*$/ and $pkg->{submenudep} = $1;
 		/^Source: \s*(.+)\s*$/ and $pkg->{source} = $1;
+		/^License: \s*(.+)\s*$/ and $pkg->{license} = $1;
+		/^LicenseFiles: \s*(.+)\s*$/ and $pkg->{licensefiles} = $1;
 		/^Default: \s*(.+)\s*$/ and $pkg->{default} = $1;
 		/^Provides: \s*(.+)\s*$/ and do {
 			my @vpkg = split /\s+/, $1;
@@ -113,8 +211,10 @@ sub parse_package_metadata($) {
 		};
 		/^Menu-Depends: \s*(.+)\s*$/ and $pkg->{mdepends} = [ split /\s+/, $1 ];
 		/^Depends: \s*(.+)\s*$/ and $pkg->{depends} = [ split /\s+/, $1 ];
+		/^Conflicts: \s*(.+)\s*$/ and $pkg->{conflicts} = [ split /\s+/, $1 ];
 		/^Hidden: \s*(.+)\s*$/ and $pkg->{hidden} = 1;
 		/^Build-Variant: \s*([\w\-]+)\s*/ and $pkg->{variant} = $1;
+		/^Default-Variant: .*/ and $pkg->{variant_default} = 1;
 		/^Build-Only: \s*(.+)\s*$/ and $pkg->{buildonly} = 1;
 		/^Build-Depends: \s*(.+)\s*$/ and $pkg->{builddepends} = [ split /\s+/, $1 ];
 		/^Build-Depends\/(\w+): \s*(.+)\s*$/ and $pkg->{"builddepends/$1"} = [ split /\s+/, $2 ];

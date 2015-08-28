@@ -15,15 +15,18 @@ CPU_TYPE:=cortex-a8
 CPU_SUBTYPE:=vfpv3
 MAINTAINER:=Zoltan HERPAI <wigyori@uid0.hu>
 
-LINUX_VERSION:=3.13.7
-KERNELNAME:="zImage dtbs"
-DEFAULT_PACKAGES += uboot-envtools uboot-sunxi kmod-eeprom-sunxi kmod-wdt-sunxi
+KERNEL_PATCHVER:=4.1
+KERNELNAME:=zImage dtbs
 
 # A10: Cortex-A8
 # A13: Cortex-A8
 # A20: dual Cortex-A7
 # A31: quad Cortex-A7
+# A80: octa Cortex-A15/A7
+# H3: quad Cortex-A7
 
 include $(INCLUDE_DIR)/target.mk
+
+DEFAULT_PACKAGES += uboot-envtools kmod-eeprom-sunxi kmod-wdt-sunxi
 
 $(eval $(call BuildTarget))

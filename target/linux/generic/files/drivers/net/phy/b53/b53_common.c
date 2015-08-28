@@ -408,11 +408,11 @@ static void b53_enable_mib(struct b53_device *dev)
 {
 	u8 gc;
 
-	b53_read8(dev, B53_CTRL_PAGE, B53_GLOBAL_CONFIG, &gc);
+	b53_read8(dev, B53_MGMT_PAGE, B53_GLOBAL_CONFIG, &gc);
 
 	gc &= ~(GC_RESET_MIB | GC_MIB_AC_EN);
 
-	b53_write8(dev, B53_CTRL_PAGE, B53_GLOBAL_CONFIG, gc);
+	b53_write8(dev, B53_MGMT_PAGE, B53_GLOBAL_CONFIG, gc);
 }
 
 static int b53_apply(struct b53_device *dev)
@@ -480,6 +480,7 @@ static void b53_switch_reset_gpio(struct b53_device *dev)
 
 static int b53_switch_reset(struct b53_device *dev)
 {
+	u8 cpu_port = dev->sw_dev.cpu_port;
 	u8 mgmt;
 
 	b53_switch_reset_gpio(dev);
@@ -525,7 +526,7 @@ static int b53_switch_reset(struct b53_device *dev)
 				return -EINVAL;
 			}
 		}
-	} else if ((is531x5(dev) || is5301x(dev)) && dev->sw_dev.cpu_port == B53_CPU_PORT) {
+	} else if (is531x5(dev) && cpu_port == B53_CPU_PORT) {
 		u8 mii_port_override;
 
 		b53_read8(dev, B53_CTRL_PAGE, B53_PORT_OVERRIDE_CTRL,
@@ -533,6 +534,33 @@ static int b53_switch_reset(struct b53_device *dev)
 		b53_write8(dev, B53_CTRL_PAGE, B53_PORT_OVERRIDE_CTRL,
 			   mii_port_override | PORT_OVERRIDE_EN |
 			   PORT_OVERRIDE_LINK);
+	} else if (is5301x(dev)) {
+		if (cpu_port == 8) {
+			u8 mii_port_override;
+
+			b53_read8(dev, B53_CTRL_PAGE, B53_PORT_OVERRIDE_CTRL,
+				  &mii_port_override);
+			mii_port_override |= PORT_OVERRIDE_LINK |
+					     PORT_OVERRIDE_RX_FLOW |
+					     PORT_OVERRIDE_TX_FLOW |
+					     PORT_OVERRIDE_SPEED_2000M |
+					     PORT_OVERRIDE_EN;
+			b53_write8(dev, B53_CTRL_PAGE, B53_PORT_OVERRIDE_CTRL,
+				   mii_port_override);
+
+			/* TODO: Ports 5 & 7 require some extra handling */
+		} else {
+			u8 po_reg = B53_GMII_PORT_OVERRIDE_CTRL(cpu_port);
+			u8 gmii_po;
+
+			b53_read8(dev, B53_CTRL_PAGE, po_reg, &gmii_po);
+			gmii_po |= GMII_PO_LINK |
+				   GMII_PO_RX_FLOW |
+				   GMII_PO_TX_FLOW |
+				   GMII_PO_EN |
+				   GMII_PO_SPEED_2000M;
+			b53_write8(dev, B53_CTRL_PAGE, po_reg, gmii_po);
+		}
 	}
 
 	b53_enable_mib(dev);
@@ -775,8 +803,8 @@ static int b53_global_reset_switch(struct switch_dev *dev)
 	priv->enable_jumbo = 0;
 	priv->allow_vid_4095 = 0;
 
-	memset(priv->vlans, 0, sizeof(priv->vlans) * dev->vlans);
-	memset(priv->ports, 0, sizeof(priv->ports) * dev->ports);
+	memset(priv->vlans, 0, sizeof(*priv->vlans) * dev->vlans);
+	memset(priv->ports, 0, sizeof(*priv->ports) * dev->ports);
 
 	return b53_switch_reset(priv);
 }
@@ -1161,7 +1189,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
 		.alias = "bcm53011",
 		.vlans = 4096,
 		.enabled_ports = 0x1f,
-		.cpu_port = B53_CPU_PORT_25, // TODO: auto detect
+		.cpu_port = B53_CPU_PORT_25, /* TODO: auto detect */
 		.vta_regs = B53_VTA_REGS,
 		.duplex_reg = B53_DUPLEX_STAT_GE,
 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
@@ -1173,8 +1201,8 @@ static const struct b53_chip_data b53_switch_chips[] = {
 		.dev_name = "BCM53011",
 		.alias = "bcm53011",
 		.vlans = 4096,
-		.enabled_ports = 0x1f,
-		.cpu_port = B53_CPU_PORT_25, // TODO: auto detect
+		.enabled_ports = 0x1bf,
+		.cpu_port = B53_CPU_PORT_25, /* TODO: auto detect */
 		.vta_regs = B53_VTA_REGS,
 		.duplex_reg = B53_DUPLEX_STAT_GE,
 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
@@ -1186,8 +1214,8 @@ static const struct b53_chip_data b53_switch_chips[] = {
 		.dev_name = "BCM53012",
 		.alias = "bcm53011",
 		.vlans = 4096,
-		.enabled_ports = 0x1f,
-		.cpu_port = B53_CPU_PORT_25, // TODO: auto detect
+		.enabled_ports = 0x1bf,
+		.cpu_port = B53_CPU_PORT_25, /* TODO: auto detect */
 		.vta_regs = B53_VTA_REGS,
 		.duplex_reg = B53_DUPLEX_STAT_GE,
 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
@@ -1200,7 +1228,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
 		.alias = "bcm53018",
 		.vlans = 4096,
 		.enabled_ports = 0x1f,
-		.cpu_port = B53_CPU_PORT_25, // TODO: auto detect
+		.cpu_port = B53_CPU_PORT_25, /* TODO: auto detect */
 		.vta_regs = B53_VTA_REGS,
 		.duplex_reg = B53_DUPLEX_STAT_GE,
 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
@@ -1213,7 +1241,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
 		.alias = "bcm53019",
 		.vlans = 4096,
 		.enabled_ports = 0x1f,
-		.cpu_port = B53_CPU_PORT_25, // TODO: auto detect
+		.cpu_port = B53_CPU_PORT_25, /* TODO: auto detect */
 		.vta_regs = B53_VTA_REGS,
 		.duplex_reg = B53_DUPLEX_STAT_GE,
 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
@@ -1307,7 +1335,8 @@ static int b53_switch_init(struct b53_device *dev)
 
 	dev->reset_gpio = b53_switch_get_reset_gpio(dev);
 	if (dev->reset_gpio >= 0) {
-		ret = devm_gpio_request_one(dev->dev, dev->reset_gpio, GPIOF_OUT_INIT_HIGH, "robo_reset");
+		ret = devm_gpio_request_one(dev->dev, dev->reset_gpio,
+					    GPIOF_OUT_INIT_HIGH, "robo_reset");
 		if (ret)
 			return ret;
 	}

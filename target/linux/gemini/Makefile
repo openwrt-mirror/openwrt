@@ -9,13 +9,14 @@ include $(TOPDIR)/rules.mk
 ARCH:=arm
 BOARD:=gemini
 BOARDNAME:=Cortina Systems CS351x
-FEATURES:=squashfs pci
+SUBTARGETS:=raidsonic wiligear
+FEATURES:=squashfs pci rtc
 CPU_TYPE:=fa526
-MAINTAINER:=Imre Kaloz <kaloz@openwrt.org>
+MAINTAINER:=Roman Yeryomin <roman@advem.lv>
 
-LINUX_VERSION:=3.9.11
+KERNEL_PATCHVER:=4.1
 
-KERNELNAME:="zImage"
+KERNELNAME:=zImage
 
 include $(INCLUDE_DIR)/target.mk
 

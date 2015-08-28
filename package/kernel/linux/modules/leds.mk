@@ -22,12 +22,13 @@ endef
 
 $(eval $(call KernelPackage,leds-gpio))
 
+LED_TRIGGER_DIR=$(LINUX_DIR)/drivers/leds/trigger
 
 define KernelPackage/ledtrig-heartbeat
   SUBMENU:=$(LEDS_MENU)
   TITLE:=LED Heartbeat Trigger
   KCONFIG:=CONFIG_LEDS_TRIGGER_HEARTBEAT
-  FILES:=$(LINUX_DIR)/drivers/leds/$(if $(call kernel_patchver_ge,3.10),trigger/)ledtrig-heartbeat.ko
+  FILES:=$(LED_TRIGGER_DIR)/ledtrig-heartbeat.ko
   AUTOLOAD:=$(call AutoLoad,50,ledtrig-heartbeat)
 endef
 
@@ -42,7 +43,7 @@ define KernelPackage/ledtrig-gpio
   SUBMENU:=$(LEDS_MENU)
   TITLE:=LED GPIO Trigger
   KCONFIG:=CONFIG_LEDS_TRIGGER_GPIO
-  FILES:=$(LINUX_DIR)/drivers/leds/$(if $(call kernel_patchver_ge,3.10),trigger/)ledtrig-gpio.ko
+  FILES:=$(LED_TRIGGER_DIR)/ledtrig-gpio.ko
   AUTOLOAD:=$(call AutoLoad,50,ledtrig-gpio)
 endef
 
@@ -124,7 +125,7 @@ define KernelPackage/ledtrig-default-on
   SUBMENU:=$(LEDS_MENU)
   TITLE:=LED Default ON Trigger
   KCONFIG:=CONFIG_LEDS_TRIGGER_DEFAULT_ON
-  FILES:=$(LINUX_DIR)/drivers/leds/$(if $(call kernel_patchver_ge,3.10),trigger/)ledtrig-default-on.ko
+  FILES:=$(LED_TRIGGER_DIR)/ledtrig-default-on.ko
   AUTOLOAD:=$(call AutoLoad,50,ledtrig-default-on,1)
 endef
 
@@ -139,7 +140,7 @@ define KernelPackage/ledtrig-timer
   SUBMENU:=$(LEDS_MENU)
   TITLE:=LED Timer Trigger
   KCONFIG:=CONFIG_LEDS_TRIGGER_TIMER
-  FILES:=$(LINUX_DIR)/drivers/leds/$(if $(call kernel_patchver_ge,3.10),trigger/)ledtrig-timer.ko
+  FILES:=$(LED_TRIGGER_DIR)/ledtrig-timer.ko
   AUTOLOAD:=$(call AutoLoad,50,ledtrig-timer,1)
 endef
 
@@ -151,12 +152,26 @@ endef
 $(eval $(call KernelPackage,ledtrig-timer))
 
 
+define KernelPackage/ledtrig-transient
+  SUBMENU:=$(LEDS_MENU)
+  TITLE:=LED Transient Trigger
+  KCONFIG:=CONFIG_LEDS_TRIGGER_TRANSIENT
+  FILES:=$(LED_TRIGGER_DIR)/ledtrig-transient.ko
+  AUTOLOAD:=$(call AutoLoad,50,ledtrig-transient,1)
+endef
+
+define KernelPackage/ledtrig-transient/description
+ Kernel module that allows LEDs one time activation of a transient state.
+endef
+
+$(eval $(call KernelPackage,ledtrig-transient))
+
+
 define KernelPackage/ledtrig-oneshot
   SUBMENU:=$(LEDS_MENU)
   TITLE:=LED One-Shot Trigger
-  DEPENDS:=@!LINUX_3_3
   KCONFIG:=CONFIG_LEDS_TRIGGER_ONESHOT
-  FILES:=$(LINUX_DIR)/drivers/leds/$(if $(call kernel_patchver_ge,3.10),trigger/)ledtrig-oneshot.ko
+  FILES:=$(LED_TRIGGER_DIR)/ledtrig-oneshot.ko
   AUTOLOAD:=$(call AutoLoad,50,ledtrig-oneshot)
 endef
 
@@ -168,10 +183,26 @@ endef
 $(eval $(call KernelPackage,ledtrig-oneshot))
 
 
+define KernelPackage/leds-pca963x
+  SUBMENU:=$(LEDS_MENU)
+  TITLE:=PCA963x LED support
+  DEPENDS:=+kmod-i2c-core
+  KCONFIG:=CONFIG_LEDS_PCA963X
+  FILES:=$(LINUX_DIR)/drivers/leds/leds-pca963x.ko
+  AUTOLOAD:=$(call AutoLoad,60,leds-pca963x,1)
+endef
+
+define KernelPackage/leds-pca963x/description
+ Driver for the NXP PCA963x I2C LED controllers.
+endef
+
+$(eval $(call KernelPackage,leds-pca963x))
+
+
 define KernelPackage/leds-tlc59116
   SUBMENU:=$(LEDS_MENU)
   TITLE:=TLC59116 LED support
-  DEPENDS:=@TARGET_mvebu kmod-i2c-core
+  DEPENDS:=@TARGET_mvebu +kmod-i2c-core +kmod-regmap
   KCONFIG:=CONFIG_LEDS_TLC59116
   FILES:=$(LINUX_DIR)/drivers/leds/leds-tlc59116.ko
   AUTOLOAD:=$(call AutoLoad,60,leds-tlc59116,1)

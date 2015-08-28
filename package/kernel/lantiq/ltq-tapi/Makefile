@@ -19,15 +19,15 @@ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
 
 PKG_USE_MIPS16:=0
 PKG_CHECK_FORMAT_SECURITY:=0
+PKG_FIXUP:=autoreconf
 
-include $(INCLUDE_DIR)/ltqtapi.mk
 include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/ltq-tapi
   SUBMENU:=Voice over IP
   TITLE:=Lantiq TAPI subsystem
   URL:=http://www.lantiq.com/
-  DEPENDS:=$(LTQ_TAPI_TARGET) +kmod-ltq-ifxos
+  DEPENDS:=@(TARGET_lantiq_falcon||TARGET_lantiq_xway) +kmod-ltq-ifxos
   FILES:=$(PKG_BUILD_DIR)/src/drv_tapi.ko
   AUTOLOAD:=$(call AutoLoad,20,drv_tapi)
 endef
@@ -58,11 +58,6 @@ CONFIGURE_ARGS += \
 	$(call autoconf_bool,CONFIG_VOICE_CPE_TAPI_HDLC,hdlc) \
 	$(call autoconf_bool,CONFIG_VOICE_CPE_TAPI_TRACES,trace) \
 	$(call autoconf_bool,CONFIG_VOICE_CPE_TAPI_LINUX_HOTPLUG,hotplug)
-
-define Build/Configure
-	(cd $(PKG_BUILD_DIR); aclocal && autoconf && automake)
-	$(call Build/Configure/Default)
-endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/drv_tapi

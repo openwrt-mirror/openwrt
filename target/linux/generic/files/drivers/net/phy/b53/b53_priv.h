@@ -150,7 +150,7 @@ static inline int is63xx(struct b53_device *dev)
 	return 0;
 #endif
 }
-	
+
 static inline int is5301x(struct b53_device *dev)
 {
 	return dev->chip_id == BCM53010_DEVICE_ID ||
@@ -301,7 +301,12 @@ static inline int b53_write64(struct b53_device *dev, u8 page, u8 reg,
 
 #ifdef CONFIG_BCM47XX
 
+#include <linux/version.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 1, 0))
+#include <linux/bcm47xx_nvram.h>
+#else
 #include <bcm47xx_nvram.h>
+#endif
 #include <bcm47xx_board.h>
 static inline int b53_switch_get_reset_gpio(struct b53_device *dev)
 {
