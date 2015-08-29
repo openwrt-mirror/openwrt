@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pcap-dnsproxy
-PKG_VERSION:=0.4.3.1
+PKG_VERSION:=0.4.3.2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/chengr28/Pcap_DNSProxy.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=5268a5cf7841f8c6883caac405a14efcf6277e55
+PKG_SOURCE_VERSION:=8bc14a2b5e570a07a7e26afea5110e979d5d95b1
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_LICENSE:=GPL-2.0
@@ -95,9 +95,7 @@ define Package/pcap-dnsproxy/install
 	$(INSTALL_BIN) ./files/pcap-dnsproxy.init $(1)/etc/init.d/pcap-dnsproxy
 	$(INSTALL_DIR) $(1)/etc/pcap-dnsproxy
 	$(SED) 's,Listen Port = 53,Listen Port = $(CONFIG_PCAP_DNSPROXY_LISTENPORT),g'                          $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Buffer Queue Limits = 64,Buffer Queue Limits = 128,g'                                         $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(SED) 's,Log Maximum Size = 8MB,Log Maximum Size = 50KB,g'                                             $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
-	$(SED) 's,Accept Type = dummy value for sed tool,Accept Type = Permit:1|2|5|6|12|15|16|28|33|99,g'      $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(SED) 's,EDNS Label = 0,EDNS Label = 1,g'                                                              $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Config.ini $(1)/etc/pcap-dnsproxy/Config.conf
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/Source/ExampleConfig/Hosts.ini $(1)/etc/pcap-dnsproxy/Hosts.conf
