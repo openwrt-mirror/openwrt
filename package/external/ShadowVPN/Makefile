@@ -5,6 +5,7 @@
 # See /LICENSE for more information.
 #
 
+### R.I.P. ShadowVPN
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ShadowVPN
@@ -16,7 +17,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/clowwindy/ShadowVPN.git
+PKG_SOURCE_URL:=https://github.com/wongsyrone/ShadowVPN.git
 
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=COPYING
