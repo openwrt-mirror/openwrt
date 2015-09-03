@@ -28,12 +28,14 @@ PKG_CHECK_FORMAT_SECURITY:=0
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
+include $(INCLUDE_DIR)/nls.mk
 
 define Package/libintl-full
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=GNU Internationalization library
   URL:=http://www.gnu.org/software/gettext/
+  DEPENDS:=$(ICONV_DEPENDS)
 endef
 
 TARGET_CFLAGS += $(FPIC)

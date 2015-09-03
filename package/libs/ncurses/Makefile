@@ -117,7 +117,7 @@ ifneq ($(HOST_OS),FreeBSD)
 			mv $$$$dir $$$$(echo -ne "\x$$$$dir"); \
 		done \
 	)
-	for file in a/ansi d/dumb l/linux r/rxvt r/rxvt-unicode s/screen v/vt100 v/vt102 x/xterm x/xterm-color x/xterm-256color; do \
+	for file in a/ansi d/dumb l/linux r/rxvt r/rxvt-unicode s/screen s/screen-256color v/vt100 v/vt102 x/xterm x/xterm-color x/xterm-256color x/xterm-88color; do \
 		$(INSTALL_DIR) $(1)/usr/share/terminfo/`dirname $$$$file`; \
 		$(CP) $(PKG_INSTALL_DIR)/usr/share/terminfo/$$$$file \
 			$(1)/usr/share/terminfo/$$$$file; \

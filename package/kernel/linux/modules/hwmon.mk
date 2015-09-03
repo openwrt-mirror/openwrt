@@ -239,6 +239,43 @@ endef
 $(eval $(call KernelPackage,hwmon-w83627hf))
 
 
+define KernelPackage/hwmon-it87
+  TITLE:=ITE IT87xx and compatibles monitoring support
+  KCONFIG:=CONFIG_SENSORS_IT87
+  FILES:=$(LINUX_DIR)/drivers/hwmon/it87.ko
+  AUTOLOAD:=$(call AutoLoad,50,it87)
+  $(call AddDepends/hwmon,@TARGET_rdc||TARGET_x86||TARGET_x86_64 +kmod-hwmon-vid)
+endef
+
+define KernelPacakge/hwmon-it87/description
+  Kernel module for the ITE IT87xx and compatibles.
+  support for ITE IT8705F, IT8712F,
+  IT8716F, IT8718F, IT8720F, IT8721F, IT8726F, IT8728F, IT8758E,
+  IT8771E, IT8772E, IT8782F, IT8783E/F and IT8603E sensor chips,
+  and the SiS950 clone.
+endef
+
+$(eval $(call KernelPackage,hwmon-it87))
+
+
+define KernelPackage/hwmon-coretemp
+  TITLE:=Intel Core/Core2/Atom temperature sensor
+  KCONFIG:=CONFIG_SENSORS_CORETEMP
+  FILES:=$(LINUX_DIR)/drivers/hwmon/coretemp.ko
+  AUTOLOAD:=$(call AutoLoad,50,coretemp)
+  $(call AddDepends/hwmon,@TARGET_rdc||TARGET_x86||TARGET_x86_64)
+endef
+
+define KernelPacakge/hwmon-it87/description
+  Kernel module for the Core/Core2/Atom.
+  support for the temperature sensor inside your CPU.
+  Most of the family 6 CPUs are supported.
+  Check Documentation/hwmon/coretemp for details.
+endef
+
+$(eval $(call KernelPackage,hwmon-coretemp))
+
+
 define KernelPackage/hwmon-gsc
   TITLE:=Gateworks GSC monitoring support
   KCONFIG:=CONFIG_SENSORS_GSC

@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qemu
-PKG_VERSION:=0.14.1
+PKG_VERSION:=2.0.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=@SAVANNAH/qemu
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_MD5SUM:=b6c713a8db638e173af53a62d5178640
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_MD5SUM:=2790f44fd76da5de5024b4aafeb594c2
 
 include $(INCLUDE_DIR)/host-build.mk
 
@@ -20,6 +20,9 @@ HOST_CFLAGS += -I$(STAGING_DIR_HOST)/include/e2fsprogs
 
 define Host/Configure
 	(cd $(HOST_BUILD_DIR); \
+		PKG_CONFIG=/usr/bin/pkg-config \
+		PKG_CONFIG_LIBDIR=/usr/lib/pkgconfig:/usr/share/pkgconfig \
+		PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig \
 		CFLAGS="$(HOST_CFLAGS)" \
 		LDFLAGS="$(HOST_LDFLAGS)" \
 		$(HOST_CONFIGURE_CMD) \
@@ -29,7 +32,7 @@ define Host/Configure
 endef
 
 define Host/Compile
-	$(MAKE) -C $(HOST_BUILD_DIR) qemu-img
+	$(MAKE) $(HOST_JOBS) -C $(HOST_BUILD_DIR) qemu-img
 endef
 
 define Host/Install

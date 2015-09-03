@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=iperf
-PKG_VERSION:=2.0.5
+PKG_VERSION:=3.0.9
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=@SF/$(PKG_NAME)
-PKG_MD5SUM:=44b5536b67719f4250faed632a3cd016
+PKG_SOURCE_URL:=http://downloads.es.net/pub/iperf
+PKG_MD5SUM:=a6b83037ad43dd2ca9207c26379af770
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
 PKG_LICENSE:=BSD-3-Clause
@@ -80,7 +80,9 @@ endif
 
 define Package/iperf/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/iperf $(1)/usr/bin/iperf
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/.libs/iperf3 $(1)/usr/bin/iperf3
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/.libs/libiperf.so* $(1)/usr/lib/
 endef
 Package/iperf-mt/install = $(Package/iperf/install)
 

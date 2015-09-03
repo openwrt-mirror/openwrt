@@ -22,6 +22,7 @@ PKG_LICENSE_FILES:=COPYING
 PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
 
 PKG_BUILD_PARALLEL:=1
+PKG_BUILD_DEPENDS:=util-linux
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -35,7 +36,7 @@ define Package/samba36-server
   CATEGORY:=Network
   TITLE:=Samba 3.6 SMB/CIFS server
   URL:=http://www.samba.org/
-  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS)
+  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS) +libaio
 endef
 
 define Package/samba36-client
@@ -108,6 +109,7 @@ CONFIGURE_ARGS += \
 	--with-piddir=/var/run \
 	--with-privatedir=/etc/samba \
 	--with-sendfile-support \
+	--with-aio-support \
 	--without-acl-support \
 	--without-cluster-support \
 	--without-ads \
@@ -148,6 +150,13 @@ define Package/samba36-server/install
 	$(LN) samba_multicall $(1)/usr/sbin/nmbd
 	$(LN) samba_multicall $(1)/usr/sbin/smbpasswd
 endef
+
+
+define Package/samba36-server/conffiles
+/etc/config/samba
+/etc/samba/smb.conf.template
+endef
+
 
 define Package/samba36-client/install
 	$(INSTALL_DIR) $(1)/usr/sbin

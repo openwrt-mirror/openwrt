@@ -37,6 +37,27 @@ endef
 
 $(eval $(call KernelPackage,hid-generic))
 
+
+define KernelPackage/hid-dragonrise
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=HID: DragonRise Inc. with force feedback
+  DEPENDS:=+kmod-usb-hid
+  KCONFIG:=\
+	CONFIG_HID_DRAGONRISE \
+	CONFIG_DRAGONRISE_FF=y
+	CONFIG_INPUT_FF_MEMLESS=y \
+  FILES:=$(LINUX_DIR)/drivers/hid/hid-dr.ko
+  AUTOLOAD:=$(call AutoLoad,71,hid-dr)
+  $(call AddDepends/hid)
+endef
+
+define KernelPackage/hid-dragonrise/description
+ Kernel modules for DragonRise Inc. force feedback
+endef
+
+$(eval $(call KernelPackage,hid-dragonrise))
+
+
 define KernelPackage/input-core
   SUBMENU:=$(INPUT_MODULES_MENU)
   TITLE:=Input device core

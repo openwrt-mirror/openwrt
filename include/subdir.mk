@@ -23,7 +23,7 @@ define subtarget
 endef
 
 define ERROR
-	($(call MESSAGE, $(2)); $(if $(BUILD_LOG), echo "$(2)" >> $(BUILD_LOG_DIR)/$(1)/error.txt))
+	($(call MESSAGE, $(2)); $(if $(BUILD_LOG), echo "$(2)" | tee -a $(BUILD_LOG_DIR)/all.log >> $(BUILD_LOG_DIR)/$(1)/error.txt))
 endef
 
 lastdir=$(word $(words $(subst /, ,$(1))),$(subst /, ,$(1)))
@@ -43,7 +43,7 @@ define subdir
       $(call warn_eval,$(1)/$(bd),t,T,$(1)/$(bd)/$(target): $(if $(QUILT),,$($(1)/$(bd)/$(target)) $(call $(1)//$(target),$(1)/$(bd))))
 	  	$(if $(BUILD_LOG),@mkdir -p $(BUILD_LOG_DIR)/$(1)/$(bd))
         $(foreach variant,$(if $(BUILD_VARIANT),$(BUILD_VARIANT),$(if $(strip $($(1)/$(bd)/variants)),$($(1)/$(bd)/variants),$(if $($(1)/$(bd)/default-variant),$($(1)/$(bd)/default-variant),__default))),
-			$(if $(call debug,$(1)/$(bd),v),,@)+$(if $(BUILD_LOG),set -o pipefail;) $$(SUBMAKE) -r -C $(1)/$(bd) $(target) BUILD_VARIANT="$(filter-out __default,$(variant))" $(if $(BUILD_LOG),SILENT= 2>&1 | tee $(BUILD_LOG_DIR)/$(1)/$(bd)/$(target).txt) $(if $(findstring $(bd),$($(1)/builddirs-ignore-$(target))), || $(call ERROR,$(1),   ERROR: $(1)/$(bd) failed to build$(if $(filter-out __default,$(variant)), (build variant: $(variant))).))
+			$(if $(call debug,$(1)/$(bd),v),,@)+$(if $(BUILD_LOG),set -o pipefail;) $$(SUBMAKE) -r -C $(1)/$(bd) $(target) BUILD_VARIANT="$(filter-out __default,$(variant))" $(if $(BUILD_LOG),SILENT= 2>&1 | tee -a $(BUILD_LOG_DIR)/all.log | tee $(BUILD_LOG_DIR)/$(1)/$(bd)/$(target).txt) $(if $(findstring $(bd),$($(1)/builddirs-ignore-$(target))), || $(call ERROR,$(1),   ERROR: $(1)/$(bd) failed to build$(if $(filter-out __default,$(variant)), (build variant: $(variant))).))
         )
       $(if $(PREREQ_ONLY)$(DUMP_TARGET_DB),,
         # aliases

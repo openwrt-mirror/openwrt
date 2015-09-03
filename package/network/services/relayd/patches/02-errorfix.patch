@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7e960ab..d2ae69c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 2.8)
+ 
+ PROJECT(relayd C)
+-ADD_DEFINITIONS(-Os -Wall -Werror --std=gnu99 -g3)
++ADD_DEFINITIONS(-Os -Wall -Werror -Wno-error=unused-result --std=gnu99 -g3)
+ 
+ IF(APPLE)
+   INCLUDE_DIRECTORIES(/opt/local/include)

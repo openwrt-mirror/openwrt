@@ -93,7 +93,13 @@ $(call Package/e2fsprogs)
   DEPENDS:= +e2fsprogs
 endef
 
-TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
+define Package/e4defrag
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem e4defrag utility
+  DEPENDS:= +e2fsprogs
+endef
+
+TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections -D_FILE_OFFSET_BITS=64
 
 CONFIGURE_VARS += \
 	ac_cv_lib_pthread_sem_init=no
@@ -219,6 +225,11 @@ define Package/debugfs/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libss.so.* $(1)/usr/lib/
 endef
 
+define Package/e4defrag/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/e4defrag $(1)/usr/sbin/
+endef
+
 $(eval $(call BuildPackage,e2fsprogs))
 $(eval $(call BuildPackage,libext2fs))
 $(eval $(call BuildPackage,tune2fs))
@@ -228,3 +239,4 @@ $(eval $(call BuildPackage,dumpe2fs))
 $(eval $(call BuildPackage,e2freefrag))
 $(eval $(call BuildPackage,filefrag))
 $(eval $(call BuildPackage,debugfs))
+$(eval $(call BuildPackage,e4defrag))
