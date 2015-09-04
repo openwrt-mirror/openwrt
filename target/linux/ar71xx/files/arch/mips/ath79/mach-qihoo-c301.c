@@ -89,6 +89,10 @@ static struct flash_platform_data flash __initdata = {NULL, NULL, 0};
 static int qihoo_c301_board=0;
 static u8 wlan24mac[ETH_ALEN];
 
+static int qihoo_c301_board = 0;
+
+static u8 wlan24mac[ETH_ALEN];
+
 static void qihoo_c301_get_mac(const char *name, char *mac)
 {
 	u8 *nvram = (u8 *) KSEG1ADDR(QIHOO_C301_NVRAM_ADDR);
@@ -166,6 +170,8 @@ static void __init qihoo_c301_setup(void)
 			 GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED,
 			 "USB power");
 	ath79_register_usb();
+
+	qihoo_c301_board = 1;
 }
 
 MIPS_MACHINE(ATH79_MACH_QIHOO_C301, "QIHOO-C301", "Qihoo 360 C301",
@@ -194,6 +200,7 @@ static int qihoo_init_wmac(void)
 	art = kzalloc(0x1000, GFP_KERNEL);
 	if (!art)
 		return -1;
+
 	ret = mtd_read(mtd, QIHOO_C301_WMAC_CALDATA_OFFSET, 0x1000, &nb, art);
 	if (nb != 0x1000)
 	{

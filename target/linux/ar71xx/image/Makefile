@@ -283,6 +283,16 @@ $(Device/tplink)
   IMAGE_SIZE := 15872k
 endef
 
+define Device/tl-wr2041n-v1
+$(Device/tplink-4mlzma)
+  BOARDNAME = TL-WR2041N-v1
+  # DEVICE_PROFILE in generic/profile/tp-link.mk
+  # and there's no MultiProfile in new build code.
+  # if you need it, use $(Device/tl-origin-device) instead
+  DEVICE_PROFILE = TLWR2041
+  TPLINK_HWID := 0x20410001
+endef
+
 define Device/tl-wdr4300-v1
 $(Device/tplink-8mlzma)
   BOARDNAME = TL-WDR4300
@@ -315,7 +325,7 @@ define Device/mw4530r-v1
 $(Device/tl-wdr4300-v1)
   TPLINK_HWID := 0x45300001
 endef
-TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-wdr4310-v1 mw4530r-v1
+TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wr2041n-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-wdr4310-v1 mw4530r-v1
 
 define Device/archer-c5
     $(Device/tplink-16mlzma)
@@ -1266,6 +1276,7 @@ wndr3700_mtdlayout=mtdparts=spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,7680k(firmw
 wndr3700v2_mtdlayout=mtdparts=spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,15872k(firmware),64k(art)ro
 wndr4300_mtdlayout=mtdparts=ar934x-nfc:256k(u-boot)ro,256k(u-boot-env)ro,256k(caldata),512k(pot),2048k(language),512k(config),3072k(traffic_meter),2048k(kernel),121856k(ubi),123904k@0x6c0000(firmware),256k(caldata_backup),-(reserved)
 r6100_mtdlayout=mtdparts=ar934x-nfc:128k(u-boot)ro,256k(caldata),256k(caldata-backup),512k(config),512k(pot),2048k(kernel),122240k(ubi),25600k@0x1a0000(firmware),2048k(language),3072k(traffic_meter)
+wndr4300_mtdlayout=mtdparts=ar934x-nfc:256k(u-boot)ro,256k(u-boot-env)ro,256k(caldata),512k(pot),2048k(language),512k(config),3072k(traffic_meter),2048k(kernel),121856k(ubi),123904k@0x6c0000(firmware),256k(caldata_backup),-(reserved)
 zcn1523h_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6208k(rootfs),1472k(kernel),64k(configure)ro,64k(mfg)ro,64k(art)ro,7680k@0x50000(firmware)
 mynet_n600_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15872k(firmware),64k(radiocfg)ro
 qihoo_c301_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15744k(firmware),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware_backup),1024k(privatedata)
@@ -1273,6 +1284,9 @@ qihoo_c301_dual_flash_mtdlayout=mtdparts=flash:256k(u-boot),64k(u-boot-env),64k(
 qihoo_c301_flash2_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),15744k(firmware_backup),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware),1024k(privatedata)
 mynet_rext_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,7808k(firmware),64k(nvram)ro,64k(ART)ro
 zyx_nbg6716_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(env)ro,64k(RFdata)ro,-(nbu);ar934x-nfc:2048k(zyxel_rfsd),2048k(romd),1024k(header),2048k(kernel),-(ubi)
+qihoo_c301_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),15744k(firmware),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(upgrade2),1024k(privatedata)
+qihoo_c301_flash2_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),15744k(upgrade1),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware),1024k(privatedata)
+qihoo_c301_32m_mtdlayout=mtdparts=flash:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),32256k(firmware),64k(radiocfg)
 
 
 define Image/BuildKernel
@@ -2241,9 +2255,10 @@ $(eval $(call SingleProfile,Planex,64kraw,MZKW300NH,mzk-w300nh,MZK-W300NH,ttyS0,
 $(eval $(call SingleProfile,Seama,64k,MYNETN600,mynet-n600,MYNET-N600,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd16_wd_db600,1310720,16187392))
 $(eval $(call SingleProfile,Seama,64k,MYNETN750,mynet-n750,MYNET-N750,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd13_wd_av,1310720,16187392))
 
-$(eval $(call SingleProfile,Seama,64k,QIHOOC301FLASH1,qihoo-c301-flash1,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),wrgac26_qihoo360_360rg,1310720,16121856))
-$(eval $(call SingleProfile,Seama,64k,QIHOOC301FLASH2,qihoo-c301-flash2,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_flash2_mtdlayout),wrgac26_qihoo360_360rg,1310720,15728640))
-$(eval $(call SingleProfile,Seama,64k,QIHOOC301DUALFLASH,qihoo-c301-dual-flash,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_dual_flash_mtdlayout),wrgac26_qihoo360_360rg,1310720,33030144))
+$(eval $(call SingleProfile,Seama,64k,QIHOO36016M,qihoo-c301-flash1-16m,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),wrgac26_qihoo360_360rg,1310720,16121856))
+$(eval $(call SingleProfile,Seama,64k,QIHOO360FLASH2,qihoo-c301-flash2-16m,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_flash2_mtdlayout),wrgac26_qihoo360_360rg,1310720,15728640))
+$(eval $(call SingleProfile,Seama,64k,QIHOO36032M,qihoo-c301-dual-flash-32m,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_32m_mtdlayout),wrgac26_qihoo360_360rg,1310720,33030144))
+
 $(eval $(call SingleProfile,Senao,squashfs-only,EAP300V2,eap300v2,EAP300V2,ttyS0,115200,$$(eap300v2_mtdlayout)))
 
 $(eval $(call SingleProfile,TPLINKOLD,squashfs-only,TLWR841NV15,tl-wr841nd-v1.5,TL-WR841N-v1.5,ttyS0,115200,0x08410002,2,4M))
@@ -2306,6 +2321,7 @@ $(eval $(call MultiProfile,EWDORIN, EWDORINAP EWDORINRT EWDORIN16M))
 $(eval $(call MultiProfile,QIHOOC301,QIHOOC301FLASH1 QIHOOC301FLASH2 QIHOOC301DUALFLASH))
 $(eval $(call MultiProfile,OPENMESH,OM2P OM5P MR600 MR900))
 $(eval $(call MultiProfile,TEW652BRP,TEW652BRP_FW TEW652BRP_RECOVERY))
+$(eval $(call MultiProfile,QIHOO360,QIHOO36016M QIHOO360FLASH2 QIHOO36032M))
 $(eval $(call MultiProfile,TLMR3220,TLMR3220V1))
 $(eval $(call MultiProfile,TLMR3420,TLMR3420V1))
 $(eval $(call MultiProfile,TLWA701,TLWA701NV1))

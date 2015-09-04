@@ -227,6 +227,9 @@ ifeq ($(DUMP),1)
   endif
   ifneq ($(findstring arm,$(ARCH)),)
     CPU_TYPE ?= xscale
+    ifneq ($(CONFIG_GCC_VERSION_4_9_LINARO)$(CONFIG_GCC_VERSION_5),)
+      CPU_CFLAGS += -fno-ipa-sra
+    endif
     CPU_CFLAGS_arm920t = -march=armv4t -mtune=arm920t
     CPU_CFLAGS_arm926ej-s = -march=armv5te -mtune=arm926ej-s
     CPU_CFLAGS_arm1136j-s = -march=armv6 -mtune=arm1136j-s

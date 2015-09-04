@@ -63,8 +63,23 @@ case "$FIRMWARE" in
 		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) +2)
 		;;
 	qihoo-c301)
-		ath10kcal_extract "radiocfg" 20480 2116
-		ath10kcal_patch_mac $(mtd_get_mac_ascii devdata wlan5mac)
+		# for dual flash
+		local mac
+		local mtd
+		mtd=$(cat /proc/mtd | grep radiocfg | sed 's/mtd\([0-9]*\):.*/\1/g')
+		mac=$(mtd_get_mac_ascii devdata wlan5mac)
+		if [ -z "$mac" ]; then
+			mac=$(macaddr_add $(cat /sys/class/net/eth0/address) -2)
+		fi
+		dd if=/dev/mtdblock${mtd} \
+			bs=1 skip=20480 count=6 \
+			of=/tmp/ath10k-board.bin
+		macaddr_2bin $mac >> /tmp/ath10k-board.bin
+		dd if=/dev/mtdblock${mtd} \
+			bs=1 skip=20492 count=2104 >> /tmp/ath10k-board.bin
+		# origin as below
+		#ath10kcal_extract "radiocfg" 20480 2116
+		#ath10kcal_patch_mac $(mtd_get_mac_ascii devdata wlan5mac)
 		;;
 	esr1750 | \
 	epg5000)

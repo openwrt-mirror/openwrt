@@ -2,11 +2,11 @@
 +++ b/gcc/config.gcc
 @@ -575,7 +575,7 @@ case ${target} in
  esac
- 
+
  # Common C libraries.
 -tm_defines="$tm_defines LIBC_GLIBC=1 LIBC_UCLIBC=2 LIBC_BIONIC=3"
 +tm_defines="$tm_defines LIBC_GLIBC=1 LIBC_UCLIBC=2 LIBC_BIONIC=3 LIBC_MUSL=4"
- 
+
  # 32-bit x86 processors supported by --with-arch=.  Each processor
  # MUST be separated by exactly one space.
 @@ -720,6 +720,9 @@ case ${target} in
@@ -32,17 +32,17 @@
  #define OPTION_BIONIC (linux_libc == LIBC_BIONIC)
 +#define OPTION_MUSL   (linux_libc == LIBC_MUSL)
  #endif
- 
+
  #define GNU_USER_TARGET_OS_CPP_BUILTINS()			\
 @@ -53,18 +55,21 @@ see the files COPYING3 and COPYING.RUNTI
     uClibc or Bionic is the default C library and whether
     -muclibc or -mglibc or -mbionic has been passed to change the default.  */
- 
+
 -#define CHOOSE_DYNAMIC_LINKER1(LIBC1, LIBC2, LIBC3, LD1, LD2, LD3)	\
 -  "%{" LIBC2 ":" LD2 ";:%{" LIBC3 ":" LD3 ";:" LD1 "}}"
 +#define CHOOSE_DYNAMIC_LINKER1(LIBC1, LIBC2, LIBC3, LIBC4, LD1, LD2, LD3, LD4)	\
 +  "%{" LIBC2 ":" LD2 ";:%{" LIBC3 ":" LD3 ";:%{" LIBC4 ":" LD4 ";:" LD1 "}}}"
- 
+
  #if DEFAULT_LIBC == LIBC_GLIBC
 -#define CHOOSE_DYNAMIC_LINKER(G, U, B) \
 -  CHOOSE_DYNAMIC_LINKER1 ("mglibc", "muclibc", "mbionic", G, U, B)
@@ -65,7 +65,7 @@
  #error "Unsupported DEFAULT_LIBC"
  #endif /* DEFAULT_LIBC */
 @@ -84,21 +89,92 @@ see the files COPYING3 and COPYING.RUNTI
- 
+
  #define GNU_USER_DYNAMIC_LINKER						\
    CHOOSE_DYNAMIC_LINKER (GLIBC_DYNAMIC_LINKER, UCLIBC_DYNAMIC_LINKER,	\
 -			 BIONIC_DYNAMIC_LINKER)
@@ -82,11 +82,11 @@
    CHOOSE_DYNAMIC_LINKER (GLIBC_DYNAMIC_LINKERX32, UCLIBC_DYNAMIC_LINKERX32, \
 -			 BIONIC_DYNAMIC_LINKERX32)
 +			 BIONIC_DYNAMIC_LINKERX32, MUSL_DYNAMIC_LINKERX32)
- 
+
  /* Whether we have Bionic libc runtime */
  #undef TARGET_HAS_BIONIC
  #define TARGET_HAS_BIONIC (OPTION_BIONIC)
- 
+
 +/* musl avoids problematic includes by rearranging the include directories.
 + * Unfortunately, this is mostly duplicated from cppdefault.c */
 +#if DEFAULT_LIBC == LIBC_MUSL

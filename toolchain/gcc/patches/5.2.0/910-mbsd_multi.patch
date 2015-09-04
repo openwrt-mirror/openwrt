@@ -19,7 +19,7 @@
 @@ -122,6 +122,9 @@ static int class_dump_flags;
  /* Whether any standard preincluded header has been preincluded.  */
  static bool done_preinclude;
- 
+
 +/* Check if a port honours COPTS.  */
 +static int honour_copts = 0;
 +
@@ -29,7 +29,7 @@
 @@ -449,6 +452,12 @@ c_common_handle_option (size_t scode, co
        flag_no_builtin = !value;
        break;
- 
+
 +    case OPT_fhonour_copts:
 +      if (c_language == clk_c) {
 +        honour_copts++;
@@ -42,7 +42,7 @@
 @@ -1034,6 +1043,47 @@ c_common_init (void)
        return false;
      }
- 
+
 +  if (c_language == clk_c) {
 +    char *ev = getenv ("GCC_HONOUR_COPTS");
 +    int evv;
@@ -86,13 +86,13 @@
 +
    return true;
  }
- 
+
 --- a/gcc/c-family/c.opt
 +++ b/gcc/c-family/c.opt
 @@ -431,6 +431,10 @@ Wfloat-conversion
  C ObjC C++ ObjC++ Var(warn_float_conversion) LangEnabledBy(C ObjC C++ ObjC++,Wconversion)
  Warn for implicit type conversions that cause loss of floating point precision
- 
+
 +Werror-maybe-reset
 +C ObjC C++ ObjC++
 +; Documented in common.opt
@@ -103,7 +103,7 @@
 @@ -1161,6 +1165,9 @@ C++ ObjC++ Optimization Alias(fexception
  fhonor-std
  C++ ObjC++ Ignore Warn(switch %qs is no longer supported)
- 
+
 +fhonour-copts
 +C ObjC C++ ObjC++ RejectNegative
 +
@@ -115,7 +115,7 @@
 @@ -561,6 +561,10 @@ Werror=
  Common Joined
  Treat specified warning as error
- 
+
 +Werror-maybe-reset
 +Common
 +If environment variable GCC_NO_WERROR is set, act as -Wno-error
@@ -126,7 +126,7 @@
 @@ -1360,6 +1364,9 @@ fguess-branch-probability
  Common Report Var(flag_guess_branch_prob) Optimization
  Enable guessing of branch probabilities
- 
+
 +fhonour-copts
 +Common RejectNegative
 +
@@ -138,7 +138,7 @@
 @@ -1699,6 +1699,17 @@ common_handle_option (struct gcc_options
  			       opts, opts_set, loc, dc);
        break;
- 
+
 +    case OPT_Werror_maybe_reset:
 +      {
 +        char *ev = getenv ("GCC_NO_WERROR");
@@ -158,7 +158,7 @@
 @@ -163,6 +163,11 @@ in older programs.  This warning is on b
  Make all warnings into hard errors.  Source code which triggers warnings
  will be rejected.
- 
+
 + at item -Werror-maybe-reset
 + at opindex Werror-maybe-reset
 +Act like @samp{-Wno-error} if the @env{GCC_NO_WERROR} environment
@@ -181,7 +181,7 @@
 @@ -5371,6 +5371,22 @@ This option is only supported for C and
  @option{-Wall} and by @option{-Wpedantic}, which can be disabled with
  @option{-Wno-pointer-sign}.
- 
+
 + at item -Werror-maybe-reset
 + at opindex Werror-maybe-reset
 +Act like @samp{-Wno-error} if the @env{GCC_NO_WERROR} environment
@@ -204,17 +204,17 @@
 @@ -7844,7 +7860,7 @@ so, the first branch is redirected to ei
  second branch or a point immediately following it, depending on whether
  the condition is known to be true or false.
- 
+
 -Enabled at levels @option{-O2}, @option{-O3}, @option{-Os}.
 +Enabled at levels @option{-O3}.
- 
+
  @item -fsplit-wide-types
  @opindex fsplit-wide-types
 --- a/gcc/java/jvspec.c
 +++ b/gcc/java/jvspec.c
 @@ -629,6 +629,7 @@ lang_specific_pre_link (void)
       class name.  Append dummy `.c' that can be stripped by set_input so %b
-      is correct.  */ 
+      is correct.  */
    set_input (concat (main_class_name, "main.c", NULL));
 +  putenv ("GCC_HONOUR_COPTS=s"); /* XXX hack!  */
    err = do_spec (jvgenmain_spec);

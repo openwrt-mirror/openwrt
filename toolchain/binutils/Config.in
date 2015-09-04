@@ -3,11 +3,15 @@
 choice
 	prompt "Binutils Version" if TOOLCHAINOPTS
 	default BINUTILS_VERSION_LINARO
+	default BINUTILS_VERSION_LINARO_2_25
 	help
 	  Select the version of binutils you wish to use.
 
 	config BINUTILS_VERSION_LINARO
 		bool "Linaro binutils 2.24"
+
+	config BINUTILS_VERSION_LINARO_2_25
+		bool "Linaro binutils 2.25"
 
 endchoice
 
@@ -22,4 +26,5 @@ config BINUTILS_VERSION
 	string
 	prompt "Binutils Version" if (TOOLCHAINOPTS && NULL)
 	default "linaro"          if BINUTILS_VERSION_LINARO
+	default "linaro-2.25"     if BINUTILS_VERSION_LINARO_2_25
 	default "linaro"

@@ -254,6 +254,32 @@ define Package/libgfortran/config
 	endmenu
 endef
 
+define Package/libgo
+$(call Package/gcc/Default)
+  TITLE:=Go support library
+  DEPENDS+=@INSTALL_GCCGO
+endef
+
+define Package/libgo/config
+	menu "Configuration"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libgo
+
+	config LIBGO_ROOT_DIR
+		string
+		prompt "libgo shared library base directory"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libgo
+		default TOOLCHAIN_ROOT  if !NATIVE_TOOLCHAIN
+		default "/"  if NATIVE_TOOLCHAIN
+
+	config LIBGO_FILE_SPEC
+		string
+		prompt "libgo shared library files (use wildcards)"
+		depends on EXTERNAL_TOOLCHAIN && PACKAGE_libgo
+		default "./usr/lib/libgo.so.*"
+
+	endmenu
+endef
+
 define Package/ldd
 $(call Package/libc/Default)
   DEPENDS:=@!USE_MUSL
@@ -410,6 +436,11 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
 	$(CP) $(TOOLCHAIN_DIR)/lib/libgfortran.so.* $(1)/usr/lib/
   endef
 
+  define Package/libgo/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(if $(CONFIG_GCC_VERSION_4_6),,$(CP) $(TOOLCHAIN_DIR)/lib/libgo.so.* $(1)/usr/lib/)
+  endef
+
   define Package/libssp/install
 	$(INSTALL_DIR) $(1)/lib
 	$(CP) $(TOOLCHAIN_DIR)/lib/libssp.so.* $(1)/lib/
@@ -559,6 +590,14 @@ else
 	done
   endef
 
+  define Package/libgo/install
+	for file in $(call qstrip,$(CONFIG_LIBGO_FILE_SPEC)); do \
+		dir=`dirname $$$$file` ; \
+		$(INSTALL_DIR) $(1)/$$$$dir ; \
+		$(CP) $(call qstrip,$(CONFIG_LIBGO_ROOT_DIR))/$$$$file $(1)/$$$$dir/ ; \
+	done
+  endef
+
   define Package/libssp/install
 	for file in $(call qstrip,$(CONFIG_LIBSSP_FILE_SPEC)); do \
 		dir=`dirname $$$$file` ; \
@@ -642,5 +681,6 @@ $(eval $(call BuildPackage,libpthread))
 $(eval $(call BuildPackage,libthread-db))
 $(eval $(call BuildPackage,librt))
 $(eval $(call BuildPackage,libgfortran))
+$(eval $(call BuildPackage,libgo))
 $(eval $(call BuildPackage,ldd))
 $(eval $(call BuildPackage,ldconfig))

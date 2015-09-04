@@ -19,7 +19,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@223749 138bc75d-0d04-0410-961f-8
 @@ -77,6 +77,23 @@
      %{mfloat-abi=soft*:" GLIBC_DYNAMIC_LINKER_SOFT_FLOAT "} \
      %{!mfloat-abi=*:" GLIBC_DYNAMIC_LINKER_DEFAULT "}"
- 
+
 +/* For ARM musl currently supports four dynamic linkers:
 +   - ld-musl-arm.so.1 - for the EABI-derived soft-float ABI
 +   - ld-musl-armhf.so.1 - for the EABI-derived hard-float ABI
@@ -43,7 +43,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@223749 138bc75d-0d04-0410-961f-8
 --- a/libitm/config/arm/hwcap.cc
 +++ b/libitm/config/arm/hwcap.cc
 @@ -40,7 +40,11 @@ int GTM_hwcap HIDDEN = 0
- 
+
  #ifdef __linux__
  #include <unistd.h>
 +#ifdef __GLIBC__
@@ -52,5 +52,5 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@223749 138bc75d-0d04-0410-961f-8
 +#include <fcntl.h>
 +#endif
  #include <elf.h>
- 
+
  static void __attribute__((constructor))

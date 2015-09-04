@@ -390,6 +390,29 @@ endef
 
 $(eval $(call KernelPackage,ipt-imq))
 
+define KernelPackage/ipt-imq
+  TITLE:=Intermediate Queueing support
+  KCONFIG:= \
+       CONFIG_IMQ \
+       CONFIG_IMQ_BEHAVIOR_BA=y \
+       CONFIG_IMQ_NUM_DEVS=2 \
+       CONFIG_NETFILTER_XT_TARGET_IMQ
+  FILES:= \
+       $(LINUX_DIR)/drivers/net/imq.$(LINUX_KMOD_SUFFIX) \
+       $(foreach mod,$(IPT_IMQ-m),$(LINUX_DIR)/net/$(mod).$(LINUX_KMOD_SUFFIX))
+  AUTOLOAD:=$(call AutoProbe,$(notdir imq \
+       $(IPT_IMQ-m) \
+  ))
+  $(call AddDepends/ipt)
+endef
+
+define KernelPackage/ipt-imq/description
+ Kernel support for Intermediate Queueing devices
+endef
+
+$(eval $(call KernelPackage,ipt-imq))
+
+
 define KernelPackage/ipt-ulog
   TITLE:=Module for user-space packet logging
   KCONFIG:=$(KCONFIG_IPT_ULOG)
@@ -871,14 +894,13 @@ endef
 $(eval $(call KernelPackage,nft-nat6))
 
 
-
 define KernelPackage/ipt-weburl
   SUBMENU:=$(NF_MENU)
   TITLE:=weburl
   KCONFIG:=CONFIG_IP_NF_MATCH_WEBURL
   FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*weburl*.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_WEBURL-m)))
-	DEPENDS:= kmod-ipt-core
+       DEPENDS:= kmod-ipt-core
 endef
 $(eval $(call KernelPackage,ipt-weburl))
 
@@ -889,7 +911,7 @@ define KernelPackage/ipt-webmon
   KCONFIG:=CONFIG_IP_NF_MATCH_WEBMON
   FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*webmon*.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_WEBMON-m)))
-	DEPENDS:= kmod-ipt-core
+       DEPENDS:= kmod-ipt-core
 endef
 $(eval $(call KernelPackage,ipt-webmon))
 
@@ -900,7 +922,7 @@ define KernelPackage/ipt-timerange
   KCONFIG:=CONFIG_IP_NF_MATCH_TIMERANGE
   FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*timerange*.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_TIMERANGE-m)))
-	DEPENDS:= kmod-ipt-core
+       DEPENDS:= kmod-ipt-core
 endef
 $(eval $(call KernelPackage,ipt-timerange))
 
@@ -911,6 +933,6 @@ define KernelPackage/ipt-bandwidth
   KCONFIG:=CONFIG_IP_NF_MATCH_BANDWIDTH
   FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*bandwidth*.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_BANDWIDTH-m)))
-	DEPENDS:= kmod-ipt-core
+       DEPENDS:= kmod-ipt-core
 endef
 $(eval $(call KernelPackage,ipt-bandwidth))

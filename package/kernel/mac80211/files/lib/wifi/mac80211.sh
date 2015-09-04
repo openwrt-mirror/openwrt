@@ -83,13 +83,13 @@ detect_mac80211() {
 		ht_capab=""
 
 		iw phy "$dev" info | grep -q 'Capabilities:' && htmode=HT40
-		iw phy "$dev" info | grep -q '2412 MHz' || { mode_band="a"; channel="157"; }
+		iw phy "$dev" info | grep -q '2412 MHz' || { mode_band="a"; channel="auto"; }
 
 		vht_cap=$(iw phy "$dev" info | grep -c 'VHT Capabilities')
 		cap_5ghz=$(iw phy "$dev" info | grep -c "Band 2")
 		[ "$vht_cap" -gt 0 -a "$cap_5ghz" -gt 0 ] && {
 			mode_band="a";
-			channel="157"
+			channel="auto"
 			htmode="VHT80"
 		}
 

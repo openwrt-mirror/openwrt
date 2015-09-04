@@ -341,6 +341,7 @@ platform_check_image() {
     tl-wdr3320-v2 | \
 	tl-wdr3500 | \
     mw4530r | \
+	tl-wr2041n-v1 | \
 	tl-wdr4300 | \
 	tl-wdr4900-v2 | \
 	tl-wdr6300 | \

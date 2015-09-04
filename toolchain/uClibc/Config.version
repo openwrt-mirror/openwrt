@@ -1,9 +1,13 @@
 config UCLIBC_VERSION
 	string
 	depends on USE_UCLIBC
+	default "20150615"       if UCLIBC_VERSION_SNAPSHOT
 	default "0.9.33.2"       if UCLIBC_VERSION_0_9_33
 	default "0.9.33.2"
 
 config UCLIBC_VERSION_0_9_33
 	default y if !TOOLCHAINOPTS && USE_UCLIBC
+	bool
+
+config UCLIBC_VERSION_SNAPSHOT
 	bool

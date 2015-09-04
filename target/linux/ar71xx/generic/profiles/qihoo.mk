@@ -7,7 +7,7 @@
 
 define Profile/QIHOOC301
 	NAME:=Qihoo 360 C301
-	PACKAGES:=kmod-ath9k kmod-ath10k kmod-usb2
+	PACKAGES:=kmod-usb-core kmod-usb2 uboot-envtools kmod-ledtrig-usbdev kmod-ath9k kmod-ath10k
 endef
 
 define Profile/QIHOOC301/Description

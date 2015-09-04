@@ -39,6 +39,5 @@ index 7c31f3a..2672730 100644
  #endif
  
  #if defined(__OpenBSD__) || defined(__NetBSD__)
--- 
+--
 1.7.10.4
-

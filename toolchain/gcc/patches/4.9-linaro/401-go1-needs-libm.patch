@@ -1,0 +1,11 @@
+--- a/gcc/go/Make-lang.in	2015-03-05 02:40:05.246555190 +1100
++++ b/gcc/go/Make-lang.in	2015-03-05 02:40:18.414555609 +1100
+@@ -75,7 +75,7 @@
+ 
+ go1$(exeext): $(GO_OBJS) attribs.o $(BACKEND) $(LIBDEPS)
+ 	+$(LLINKER) $(ALL_LINKERFLAGS) $(LDFLAGS) -o $@ \
+-	      $(GO_OBJS) attribs.o $(BACKEND) $(LIBS) $(BACKENDLIBS)
++	      $(GO_OBJS) attribs.o $(BACKEND) $(LIBS) $(BACKENDLIBS) -lm
+ 
+ # Documentation.
+ 
