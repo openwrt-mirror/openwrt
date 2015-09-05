@@ -74,3 +74,10 @@ config INSTALL_GFORTRAN
 	default n
 	help
 	    Build/install GNU fortran compiler ?
+
+config INSTALL_GCCGO
+	bool
+	prompt "Build/install gccgo compiler?" if TOOLCHAINOPTS && !(GCC_VERSION_4_6 || GCC_VERSION_4_6_LINARO)
+	default n
+	help
+	    Build/install GNU gccgo compiler ?
