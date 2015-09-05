@@ -437,10 +437,23 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(TOOLCHAIN_DIR)/lib/libgfortran.so.* $(1)/usr/lib/
   endef
+  
+  define Package/libgo/install
+    $(INSTALL_DIR) $(1)/usr/lib
+    $(if $(CONFIG_TARGET_avr32)$(CONFIG_TARGET_coldfire),,$(CP) $(TOOLCHAIN_DIR)/lib/libgo.so.* $(1)/usr/lib/)
+  endef
 
   define Package/libssp/install
 	$(INSTALL_DIR) $(1)/lib
 	$(CP) $(TOOLCHAIN_DIR)/lib/libssp.so.* $(1)/lib/
+  endef
+  
+  define Package/libgo/install
+    for file in $(call qstrip,$(CONFIG_LIBGO_FILE_SPEC)); do \
+        dir=`dirname $$$$file` ; \
+        $(INSTALL_DIR) $(1)/$$$$dir ; \
+        $(CP) $(call qstrip,$(CONFIG_LIBGO_ROOT_DIR))/$$$$file $(1)/$$$$dir/ ; \
+    done
   endef
 
   define Package/libstdcpp/install
@@ -670,5 +683,6 @@ $(eval $(call BuildPackage,libpthread))
 $(eval $(call BuildPackage,libthread-db))
 $(eval $(call BuildPackage,librt))
 $(eval $(call BuildPackage,libgfortran))
+$(eval $(call BuildPackage,libgo))
 $(eval $(call BuildPackage,ldd))
 $(eval $(call BuildPackage,ldconfig))
