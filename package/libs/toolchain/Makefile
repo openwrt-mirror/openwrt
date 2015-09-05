@@ -254,6 +254,34 @@ define Package/libgfortran/config
 	endmenu
 endef
 
+
+define Package/libgo
+$(call Package/gcc/Default)
+  TITLE:=Go support library
+  DEPENDS+=@INSTALL_GCCGO
+  DEPENDS+=@USE_EGLIBC
+endef
+
+define Package/libgo/config
+       menu "Configuration"
+               depends EXTERNAL_TOOLCHAIN && PACKAGE_libgo
+
+       config LIBGO_ROOT_DIR
+               string
+               prompt "libgo shared library base directory"
+               depends EXTERNAL_TOOLCHAIN && PACKAGE_libgo
+               default TOOLCHAIN_ROOT  if !NATIVE_TOOLCHAIN
+               default "/"  if NATIVE_TOOLCHAIN
+
+       config LIBGO_FILE_SPEC
+               string
+               prompt "libgo shared library files (use wildcards)"
+               depends EXTERNAL_TOOLCHAIN && PACKAGE_libgo
+               default "./usr/lib/libgo.so.*"
+
+       endmenu
+endef
+
 define Package/ldd
 $(call Package/libc/Default)
   DEPENDS:=@!USE_MUSL
