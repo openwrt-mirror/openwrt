@@ -119,7 +119,12 @@ ppp_generic_setup() {
 	[ "${keepalive_adaptive:-1}" -lt 1 ] && lcp_adaptive=""
 	[ -n "$connect" ] || json_get_var connect connect
 	[ -n "$disconnect" ] || json_get_var disconnect disconnect
-
+#By 蝈蝈：并发拨号同步的前期准备
+	[ "$(uci get syncdial.config.enabled)" == "1" ] && {
+		ppp_if_cnt=$(cat /etc/config/network | grep -c "proto 'pppoe'")
+		syncppp_option="syncppp $ppp_if_cnt"
+		shellsync $ppp_if_cnt 10
+	}
 	proto_run_command "$config" /usr/sbin/pppd \
 		nodetach ipparam "$config" \
 		ifname "$pppname" \
@@ -137,6 +142,7 @@ ppp_generic_setup() {
 		ip-down-script /lib/netifd/ppp-down \
 		ipv6-down-script /lib/netifd/ppp-down \
 		${mtu:+mtu $mtu mru $mtu} \
+		$syncppp_option \
 		"$@" $pppd_options
 }
 

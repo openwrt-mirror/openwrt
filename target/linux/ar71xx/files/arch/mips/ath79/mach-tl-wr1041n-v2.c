@@ -24,8 +24,10 @@
 #include "dev-leds-gpio.h"
 #include "dev-m25p80.h"
 #include "dev-spi.h"
+#include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "tplink-wmac.h"
 
 #define TL_WR1041NV2_GPIO_BTN_RESET	14
 #define TL_WR1041NV2_GPIO_LED_WPS	13
@@ -104,7 +106,6 @@ static struct mdio_board_info db120_mdio0_info[] = {
 static void __init tl_wr1041nv2_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
 
 	ath79_register_m25p80(&tl_wr1041nv2_flash_data);
 
@@ -113,7 +114,7 @@ static void __init tl_wr1041nv2_setup(void)
 	ath79_register_gpio_keys_polled(-1, TL_WR1041NV2_KEYS_POLL_INTERVAL,
 					 ARRAY_SIZE(tl_wr1041nv2_gpio_keys),
 					 tl_wr1041nv2_gpio_keys);
-	ath79_register_wmac(ee, mac);
+    tplink_register_builtin_wmac1(0x1000, mac, -1);
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_RGMII_GMAC0 |
 				   AR934X_ETH_CFG_SW_ONLY_MODE);
@@ -121,7 +122,7 @@ static void __init tl_wr1041nv2_setup(void)
 	ath79_register_mdio(1, 0x0);
 	ath79_register_mdio(0, 0x0);
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 
 	mdiobus_register_board_info(db120_mdio0_info,
 				    ARRAY_SIZE(db120_mdio0_info));
@@ -132,6 +133,8 @@ static void __init tl_wr1041nv2_setup(void)
 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
 	ath79_eth0_pll_data.pll_1000 = 0x06000000;
 	ath79_register_eth(0);
+
+	ath79_register_usb();
 }
 
 MIPS_MACHINE(ATH79_MACH_TL_WR1041N_V2, "TL-WR1041N-v2",

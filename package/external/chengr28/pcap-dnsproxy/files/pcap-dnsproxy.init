@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+
+SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+# MUST set Config.conf before 'enable' this service
+# do NOT use daemon code inside pcap-dnsproxy, use start-stop-daemon instead.
+
+start() {
+	service_start /usr/sbin/Pcap_DNSProxy -c /etc/pcap-dnsproxy --disable-daemon
+}
+
+stop() {
+	# If you cant stop, use 'killall' instead.
+	# i.e. killall -SIGTERM Pcap_DNSProxy
+	service_stop /usr/sbin/Pcap_DNSProxy
+}

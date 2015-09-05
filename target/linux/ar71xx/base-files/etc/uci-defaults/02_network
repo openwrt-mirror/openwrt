@@ -200,6 +200,8 @@ el-m150)
 	;;
 
 tl-wdr4300|\
+tl-wr941nd-v7|\
+mw4530r|\
 tl-wr1041n-v2)
 	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 	ucidef_add_switch "switch0" "1" "1"
@@ -426,8 +428,8 @@ hiwifi-hc6361 |\
 ja76pf |\
 mc-mac1200r|\
 mynet-n600 |\
-oolite |\
 qihoo-c301 |\
+oolite |\
 rb-750 |\
 rb-751 |\
 tew-632brp |\
@@ -435,11 +437,14 @@ tew-712br |\
 tl-mr3220 |\
 tl-mr3220-v2 |\
 tl-mr3420 |\
+tl-wdr3320-v2 |\
 tl-wdr3500 |\
+tl-wdr6300 |\
 tl-wr741nd |\
 tl-wr741nd-v4 |\
 tl-wr841n-v7 |\
 tl-wr841n-v9 |\
+tl-wr882n-v1 |\
 whr-g301n |\
 whr-hp-g300n |\
 whr-hp-gn |\

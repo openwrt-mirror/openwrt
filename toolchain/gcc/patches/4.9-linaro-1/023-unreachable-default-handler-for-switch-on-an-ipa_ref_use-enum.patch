@@ -1,0 +1,22 @@
+--- a/gcc/ipa-reference.c
++++ b/gcc/ipa-reference.c
+@@ -483,6 +483,8 @@ analyze_function (struct cgraph_node *fn
+ 	  break;
+ 	case IPA_REF_ADDR:
+ 	  break;
++	default:
++	  gcc_unreachable ();
+ 	}
+     }
+ 
+--- a/gcc/ipa-pure-const.c
++++ b/gcc/ipa-pure-const.c
+@@ -1288,6 +1288,8 @@ propagate_pure_const (void)
+ 		  break;
+ 		case IPA_REF_ADDR:
+ 		  break;
++		default:
++		  gcc_unreachable ();
+ 		}
+ 	      better_state (&ref_state, &ref_looping,
+ 			    w_l->state_previously_known,

@@ -1,0 +1,25 @@
+[global]
+	netbios name = |NAME| 
+	interfaces = |INTERFACES|
+	server string = |DESCRIPTION|
+	unix charset = |CHARSET|
+	workgroup = |WORKGROUP|
+	passdb backend = smbpasswd
+	security = user
+	smb encrypt = disabled
+	smb passwd file = /etc/samba/smbpasswd
+	lock directory = /var/locks
+	domain logons = no
+	strict allocate = yes
+	read raw = yes
+	write raw = yes
+	strict locking = no
+	socket options = TCP_NODELAY IPTOS_LOWDELAY SO_RCVBUF=131072 SO_SNDBUF=131072
+	min receivefile size = 0
+	use sendfile = true
+	oplocks = yes
+	max xmit = 65535
+	max connections = 8
+	deadtime = 30
+	aio read size = 0
+	aio write size = 0

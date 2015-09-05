@@ -12,6 +12,9 @@ set_state() {
 	a4001n)
 		status_led="A4001N:green:power"
 		;;
+	av4202n)
+		status_led="AV4202N:blue:LED4A"
+		;;
 	ar-5381u)
 		status_led="AR-5381u:green:power"
 		;;

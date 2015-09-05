@@ -20,7 +20,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@223218 138bc75d-0d04-0410-961f-8
 --- a/gcc/config/i386/linux.h
 +++ b/gcc/config/i386/linux.h
 @@ -21,3 +21,6 @@ along with GCC; see the file COPYING3.
- 
+
  #define GNU_USER_LINK_EMULATION "elf_i386"
  #define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
 +
@@ -44,7 +44,7 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@223218 138bc75d-0d04-0410-961f-8
 @@ -25,16 +25,19 @@
  #ifndef LIBITM_X86_TLS_H
  #define LIBITM_X86_TLS_H 1
- 
+
 -#if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 10)
 +#if defined(__GLIBC_PREREQ)
 +#if __GLIBC_PREREQ(2, 10)
@@ -54,19 +54,19 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@223218 138bc75d-0d04-0410-961f-8
  #define HAVE_ARCH_GTM_THREAD_DISP 1
  #endif
 +#endif
- 
+
  #include "config/generic/tls.h"
- 
+
 -#if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 10)
 +#if defined(__GLIBC_PREREQ)
 +#if __GLIBC_PREREQ(2, 10)
  namespace GTM HIDDEN {
- 
+
  #ifdef __x86_64__
 @@ -101,5 +104,6 @@ static inline void set_abi_disp(struct a
- 
+
  } // namespace GTM
  #endif /* >= GLIBC 2.10 */
 +#endif
- 
+
  #endif // LIBITM_X86_TLS_H

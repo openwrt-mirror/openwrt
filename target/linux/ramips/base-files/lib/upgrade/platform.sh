@@ -55,6 +55,7 @@ platform_check_image() {
 	fonera20n|\
 	freestation5|\
 	hg255d|\
+	hiwifi-hc5761 |\
 	hlk-rm04|\
 	hpm|\
 	ht-tm02|\

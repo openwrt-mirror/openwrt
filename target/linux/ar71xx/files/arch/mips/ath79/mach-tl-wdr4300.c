@@ -27,6 +27,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "tplink-wmac.h"
 
 #define WDR4300_GPIO_LED_USB1		11
 #define WDR4300_GPIO_LED_USB2		12
@@ -48,8 +49,8 @@
 
 #define WDR4300_MAC0_OFFSET		0
 #define WDR4300_MAC1_OFFSET		6
-#define WDR4300_WMAC_CALDATA_OFFSET	0x1000
-#define WDR4300_PCIE_CALDATA_OFFSET	0x5000
+#define WDR4300_WMAC_CALDATA_OFFSET	0x0000
+#define WDR4300_PCIE_CALDATA_OFFSET	0x4000
 
 static const char *wdr4300_part_probes[] = {
 	"tp-link",
@@ -90,9 +91,9 @@ static struct gpio_led wdr4300_leds_gpio[] __initdata = {
 
 static struct gpio_keys_button wdr4300_gpio_keys[] __initdata = {
 	{
-		.desc		= "QSS button",
+		.desc		= "Reset button",
 		.type		= EV_KEY,
-		.code		= KEY_WPS_BUTTON,
+		.code		= KEY_RESTART,
 		.debounce_interval = WDR4300_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= WDR4300_GPIO_BTN_WPS,
 		.active_low	= 1,
@@ -156,8 +157,6 @@ static struct mdio_board_info wdr4300_mdio0_info[] = {
 static void __init wdr4300_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wdr4300_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(wdr4300_leds_gpio),
@@ -169,12 +168,10 @@ static void __init wdr4300_setup(void)
 	ath79_wmac_set_ext_lna_gpio(0, WDR4300_GPIO_EXTERNAL_LNA0);
 	ath79_wmac_set_ext_lna_gpio(1, WDR4300_GPIO_EXTERNAL_LNA1);
 
-	ath79_init_mac(tmpmac, mac, -1);
-	ath79_register_wmac(art + WDR4300_WMAC_CALDATA_OFFSET, tmpmac);
+    tplink_register_builtin_wmac1(WDR4300_WMAC_CALDATA_OFFSET, mac, -1);
 
-	ath79_init_mac(tmpmac, mac, 0);
 	ap9x_pci_setup_wmac_led_pin(0, 0);
-	ap91_pci_init(art + WDR4300_PCIE_CALDATA_OFFSET, tmpmac);
+    tplink_register_ap91_wmac2(WDR4300_PCIE_CALDATA_OFFSET, mac, 2);
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_RGMII_GMAC0);
 
@@ -183,7 +180,7 @@ static void __init wdr4300_setup(void)
 
 	ath79_register_mdio(0, 0x0);
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, -2);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 
 	/* GMAC0 is connected to an AR8327N switch */
 	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_RGMII;

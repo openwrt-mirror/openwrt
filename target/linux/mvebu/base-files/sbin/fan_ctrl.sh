@@ -4,12 +4,12 @@ CPU_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon2/temp1_input`
 DDR_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp1_input`
 WIFI_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp2_input`
 
-CPU_LOW=85
-CPU_HIGH=95
-DDR_LOW=65
-DDR_HIGH=75
-WIFI_LOW=100
-WIFI_HIGH=115
+CPU_LOW=60
+CPU_HIGH=70
+DDR_LOW=60
+DDR_HIGH=70
+WIFI_LOW=85
+WIFI_HIGH=100
 
 if [ -d /sys/devices/pwm_fan ];then
 	FAN_CTRL=/sys/devices/pwm_fan/hwmon/hwmon0/pwm1

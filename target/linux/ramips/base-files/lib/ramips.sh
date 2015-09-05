@@ -418,6 +418,9 @@ ramips_board_detect() {
 	*"X8")
 		name="x8"
 		;;
+	*"HC5761")
+		name="hiwifi-hc5761"
+		;;
 	*"Y1")
 		name="y1"
 		;;

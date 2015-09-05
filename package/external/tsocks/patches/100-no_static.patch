@@ -1,0 +1,11 @@
+--- a/Makefile.in	2015-05-26 20:33:53.000000000 +0800
++++ b/Makefile.in	2015-05-26 20:36:28.313415247 +0800
+@@ -47,7 +47,7 @@ ${INSPECT}: ${INSPECT}.c ${COMMON}.o
+ 	${SHCC} ${CFLAGS} ${INCLUDES} -o ${INSPECT} ${INSPECT}.c ${COMMON}.o ${LIBS} 
+ 
+ ${SAVE}: ${SAVE}.c
+-	${SHCC} ${CFLAGS} ${INCLUDES} -static -o ${SAVE} ${SAVE}.c
++	${SHCC} ${CFLAGS} ${INCLUDES} -o ${SAVE} ${SAVE}.c
+ 
+ ${SHLIB}: ${OBJS} ${COMMON}.o ${PARSER}.o
+ 	${SHCC} ${CFLAGS} ${INCLUDES} -nostdlib -shared -o ${SHLIB} ${OBJS} ${COMMON}.o ${PARSER}.o ${DYNLIB_FLAGS} ${SPECIALLIBS} ${LIBS}

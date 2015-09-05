@@ -20,17 +20,17 @@ Signed-off-by: Mark Hatle <mark.hatle@windriver.com>
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -315,6 +315,7 @@ AC_CHECK_FUNCS([ \
+@@ -344,6 +344,7 @@ AC_CHECK_FUNCS([ \
  	llseek \
  	lseek64 \
  	mempcpy \
 +	mkostemp \
  	nanosleep \
- 	open_memstream \
+ 	ntp_gettime \
  	personality \
 --- a/include/c.h
 +++ b/include/c.h
-@@ -233,6 +233,13 @@ static inline int dirfd(DIR *d)
+@@ -241,6 +241,13 @@ static inline int dirfd(DIR *d)
  #endif
  
  /*

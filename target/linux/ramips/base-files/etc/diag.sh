@@ -103,6 +103,12 @@ get_status_led() {
 	f7c027)
 		status_led="$board:orange:status"
 		;;
+	hg255d)
+		status_led="hg255d:power"
+		;;
+	hiwifi-hc5761)
+		status_led="hiwifi:blue:system"
+		;;
 	m2m)
 		status_led="$board:blue:wifi"
 		;;

@@ -501,6 +501,8 @@ $(eval $(call bcm63xxCfe,96368MVWG,96368MVWG-generic,bcm96368MVWG,96368MVWG,6368
 $(eval $(call bcm63xxCfe,A4001N,A4001N,a4001n,96328dg2x2,6328,--pad 4))
 # ADB P.DG A4001N1
 $(eval $(call bcm63xxCfe,A4001N1,A4001N1,a4001n1,963281T_TEF,6328,--pad 8))
+# ADB P.DG AV4202N
+$(eval $(call bcm63xxCfe,AV4202N,AV4202N,av4202n,96368MVNgr,6368))
 # Alcatel RG100A
 $(eval $(call bcm63xxCfe,RG100A,RG100A,rg100a,96358VW2,6358,--block-size 0x20000 --image-offset 0x20000))
 # Asmax AR 1004g

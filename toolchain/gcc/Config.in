@@ -20,6 +20,10 @@ choice
 		bool "gcc 4.9.x with Linaro enhancements"
 		depends on BROKEN
 
+	config GCC_USE_VERSION_4_9_LINARO_1
+		select GCC_VERSION_4_9_LINARO_1
+		bool "gcc 4.9.x_1 with Linaro enhancements"
+
 	config GCC_USE_VERSION_5
 		select GCC_VERSION_5
 		bool "gcc 5.x"
@@ -74,3 +78,11 @@ config INSTALL_GFORTRAN
 	default n
 	help
 	    Build/install GNU fortran compiler ?
+
+
+config INSTALL_GCCGO
+	bool
+	prompt "Build/install gccgo compiler?" if TOOLCHAINOPTS && !(GCC_VERSION_4_4_7 || GCC_VERSION_4_6 || GCC_VERSION_4_6_LINARO) && !UCLIBC_VERSION_0_9_33
+	default n
+	help
+	    Build/install GNU gccgo compiler ?

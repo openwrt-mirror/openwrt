@@ -1,0 +1,242 @@
+--- a/gcc/asan.c
++++ b/gcc/asan.c
+@@ -2015,6 +2015,8 @@ maybe_instrument_call (gimple_stmt_itera
+ 	    case BUILT_IN_TRAP:
+ 	      /* Don't instrument these.  */
+ 	      return false;
++	    default:
++	      break;
+ 	    }
+ 	}
+       tree decl = builtin_decl_implicit (BUILT_IN_ASAN_HANDLE_NO_RETURN);
+--- a/gcc/c-family/c-common.h
++++ b/gcc/c-family/c-common.h
+@@ -329,9 +329,6 @@ struct c_common_resword
+ 
+ /* Extra cpp_ttype values for C++.  */
+ 
+-/* A token type for keywords, as opposed to ordinary identifiers.  */
+-#define CPP_KEYWORD ((enum cpp_ttype) (N_TTYPES + 1))
+-
+ /* A token type for template-ids.  If a template-id is processed while
+    parsing tentatively, it is replaced with a CPP_TEMPLATE_ID token;
+    the value of the CPP_TEMPLATE_ID is whatever was returned by
+--- a/gcc/c/c-parser.c
++++ b/gcc/c/c-parser.c
+@@ -125,11 +125,6 @@ c_parse_init (void)
+    C++).  It would then be possible to share more of the C and C++
+    lexer code, if desired.  */
+ 
+-/* The following local token type is used.  */
+-
+-/* A keyword.  */
+-#define CPP_KEYWORD ((enum cpp_ttype) (N_TTYPES + 1))
+-
+ /* More information about the type of a CPP_NAME token.  */
+ typedef enum c_id_kind {
+   /* An ordinary identifier.  */
+@@ -5190,7 +5185,7 @@ c_parser_switch_statement (c_parser *par
+   save_break = c_break_label;
+   c_break_label = NULL_TREE;
+   body = c_parser_c99_block_statement (parser);
+-  c_finish_case (body);
++  c_finish_case (body, ce.original_type);
+   if (c_break_label)
+     {
+       location_t here = c_parser_peek_token (parser)->location;
+--- a/gcc/c/c-typeck.c
++++ b/gcc/c/c-typeck.c
+@@ -9425,10 +9425,11 @@ do_case (location_t loc, tree low_value,
+   return label;
+ }
+ 
+-/* Finish the switch statement.  */
++/* Finish the switch statement.  TYPE is the original type of the
++   controlling expression of the switch, or NULL_TREE.  */
+ 
+ void
+-c_finish_case (tree body)
++c_finish_case (tree body, tree type)
+ {
+   struct c_switch *cs = c_switch_stack;
+   location_t switch_location;
+@@ -9438,7 +9439,7 @@ c_finish_case (tree body)
+   /* Emit warnings as needed.  */
+   switch_location = EXPR_LOCATION (cs->switch_expr);
+   c_do_switch_warnings (cs->cases, switch_location,
+-			TREE_TYPE (cs->switch_expr),
++			type ? type : TREE_TYPE (cs->switch_expr),
+ 			SWITCH_COND (cs->switch_expr));
+ 
+   /* Pop the stack.  */
+--- a/gcc/cp/parser.c
++++ b/gcc/cp/parser.c
+@@ -4144,7 +4144,7 @@ cp_parser_primary_expression (cp_parser
+ 
+   /* Peek at the next token.  */
+   token = cp_lexer_peek_token (parser->lexer);
+-  switch (token->type)
++  switch ((int) token->type)
+     {
+       /* literal:
+ 	   integer-literal
+@@ -4830,7 +4830,7 @@ cp_parser_unqualified_id (cp_parser* par
+   /* Peek at the next token.  */
+   token = cp_lexer_peek_token (parser->lexer);
+ 
+-  switch (token->type)
++  switch ((int) token->type)
+     {
+     case CPP_NAME:
+       {
+--- a/gcc/cp/semantics.c
++++ b/gcc/cp/semantics.c
+@@ -1126,7 +1126,8 @@ finish_switch_cond (tree cond, tree swit
+ 	  error ("switch quantity not an integer");
+ 	  cond = error_mark_node;
+ 	}
+-      orig_type = TREE_TYPE (cond);
++      /* We want unlowered type here to handle enum bit-fields.  */
++      orig_type = unlowered_expr_type (cond);
+       if (cond != error_mark_node)
+ 	{
+ 	  /* [stmt.switch]
+--- a/gcc/cp/tree.c
++++ b/gcc/cp/tree.c
+@@ -2330,6 +2330,8 @@ bot_manip (tree* tp, int* walk_subtrees,
+ 	  case BUILT_IN_FILE:
+ 	  case BUILT_IN_LINE:
+ 	    SET_EXPR_LOCATION (*tp, input_location);
++	  default:
++	    break;
+ 	  }
+     }
+   return t;
+--- a/gcc/ipa-pure-const.c
++++ b/gcc/ipa-pure-const.c
+@@ -452,6 +452,8 @@ special_builtin_state (enum pure_const_s
+ 	  *looping = true;
+ 	  *state = IPA_CONST;
+ 	  return true;
++	default:
++	  break;
+       }
+   return false;
+ }
+--- a/gcc/lto-streamer-out.c
++++ b/gcc/lto-streamer-out.c
+@@ -2235,7 +2235,7 @@ write_symbol (struct streamer_tree_cache
+ {
+   const char *name;
+   enum gcc_plugin_symbol_kind kind;
+-  enum gcc_plugin_symbol_visibility visibility;
++  enum gcc_plugin_symbol_visibility visibility = GCCPV_DEFAULT;
+   unsigned slot_num;
+   unsigned HOST_WIDEST_INT size;
+   const char *comdat;
+--- a/gcc/predict.c
++++ b/gcc/predict.c
+@@ -1923,6 +1923,8 @@ expr_expected_value_1 (tree type, tree o
+ 		if (predictor)
+ 		  *predictor = PRED_COMPARE_AND_SWAP;
+ 		return boolean_true_node;
++	      default:
++		break;
+ 	    }
+ 	}
+ 
+--- /dev/null
++++ b/gcc/testsuite/c-c++-common/pr53874.c
+@@ -0,0 +1,35 @@
++/* PR c/53874 */
++/* { dg-do compile } */
++/* { dg-options "-Wswitch-enum" } */
++
++enum E { A, B, C };
++struct S { enum E e:2; };
++typedef struct S TS;
++
++int
++fn0 (struct S *s)
++{
++  switch (s->e) /* { dg-warning "enumeration value .C. not handled in switch" } */
++    {
++    case A:
++      return 1;
++    case B:
++      return 2;
++    default:
++      return 0;
++    }
++}
++
++int
++fn1 (TS *s)
++{
++  switch (s->e) /* { dg-warning "enumeration value .C. not handled in switch" } */
++    {
++    case A:
++      return 1;
++    case B:
++      return 2;
++    default:
++      return 0;
++    }
++}
+--- /dev/null
++++ b/gcc/testsuite/c-c++-common/pr61405.c
+@@ -0,0 +1,31 @@
++/* PR c/61405 */
++/* { dg-do compile } */
++/* { dg-options "-Wswitch" } */
++
++enum E { A, B, C };
++struct S { enum E e:2; };
++typedef struct S TS;
++
++int
++fn0 (struct S *s)
++{
++  switch (s->e) /* { dg-warning "enumeration value .C. not handled in switch" } */
++    {
++    case A:
++      return 1;
++    case B:
++      return 2;
++    }
++}
++
++int
++fn1 (TS *s)
++{
++  switch (s->e) /* { dg-warning "enumeration value .C. not handled in switch" } */
++    {
++    case A:
++      return 1;
++    case B:
++      return 2;
++    }
++}
+--- a/libcpp/include/cpplib.h
++++ b/libcpp/include/cpplib.h
+@@ -153,6 +153,9 @@ enum cpp_ttype
+   TTYPE_TABLE
+   N_TTYPES,
+ 
++  /* A token type for keywords, as opposed to ordinary identifiers.  */
++  CPP_KEYWORD,
++
+   /* Positions in the table.  */
+   CPP_LAST_EQ        = CPP_LSHIFT,
+   CPP_FIRST_DIGRAPH  = CPP_HASH,
+--- a/gcc/c/c-tree.h
++++ b/gcc/c/c-tree.h
+@@ -617,7 +617,7 @@ extern void process_init_element (locati
+ extern tree build_compound_literal (location_t, tree, tree, bool);
+ extern void check_compound_literal_type (location_t, struct c_type_name *);
+ extern tree c_start_case (location_t, location_t, tree);
+-extern void c_finish_case (tree);
++extern void c_finish_case (tree, tree);
+ extern tree build_asm_expr (location_t, tree, tree, tree, tree, tree, bool);
+ extern tree build_asm_stmt (tree, tree);
+ extern int c_types_compatible_p (tree, tree);

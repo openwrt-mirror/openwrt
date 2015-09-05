@@ -1,0 +1,15 @@
+https://sourceware.org/ml/crossgcc/2014-09/msg00034.html
+
+--- a/libgo/runtime/getncpu-linux.c
++++ b/libgo/runtime/getncpu-linux.c
+@@ -5,8 +5,8 @@
+ #include <features.h>
+ #include <sched.h>
+ 
+-// CPU_COUNT is only provided by glibc 2.6 or higher
+-#if !defined(__GLIBC_PREREQ) || !__GLIBC_PREREQ(2, 6)
++// Define CPU_COUNT if it isn't already.
++#if !defined(CPU_COUNT)
+ #define CPU_COUNT(set) _CPU_COUNT((unsigned int *)(set), sizeof(*(set))/sizeof(unsigned int))
+ static int _CPU_COUNT(unsigned int *set, size_t len) {
+ 	int cnt;
