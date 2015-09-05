@@ -131,3 +131,29 @@
  #ifdef BDEBUG
  static void
  dot_dump_node(struct block *block, struct bpf_program *prog, FILE *out)
+--- a/pcap-common.c
++++ b/pcap-common.c
+@@ -1372,14 +1372,23 @@ swap_pseudo_headers(int linktype, struct
+ 	switch (linktype) {
+ 
+ 	case DLT_USB_LINUX:
++#ifndef PCAP_SUPPORT_USB
++		return;
++#endif
+ 		swap_linux_usb_header(hdr, data, 0);
+ 		break;
+ 
+ 	case DLT_USB_LINUX_MMAPPED:
++#ifndef PCAP_SUPPORT_USB
++		return;
++#endif
+ 		swap_linux_usb_header(hdr, data, 1);
+ 		break;
+ 
+ 	case DLT_NFLOG:
++#ifndef PCAP_SUPPORT_NETFILTER
++		return;
++#endif
+ 		swap_nflog_header(hdr, data);
+ 		break;
+ 	}
