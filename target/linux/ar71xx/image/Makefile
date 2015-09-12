@@ -14,7 +14,7 @@ IMAGE_PROFILE:=$(if $(PROFILE),$(PROFILE),Default)
 
 KERNEL_LOADADDR = 0x80060000
 
-DEVICE_VARS += NETGEAR_KERNEL_MAGIC NETGEAR_BOARD NETGEAR_ID CMDLINE CONSOLE IMAGE_SIZE BOARDNAME LOADER_FLASH_OFFS
+DEVICE_VARS += NETGEAR_KERNEL_MAGIC NETGEAR_BOARD_ID NETGEAR_HW_ID CMDLINE CONSOLE IMAGE_SIZE BOARDNAME LOADER_FLASH_OFFS
 
 define Build/netgear-squashfs
 	rm -rf $@.fs $@.squashfs
@@ -35,15 +35,6 @@ endef
 
 define Build/netgear-uImage
 	$(call Build/uImage,$(1) -M $(NETGEAR_KERNEL_MAGIC))
-endef
-
-define Build/netgear-image
-	$(STAGING_DIR_HOST)/bin/mkdniimg \
-		-B $(NETGEAR_BOARD) -v OpenWrt.$(REVISION) \
-		$(if $(NETGEAR_ID),-H $(NETGEAR_ID)) \
-		-r "$(1)" \
-		-i $@ -o $@.new
-	mv $@.new $@
 endef
 
 # combine kernel and rootfs into one image
@@ -188,25 +179,33 @@ define Device/carambola2
 endef
 TARGET_DEVICES += carambola2
 
+define Device/cf-e316n-v2
+  BOARDNAME = CF-E316N-V2
+  IMAGE_SIZE = 16192k
+  CONSOLE = ttyS0,115200
+  MTDPARTS = spi0.0:64k(u-boot)ro,64k(art)ro,16192k(firmware),64k(nvram)ro
+endef
+TARGET_DEVICES += cf-e316n-v2
+
 define Device/wndr3700
   BOARDNAME = WNDR3700
   NETGEAR_KERNEL_MAGIC = 0x33373030
-  NETGEAR_BOARD = WNDR3700
+  NETGEAR_BOARD_ID = WNDR3700
   IMAGE_SIZE = 7680k
   MTDPARTS = spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,7680k(firmware),64k(art)ro
   IMAGES := sysupgrade.bin factory.img factory-NA.img
   KERNEL := kernel-bin | patch-cmdline | lzma -d20 | netgear-uImage lzma
   IMAGE/default = append-kernel $$$$(BLOCKSIZE) | netgear-squashfs | append-rootfs | pad-rootfs
   IMAGE/sysupgrade.bin = $$(IMAGE/default) | check-size $$$$(IMAGE_SIZE)
-  IMAGE/factory.img = $$(IMAGE/default) | netgear-image | check-size $$$$(IMAGE_SIZE)
-  IMAGE/factory-NA.img = $$(IMAGE/default) | netgear-image NA | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory.img = $$(IMAGE/default) | netgear-dni | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory-NA.img = $$(IMAGE/default) | netgear-dni NA | check-size $$$$(IMAGE_SIZE)
 endef
 
 define Device/wndr3700v2
 $(Device/wndr3700)
-  NETGEAR_BOARD = WNDR3700v2
+  NETGEAR_BOARD_ID = WNDR3700v2
   NETGEAR_KERNEL_MAGIC = 0x33373031
-  NETGEAR_ID = 29763654+16+64
+  NETGEAR_HW_ID = 29763654+16+64
   IMAGE_SIZE = 15872k
   MTDPARTS = spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,15872k(firmware),64k(art)ro
   IMAGES := sysupgrade.bin factory.img
@@ -214,23 +213,23 @@ endef
 
 define Device/wndr3800
 $(Device/wndr3700v2)
-  NETGEAR_BOARD = WNDR3800
-  NETGEAR_ID = 29763654+16+128
+  NETGEAR_BOARD_ID = WNDR3800
+  NETGEAR_HW_ID = 29763654+16+128
 endef
 
 define Device/wndr3800ch
 $(Device/wndr3800)
-  NETGEAR_BOARD = WNDR3800CH
+  NETGEAR_BOARD_ID = WNDR3800CH
 endef
 
 define Device/wndrmac
 $(Device/wndr3700v2)
-  NETGEAR_BOARD = WNDRMAC
+  NETGEAR_BOARD_ID = WNDRMAC
 endef
 
 define Device/wndrmacv2
 $(Device/wndr3800)
-  NETGEAR_BOARD = WNDRMACv2
+  NETGEAR_BOARD_ID = WNDRMACv2
 endef
 
 TARGET_DEVICES += wndr3700 wndr3700v2 wndr3800 wndr3800ch wndrmac wndrmacv2
@@ -1211,7 +1210,8 @@ ap83_mtdlayout=mtdparts=spi0.0:256k(u-boot),128k(u-boot-env)ro,4096k(rootfs),364
 ap96_mtdlayout=mtdparts=spi0.0:192k(u-boot),64k(u-boot-env)ro,6144k(rootfs),1728k(kernel),64k(art)ro,7872k@0x40000(firmware)
 ap113_mtd_layout=mtdparts=spi0.0:64k(u-boot),3008k(rootfs),896k(uImage),64k(NVRAM),64k(ART),3904k@0x10000(firmware)
 ap121_mtdlayout_2M=mtdparts=spi0.0:64k(u-boot)ro,1216k(rootfs),704k(kernel),64k(art)ro,1920k@0x10000(firmware)
-ap121_mtdlayout_4M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,2752k(rootfs),896k(kernel),64k(nvram),64k(art)ro,3648k@0x50000(firmware)
+ap121_mtdlayout_4M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,2448k(rootfs),1200k(kernel),64k(nvram),64k(art)ro,3648k@0x50000(firmware)
+ap121_mtdlayout_8M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6144k(rootfs),1600k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
 ap132_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1408k(kernel),6400k(rootfs),64k(art),7808k@0x50000(firmware)
 ap135_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14528k(rootfs),1472k(kernel),64k(art)ro,16000k@0x50000(firmware)
 ap136_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1408k(kernel),64k(mib0),64k(art)ro,7744k@0x50000(firmware)
@@ -2134,6 +2134,7 @@ $(eval $(call SingleProfile,AthLzma,256k,ALL0315N,all0315n,ALL0315N,ttyS0,115200
 $(eval $(call SingleProfile,AthLzma,64k,AP113,ap113,AP113,ttyS0,115200,$$(ap113_mtd_layout),RK))
 $(eval $(call SingleProfile,AthLzma,64k,AP121_2M,ap121-2M,AP121,ttyATH0,115200,$$(ap121_mtdlayout_2M),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP121_4M,ap121-4M,AP121,ttyATH0,115200,$$(ap121_mtdlayout_4M),RKuImage))
+$(eval $(call SingleProfile,AthLzma,64k,AP121_8M,ap121-8M,AP121,ttyATH0,115200,$$(ap121_mtdlayout_8M),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP121MINI,ap121-mini,AP121-MINI,ttyATH0,115200,$$(ap121_mtdlayout_4M),RKuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP132,ap132,AP132,ttyS0,115200,$$(ap132_mtdlayout),KRuImage))
 $(eval $(call SingleProfile,AthLzma,64k,AP135,ap135-020,AP135-020,ttyS0,115200,$$(ap135_mtdlayout),RKuImage))
@@ -2296,7 +2297,7 @@ $(eval $(call SingleProfile,Zcomax,64k,ZCN1523H516,zcn-1523h-5-16,ZCN-1523H-5,tt
 
 $(eval $(call SingleProfile,ZyXEL,64k,NBG_460N_550N_550NH,nbg460n_550n_550nh,NBG460N,ttyS0,115200,NBG-460N))
 
-$(eval $(call MultiProfile,AP121,AP121_2M AP121_4M))
+$(eval $(call MultiProfile,AP121,AP121_2M AP121_4M AP121_8M))
 $(eval $(call MultiProfile,AP136,AP136_010 AP136_020))
 $(eval $(call MultiProfile,AP143,AP143_8M AP143_16M))
 $(eval $(call MultiProfile,AP147,AP147_010))

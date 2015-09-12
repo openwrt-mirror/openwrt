@@ -41,14 +41,6 @@ ifeq ($(findstring linaro, $(CONFIG_GCC_VERSION)),linaro)
       PKG_MD5SUM:=5ba2f3a449b1658ccc09d27cc7ab3c03
       PKG_COMP:=xz
     endif
-    ifeq ($(CONFIG_GCC_VERSION),"4.9-linaro")
-      LINARO_RELEASE:=15.03
-      PKG_REV:=4.9-2015.03
-      PKG_VERSION:=4.9.3
-      PKG_VERSION_MAJOR:=4.9
-      PKG_MD5SUM:=f9d256d120adfbb45dd3e2d22b70cba9
-      PKG_COMP:=xz
-    endif
     ifneq ($(LINARO_RELEASE),)
       PKG_SOURCE_URL:=http://releases.linaro.org/$(LINARO_RELEASE)/components/toolchain/gcc-linaro/$(PKG_VERSION_MAJOR)
     else
@@ -61,9 +53,6 @@ else
   PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
   PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 
-  ifeq ($(PKG_VERSION),4.6.3)
-    PKG_MD5SUM:=773092fe5194353b02bb0110052a972e
-  endif
   ifeq ($(PKG_VERSION),4.8.0)
     PKG_MD5SUM:=e6040024eb9e761c3bea348d1fa5abb0
   endif

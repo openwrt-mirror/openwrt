@@ -246,7 +246,7 @@ define Image/mkfs/cpiogz
 endef
 
 define Image/mkfs/targz
-	$(TAR) -czpf $(BIN_DIR)/$(IMG_PREFIX)$(if $(PROFILE),-$(PROFILE))-rootfs.tar.gz --numeric-owner --owner=0 --group=0 -C $(TARGET_DIR)/ .
+	$(TAR) -czpf $(BIN_DIR)/$(IMG_PREFIX)$(if $(PROFILE),-$(PROFILE))-rootfs.tar.gz --numeric-owner --owner=0 --group=0 --sort=name -C $(TARGET_DIR)/ .
 endef
 
 E2SIZE=$(shell echo $$(($(CONFIG_TARGET_ROOTFS_PARTSIZE)*1024*1024)))
@@ -309,6 +309,15 @@ define Build/netgear-chk
 	mv $@.new $@
 endef
 
+define Build/netgear-dni
+	$(STAGING_DIR_HOST)/bin/mkdniimg \
+		-B $(NETGEAR_BOARD_ID) -v OpenWrt.$(REVISION) \
+		$(if $(NETGEAR_HW_ID),-H $(NETGEAR_HW_ID)) \
+		-r "$(1)" \
+		-i $@ -o $@.new
+	mv $@.new $@
+endef
+
 define Build/fit
 	$(TOPDIR)/scripts/mkits.sh \
 		-D $(DEVICE_NAME) -o $@.its -k $@ \
@@ -346,6 +355,16 @@ define Build/append-rootfs
 	dd if=$(word 2,$^) $(if $(1),bs=$(1) conv=sync) >> $@
 endef
 
+define Build/append-ubi
+	sh $(TOPDIR)/scripts/ubinize-image.sh \
+		$(if $(KERNEL_IN_UBI),--kernel $(word 1,$^)) \
+		$(word 2,$^) \
+		$@.tmp \
+		-p $(BLOCKSIZE) -m $(PAGESIZE) -E 5
+	cat $@.tmp >> $@
+	rm $@.tmp
+endef
+
 define Build/pad-to
 	dd if=$@ of=$@.new bs=$(1) conv=sync
 	mv $@.new $@
@@ -367,7 +386,7 @@ define Build/pad-offset
 endef
 
 define Build/check-size
-	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
+	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -ge "$$(stat -c%s $@)" ] || { \
 		echo "WARNING: Image file $@ is too big" >&2; \
 		rm -f $@; \
 	}
@@ -379,6 +398,14 @@ define Build/combined-image
 		"$@" \
 		"$@.new"
 	@mv $@.new $@
+endef
+
+define Build/sysupgrade-nand
+	sh $(TOPDIR)/scripts/sysupgrade-nand.sh \
+		--board $(if $(BOARD_NAME),$(BOARD_NAME),$(DEVICE_NAME)) \
+		--kernel $(word 1,$^) \
+		--rootfs $(word 2,$^) \
+		$@
 endef
 
 define Device/Init
@@ -433,7 +460,7 @@ endef
 endif
 
 define Device/Build/check_size
-	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -gt "$$(stat -c%s $@)" ] || { \
+	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -ge "$$(stat -c%s $@)" ] || { \
 		echo "WARNING: Image file $@ is too big" >&2; \
 		rm -f $@; \
 	}

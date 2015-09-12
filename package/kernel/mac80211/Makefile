@@ -78,7 +78,7 @@ endef
 define KernelPackage/mac80211
   $(call KernelPackage/mac80211/Default)
   TITLE:=Linux 802.11 Wireless Networking Stack
-  DEPENDS+= +kmod-crypto-core +kmod-crypto-arc4 +kmod-cfg80211 +hostapd-common
+  DEPENDS+= +kmod-cfg80211 +hostapd-common
   KCONFIG:=\
 	CONFIG_AVERAGE=y
   FILES:= $(PKG_BUILD_DIR)/net/mac80211/mac80211.ko
@@ -108,8 +108,8 @@ Generic IEEE 802.11 Networking Stack (mac80211)
 endef
 
 PKG_LINUX_FIRMWARE_NAME:=linux-firmware
-PKG_LINUX_FIRMWARE_VERSION:=f404336ba808cbd57547196e13367079a23b822c
-PKG_LINUX_FIRMWARE_SOURCE:=$(PKG_LINUX_FIRMWARE_NAME)-2015-03-20-$(PKG_LINUX_FIRMWARE_VERSION).tar.bz2
+PKG_LINUX_FIRMWARE_VERSION:=6ebf5d57d9f6d0cf05558baef1af2b90a3fe98ed
+PKG_LINUX_FIRMWARE_SOURCE:=$(PKG_LINUX_FIRMWARE_NAME)-2015-09-03-$(PKG_LINUX_FIRMWARE_VERSION).tar.xz
 PKG_LINUX_FIRMWARE_PROTO:=git
 PKG_LINUX_FIRMWARE_SOURCE_URL:=https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 PKG_LINUX_FIRMWARE_SUBDIR:=$(PKG_LINUX_FIRMWARE_NAME)-$(PKG_LINUX_FIRMWARE_VERSION)
@@ -719,7 +719,7 @@ endef
 define KernelPackage/net-libipw
   $(call KernelPackage/mac80211/Default)
   TITLE:=libipw for ipw2100 and ipw2200
-  DEPENDS:=@PCI_SUPPORT +kmod-crypto-core +kmod-crypto-arc4 +kmod-crypto-michael-mic +kmod-lib80211 +kmod-cfg80211 +@DRIVER_WEXT_SUPPORT @!BIG_ENDIAN
+  DEPENDS:=@PCI_SUPPORT +kmod-crypto-michael-mic +kmod-lib80211 +kmod-cfg80211 +@DRIVER_WEXT_SUPPORT @!BIG_ENDIAN
   FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/ipw2x00/libipw.ko
   AUTOLOAD:=$(call AutoProbe,libipw)
 endef
@@ -831,80 +831,67 @@ define KernelPackage/iwlagn
   TITLE:=Intel AGN Wireless support
   FILES:= \
 	$(PKG_BUILD_DIR)/drivers/net/wireless/iwlwifi/iwlwifi.ko \
-	$(PKG_BUILD_DIR)/drivers/net/wireless/iwlwifi/dvm/iwldvm.ko
-  AUTOLOAD:=$(call AutoProbe,iwlwifi iwldvm)
+	$(PKG_BUILD_DIR)/drivers/net/wireless/iwlwifi/dvm/iwldvm.ko \
+	$(PKG_BUILD_DIR)/drivers/net/wireless/iwlwifi/mvm/iwlmvm.ko
+  AUTOLOAD:=$(call AutoProbe,iwlwifi iwldvm iwlmvm)
   MENU:=1
 endef
 
 define KernelPackage/iwlagn/description
- iwlagn kernel module for Intel 5000/5150/1000/6000/6050/6005/6030/100 support
+ iwlagn kernel module for
+ Intel Wireless WiFi Link 6250AGN Adapter
+ Intel 6000 Series Wi-Fi Adapters (6200AGN and 6300AGN)
+ Intel WiFi Link 1000BGN
+ Intel Wireless WiFi 5150AGN
+ Intel Wireless WiFi 5100AGN, 5300AGN, and 5350AGN
+ Intel 6005 Series Wi-Fi Adapters
+ Intel 6030 Series Wi-Fi Adapters
+ Intel Wireless WiFi Link 6150BGN 2 Adapter
+ Intel 100 Series Wi-Fi Adapters (100BGN and 130BGN)
+ Intel 2000 Series Wi-Fi Adapters
+ Intel 7260 Wi-Fi Adapter
+ Intel 3160 Wi-Fi Adapter
+ Intel 7265 Wi-Fi Adapter
+ Intel 8260 Wi-Fi Adapter
+ Intel 3165 Wi-Fi Adapter
 endef
 
 define KernelPackage/iwlagn/config
   if PACKAGE_kmod-iwlagn
 
-	config IWL5000_FW
-		bool "Intel 5000 Firmware"
-		default y
+	config PACKAGE_IWLWIFI_DEBUG
+		bool "Enable full debugging output in the iwlagn driver"
+		default n
 		help
-		  Download and install firmware for:
-		    Intel Wireless WiFi 5100AGN, 5300AGN, and 5350AGN
+		  This option will enable debug tracing output for the iwlwifi drivers
 
-	config IWL5150_FW
-		bool "Intel 5150 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Wireless WiFi 5150AGN
+		  This will result in the kernel module being ~100k larger.  You can
+		  control which debug output is sent to the kernel log by setting the
+		  value in
 
-	config IWL1000_FW
-		bool "Intel 1000 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Centrino Wireless-N 1000
+			/sys/module/iwlwifi/parameters/debug
 
-	config IWL6000_FW
-		bool "Intel 6000 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Centrino Ultimate-N 6300 and Advanced-N 6200
+		  This entry will only exist if this option is enabled.
 
-	config IWL6050_FW
-		bool "Intel 6050 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Centrino Advanced-N + WiMAX 6250 and Wireless-N + WiMAX 6150
+		  To set a value, simply echo an 8-byte hex value to the same file:
 
-	config IWL6005_FW
-		bool "Intel 6005 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Centrino Advanced-N 6205
+			  % echo 0x43fff > /sys/module/iwlwifi/parameters/debug
 
-	config IWL6030_FW
-		bool "Intel 6030 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Centrino Advanced-N 6230, Wireless-N 1030, Wireless-N 130 and Advanced-N 6235
+		  You can find the list of debug mask values in:
+			  drivers/net/wireless/iwlwifi/iwl-debug.h
 
-	config IWL7260_FW
-		bool "Intel 7260 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Dual Band Wireless-N 7260 and Intel Dual Band Wireless-AC 7260
+		  If this is your first time using this driver, you should say Y here
+		  as the debug information can assist others in helping you resolve
+		  any problems you may encounter.
 
-	config IWL7265_FW
-		bool "Intel 7265 Firmware"
-		default y
+	config PACKAGE_IWLWIFI_DEBUGFS
+	        bool "iwlwifi debugfs support"
+		depends on PACKAGE_MAC80211_DEBUGFS
+		default n
 		help
-		  Download and install firmware for:
-		    Intel Wireless 7265
+		  Enable creation of debugfs files for the iwlwifi drivers. This
+		  is a low-impact option that allows getting insight into the
+		  driver's state at runtime.
 
 	config IWL100_FW
 		bool "Intel 100 Firmware"
@@ -913,19 +900,12 @@ define KernelPackage/iwlagn/config
 		  Download and install firmware for:
 		    Intel Centrino Wireless-N 100
 
-	config IWL2000_FW
-		bool "Intel 2000 Firmware"
+	config IWL1000_FW
+		bool "Intel 1000 Firmware"
 		default y
 		help
 		  Download and install firmware for:
-		    Intel Centrino Wireless-N 2200
-
-	config IWL2030_FW
-		bool "Intel 2030 Firmware"
-		default y
-		help
-		  Download and install firmware for:
-		    Intel Centrino Wireless-N 2230
+		    Intel Centrino Wireless-N 1000
 
 	config IWL105_FW
 		bool "Intel 105 Firmware"
@@ -941,12 +921,90 @@ define KernelPackage/iwlagn/config
 		  Download and install firmware for:
 		    Intel Centrino Wireless-N 135
 
+	config IWL2000_FW
+		bool "Intel 2000 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Centrino Wireless-N 2200
+
+	config IWL2030_FW
+		bool "Intel 2030 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Centrino Wireless-N 2230
+
 	config IWL3160_FW
 		bool "Intel 3160 Firmware"
 		default y
 		help
 		  Download and install firmware for:
-		    Intel Wireless 3160
+		    Intel Wireless WiFi 3160
+
+	config IWL5000_FW
+		bool "Intel 5000 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Wireless WiFi 5100AGN, 5300AGN, and 5350AGN
+
+	config IWL5150_FW
+		bool "Intel 5150 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Wireless WiFi 5150AGN
+
+	config IWL6000_FW
+		bool "Intel 6000 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Centrino Ultimate-N 6300 and Advanced-N 6200
+
+	config IWL6005_FW
+		bool "Intel 6005 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Centrino Advanced-N 6205
+
+	config IWL6030_FW
+		bool "Intel 6030 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Centrino Advanced-N 6230, Wireless-N 1030, Wireless-N 130 and Advanced-N 6235
+
+	config IWL6050_FW
+		bool "Intel 6050 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Centrino Advanced-N + WiMAX 6250 and Wireless-N + WiMAX 6150
+
+	config IWL7260_FW
+		bool "Intel 7260 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Dual Band Wireless-N 7260 and Intel Dual Band Wireless-AC 7260
+
+	config IWL7265_FW
+		bool "Intel 7265 Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Wireless 7265, 7265D, 3165
+
+	config IWL8000_FW
+		bool "Intel 8000 Series Firmware"
+		default y
+		help
+		  Download and install firmware for:
+		    Intel Wireless Series 8260, 4165
+
   endif
 endef
 
@@ -1637,12 +1695,14 @@ config-$(call config_package,rt2800-pci) += RT2800PCI
 config-y += RT2800PCI_RT33XX RT2800PCI_RT35XX RT2800PCI_RT53XX RT2800PCI_RT3290
 
 config-$(call config_package,rt2800-usb) += RT2800USB
-config-y += RT2800USB_RT33XX RT2800USB_RT35XX RT2800USB_RT3573 RT2800USB_RT53XX RT2800USB_RT55XX
+config-y += RT2800USB_RT33XX RT2800USB_RT35XX RT2800USB_RT3573 RT2800USB_RT53XX RT2800USB_RT55XX RT2800USB_UNKNOWN
 
 config-$(call config_package,iwl-legacy) += IWLEGACY
 config-$(call config_package,iwl3945) += IWL3945
 config-$(call config_package,iwl4965) += IWL4965
-config-$(call config_package,iwlagn) += IWLWIFI IWLDVM
+config-$(call config_package,iwlagn) += IWLWIFI IWLDVM IWLMVM
+config-$(CONFIG_PACKAGE_IWLWIFI_DEBUG)+= IWLWIFI_DEBUG
+config-$(CONFIG_PACKAGE_IWLWIFI_DEBUGFS)+= IWLWIFI_DEBUGFS
 
 config-$(call config_package,net-libipw) += LIBIPW
 config-$(call config_package,net-ipw2100) += IPW2100
@@ -1716,7 +1776,7 @@ define Build/Prepare
 	$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(IPW2100_NAME)-$(IPW2100_VERSION).tgz
 	$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(IPW2200_NAME)-$(IPW2200_VERSION).tgz
 	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(ZD1211FW_NAME)-$(ZD1211FW_VERSION).tar.bz2
-	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(PKG_LINUX_FIRMWARE_SOURCE)
+	$(TAR) -C $(PKG_BUILD_DIR) -xJf $(DL_DIR)/$(PKG_LINUX_FIRMWARE_SOURCE)
 	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SOURCE)
 	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(PKG_MT7601U_FW_SOURCE)
 	rm -rf \
@@ -1853,8 +1913,7 @@ endef
 define KernelPackage/wl18xx/install
 	$(INSTALL_DIR) $(1)/lib/firmware/ti-connectivity
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/ti-connectivity/wl18xx-conf.bin \
-		$(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/ti-connectivity/wl18xx-fw-3.bin \
+		$(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/ti-connectivity/wl18xx-fw-4.bin \
 		$(1)/lib/firmware/ti-connectivity
 endef
 
@@ -1929,41 +1988,11 @@ endef
 
 define KernelPackage/iwlagn/install
 	$(INSTALL_DIR) $(1)/lib/firmware
-ifneq ($(CONFIG_IWL5000_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-5000-5.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL5150_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-5150-2.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL1000_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-1000-5.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL6000_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6000-4.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL6050_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6050-5.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL6005_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6000g2a-6.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL6030_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6000g2b-6.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL7260_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7260-9.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL7265_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265-9.ucode $(1)/lib/firmware
-endif
 ifneq ($(CONFIG_IWL100_FW),)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-100-5.ucode $(1)/lib/firmware
 endif
-ifneq ($(CONFIG_IWL2000_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-2000-6.ucode $(1)/lib/firmware
-endif
-ifneq ($(CONFIG_IWL2030_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-2030-6.ucode $(1)/lib/firmware
+ifneq ($(CONFIG_IWL1000_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-1000-5.ucode $(1)/lib/firmware
 endif
 ifneq ($(CONFIG_IWL105_FW),)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-105-6.ucode $(1)/lib/firmware
@@ -1971,8 +2000,42 @@ endif
 ifneq ($(CONFIG_IWL135_FW),)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-135-6.ucode $(1)/lib/firmware
 endif
+ifneq ($(CONFIG_IWL2000_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-2000-6.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL2030_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-2030-6.ucode $(1)/lib/firmware
+endif
 ifneq ($(CONFIG_IWL3160_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-3160-9.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-3160-13.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL5000_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-5000-5.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL5150_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-5150-2.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL6000_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6000-4.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL6005_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6000g2a-6.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL6030_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6000g2b-6.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL6050_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6050-5.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL7260_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7260-13.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL7265_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265-13.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265D-13.ucode $(1)/lib/firmware
+endif
+ifneq ($(CONFIG_IWL8000_FW),)
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-8000C-13.ucode $(1)/lib/firmware
 endif
 endef
 
