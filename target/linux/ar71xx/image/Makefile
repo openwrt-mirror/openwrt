@@ -787,13 +787,6 @@ define Device/tl-wr941nd-v7
     TPLINK_HWID := 0x09410007
 endef
 
-define Device/tl-wdr3320-v2
-    $(Device/tplink-8mlzma)
-    BOARDNAME := TL-WDR3320-v2
-    DEVICE_PROFILE := TLWDR3320V2
-    TPLINK_HWID := 0x33200002
-endef
-
 define Device/tl-wr882n-v1
     $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR882N-v1
@@ -807,7 +800,7 @@ define Device/tl-wdr6300-v2
     DEVICE_PROFILE := TLWDR6300
     TPLINK_HWID := 0x63000002
 endef
-TARGET_DEVICES += tl-wr941nd-v7 tl-wdr3320-v2 tl-wr882n-v1 tl-wdr6300-v2
+TARGET_DEVICES += tl-wr941nd-v7 tl-wr882n-v1 tl-wdr6300-v2
 
 # UBNT_BOARD e.g. one of (XS2, XS5, RS, XM)
 # UBNT_TYPE e.g. one of (BZ, XM, XW)
