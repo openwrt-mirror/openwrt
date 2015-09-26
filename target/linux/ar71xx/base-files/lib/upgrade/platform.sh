@@ -227,6 +227,7 @@ platform_check_image() {
 	tew-732br | \
 	wrt400n | \
 	airgateway | \
+	airgatewaypro | \
 	airrouter | \
 	bullet-m | \
 	loco-m-xw | \
@@ -251,7 +252,8 @@ platform_check_image() {
 	nbg460n_550n_550nh | \
 	unifi | \
 	unifi-outdoor | \
-	carambola2 )
+	carambola2 | \
+	weio )
 		[ "$magic" != "2705" ] && {
 			echo "Invalid image type."
 			return 1
@@ -292,6 +294,7 @@ platform_check_image() {
 
 		return 0;
 		;;
+	mr1750 | \
 	mr600 | \
 	mr600v2 | \
 	mr900 | \
@@ -339,9 +342,9 @@ platform_check_image() {
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
-    tl-wdr3320-v2 | \
+	tl-wdr3320-v2 | \
 	tl-wdr3500 | \
-    mw4530r | \
+	mw4530r | \
 	tl-wdr4300 | \
 	tl-wdr4900-v2 | \
 	tl-wdr6300 | \
@@ -523,6 +526,7 @@ platform_do_upgrade() {
 	tew-673gru)
 		platform_do_upgrade_dir825b "$ARGV"
 		;;
+	mr1750 | \
 	mr600 | \
 	mr600v2 | \
 	mr900 | \

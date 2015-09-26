@@ -15,14 +15,9 @@ platform_check_image() {
 	return $?
 }
 
-platform_do_upgrade() {
-	if [ $$ -ne 1 ]; then
-		echo "not PID 1, upgrade aborted."
-		return 1;
-	fi
-	platform_do_upgrade_phase2 "$1" "$CONF_TAR" "$SAVE_CONFIG"
+platform_pre_upgrade() {
+	nand_do_upgrade $1
 }
-
 
 disable_watchdog() {
 	killall watchdog

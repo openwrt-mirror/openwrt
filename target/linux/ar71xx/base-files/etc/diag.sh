@@ -150,6 +150,9 @@ get_status_led() {
 	mr600v2)
 		status_led="mr600:blue:power"
 		;;
+	mr1750)
+		status_led="mr1750:blue:power"
+		;;
 	mr900 | \
 	mr900v2)
 		status_led="mr900:blue:power"
@@ -259,7 +262,7 @@ get_status_led() {
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
-    tl-wdr3320-v2 | \
+	tl-wdr3320-v2 | \
 	tl-wdr3500 | \
 	tl-wdr6300 | \
 	tl-wr1041n-v2 | \
@@ -314,7 +317,8 @@ get_status_led() {
 	unifi-outdoor-plus)
 		status_led="ubnt:white:front"
 		;;
-	airgateway)
+	airgateway | \
+	airgatewaypro)
 		status_led="ubnt:white:status"
 		;;
 	whr-g301n | \

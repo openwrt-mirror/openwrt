@@ -2,6 +2,7 @@
  *  TP-LINK TL-WDR3320 v2 board support
  *
  *  Copyright (C) 2012 Gabor Juhos <juhosg@openwrt.org>
+ *  Copyright (C) 2015 Weijie Gao <hackpascal@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License version 2 as published
@@ -94,17 +95,17 @@ static void __init wdr3320_setup(void)
 					ARRAY_SIZE(wdr3320_gpio_keys),
 					wdr3320_gpio_keys);
 
-    tplink_register_builtin_wmac1(WDR3320_WMAC_CALDATA_OFFSET, mac, -1);
+	tplink_register_builtin_wmac1(WDR3320_WMAC_CALDATA_OFFSET, mac, -1);
 
 	ap9x_pci_setup_wmac_led_pin(0, 0);
-    tplink_register_ap91_wmac2(WDR3320_PCIE_CALDATA_OFFSET, mac, 2);
+	tplink_register_ap91_wmac2(WDR3320_PCIE_CALDATA_OFFSET, mac, 2);
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE);
 
 	ath79_register_mdio(1, 0x0);
 
 	/* LAN */
-	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
 
 	/* GMAC1 is connected to the internal switch */
 	ath79_eth1_data.phy_if_mode = PHY_INTERFACE_MODE_GMII;
@@ -112,7 +113,7 @@ static void __init wdr3320_setup(void)
 	ath79_register_eth(1);
 
 	/* WAN */
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
 
 	/* GMAC0 is connected to the PHY4 of the internal switch */
 	ath79_switch_data.phy4_mii_en = 1;

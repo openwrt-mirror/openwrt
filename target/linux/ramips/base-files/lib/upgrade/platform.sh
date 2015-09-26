@@ -36,6 +36,7 @@ platform_check_image() {
 	cf-wr800n|\
 	d105|\
 	dap-1350|\
+	db-wrt01|\
 	dcs-930|\
 	dcs-930l-b1|\
 	dir-300-b1|\
@@ -108,6 +109,7 @@ platform_check_image() {
 	whr-300hp2|\
 	whr-600d|\
 	whr-g300n|\
+	wizfi630a|\
 	wl-330n|\
 	wl-330n3g|\
 	wl-341v3|\

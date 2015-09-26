@@ -94,6 +94,7 @@ get_status_led() {
 	y1s)
 		status_led="$board:blue:power"
 		;;
+	db-wrt01|\
 	esr-9753)
 		status_led="$board:orange:power"
 		;;
@@ -170,6 +171,9 @@ get_status_led() {
 	whr-g300n|\
 	wzr-agl300nh)
 		status_led="$board:green:router"
+		;;
+	wizfi630a)
+		status_led="$board::run"
 		;;
 	wsr-1166|\
 	wsr-600)

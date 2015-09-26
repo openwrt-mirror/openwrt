@@ -608,7 +608,6 @@ Image/Build/Profile/W502U=$(call BuildFirmware/Default8M/$(1),$(1),w502u,W502U)
 
 Image/Build/Profile/WCR150GN=$(call BuildFirmware/Default4M/$(1),$(1),wcr150gn,WCR150GN)
 
-
 Image/Build/Profile/MZK-DP150N=$(call BuildFirmware/Default4M/$(1),$(1),mzk-dp150n,MZK-DP150N)
 
 buffalo_whrg300n_mtd_size=3801088
@@ -630,6 +629,8 @@ BuildFirmware/WHRG300N/initramfs=$(call BuildFirmware/OF/initramfs,$(1),whr-g300
 Image/Build/Profile/WHRG300N=$(call BuildFirmware/WHRG300N/$(1),$(1))
 
 Image/Build/Profile/WIZARD8800=$(call BuildFirmware/Default8M/$(1),$(1),wizard-8800,WIZARD8800,Linux Kernel Image)
+
+Image/Build/Profile/WIZFI630A=$(call BuildFirmware/Default16M/$(1),$(1),wizfi630a,WIZFI630A)
 
 Image/Build/Profile/WL-330N=$(call BuildFirmware/Default4M/$(1),$(1),wl-330n,WL-330N)
 
@@ -763,6 +764,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/WCR150GN,$(1))
 	$(call Image/Build/Profile/WHRG300N,$(1))
 	$(call Image/Build/Profile/WIZARD8800,$(1))
+	$(call Image/Build/Profile/WIZFI630A,$(1))
 	$(call Image/Build/Profile/WL-330N,$(1))
 	$(call Image/Build/Profile/WL-330N3G,$(1))
 	$(call Image/Build/Profile/WL-341V3,$(1))
@@ -868,6 +870,7 @@ Image/Build/Profile/CF-WR800N=$(call BuildFirmware/Default8M/$(1),$(1),cf-wr800n
 Image/Build/Profile/DIR-810L=$(call BuildFirmware/CustomFlash/$(1),$(1),dir-810l,DIR-810L,$(dlink810l_mtd_size))
 na930_mtd_size=20971520
 Image/Build/Profile/NA930=$(call BuildFirmware/CustomFlash/$(1),$(1),na930,NA930,$(na930_mtd_size))
+Image/Build/Profile/DB-WRT01=$(call BuildFirmware/Default8M/$(1),$(1),db-wrt01,DB-WRT01)
 Image/Build/Profile/MZK-750DHP=$(call BuildFirmware/Default8M/$(1),$(1),mzk-750dhp,MZK-750DHP)
 Image/Build/Profile/HiWiFi-HC5761=$(call BuildFirmware/Default16M/$(1),$(1),hiwifi-hc5761,HiWiFi-HC5761)
 Image/Build/Profile/OY-0001=$(call BuildFirmware/Default16M/$(1),$(1),oy-0001,OY-0001)
@@ -902,6 +905,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/WHR300HP2,$(1))
 	$(call Image/Build/Profile/WHR600D,$(1))
 	$(call Image/Build/Profile/WHR1166D,$(1))
+	$(call Image/Build/Profile/DB-WRT01,$(1))
 	$(call Image/Build/Profile/MZK-750DHP,$(1))
 	$(call Image/Build/Profile/NA930,$(1))
 	$(call Image/Build/Profile/HiWiFi-HC5761,$(1))

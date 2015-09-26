@@ -7,7 +7,7 @@
 #
 
 usage() {
-	echo "Usage: $0 <OM2P|OM5P|MR600|MR900> <out file path> <kernel path> <rootfs path>"
+	echo "Usage: $0 <OM2P|OM5P|MR600|MR900|MR1750> <out file path> <kernel path> <rootfs path>"
 	rm -f $CFG_OUT
 	exit 1
 }
@@ -26,7 +26,7 @@ case $CE_TYPE in
 		FLASH_BS=262144
 		MD5_SKIP_BLOCKS=1
 		;;
-	OM5P|MR600|MR900)
+	OM5P|MR600|MR900|MR1750)
 		MAX_PART_SIZE=7808
 		KERNEL_FLASH_ADDR=0xb0000
 		FLASH_BS=65536
@@ -48,6 +48,7 @@ ROOTFS_FLASH_ADDR=$(addr=$(($KERNEL_FLASH_ADDR + ($KERNEL_PART_SIZE * 1024))); p
 ROOTFS_SIZE=$(stat -c%s "$ROOTFS_PATH")
 ROOTFS_CHECK_BLOCKS=$((($ROOTFS_SIZE / $CHECK_BS) - $MD5_SKIP_BLOCKS))
 ROOTFS_MD5=$(md5=$(dd if=$ROOTFS_PATH bs=$CHECK_BS count=$ROOTFS_CHECK_BLOCKS 2>&- | md5sum); echo ${md5%% *})
+ROOTFS_MD5_FULL=$(md5=$(md5sum $ROOTFS_PATH); echo ${md5%% *})
 ROOTFS_CHECK_SIZE=$(printf '0x%x' $(($ROOTFS_CHECK_BLOCKS * $CHECK_BS)))
 ROOTFS_PART_SIZE=$(($MAX_PART_SIZE - $KERNEL_PART_SIZE))
 
@@ -55,6 +56,7 @@ cat << EOF > $CFG_OUT
 [vmlinux]
 filename=kernel
 md5sum=$KERNEL_MD5
+filemd5sum=$KERNEL_MD5
 flashaddr=$KERNEL_FLASH_ADDR
 checksize=0x0
 cmd_success=setenv bootseq 1,2; setenv kernel_size_1 $KERNEL_PART_SIZE; saveenv
@@ -63,6 +65,7 @@ cmd_fail=reset
 [rootfs]
 filename=rootfs
 md5sum=$ROOTFS_MD5
+filemd5sum=$ROOTFS_MD5_FULL
 flashaddr=$ROOTFS_FLASH_ADDR
 checksize=$ROOTFS_CHECK_SIZE
 cmd_success=setenv bootseq 1,2; setenv kernel_size_1 $KERNEL_PART_SIZE; setenv rootfs_size_1 $ROOTFS_PART_SIZE; saveenv

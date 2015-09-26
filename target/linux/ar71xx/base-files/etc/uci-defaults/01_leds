@@ -9,7 +9,8 @@
 board=$(ar71xx_board_name)
 
 case "$board" in
-airgateway)
+airgateway | \
+airgatewaypro)
 	ucidef_set_led_wlan "wlan" "WLAN" "ubnt:blue:wlan" "phy0tpt"
 	;;
 alfa-nx)
@@ -263,10 +264,10 @@ mr600)
 	ucidef_set_led_wlan "wlan58" "WLAN58" "mr600:green:wlan58" "phy0tpt"
 	;;
 
-qihoo-c301)
-	ucidef_set_led_wlan "wlan2g" "WLAN2G" "360:green:status" "phy1tpt"
-	ucidef_set_led_wlan "wlan5g" "WLAN5G" "360:red:status" "phy0tpt"
-	ucidef_set_led_default "ethled" "ENABLE_ETH_LIGHT" "360:green:ethsw" "1"
+mr1750)
+	ucidef_set_led_netdev "lan" "LAN" "mr1750:blue:wan" "eth0"
+	ucidef_set_led_wlan "wlan58" "WLAN58" "mr1750:blue:wlan58" "phy0tpt"
+	ucidef_set_led_wlan "wlan24" "WLAN24" "mr1750:blue:wlan24" "phy1tpt"
 	;;
 
 mr900 | \
@@ -326,6 +327,12 @@ om5p | \
 om5p-an)
 	ucidef_set_led_netdev "port1" "port1" "om5p:blue:wan" "eth0"
 	ucidef_set_led_netdev "port2" "port2" "om5p:blue:lan" "eth1"
+	;;
+
+qihoo-c301)
+	ucidef_set_led_wlan "wlan2g" "WLAN2G" "360:green:status" "phy1tpt"
+	ucidef_set_led_wlan "wlan5g" "WLAN5G" "360:red:status" "phy0tpt"
+	ucidef_set_led_default "ethled" "ENABLE_ETH_LIGHT" "360:green:ethsw" "1"
 	;;
 
 smart-300)

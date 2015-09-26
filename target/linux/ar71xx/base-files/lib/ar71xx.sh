@@ -224,7 +224,7 @@ tplink_board_detect() {
 	"342000"*)
 		model="TP-Link TL-MR3420"
 		;;
-    	"332000"*)
+	"332000"*)
 		model="TP-Link TL-WDR3320"
 		;;
 	"350000"*)
@@ -335,6 +335,9 @@ ar71xx_board_detect() {
 	*"AirGateway")
 		name="airgateway"
 		;;
+	*"AirGateway Pro")
+		name="airgatewaypro"
+		;;
 	*"AirRouter")
 		name="airrouter"
 		;;
@@ -379,6 +382,9 @@ ar71xx_board_detect() {
 		;;
 	*"AP147-010 reference board")
 		name="ap147-010"
+		;;
+	*"AP152 reference board")
+		name="ap152"
 		;;
 	*AP81)
 		name="ap81"
@@ -522,6 +528,9 @@ ar71xx_board_detect() {
 		;;
 	*MR600v2)
 		name="mr600v2"
+		;;
+	*MR1750)
+		name="mr1750"
 		;;
 	*MR600)
 		name="mr600"
@@ -775,7 +784,7 @@ ar71xx_board_detect() {
 	*"TL-WA901ND v3")
 		name="tl-wa901nd-v3"
 		;;
-    	*"TL-WDR3320 v2")
+	*"TL-WDR3320 v2")
 		name="tl-wdr3320-v2"
 		;;
 	*"TL-WDR3500")
@@ -858,6 +867,9 @@ ar71xx_board_detect() {
 		;;
 	*"UniFi AP Pro")
 		name="uap-pro"
+		;;
+	*"WeIO")
+		name="weio"
 		;;
 	*WHR-G301N)
 		name="whr-g301n"
