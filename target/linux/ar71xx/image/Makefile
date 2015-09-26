@@ -920,7 +920,7 @@ define Device/ubnt-air-gateway-pro
   UBNT_CHIP := ar934x
   CONSOLE = ttyS0,115200
 endef
-TARGET_DEVICES += ubnt-air-gateway-pro
+#TARGET_DEVICES += ubnt-air-gateway-pro
 
 define Device/ubdev01
   $(Device/ubnt-xm)
