@@ -28,6 +28,8 @@ $(eval $(call KernelPackage,sound-arm-bcm2835))
 define KernelPackage/sound-soc-bcm2708-i2s
   TITLE:=SoC Audio support for the Broadcom 2708 I2S module
   KCONFIG:= \
+	CONFIG_BCM2708_SPIDEV=n \
+	CONFIG_MFD_RPISENSE_CORE=n \
 	CONFIG_SND_BCM2708_SOC_I2S \
 	CONFIG_SND_SOC_DMAENGINE_PCM=y \
 	CONFIG_SND_SOC_GENERIC_DMAENGINE_PCM=y
@@ -53,7 +55,7 @@ define KernelPackage/sound-soc-hifiberry-dac
 	$(LINUX_DIR)/sound/soc/bcm/snd-soc-hifiberry-dac.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-pcm5102a.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-pcm5102a snd-soc-hifiberry-dac)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -72,7 +74,7 @@ define KernelPackage/sound-soc-hifiberry-dacplus
 	$(LINUX_DIR)/sound/soc/bcm/snd-soc-hifiberry-dacplus.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-pcm512x.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-pcm512x snd-soc-hifiberry-dacplus)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -91,7 +93,7 @@ define KernelPackage/sound-soc-hifiberry-digi
 	$(LINUX_DIR)/sound/soc/bcm/snd-soc-hifiberry-digi.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8804.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-wm8804 snd-soc-hifiberry-digi)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -110,7 +112,7 @@ define KernelPackage/sound-soc-hifiberry-amp
 	$(LINUX_DIR)/sound/soc/bcm/snd-soc-hifiberry-amp.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-tas5713.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-tas5713 snd-soc-hifiberry-amp)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -129,7 +131,7 @@ define KernelPackage/sound-soc-rpi-dac
 	$(LINUX_DIR)/sound/soc/bcm/snd-soc-rpi-dac.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-pcm1794a.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-pcm1794a snd-soc-rpi-dac)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -148,7 +150,7 @@ define KernelPackage/sound-soc-rpi-proto
 	$(LINUX_DIR)/sound/soc/bcm/snd-soc-rpi-proto.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8731.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-wm8731 snd-soc-rpi-proto)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -169,7 +171,7 @@ define KernelPackage/sound-soc-iqaudio-dac
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-pcm512x.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-pcm512x-i2c.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-pcm512x snd-soc-pcm512x-i2c snd-soc-iqaudio-dac)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 
@@ -192,7 +194,7 @@ define KernelPackage/sound-soc-raspidac3
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-pcm512x-i2c.ko \
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-tpa6130a2.ko
   AUTOLOAD:=$(call AutoLoad,68,snd-soc-pcm512x snd-soc-pcm512x-i2c snd-soc-tpa6130a2 snd-soc-raspidac3)
-  DEPENDS:=kmod-sound-soc-bcm2708-i2s
+  DEPENDS:=kmod-sound-soc-bcm2708-i2s +kmod-i2c-bcm2708
   $(call AddDepends/sound)
 endef
 

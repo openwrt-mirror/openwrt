@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/libnl/default
   SECTION:=libs
   CATEGORY:=Libraries
-  URL:=http://people.suug.ch/~tgr/libnl/
+  URL:=http://www.infradead.org/~tgr/libnl/
 endef
 
 define Package/libnl-core
@@ -85,8 +85,8 @@ define Build/Compile
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/libnl $(1)/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/libnl3/* $(1)/usr/include/libnl/
+	$(INSTALL_DIR) $(1)/usr/include/libnl3 $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/libnl3/* $(1)/usr/include/libnl3/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc $(1)/usr/lib/pkgconfig
 

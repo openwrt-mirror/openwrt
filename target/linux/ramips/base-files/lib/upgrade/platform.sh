@@ -55,6 +55,7 @@ platform_check_image() {
 	firewrt|\
 	fonera20n|\
 	freestation5|\
+	hc5*61|\
 	hg255d|\
 	hiwifi-hc5761 |\
 	hlk-rm04|\

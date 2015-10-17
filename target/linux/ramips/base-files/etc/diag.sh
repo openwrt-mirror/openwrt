@@ -104,11 +104,18 @@ get_status_led() {
 	f7c027)
 		status_led="$board:orange:status"
 		;;
+<<<<<<< HEAD
 	hg255d)
 		status_led="hg255d:power"
 		;;
 	hiwifi-hc5761)
 		status_led="hiwifi:blue:system"
+=======
+	hc5*61|\
+	mlw221|\
+	mlwg2)
+		status_led="$board:blue:system"
+>>>>>>> cef3ed688e2e7a8521ad386b64849258087f4f9c
 		;;
 	m2m)
 		status_led="$board:blue:wifi"
@@ -120,10 +127,6 @@ get_status_led() {
 	miwifi-mini|\
 	zte-q7)
 		status_led="$board:red:status"
-		;;
-	mlw221|\
-	mlwg2)
-		status_led="$board:blue:system"
 		;;
 	mr-102n)
 		status_led="$board:amber:status"
