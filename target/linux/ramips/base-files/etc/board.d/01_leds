@@ -8,11 +8,7 @@ set_usb_led() {
 }
 
 set_wifi_led() {
-	if [ -d /sys/class/net/ra0 ] ; then
-		ucidef_set_led_netdev "wifi_led" "wifi" "$1" "ra0"
-	else
-		ucidef_set_led_netdev "wifi_led" "wifi" "$1" "wlan0"
-	fi
+	ucidef_set_led_netdev "wifi_led" "wifi" "$1" "wlan0"
 }
 
 
@@ -136,12 +132,6 @@ fonera20n)
 	set_usb_led "$board:orange:usb"
 	set_wifi_led "$board:orange:wifi"
 	;;
-<<<<<<< HEAD
-hiwifi-hc5761)
-	ucidef_set_led_default "system" "system" "hiwifi:blue:system" "1"
-	ucidef_set_led_netdev "internet" "internet" "hiwifi:blue:internet" "eth0.2"
-	set_wifi_led "hiwifi:blue:wlan-2p4"
-=======
 hc5661)
 	ucidef_set_led_default "system" "system" "$board:blue:system" "1"
 	ucidef_set_led_netdev "internet" "internet" "$board:blue:internet" "eth0.2"
@@ -159,7 +149,6 @@ hc5861)
 	set_wifi_led "$board:blue:wlan2g"
 	ucidef_set_led_netdev "wifi5g" "wifi5g" "$board:blue:wlan5g" "rai0"
 	ucidef_set_led_default "turbo" "turbo" "$board:blue:turbo" "0"
->>>>>>> cef3ed688e2e7a8521ad386b64849258087f4f9c
 	;;
 hg255d)
 	set_wifi_led "$board:green:wlan"

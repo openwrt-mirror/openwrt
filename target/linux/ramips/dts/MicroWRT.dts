@@ -7,15 +7,10 @@
 	model = "Microduino MicroWRT";
 
 	chosen {
-		bootargs = "console=ttyS1,115200";
+		bootargs = "console=ttyS0,115200";
 	};
 
 	palmbus@10000000 {
-		uart@500 {
-			pinctrl-names = "default";
-			pinctrl-0 = <&uartf_gpio_pins>;
-			status = "okay";
-		};
 		gpio2: gpio@660 {
 			status = "okay";
 		};
@@ -50,7 +45,7 @@
 				factory: partition@30000 {
 					label = "factory";
 					reg = <0x30000 0x10000>;
-
+					read-only;
 				};
 
 				partition@40000 {
@@ -87,7 +82,7 @@
 	pinctrl {
 		state_default: pinctrl0 {
 			default {
-				ralink,group = "wled", "i2c", "wdt";
+				ralink,group = "wled", "i2c", "wdt", "uartf";
 				ralink,function = "gpio";
 			};
 		};
@@ -112,4 +107,3 @@
 		};
 	};
 };
-

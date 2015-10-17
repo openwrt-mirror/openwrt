@@ -57,7 +57,6 @@ platform_check_image() {
 	freestation5|\
 	hc5*61|\
 	hg255d|\
-	hiwifi-hc5761 |\
 	hlk-rm04|\
 	hpm|\
 	ht-tm02|\

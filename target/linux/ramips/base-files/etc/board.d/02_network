@@ -231,16 +231,6 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "1" "1 2 6t"
 		ucidef_add_switch_vlan "switch0" "2" "0 6t"
 		;;
-<<<<<<< HEAD
-	hiwifi-hc5761 | \
-	y1s)
-		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
-		ucidef_add_switch "switch0" "1" "1"
-		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 5 6t"
-		ucidef_add_switch_vlan "switch0" "2" "0 6t"
-		;;
-=======
->>>>>>> cef3ed688e2e7a8521ad386b64849258087f4f9c
 	zbt-wr8305rt)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
@@ -311,24 +301,6 @@ ramips_setup_macs()
 		;;
 	ht-tm02)
 		lan_mac=$(cat /sys/class/net/eth0/address)
-		;;
-	hiwifi-hc5761)
-		local part
-		local mac_dirty
-
-		part=$(find_mtd_part "bdinfo")
-		if [ -z "$part" ]; then
-			echo "hiwifi_get_mac: partition bdinfo not found!" >&2
-			return
-		fi
-
-		mac_dirty=$(strings "$part" | sed -n 's/^'"Vfac_mac "'=//p')
-
-		# "canonicalize" mac
-		[ -n "$mac_dirty" ] && {
-				lan_mac=$(macaddr_canonicalize "$mac_dirty")
-		}
-		wan_mac=$(macaddr_add "$lan_mac" 1)
 		;;
 	m3|\
 	m4|\
