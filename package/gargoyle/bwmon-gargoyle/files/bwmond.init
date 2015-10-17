@@ -100,13 +100,19 @@ start()
 
 	# code to help filter out bogons on distribution monitors, 
 	# which make up really small amount of bandwidth, but screw up monitoring
-	ipset --create  local_addr_set nethash >/dev/null 2>&1 #may die if set already exists
-	ipset -F local_addr_set
-	ipset --add local_addr_set $lan_ip/$lan_bits
-	ipset --add local_addr_set $wan_ip/31 #minimum netmask allowed, good enough
 
+	iptables -t $upload_table -A $upload_chain                                    -j CONNMARK --set-mark 0x0/0xFF000000
+	iptables -t $upload_table -A $upload_chain -s $lan_ip/$lan_bits               -j CONNMARK --set-mark 0x0F000000/0xFF000000
+	iptables -t $upload_table -A $upload_chain -s $wan_ip                         -j CONNMARK --set-mark 0x0F000000/0xFF000000
+	iptables -t $upload_table -A $upload_chain -m connmark --mark 0x0/0x0F000000  -j RETURN
+	iptables -t $upload_table -A $upload_chain                                    -j CONNMARK --set-mark 0x0/0xFF000000
+	
 
-
+	iptables -t $download_table -A $download_chain                                    -j CONNMARK --set-mark 0x0/0xFF000000
+	iptables -t $download_table -A $download_chain -d $lan_ip/$lan_bits               -j CONNMARK --set-mark 0x0F000000/0xFF000000
+	iptables -t $download_table -A $download_chain -d $wan_ip                         -j CONNMARK --set-mark 0x0F000000/0xFF000000
+	iptables -t $download_table -A $download_chain -m connmark --mark 0x0/0x0F000000  -j RETURN
+	iptables -t $download_table -A $download_chain                                    -j CONNMARK --set-mark 0x0/0xFF000000
 
 
 	minute_s=60
@@ -163,8 +169,8 @@ start()
 		bdist_reset_time=$(eval "echo \$bdist"$n"_reset_time")
 		if [ -n "$bdist_reset_time" ] ; then bdist_reset_time="--reset_time $bdist_reset_time" ; fi
 		if [ -n "$lan_mask" ] && [ -n "$lan_ip" ] ; then
-			iptables -t $download_table -A $download_chain -m set --match-set local_addr_set dst -m bandwidth --id "bdist"$n"-download-$bdist_interval-$bdist_num_intervals" --type "individual_dst" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
-			iptables -t $upload_table   -A $upload_chain   -m set --match-set local_addr_set src -m bandwidth --id "bdist"$n"-upload-$bdist_interval-$bdist_num_intervals"   --type "individual_src" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
+			iptables -t $download_table -A $download_chain -m bandwidth --id "bdist"$n"-download-$bdist_interval-$bdist_num_intervals" --type "individual_dst" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
+			iptables -t $upload_table   -A $upload_chain   -m bandwidth --id "bdist"$n"-upload-$bdist_interval-$bdist_num_intervals"   --type "individual_src" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
 			ids="bdist"$n"-download-$bdist_interval-$bdist_num_intervals bdist"$n"-upload-$bdist_interval-$bdist_num_intervals" 
 		fi
 	else
@@ -196,8 +202,8 @@ start()
 		fi
 
 		if [ -n "$lan_mask" ] && [ -n "$lan_ip" ] ; then
-			iptables -t $download_table -A $download_chain -m set --match-set local_addr_set dst -m bandwidth --id "bdist"$n"-download-$bdist_interval-$bdist_num_intervals" --type "individual_dst" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
-			iptables -t $upload_table   -A $upload_chain   -m set --match-set local_addr_set src -m bandwidth --id "bdist"$n"-upload-$bdist_interval-$bdist_num_intervals"   --type "individual_src" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
+			iptables -t $download_table -A $download_chain -m bandwidth --id "bdist"$n"-download-$bdist_interval-$bdist_num_intervals" --type "individual_dst" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
+			iptables -t $upload_table   -A $upload_chain   -m bandwidth --id "bdist"$n"-upload-$bdist_interval-$bdist_num_intervals"   --type "individual_src" --reset_interval $bdist_interval --intervals_to_save $bdist_num_intervals $bdist_reset_time
 			ids="$ids bdist"$n"-download-$bdist_interval-$bdist_num_intervals bdist"$n"-upload-$bdist_interval-$bdist_num_intervals" 
 		fi
 
@@ -245,12 +251,16 @@ start()
 		done
 	fi
 
+
+
+
 	touch /etc/crontabs/root
 	grep -v "$backup_script" /etc/crontabs/root > "$tmp_cron"
 	echo "0 0,4,8,12,16,20 * * * $backup_script" >> "$tmp_cron"
 	
 	mkdir -p "$backup_script_dir"
-	echo "#!/bin/sh" > "$backup_script"
+	echo "#!/bin/sh"          > "$backup_script"
+	echo "touch /etc/banner" >> "$backup_script"
 	chmod 700 "$backup_script"
 	
 
@@ -261,7 +271,7 @@ start()
 		if [ -n "$is_total123" ] || [ -n "$is_bdist123" ] || [ -n "$is_qos123" ]  ; then
 			bw_restore "$i" 1
 		else
-			bw_restore "$i" 1
+			bw_restore "$i" 0
 		fi
 	done
 
