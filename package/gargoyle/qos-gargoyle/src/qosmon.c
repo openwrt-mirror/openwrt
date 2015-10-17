@@ -47,6 +47,7 @@
 #include <ncurses.h>
 #endif
 
+
 #define MAXPACKET   100   /* max packet size */
 #define BACKGROUND  3     /* Detact and run in the background */
 #define ADDENTITLEMENT 4
@@ -67,9 +68,13 @@
 #define talk(a,b,c,d,e) rtnl_talk(a,b,c,d,e,NULL,NULL)
 #endif
 
+
+/* use_names is required when linking to tc_util.o */
+bool use_names = false;
+
+
 u_char  packet[MAXPACKET];
 int pingflags, options;
-bool use_names;
 
 #define DEAMON (pingflags & BACKGROUND)
 
