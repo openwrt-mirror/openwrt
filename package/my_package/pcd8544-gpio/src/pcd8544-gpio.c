@@ -43,10 +43,14 @@ const char this_driver_name[] = "pcd8544_gpio";
 static struct proc_dir_entry *proc_getgpio = NULL;
 static struct proc_dir_entry *proc_getstr = NULL;
 
+struct mutex cmd_lock;
+
 void pcd8544_write_byte(const unsigned char dat_cnst,bool cmd)
 {
 	int i;
 	char data=dat_cnst;
+
+	mutex_lock(&cmd_lock);
 	gpio_set_value(G_CE, 0);
 	gpio_set_value(G_DC, cmd);
 	for(i=0;i<8;i++)
@@ -57,6 +61,7 @@ void pcd8544_write_byte(const unsigned char dat_cnst,bool cmd)
 		gpio_set_value(G_CLK, 1);
 	}
 	gpio_set_value(G_CE, 1);
+	mutex_unlock(&cmd_lock);
 }
 //GPIO PROCFG
 static int proc_pcd8544_gpio_read(struct seq_file *seq, void *v)
@@ -73,8 +78,10 @@ static ssize_t proc_pcd8544_gpio_write(struct file *file, const char __user *buf
 	char buf[17];
 	int len;
 
+	mutex_lock(&cmd_lock);
 	len=count>sizeof(buf)?sizeof(buf):count;
 	if (copy_from_user(buf, buffer, len)){
+		mutex_unlock(&cmd_lock);
 		return -EFAULT;
 	}
 	if(sscanf(buf,"%d%d%d%d%d",&G_CLK,&G_DIN,&G_DC,&G_CE,&G_RST)==5)
@@ -108,6 +115,7 @@ static ssize_t proc_pcd8544_gpio_write(struct file *file, const char __user *buf
 	} else {
 		printk("Please give the GPIOs in correct format.\n");
 	}
+	mutex_unlock(&cmd_lock);
 	return count;
 }
 
@@ -168,6 +176,7 @@ static const struct file_operations proc_pcd8544_str_operations = {
 //procfs end
 static int __init pcd8544_init(void)
 {
+	mutex_init(&cmd_lock);
 	proc_getgpio = proc_create("pcd8544_gpio", 0, NULL, &proc_pcd8544_gpio_operations);
 	if(proc_getgpio == NULL){
 		printk("Failed to create proc entry.\n");
