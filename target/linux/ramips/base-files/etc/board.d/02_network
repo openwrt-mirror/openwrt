@@ -137,6 +137,7 @@ ramips_setup_interfaces()
 	mt7628 | \
 	mzk-w300nh2 | \
 	mzk-750dhp | \
+	netprotection | \
 	whr-300hp2 | \
 	whr-600d | \
 	oy-0001 | \
@@ -166,7 +167,6 @@ ramips_setup_interfaces()
 	f5d8235-v1 | \
 	f5d8235-v2 | \
 	hg255d | \
-        netprotection | \
 	rt-n14u | \
 	wrtnode | \
 	wt3020 | \
