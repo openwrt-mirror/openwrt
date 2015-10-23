@@ -107,17 +107,20 @@ tplink_board_detect() {
 	"015300"*)
 		model="EasyLink EL-MINI"
 		;;
-	"04440001"*)
-		model="BITMAIN ANTMINER S1"
+	"044401"*)
+		model="ANTMINER-S1"
 		;;
-	"04440003"*)
-		model="BITMAIN ANTMINER S3"
+	"044403"*)
+		model="ANTMINER-S3"
 		;;
 	"120000"*)
 		model="MERCURY MAC1200R"
 		;;
 	"3C0001"*)
 		model="OOLITE"
+		;;
+	"3C0002"*)
+		model="MINIBOX_V1"
 		;;
 	"070300"*)
 		model="TP-Link TL-WR703N"
@@ -356,6 +359,12 @@ ar71xx_board_detect() {
 	*ALL0315N)
 		name="all0315n"
 		;;
+	*Antminer-S1)
+		name="antminer-s1"
+		;;
+	*Antminer-S3)
+		name="antminer-s3"
+		;;
 	*AP113)
 		name="ap113"
 		;;
@@ -519,6 +528,9 @@ ar71xx_board_detect() {
 		;;
 	*"MAC1200R")
 		name="mc-mac1200r"
+		;;
+	*"MiniBox V1.0")
+		name="minibox-v1"
 		;;
 	*MR12)
 		name="mr12"
