@@ -37,10 +37,7 @@ $(call Package/iproute2/Default,tiny,Minimal)
   CONFLICTS:=ip-full
 endef
 
-define Package/ip-full
-$(call Package/iproute2/Default,full,Full)
-  PROVIDES:=ip
-endef
+Package/ip-full=$(call Package/iproute2/Default,full,Full)
 
 define Package/ip-$(BUILD_VARIANT)/conffiles
 $(Package/ip/conffiles)
