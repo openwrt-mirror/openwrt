@@ -15,7 +15,7 @@ define Package/gargoyle-firewall-util
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=A couple of shell script routines for firewall initialization
-	DEPENDS:=+ebtables +libericstools +uci +libiptbwctl +iptables-mod-filter +iptables-mod-ipopt +iptables-mod-conntrack-extra +iptables-mod-nat-extra +iptables-mod-extra +iptables-mod-iprange +iptables-mod-bandwidth +iptables-mod-timerange +iptables-mod-weburl +kmod-gre +kmod-pptp +kmod-tun +kmod-ipt-nathelper +kmod-ipt-nathelper-extra
+	DEPENDS:=+ebtables +libericstools +uci +libiptbwctl +iptables-mod-filter +iptables-mod-ipopt +iptables-mod-conntrack-extra +iptables-mod-nat-extra +iptables-mod-extra +iptables-mod-iprange +iptables-mod-bandwidth +iptables-mod-timerange +iptables-mod-weburl +kmod-gre +kmod-pptp +kmod-tun +kmod-nf-nathelper +kmod-nf-nathelper-extra
 	MAINTAINER:=Eric Bishop <eric@gargoyle-router.com>
 endef
 
