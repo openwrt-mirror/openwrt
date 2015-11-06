@@ -83,7 +83,8 @@ ramips_setup_interfaces()
 	wsr-1166|\
 	wsr-600|\
 	wt1520|\
-	y1)
+	y1|\
+	zbt-wg2626)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 6t"
@@ -104,7 +105,8 @@ ramips_setup_interfaces()
 		ucidef_add_switch_vlan "switch0" "2" "4 5t"
 		;;
 	asl26555|\
-	re6500)
+	re6500|\
+	rp-n53)
 		ucidef_set_interface_lan "eth0.1"
 		ucidef_add_switch "switch0" "1" "1"
 		ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 6t"
@@ -332,6 +334,10 @@ ramips_setup_macs()
 	tew-692gr)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		wan_mac=$(macaddr_add "$lan_mac" 4)
+		;;
+	tiny-ac)
+		lan_mac=$(mtd_get_mac_ascii u-boot-env LAN_MAC_ADDR)
+		wan_mac=$(mtd_get_mac_ascii u-boot-env WAN_MAC_ADDR)
 		;;
 	w306r-v20)
 		lan_mac=$(cat /sys/class/net/eth0/address)

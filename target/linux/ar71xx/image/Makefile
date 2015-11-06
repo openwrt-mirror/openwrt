@@ -48,6 +48,7 @@ endef
 define Build/mktplinkfw
 	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
 		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) -F $(TPLINK_FLASHLAYOUT) -N OpenWrt -V $(REVISION) $2 \
+		-m $(TPLINK_HEADER_VERSION) \
 		-k $(word 1,$^) \
 		-r $@ \
 		-o $@.new \
@@ -62,6 +63,7 @@ endef
 define Build/mktplinkfw-initramfs
 	$(STAGING_DIR_HOST)/bin/mktplinkfw \
 		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) -F $(TPLINK_FLASHLAYOUT) -N OpenWrt -V $(REVISION) $2 \
+		-m $(TPLINK_HEADER_VERSION) \
 		-k $@ \
 		-o $@.new \
 		-s -S \
@@ -99,7 +101,7 @@ define Build/copy-file
 	cat "$(1)" > "$@"
 endef
 
-DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT
+DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT TPLINK_HEADER_VERSION
 
 # UBNT_BOARD e.g. one of (XS2, XS5, RS, XM)
 # UBNT_TYPE e.g. one of (BZ, XM, XW)
@@ -249,17 +251,12 @@ TARGET_DEVICES += wndr3700 wndr3700v2 wndr3800 wndr3800ch wndrmac wndrmacv2
 
 define Device/tplink
   TPLINK_HWREV := 0x1
+  TPLINK_HEADER_VERSION := 1
   KERNEL := kernel-bin | patch-cmdline | lzma
   KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | mktplinkfw-initramfs
   IMAGES := sysupgrade.bin factory.bin
   IMAGE/sysupgrade.bin := append-rootfs | mktplinkfw sysupgrade
   IMAGE/factory.bin := append-rootfs | mktplinkfw factory
-endef
-
-define Device/tplink-chn-v2
-$(Device/tplink)
-  IMAGE/sysupgrade.bin := append-rootfs | mktplinkfw sysupgrade "-m 2"
-  IMAGE/factory.bin := append-rootfs | mktplinkfw factory "-m 2"
 endef
 
 define Device/tplink-nolzma
@@ -301,12 +298,6 @@ $(Device/tplink)
   IMAGE_SIZE := 15872k
 endef
 
-define Device/tplink-chn-v2-4mlzma
-$(Device/tplink-chn-v2)
-  TPLINK_FLASHLAYOUT := 4Mlzma
-  IMAGE_SIZE := 3904k
-endef
-
 define Device/tl-wdr4300-v1
 $(Device/tplink-8mlzma)
   BOARDNAME = TL-WDR4300
@@ -341,11 +332,23 @@ $(Device/tl-wdr4300-v1)
 endef
 TARGET_DEVICES += tl-wdr3500-v1 tl-wdr3600-v1 tl-wdr4300-v1 tl-wdr4300-v1-il tl-wdr4310-v1 mw4530r-v1
 
+define Device/tl-wdr6500-v2
+$(Device/tplink-8mlzma)
+  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma
+  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | uImage lzma | mktplinkfw-initramfs
+  BOARDNAME = TL-WDR6500-v2
+  DEVICE_PROFILE = TLWDR6500V2
+  TPLINK_HWID := 0x65000002
+  TPLINK_HEADER_VERSION := 2
+endef
+TARGET_DEVICES += tl-wdr6500-v2
+
 define Device/tl-wdr3320-v2
-$(Device/tplink-chn-v2-4mlzma)
+$(Device/tplink-4mlzma)
   BOARDNAME = TL-WDR3320-v2
   DEVICE_PROFILE = TLWDR3320V2
   TPLINK_HWID := 0x33200002
+  TPLINK_HEADER_VERSION := 2
 endef
 TARGET_DEVICES += tl-wdr3320-v2
 
@@ -369,7 +372,14 @@ define Device/archer-c7-v2
     DEVICE_PROFILE := ARCHERC7
     TPLINK_HWID := 0xc7000002
 endef
-TARGET_DEVICES += archer-c5-v1 archer-c7-v1 archer-c7-v2
+
+define Device/tl-wdr7500-v3
+    $(Device/tplink-8mlzma)
+    BOARDNAME := ARCHER-C7
+    DEVICE_PROFILE := ARCHERC7
+    TPLINK_HWID := 0x75000003
+endef
+TARGET_DEVICES += archer-c5-v1 archer-c7-v1 archer-c7-v2 tl-wdr7500-v3
 
 define Device/antminer-s1
     $(Device/tplink-8mlzma)
@@ -668,6 +678,14 @@ define Device/tl-wr743nd-v2
 endef
 TARGET_DEVICES += tl-wr740n-v1 tl-wr740n-v3 tl-wr740n-v4 tl-wr740n-v5 tl-wr741nd-v1 tl-wr741nd-v2 tl-wr741nd-v4 tl-wr741nd-v5 tl-wr743nd-v1 tl-wr743nd-v2
 
+define Device/tl-wr841nd-v1.5
+    $(Device/tplink-4m)
+    BOARDNAME := TL-WR841N-v1.5
+    DEVICE_PROFILE := TLWR841
+    TPLINK_HWID := 0x08410002
+    TPLINK_HWREV := 2
+endef
+
 define Device/tl-wr841nd-v3
     $(Device/tplink-8m)
     BOARDNAME := TL-WR941ND
@@ -738,7 +756,7 @@ define Device/tl-wr847n-v8
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08470008
 endef
-TARGET_DEVICES += tl-wr841nd-v3 tl-wr841nd-v5 tl-wr841nd-v7 tl-wr841n-v8 tl-wr841n-v9 tl-wr841n-v10 tl-wr842n-v1 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
+TARGET_DEVICES += tl-wr841nd-v1.5 tl-wr841nd-v3 tl-wr841nd-v5 tl-wr841nd-v7 tl-wr841n-v8 tl-wr841n-v9 tl-wr841n-v10 tl-wr842n-v1 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
 
 define Device/tl-wr941nd-v2
     $(Device/tplink-8m)
@@ -1943,104 +1961,6 @@ define Image/Build/Senao
 		$(call sysupname,$(1),$(2))
 endef
 
-Image/Build/TPLINKOLD/loader=$(call Image/BuildLoaderAlone,$(1),gz,$(2),0x22000,0)
-
-define Image/Build/TPLINKOLD
-	[ -e "$(KDIR)/loader-$(2).gz" ]
-	$(call MkuImageOKLI,$(2))
-	( \
-		dd if=$(KDIR)/loader-$(2).gz bs=7680 count=1 conv=sync; \
-		dd if=$(KDIR_TMP)/vmlinux-$(2).okli conv=sync; \
-	) > $(KDIR_TMP)/kernel-$(2).bin
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -V $(REVISION)\
-		-X 0x40000 \
-		-k $(KDIR_TMP)/kernel-$(2).bin \
-		-r $(KDIR)/root.$(1) \
-		-o $(call factoryname,$(1),$(2))
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -V $(REVISION) -s\
-		-X 0x40000 \
-		-k $(KDIR_TMP)/kernel-$(2).bin \
-		-r $(KDIR)/root.$(1) \
-		-o $(call sysupname,$(1),$(2))
-endef
-
-define Image/Build/TPLINKOLD/initramfs
-	$(call Image/BuildLoader,$(2),gz,$(3),0x80060000,-initramfs)
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw -c \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -V $(REVISION) -s\
-		-k $(KDIR)/loader-$(2)-initramfs.gz \
-		-o $(call imgname,$(1),$(2))-initramfs-uImage.bin
-endef
-
-
-Image/Build/TPLINK/loader=$(call Image/BuildLoaderAlone,$(1),gz,$(2),0x22000,0)
-
-define Image/Build/TPLINK
-	[ -e "$(KDIR)/loader-$(2).gz" ]
-	$(call MkuImageOKLI,$(2))
-	( \
-		dd if=$(KDIR)/loader-$(2).gz bs=7680 count=1 conv=sync; \
-		dd if=$(KDIR_TMP)/vmlinux-$(2).okli conv=sync; \
-	) > $(KDIR_TMP)/kernel-$(2).bin
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -V $(REVISION)\
-		-X 0x40000 \
-		-k $(KDIR_TMP)/kernel-$(2).bin \
-		-r $(KDIR)/root.$(1) \
-		-a $(call rootfs_align,$(1)) -j \
-		-o $(call factoryname,$(1),$(2))
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -V $(REVISION) -s\
-		-X 0x40000 \
-		-k $(KDIR_TMP)/kernel-$(2).bin \
-		-r $(KDIR)/root.$(1) \
-		-a $(call rootfs_align,$(1)) -j \
-		-o $(call sysupname,$(1),$(2))
-endef
-
-define Image/Build/TPLINK/initramfs
-	$(call Image/BuildLoader,$(2),gz,$(3),0x80060000,-initramfs)
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw -c \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -V $(REVISION) -s\
-		-k $(KDIR)/loader-$(2)-initramfs.gz \
-		-o $(call imgname,$(1),$(2))-uImage.bin
-endef
-
-
-Image/Build/TPLINK-64K/buildkernel=$(call PatchKernelLzma,$(2),$(3))
-
-define Image/Build/TPLINK-64K
-	-$(STAGING_DIR_HOST)/bin/mkimage \
-		-A mips -O linux -T kernel -a 0x80060000 -C lzma \
-		-e 0x80060000 -n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
-		-d $$(KDIR_TMP)/vmlinux-$(2).bin.lzma $(KDIR_TMP)/vmlinux-$(2).bin.lzma.img
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -m 2 -V $(REVISION) $(7) \
-		-X 0x20000 \
-		-k $(KDIR_TMP)/vmlinux-$(2).bin.lzma.img \
-		-r $(KDIR)/root.$(1) \
-		-a $(call rootfs_align,$(1)) -j \
-		-o $(call factoryname,$(1),$(2))
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -m 2 -V $(REVISION) $(7) -s \
-		-X 0x20000 \
-		-k $(KDIR_TMP)/vmlinux-$(2).bin.lzma.img \
-		-r $(KDIR)/root.$(1) \
-		-a $(call rootfs_align,$(1)) -j \
-		-o $(call sysupname,$(1),$(2))
-endef
-
-define Image/Build/TPLINK-64K/initramfs
-	$(call PatchKernelLzma,$(2),$(3),,-initramfs)
-	-$(STAGING_DIR_HOST)/bin/mktplinkfw -c \
-		-H $(4) -W $(5) -F $(6) -N OpenWrt -m 2 -V $(REVISION) $(7) -s \
-		-k $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma.img \
-		-o $(call imgname,$(1),$(2))-uImage.bin
-endef
-
-
 Image/Build/TPLINK-SAFELOADER/loader = $(call Image/BuildLoaderPatched,$(1),elf,$(2) $(3))
 
 define Image/Build/TPLINK-SAFELOADER
@@ -2446,10 +2366,6 @@ $(eval $(call SingleProfile,Seama,64k,QIHOOC301DUALFLASH,qihoo-c301-dual-flash,Q
 
 $(eval $(call SingleProfile,Senao,squashfs-only,EAP300V2,eap300v2,EAP300V2,ttyS0,115200,$$(eap300v2_mtdlayout)))
 
-$(eval $(call SingleProfile,TPLINKOLD,squashfs-only,TLWR841NV15,tl-wr841nd-v1.5,TL-WR841N-v1.5,ttyS0,115200,0x08410002,2,4M))
-
-$(eval $(call SingleProfile,TPLINK-64K,64kraw,TLWDR6500V2,tl-wdr6500-v2,TL-WDR6500-v2,ttyS0,115200,0x65000002,1,8Mlzma))
-
 $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
 
 $(eval $(call SingleProfile,WHRHPG300N,64kraw,WHRG301N,whr-g301n,WHR-G301N,ttyS0,115200,$$(whrhpg300n_mtdlayout),WHR-G301N))
@@ -2481,7 +2397,6 @@ $(eval $(call MultiProfile,EWDORIN, EWDORINAP EWDORINRT EWDORIN16M))
 $(eval $(call MultiProfile,QIHOOC301,QIHOOC301FLASH1 QIHOOC301FLASH2 QIHOOC301DUALFLASH))
 $(eval $(call MultiProfile,OPENMESH,OM2P OM5P MR600 MR900 MR1750))
 $(eval $(call MultiProfile,TEW652BRP,TEW652BRP_FW TEW652BRP_RECOVERY))
-$(eval $(call MultiProfile,TLWR841,TLWR841NV15))
 $(eval $(call MultiProfile,TUBE2H,TUBE2H8M TUBE2H16M))
 $(eval $(call MultiProfile,WNR612V2,REALWNR612V2 N150R))
 $(eval $(call MultiProfile,WNR1000V2,REALWNR1000V2 WNR1000V2_VC))
