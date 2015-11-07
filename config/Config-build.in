@@ -83,7 +83,7 @@ menu "Global build settings"
 		prompt "Enable IPv6 support in packages"
 		default y
 		help
-		  Enable IPv6 support in packages (passes --enable-ipv6 to configure scripts).
+		  Enables IPv6 support in kernel (builtin) and packages.
 
 	config PKG_BUILD_PARALLEL
 		bool
@@ -219,6 +219,7 @@ menu "Global build settings"
 
 	choice
 		prompt "User space Stack-Smashing Protection"
+		depends on USE_MUSL
 		default PKG_CC_STACKPROTECTOR_REGULAR
 		help
 		  Enable GCC Stack Smashing Protection (SSP) for userspace applications
@@ -231,13 +232,14 @@ menu "Global build settings"
 		config PKG_CC_STACKPROTECTOR_STRONG
 			bool "Strong"
 			select SSP_SUPPORT if !USE_MUSL
-			depends on GCC_VERSION_4_9_LINARO
+			depends on GCC_VERSION_5
 			depends on KERNEL_CC_STACKPROTECTOR_STRONG
 	endchoice
 
 	choice
 		prompt "Kernel space Stack-Smashing Protection"
 		default KERNEL_CC_STACKPROTECTOR_REGULAR
+		depends on USE_MUSL || !(x86_64 || i386)
 		help
 		  Enable GCC Stack-Smashing Protection (SSP) for the kernel
 		config KERNEL_CC_STACKPROTECTOR_NONE
@@ -245,7 +247,7 @@ menu "Global build settings"
 		config KERNEL_CC_STACKPROTECTOR_REGULAR
 			bool "Regular"
 		config KERNEL_CC_STACKPROTECTOR_STRONG
-			depends on GCC_VERSION_4_9_LINARO
+			depends on GCC_VERSION_5
 			bool "Strong"
 	endchoice
 

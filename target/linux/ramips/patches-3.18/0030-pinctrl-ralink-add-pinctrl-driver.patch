@@ -828,8 +828,8 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
 +	FUNC("pci-host1", 2, 40, 32),
 +	FUNC("pci-fnc", 3, 40, 32)
  };
-+static struct rt2880_pmx_func ge1_func[] = { FUNC("ge1", 0, 72, 12) };
-+static struct rt2880_pmx_func ge2_func[] = { FUNC("ge1", 0, 84, 12) };
++static struct rt2880_pmx_func ge1_func[] = { FUNC("ge1", 0, 84, 12) };
++static struct rt2880_pmx_func ge2_func[] = { FUNC("ge2", 0, 72, 12) };
  
 -static struct ralink_pinmux_grp pci_mux[] = {
 -	{
@@ -927,7 +927,7 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
  obj-$(CONFIG_PINCTRL_TEGRA)	+= pinctrl-tegra.o
 --- /dev/null
 +++ b/drivers/pinctrl/pinctrl-rt2880.c
-@@ -0,0 +1,467 @@
+@@ -0,0 +1,474 @@
 +/*
 + *  linux/drivers/pinctrl/pinctrl-rt2880.c
 + *
@@ -957,6 +957,7 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
 +#include "core.h"
 +
 +#define SYSC_REG_GPIO_MODE	0x60
++#define SYSC_REG_GPIO_MODE2	0x64
 +
 +struct rt2880_priv {
 +	struct device *dev;
@@ -1134,7 +1135,9 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
 +{
 +	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
 +        u32 mode = 0;
++	u32 reg = SYSC_REG_GPIO_MODE;
 +	int i;
++	int shift;
 +
 +	/* dont allow double use */
 +	if (p->groups[group].enabled) {
@@ -1145,8 +1148,13 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
 +	p->groups[group].enabled = 1;
 +	p->func[func]->enabled = 1;
 +
-+	mode = rt_sysc_r32(SYSC_REG_GPIO_MODE);
-+	mode &= ~(p->groups[group].mask << p->groups[group].shift);
++	shift = p->groups[group].shift;
++	if (shift >= 32) {
++		shift -= 32;
++		reg = SYSC_REG_GPIO_MODE2;
++	}
++	mode = rt_sysc_r32(reg);
++	mode &= ~(p->groups[group].mask << shift);
 +
 +	/* mark the pins as gpio */
 +	for (i = 0; i < p->groups[group].func[0].pin_count; i++)
@@ -1154,14 +1162,13 @@ Signed-off-by: John Crispin <blogic@openwrt.org>
 +
 +	/* function 0 is gpio and needs special handling */
 +	if (func == 0) {
-+		mode |= p->groups[group].gpio << p->groups[group].shift;
++		mode |= p->groups[group].gpio << shift;
 +	} else {
 +		for (i = 0; i < p->func[func]->pin_count; i++)
 +			p->gpio[p->func[func]->pins[i]] = 0;
-+		mode |= p->func[func]->value << p->groups[group].shift;
++		mode |= p->func[func]->value << shift;
 +	}
-+	rt_sysc_w32(mode, SYSC_REG_GPIO_MODE);
-+
++	rt_sysc_w32(mode, reg);
 +
 +	return 0;
 +}

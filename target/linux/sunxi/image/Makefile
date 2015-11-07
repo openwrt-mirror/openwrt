@@ -11,28 +11,14 @@ include $(INCLUDE_DIR)/host.mk
 FAT32_BLOCK_SIZE=1024
 FAT32_BLOCKS=$(shell echo $$(($(CONFIG_SUNXI_SD_BOOT_PARTSIZE)*1024*1024/$(FAT32_BLOCK_SIZE))))
 
-BOARDS:= \
-	sun4i-a10-cubieboard \
-	sun4i-a10-olinuxino-lime \
-	sun4i-a10-pcduino \
-	sun5i-a13-olinuxino \
-	sun6i-a31-colombus \
-	sun6i-a31-m9 \
-	sun7i-a20-bananapi \
-	sun7i-a20-bananapro \
-	sun7i-a20-cubieboard2 \
-	sun7i-a20-cubietruck \
-	sun7i-a20-olinuxino-lime \
-	sun7i-a20-olinuxino-micro \
-	sun7i-a20-pcduino3 \
-	sun7i-a20-lamobo-r1
-
 define Image/BuildKernel
+	-mkdir -p $(KDIR_TMP)
+
 	mkimage -A arm -O linux -T kernel -C none \
 		-a 0x40008000 -e 0x40008000 \
 		-n 'ARM OpenWrt Linux-$(LINUX_VERSION)' \
 		-d $(KDIR)/zImage $(BIN_DIR)/$(IMG_PREFIX)-uImage
-	
+
     ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(CP) $(KDIR)/zImage-initramfs $(BIN_DIR)/$(IMG_PREFIX)-zImage-initramfs
 	echo -ne '\x00\x00\x00\x00' >> $(BIN_DIR)/$(IMG_PREFIX)-zImage-initramfs
@@ -42,27 +28,27 @@ define Image/BuildKernel
 		$(BIN_DIR)/$(IMG_PREFIX)-uImage-initramfs \
 	)
     endif
-
-	$(foreach board,$(BOARDS),
-		$(CP) $(DTS_DIR)/$(board).dtb $(BIN_DIR)/
-	)
 endef
 
 define Image/Build/SDCard
-	rm -f $(KDIR)/boot.img
-	mkdosfs $(KDIR)/boot.img -C $(FAT32_BLOCKS)
-	
-	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/uboot-sunxi-$(PROFILE)/$(IMG_PREFIX)-$(PROFILE)-boot.scr ::boot.scr
-	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/$(2).dtb ::dtb
-	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/$(IMG_PREFIX)-uImage ::uImage
-	
+	rm -f $(KDIR_TMP)/$(IMG_PREFIX)-$(PROFILE)-boot.img
+	mkdosfs $(KDIR_TMP)/$(IMG_PREFIX)-$(PROFILE)-boot.img -C $(FAT32_BLOCKS)
+
+	mcopy -i $(KDIR_TMP)/$(IMG_PREFIX)-$(PROFILE)-boot.img $(KDIR)/uboot-sunxi-$(PROFILE)-boot.scr ::boot.scr
+	mcopy -i $(KDIR_TMP)/$(IMG_PREFIX)-$(PROFILE)-boot.img $(DTS_DIR)/$(2).dtb ::dtb
+	mcopy -i $(KDIR_TMP)/$(IMG_PREFIX)-$(PROFILE)-boot.img $(BIN_DIR)/$(IMG_PREFIX)-uImage ::uImage
+
 	./gen_sunxi_sdcard_img.sh \
 		$(BIN_DIR)/$(IMG_PREFIX)-$(PROFILE)-sdcard-vfat-$(1).img \
-		$(KDIR)/boot.img \
+		$(KDIR_TMP)/$(IMG_PREFIX)-$(PROFILE)-boot.img \
 		$(KDIR)/root.$(1) \
 		$(CONFIG_SUNXI_SD_BOOT_PARTSIZE) \
 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) \
-		$(BIN_DIR)/uboot-sunxi-$(PROFILE)/$(IMG_PREFIX)-$(PROFILE)-u-boot-with-spl.bin
+		$(KDIR)/uboot-sunxi-$(PROFILE)-u-boot-with-spl.bin
+
+  ifneq ($(CONFIG_TARGET_IMAGES_GZIP),)
+	gzip -f9n $(BIN_DIR)/$(IMG_PREFIX)-$(PROFILE)-sdcard-vfat-$(1).img
+  endif
 endef
 
 define Image/Build/Profile/A10-OLinuXino-Lime
@@ -124,7 +110,7 @@ endef
 define Image/Build
 	$(call Image/Build/$(1),$(1))
 	$(call Image/Build/Profile/$(PROFILE),$(1))
-	
+
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 endef
 

@@ -198,6 +198,8 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 	case ATH79_SOC_AR9330:
 	case ATH79_SOC_AR9331:
 	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		mdio_dev = &ath79_mdio1_device;
 		mdio_data = &ath79_mdio1_data;
 		break;
@@ -256,6 +258,8 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 		break;
 
 	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		mdio_data->builtin_switch = 1;
 		break;
 
@@ -571,6 +575,8 @@ static void __init ath79_init_eth_pll_data(unsigned int id)
 	case ATH79_SOC_QCA9533:
 	case ATH79_SOC_QCA9556:
 	case ATH79_SOC_QCA9558:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		pll_10 = AR934X_PLL_VAL_10;
 		pll_100 = AR934X_PLL_VAL_100;
 		pll_1000 = AR934X_PLL_VAL_1000;
@@ -627,6 +633,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
 		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_TP9343:
 			pdata->phy_if_mode = PHY_INTERFACE_MODE_MII;
 			break;
 
@@ -659,6 +666,11 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 			}
 			break;
 
+		case ATH79_SOC_QCA9561:
+			if (!pdata->phy_if_mode)
+				pdata->phy_if_mode = PHY_INTERFACE_MODE_MII;
+			break;
+
 		default:
 			BUG();
 		}
@@ -687,7 +699,8 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR7241:
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
-		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_QCA9561:
+		case ATH79_SOC_TP9343:
 			pdata->phy_if_mode = PHY_INTERFACE_MODE_GMII;
 			break;
 
@@ -697,6 +710,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR9341:
 		case ATH79_SOC_AR9342:
 		case ATH79_SOC_AR9344:
+		case ATH79_SOC_QCA9533:
 			switch (pdata->phy_if_mode) {
 			case PHY_INTERFACE_MODE_MII:
 			case PHY_INTERFACE_MODE_GMII:
@@ -986,6 +1000,7 @@ void __init ath79_register_eth(unsigned int id)
 	case ATH79_SOC_AR9341:
 	case ATH79_SOC_AR9342:
 	case ATH79_SOC_AR9344:
+	case ATH79_SOC_QCA9533:
 		if (id == 0) {
 			pdata->reset_bit = AR934X_RESET_GE0_MAC |
 					   AR934X_RESET_GE0_MDIO;
@@ -1017,13 +1032,15 @@ void __init ath79_register_eth(unsigned int id)
 			pdata->fifo_cfg3 = 0x01f00140;
 		break;
 
-	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_QCA9561:
+	case ATH79_SOC_TP9343:
 		if (id == 0) {
 			pdata->reset_bit = AR933X_RESET_GE0_MAC |
 					   AR933X_RESET_GE0_MDIO;
 			pdata->set_speed = ath79_set_speed_dummy;
 
-			pdata->phy_mask = BIT(4);
+			if (!pdata->phy_mask)
+				pdata->phy_mask = BIT(4);
 		} else {
 			pdata->reset_bit = AR933X_RESET_GE1_MAC |
 					   AR933X_RESET_GE1_MDIO;
@@ -1123,6 +1140,8 @@ void __init ath79_register_eth(unsigned int id)
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
 		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_QCA9561:
+		case ATH79_SOC_TP9343:
 			pdata->mii_bus_dev = &ath79_mdio1_device.dev;
 			break;
 

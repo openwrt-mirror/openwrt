@@ -71,7 +71,7 @@ DRIVER_MAKEOPTS= \
 	CONFIG_DRIVER_WEXT=$(CONFIG_DRIVER_WEXT_SUPPORT) \
 
 ifeq ($(LOCAL_VARIANT),full)
-  CONFIG_IEEE80211W=$(CONFIG_PACKAGE_kmod-ath9k)
+  DRIVER_MAKEOPTS += CONFIG_IEEE80211W=$(CONFIG_DRIVER_11W_SUPPORT)
 endif
 
 ifneq ($(LOCAL_TYPE),hostapd)
@@ -177,7 +177,7 @@ endef
 define Package/wpad-mesh
 $(call Package/wpad/Default)
   TITLE+= (with 802.11s mesh and SAE support)
-  DEPENDS:=$(DRV_DEPENDS) +libubus +libopenssl +@CONFIG_WPA_SUPPLICANT_OPENSSL @(!TARGET_uml||BROKEN)
+  DEPENDS:=$(DRV_DEPENDS) +libubus +PACKAGE_wpad-mesh:libopenssl +@CONFIG_WPA_SUPPLICANT_OPENSSL @(!TARGET_uml||BROKEN)
   CONFLICTS:=@WPA_SUPPLICANT_INTERNAL
   VARIANT:=wpad-mesh
 endef

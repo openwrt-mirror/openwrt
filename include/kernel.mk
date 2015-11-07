@@ -62,15 +62,15 @@ endif
 
 ifneq (,$(findstring uml,$(BOARD)))
   LINUX_KARCH=um
-else ifneq (,$(findstring $(ARCH), aarch64 aarch64_be))
+else ifneq (,$(findstring $(ARCH) , aarch64 aarch64_be ))
   LINUX_KARCH := arm64
-else ifneq (,$(findstring $(ARCH), armeb))
+else ifneq (,$(findstring $(ARCH) , armeb ))
   LINUX_KARCH := arm
-else ifneq (,$(findstring $(ARCH), mipsel mips64 mips64el))
+else ifneq (,$(findstring $(ARCH) , mipsel mips64 mips64el ))
   LINUX_KARCH := mips
-else ifneq (,$(findstring $(ARCH), sh2 sh3 sh4))
+else ifneq (,$(findstring $(ARCH) , sh2 sh3 sh4 ))
   LINUX_KARCH := sh
-else ifneq (,$(findstring $(ARCH), i386 x86_64))
+else ifneq (,$(findstring $(ARCH) , i386 x86_64 ))
   LINUX_KARCH := x86
 else
   LINUX_KARCH := $(ARCH)
@@ -181,18 +181,14 @@ $(call KernelPackage/$(1)/config)
     ifneq ($(if $(SDK),$(filter-out $(LINUX_DIR)/%.ko,$(FILES)),$(strip $(FILES))),)
       define Package/kmod-$(1)/install
 		  @for mod in $$(call version_filter,$$(FILES)); do \
-			if [ -e $$$$$$$$mod ]; then \
+			if grep -q "$$$$$$$${mod##$(LINUX_DIR)/}" "$(LINUX_DIR)/modules.builtin"; then \
+				echo "NOTICE: module '$$$$$$$$mod' is built-in."; \
+			elif [ -e $$$$$$$$mod ]; then \
 				mkdir -p $$(1)/$(MODULES_SUBDIR) ; \
 				$(CP) -L $$$$$$$$mod $$(1)/$(MODULES_SUBDIR)/ ; \
-			elif [ -e "$(LINUX_DIR)/modules.builtin" ]; then \
-				if grep -q "$$$$$$$${mod##$(LINUX_DIR)/}" "$(LINUX_DIR)/modules.builtin"; then \
-					echo "NOTICE: module '$$$$$$$$mod' is built-in."; \
-				else \
-					echo "ERROR: module '$$$$$$$$mod' is missing." >&2; \
-					exit 1; \
-				fi; \
 			else \
-				echo "WARNING: module '$$$$$$$$mod' missing and modules.builtin not available, assuming built-in." >&2; \
+				echo "ERROR: module '$$$$$$$$mod' is missing." >&2; \
+				exit 1; \
 			fi; \
 		  done;
 		  $(call ModuleAutoLoad,$(1),$$(1),$(AUTOLOAD))

@@ -98,8 +98,12 @@ endef
 
 define Image/Build/trxV2
 	$(call Image/Build/CyberTANHead,$(1),$(2),$(3),$(4),$(5),$(if $(6),$(6)))
-	$(STAGING_DIR_HOST)/bin/trx -2 -o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).noheader.bin \
-		-f $(KDIR)/loader.gz -f $(KDIR)/vmlinux.lzma \
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-2 \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).noheader.bin \
+		-f $(KDIR)/loader.gz \
+		-f $(KDIR)/vmlinux.lzma \
 		$(call trxalign/$(1),$(1),$(KDIR)/$(IMG_PREFIX)-$(2)-header.bin)
 	$(call Image/Build/CyberTAN2,$(1),$(2),$(3),$(4),$(5),$(if $(6),$(6)))
 endef
@@ -110,6 +114,7 @@ endef
 
 define Build/trx-with-loader
 	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
 		-o $@ \
 		-f $(KDIR)/loader.gz \
 		-f $(word 1,$^) \
@@ -126,22 +131,13 @@ define Build/linksys-bin
 	mv $@.new $@
 endef
 
-define Build/netgear-chk
-	$(STAGING_DIR_HOST)/bin/mkchkimg \
-		-o $@.new \
-		-k $@ \
-		-b $(BOARD_ID) \
-		-r $(REGION)
-	mv $@.new $@
-endef
-
 #################################################
 # Devices
 #################################################
 
 DEVICE_VARS += PRODUCTID
 DEVICE_VARS += DEVICE_ID VERSION
-DEVICE_VARS += BOARD_ID REGION
+DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_REGION
 
 define Device/Default
 	KERNEL := kernel-bin
@@ -187,8 +183,8 @@ endef
 define NetgearDevice
   define Device/netgear-$(1)
 	$$(Device/netgear)
-	BOARD_ID := $(2)
-	REGION := $(3)
+	NETGEAR_BOARD_ID := $(2)
+	NETGEAR_REGION := $(3)
   endef
   TARGET_DEVICES += netgear-$(1)
 endef
@@ -315,7 +311,7 @@ ifeq ($(SUBTARGET),mips74k)
   $(eval $(call LinksysDevice,e900-v1,E900,1.0.4))
   $(eval $(call LinksysDevice,e1000-v1-v2-v2.1,E100,1.1.3))
   $(eval $(call LinksysDevice,e1200-v1,E120,1.0.3))
-  $(eval $(call LinksysDevice,e1200-v2-new,E122,1.0.4))
+  $(eval $(call LinksysDevice,e1200-v2,E122,1.0.4))
   $(eval $(call LinksysDevice,e1500-v1,E150,1.0.5))
   $(eval $(call LinksysDevice,e1550-v1,1550,1.0.3))
   $(eval $(call LinksysDevice,e2000-v1,32XN,1.0.4))
@@ -346,19 +342,32 @@ endif
 #################################################
 
 define Image/Build/Initramfs
-	$(STAGING_DIR_HOST)/bin/trx -o $(BIN_DIR)/$(IMG_PREFIX)-initramfs.trx -f $(KDIR)/loader.gz -f $(KDIR)/vmlinux-initramfs.lzma
-	$(STAGING_DIR_HOST)/bin/trx -o $(BIN_DIR)/$(IMG_PREFIX)-initramfs-noloader-nodictionary.trx -f $(KDIR)/vmlinux-initramfs-nodictionary.lzma
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-initramfs.trx \
+		-f $(KDIR)/loader.gz \
+		-f $(KDIR)/vmlinux-initramfs.lzma
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-initramfs-noloader-nodictionary.trx \
+		-f $(KDIR)/vmlinux-initramfs-nodictionary.lzma
 endef
 
 # $(1): filesystem type.
 define Image/Build
-	$(STAGING_DIR_HOST)/bin/trx -o $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx \
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx \
 		-f $(KDIR)/loader.gz -f $(KDIR)/vmlinux.lzma \
 		$(call trxalign/$(1),$(1))
-	$(STAGING_DIR_HOST)/bin/trx -o $(BIN_DIR)/$(IMG_PREFIX)-$(1)-noloader-nodictionary.trx \
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(1)-noloader-nodictionary.trx \
 		-f $(KDIR)/vmlinux-nodictionary.lzma \
 		$(call trxalign/$(1),$(1))
-	$(STAGING_DIR_HOST)/bin/trx -o $(BIN_DIR)/$(IMG_PREFIX)-$(1)-gz.trx \
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $(BIN_DIR)/$(IMG_PREFIX)-$(1)-gz.trx \
 		-f $(KDIR)/vmlinux.gz \
 		$(call trxalign/$(1),$(1))
 	$(call Image/Build/$(SUBTARGET)/$(1),$(1))

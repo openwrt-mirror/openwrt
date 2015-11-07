@@ -314,7 +314,7 @@ sub list_feed {
 sub list {
 	my %opts;
 
-	getopts('r:d:nsh', \%opts);
+	getopts('r:d:nshf', \%opts);
 	if ($opts{h}) {
 		usage();
 		return 0;
@@ -341,6 +341,14 @@ sub list {
 			}
 			if ($opts{d}) {
 				printf "%s%s%s%s%s%s%s\n", $feed->[1], $opts{d}, $feed->[0], $opts{d}, $revision, $opts{d}, join(", ", @{$feed->[2]});
+			}
+			elsif ($opts{f}) {
+				my $uri = join(", ", @{$feed->[2]});
+				if ($revision ne "local" && $revision ne "X") {
+					$uri =~ s/[;^].*//;
+					$uri .= "^" . $revision;
+				}
+				printf "%s %s %s\n", $feed->[0], $feed->[1], $uri;
 			}
 			else {
 				printf "\%-8s \%-8s \%-8s \%s\n", $feed->[1], $feed->[0], $revision, join(", ", @{$feed->[2]});
@@ -497,8 +505,8 @@ sub install_package {
 	$installed{$src} = 1;
 
 	defined($override) and $override == 1
-		and warn "Overriding package '$src'\n"
-		or warn "Installing package '$src'\n";
+		and warn "Overriding core package '$src' with version from $feed->[1]\n"
+		or warn "Installing package '$src' from $feed->[1]\n";
 
 	do_install_package($feed, $pkg) == 0 or do {
 		warn "failed.\n";
@@ -687,6 +695,7 @@ sub update {
 	my %opts;
 	my $feed_name;
 	my $perform_update=1;
+	my $failed=0;
 
 	$ENV{SCAN_COOKIE} = $$;
 	$ENV{OPENWRT_VERBOSE} = 's';
@@ -711,8 +720,7 @@ sub update {
 	if ( ($#ARGV == -1) or $opts{a}) {
 		foreach my $feed (@feeds) {
 			my ($type, $name, $src) = @$feed;
-			next unless update_feed($type, $name, $src, $perform_update) == 1;
-			last;
+			update_feed($type, $name, $src, $perform_update) == 0 or $failed=1;
 		}
 	} else {
 		while ($feed_name = shift @ARGV) {
@@ -721,14 +729,14 @@ sub update {
 				if($feed_name ne $name) {
 					next;
 				}
-				update_feed($type, $name, $src, $perform_update);
+				update_feed($type, $name, $src, $perform_update) == 0 or $failed=1;
 			}
 		}
 	}
 
 	refresh_config();
 
-	return 0;
+	return $failed;
 }
 
 sub feed_config() {
@@ -758,6 +766,7 @@ Commands:
 	    -s :            List of feed names and their URL.
 	    -r <feedname>:  List packages of specified feed.
 	    -d <delimiter>: Use specified delimiter to distinguish rows (default: spaces)
+	    -f :            List feeds in feeds.conf compatible format (when using -s).
 
 	install [options] <package>: Install a package
 	Options:

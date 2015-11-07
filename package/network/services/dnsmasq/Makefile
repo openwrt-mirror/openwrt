@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsmasq
-PKG_VERSION:=2.73
-PKG_RELEASE:=1
+PKG_VERSION:=2.75
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://thekelleys.org.uk/dnsmasq
-PKG_MD5SUM:=b8bfe96d22945c8cf4466826ba9b21bd
+PKG_MD5SUM:=887236f1ddde6eb57cdb9d01916c9f72
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -44,7 +44,7 @@ endef
 define Package/dnsmasq-dhcpv6
 $(call Package/dnsmasq/Default)
   TITLE += (with DHCPv6 support)
-  DEPENDS:=@IPV6 +kmod-ipv6
+  DEPENDS:=@IPV6
   VARIANT:=dhcpv6
 endef
 
@@ -52,7 +52,6 @@ define Package/dnsmasq-full
 $(call Package/dnsmasq/Default)
   TITLE += (with DNSSEC, DHCPv6, Auth DNS, IPset enabled by default)
   DEPENDS:=+PACKAGE_dnsmasq_full_dnssec:libnettle \
-	+PACKAGE_dnsmasq_full_dhcpv6:kmod-ipv6 \
 	+PACKAGE_dnsmasq_full_ipset:kmod-ipt-ipset
   VARIANT:=full
 endef

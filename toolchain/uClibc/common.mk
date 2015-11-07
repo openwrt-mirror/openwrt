@@ -7,16 +7,16 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/target.mk
 
-PKG_NAME:=uClibc
 PKG_VERSION:=$(call qstrip,$(CONFIG_UCLIBC_VERSION))
-PKG_SOURCE_URL:=http://www.uclibc.org/downloads
+
+PKG_NAME:=uClibc-ng
+PKG_SOURCE_URL = http://downloads.uclibc-ng.org/releases/$(PKG_VERSION)/
+PATCH_DIR:=$(PATH_PREFIX)/patches
+CONFIG_DIR:=$(PATH_PREFIX)/config
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 LIBC_SO_VERSION:=$(PKG_VERSION)
-PATCH_DIR:=$(PATH_PREFIX)/patches-$(PKG_VERSION)
-CONFIG_DIR:=$(PATH_PREFIX)/config-$(PKG_VERSION)
 
-PKG_MD5SUM_0.9.33.2 = a338aaffc56f0f5040e6d9fa8a12eda1
-PKG_MD5SUM=$(PKG_MD5SUM_$(PKG_VERSION))
+PKG_MD5SUM=d7dbc8ddb0274beacbb48e6928d7b097
 
 HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(PKG_NAME)-$(PKG_VERSION)
 

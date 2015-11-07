@@ -30,7 +30,7 @@ $(eval $(call KernelPackage,6lowpan))
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-crypto-ecb +kmod-lib-crc16 +kmod-hid
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-crypto-ecb +kmod-lib-crc16 +kmod-hid +!LINUX_3_18:kmod-crypto-cmac
   KCONFIG:= \
 	CONFIG_BLUEZ \
 	CONFIG_BLUEZ_L2CAP \
@@ -78,6 +78,25 @@ endef
 
 $(eval $(call KernelPackage,bluetooth))
 
+define KernelPackage/ath3k
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ATH3K Kernel Module support
+  DEPENDS:=+kmod-bluetooth +ar3k-firmware
+  KCONFIG:= \
+	CONFIG_BT_ATH3K \
+	CONFIG_BT_HCIUART_ATH3K=y
+  $(call AddDepends/bluetooth)
+  FILES:= \
+	$(LINUX_DIR)/drivers/bluetooth/ath3k.ko
+  AUTOLOAD:=$(call AutoProbe,ath3k)
+endef
+
+define KernelPackage/ath3k/description
+ Kernel support for ATH3K Module
+endef
+
+$(eval $(call KernelPackage,ath3k))
+
 
 define KernelPackage/bluetooth_6lowpan
   SUBMENU:=$(OTHER_MENU)
@@ -85,7 +104,7 @@ define KernelPackage/bluetooth_6lowpan
   DEPENDS:=+kmod-6lowpan +kmod-bluetooth
   KCONFIG:=CONFIG_BT_6LOWPAN
   FILES:=$(LINUX_DIR)/net/bluetooth/bluetooth_6lowpan.ko
-       AUTOLOAD:=$(call AutoProbe,bluetooth)
+  AUTOLOAD:=$(call AutoProbe,bluetooth_6lowpan)
 endef
 
 define KernelPackage/bluetooth_6lowpan/description
@@ -301,7 +320,6 @@ $(eval $(call KernelPackage,iio-dht11))
 define KernelPackage/lp
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Parallel port and line printer support
-  DEPENDS:=@BROKEN
   KCONFIG:= \
 	CONFIG_PARPORT \
 	CONFIG_PRINTER \
@@ -310,7 +328,7 @@ define KernelPackage/lp
 	$(LINUX_DIR)/drivers/parport/parport.ko \
 	$(LINUX_DIR)/drivers/char/lp.ko \
 	$(LINUX_DIR)/drivers/char/ppdev.ko
-  AUTOLOAD:=$(call AutoLoad,50,parport lp)
+  AUTOLOAD:=$(call AutoLoad,50,parport lp ppdev)
 endef
 
 $(eval $(call KernelPackage,lp))
@@ -363,21 +381,6 @@ endef
 $(eval $(call KernelPackage,sdhci))
 
 
-define KernelPackage/oprofile
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=OProfile profiling support
-  KCONFIG:=CONFIG_OPROFILE
-  FILES:=$(LINUX_DIR)/arch/$(LINUX_KARCH)/oprofile/oprofile.ko
-  DEPENDS:=@KERNEL_PROFILING
-endef
-
-define KernelPackage/oprofile/description
- Kernel module for support for oprofile system profiling
-endef
-
-$(eval $(call KernelPackage,oprofile))
-
-
 define KernelPackage/rfkill
   SUBMENU:=$(OTHER_MENU)
   TITLE:=RF switch subsystem support
@@ -405,7 +408,7 @@ define KernelPackage/softdog
   TITLE:=Software watchdog driver
   KCONFIG:=CONFIG_SOFT_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/softdog.ko
-  AUTOLOAD:=$(call AutoLoad,50,softdog)
+  AUTOLOAD:=$(call AutoLoad,50,softdog,1)
 endef
 
 define KernelPackage/softdog/description
@@ -473,7 +476,7 @@ define KernelPackage/wdt-omap
   DEPENDS:=@(TARGET_omap24xx||TARGET_omap35xx)
   KCONFIG:=CONFIG_OMAP_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/omap_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,omap_wdt.ko,1)
+  AUTOLOAD:=$(call AutoLoad,50,omap_wdt,1)
 endef
 
 define KernelPackage/wdt-omap/description
@@ -692,14 +695,16 @@ define KernelPackage/regmap
   TITLE:=Generic register map support
   DEPENDS:=+kmod-lib-lzo +kmod-i2c-core
   KCONFIG:=CONFIG_REGMAP \
+	   CONFIG_REGMAP_MMIO \
 	   CONFIG_REGMAP_SPI \
 	   CONFIG_REGMAP_I2C \
 	   CONFIG_SPI=y
   FILES:= \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-core.ko \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-i2c.ko \
+	$(LINUX_DIR)/drivers/base/regmap/regmap-mmio.ko \
 	$(if $(CONFIG_SPI),$(LINUX_DIR)/drivers/base/regmap/regmap-spi.ko)
-  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-spi)
+  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-mmio regmap-spi)
 endef
 
 define KernelPackage/regmap/description

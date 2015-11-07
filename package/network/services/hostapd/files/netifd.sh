@@ -120,6 +120,7 @@ hostapd_common_add_bss_config() {
 
 	config_add_boolean rsn_preauth auth_cache
 	config_add_int ieee80211w
+	config_add_int eapol_version
 
 	config_add_string 'auth_server:host' 'server:host'
 	config_add_string auth_secret
@@ -140,6 +141,7 @@ hostapd_common_add_bss_config() {
 
 	config_add_int dynamic_vlan vlan_naming
 	config_add_string vlan_tagged_interface vlan_bridge
+	config_add_string vlan_file
 
 	config_add_string 'key1:wepkey' 'key2:wepkey' 'key3:wepkey' 'key4:wepkey' 'password:wpakey'
 
@@ -182,7 +184,7 @@ hostapd_set_bss_options() {
 		wps_pushbutton wps_label ext_registrar wps_pbc_in_m1 \
 		wps_device_type wps_device_name wps_manufacturer wps_pin \
 		macfilter ssid wmm uapsd hidden short_preamble rsn_preauth \
-		iapp_interface
+		iapp_interface eapol_version
 
 	set_default isolate 0
 	set_default maxassoc 0
@@ -192,6 +194,7 @@ hostapd_set_bss_options() {
 	set_default hidden 0
 	set_default wmm 1
 	set_default uapsd 1
+	set_default eapol_version 0
 
 	append bss_conf "ctrl_interface=/var/run/hostapd"
 	if [ "$isolate" -gt 0 ]; then
@@ -237,6 +240,8 @@ hostapd_set_bss_options() {
 				[ -e "$wpa_psk_file" ] || touch "$wpa_psk_file"
 				append bss_conf "wpa_psk_file=$wpa_psk_file" "$N"
 			}
+			[ "$eapol_version" -ge "1" -a "$eapol_version" -le "2" ] && append bss_conf "eapol_version=$eapol_version" "$N"
+
 			wps_possible=1
 			append wpa_key_mgmt "WPA-PSK"
 		;;
@@ -248,7 +253,7 @@ hostapd_set_bss_options() {
 				ownip \
 				eap_reauth_period dynamic_vlan \
 				vlan_naming vlan_tagged_interface \
-				vlan_bridge
+				vlan_bridge vlan_file
 
 			# legacy compatibility
 			[ -n "$auth_server" ] || json_get_var auth_server server
@@ -291,7 +296,13 @@ hostapd_set_bss_options() {
 					append bss_conf "vlan_bridge=$vlan_bridge" "$N"
 				[ -n "$vlan_tagged_interface" ] && \
 					append bss_conf "vlan_tagged_interface=$vlan_tagged_interface" "$N"
+				[ -n "$vlan_file" ] && {
+					[ -e "$vlan_file" ] || touch "$vlan_file"
+					append bss_conf "vlan_file=$vlan_file" "$N"
+				}
 			}
+
+			[ "$eapol_version" -ge "1" -a "$eapol_version" -le "2" ] && append bss_conf "eapol_version=$eapol_version" "$N"
 		;;
 		wep)
 			local wep_keyidx=0
@@ -538,7 +549,9 @@ wpa_supplicant_add_network() {
 	json_get_vars \
 		ssid bssid key \
 		basic_rate mcast_rate \
-		ieee80211w
+		ieee80211w ieee80211r
+
+	set_default ieee80211r 0
 
 	local key_mgmt='NONE'
 	local enc_str=
@@ -548,6 +561,8 @@ wpa_supplicant_add_network() {
 	local wpa_key_mgmt="WPA-PSK"
 	local scan_ssid="scan_ssid=1"
 	local freq
+
+	[ "$ieee80211r" -gt 0 ] && wpa_key_mgmt="FT-PSK $wpa_key_mgmt"
 
 	[[ "$_w_mode" = "adhoc" ]] && {
 		append network_data "mode=1" "$N$T"
@@ -594,6 +609,7 @@ wpa_supplicant_add_network() {
 		;;
 		eap)
 			key_mgmt='WPA-EAP'
+		        [ "$ieee80211r" -gt 0 ] && key_mgmt="FT-EAP $key_mgmt"
 
 			json_get_vars eap_type identity ca_cert
 			[ -n "$ca_cert" ] && append network_data "ca_cert=\"$ca_cert\"" "$N$T"

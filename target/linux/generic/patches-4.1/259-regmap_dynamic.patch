@@ -34,8 +34,9 @@
  	depends on SPMI
  
  config REGMAP_MMIO
+-	tristate
++	tristate "Regmap MMIO"
 +	select REGMAP
- 	tristate
  
  config REGMAP_IRQ
 +	select REGMAP
@@ -78,7 +79,7 @@
  #include <linux/mutex.h>
  #include <linux/err.h>
  #include <linux/of.h>
-@@ -2632,3 +2633,5 @@ static int __init regmap_initcall(void)
+@@ -2631,3 +2632,5 @@ static int __init regmap_initcall(void)
  	return 0;
  }
  postcore_initcall(regmap_initcall);

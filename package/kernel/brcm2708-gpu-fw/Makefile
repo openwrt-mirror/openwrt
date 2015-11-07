@@ -1,4 +1,4 @@
-# 
+#
 # Copyright (C) 2012-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
@@ -8,13 +8,13 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=brcm2708-gpu-fw
-PKG_REV:=38aa676b044f8de46aedb4bd972538a7ad6a3ce1
-PKG_VERSION:=20150210
+PKG_REV:=9d268f00de7c13afa315fe2d303265d535c4bdf0
+PKG_VERSION:=20151025
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/Hexxeh/rpi-firmware/archive/
-PKG_MD5SUM:=f5683c1dcb255714942f7c9fd61b3a0a
+PKG_MD5SUM:=21ac2ba64ef045655b4d4677b3fdf6cd
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/rpi-firmware-$(PKG_REV)
 

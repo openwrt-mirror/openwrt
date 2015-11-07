@@ -93,7 +93,7 @@ ACMP252|GIGASX76X)
 	;;
 
 # ar8316
-ARV4519PW|ARV7510PW22|ARV7518PW|ARV752DPW22)
+ARV4519PW|ARV7510PW22|ARV7518PW|ARV752DPW22|ARV8539PW22)
 	ucidef_set_interface_lan "eth0.1"
 	ucidef_add_switch "switch0" "1" "1"
 	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
@@ -151,7 +151,7 @@ P2812HNUF*)
 	ucidef_add_switch_vlan "switch0" "1" "0 1 2 4 5 6t"
 	;;
 
-TDW8970)
+TDW8970|TDW8980)
 	lan_mac=$(mtd_get_mac_binary boardconfig 61696)
 	wan_mac=$(macaddr_add "$lan_mac" 1)
 	ucidef_set_interface_lan 'eth0.1'
@@ -162,11 +162,22 @@ TDW8970)
 ARV7519RW22)
 	lan_mac=$(mtd_get_mac_binary boardconfig 22)
 	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_set_interface_lan "eth0.1"
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0 2 3 4 5 6t"
 	;;
 
 BTHOMEHUBV2B|BTHOMEHUBV3A)
 	lan_mac=$(mtd_get_mac_ascii uboot_env ethaddr)
 	wan_mac=$(macaddr_add "$lan_mac" 1)
+	;;
+
+BTHOMEHUBV5A)
+	lan_mac=$(mtd_get_mac_binary caldata 4364)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_set_interface_lan 'eth0.1'
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0 1 2 4 6t"
 	;;
 
 VGV7519)

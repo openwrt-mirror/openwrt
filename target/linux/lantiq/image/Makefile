@@ -8,11 +8,10 @@
 # boards missing since devicetree update
 #EASY50712 ARV3527P
 
+JFFS2_BLOCKSIZE = 64k 128k 256k
+
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
-
-JFFS2_BLOCKSIZE = 64k 128k 256k
-KDIR_TMP:=$(KDIR)/tmp
 
 LOADER_MAKE := $(NO_TRACE_MAKE) -C lzma-loader KDIR=$(KDIR)
 
@@ -59,22 +58,6 @@ define MkImageEVA
 	dd if=$(KDIR)/$(1)$(2).eva.prealign of=$(KDIR)/$(1)$(2).eva.align.64k bs=64k conv=sync
 	dd if=$(KDIR)/$(1)$(2).eva.prealign of=$(KDIR)/$(1)$(2).eva.align.128k bs=128k conv=sync
 	cat ./eva.dummy.squashfs >> $(KDIR)/$(1)$(2).eva.align.64k
-endef
-
-define CompressGzip
-	gzip -c $(1) > $(2)
-endef
-
-define PatchKernelGzip
-	cp $(KDIR)/vmlinux$(3) $(KDIR)/vmlinux$(3)-$(1)
-	$(STAGING_DIR_HOST)/bin/patch-cmdline $(KDIR)/vmlinux$(3)-$(1) '$(strip $(2))'
-	$(call CompressGzip,$(KDIR)/vmlinux$(3)-$(1),$(KDIR)/vmlinux$(3)-$(1).gzip)
-endef
-
-define MkImageGzip
-	mkimage -A mips -O linux -T kernel -a 0x80002000 -C gzip \
-		-e 0x80002000 -n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
-		-d $(KDIR)/vmlinux$(2)-$(1).gzip $(KDIR)/uImage-$(1)$(2)
 endef
 
 define Image/Build/squashfs
@@ -285,17 +268,6 @@ ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 endif
 endef
 
-define Image/BuildKernelGzip/Template
-	$(call PatchKernelGzip,$(1),$(if $(2),$(2) machtype=$(1),))
-	$(call MkImageGzip,$(1))
-	$(CP) $(KDIR)/uImage-$(1) $(BIN_DIR)/$(IMG_PREFIX)-$(1)-uImage
-ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
-	$(call PatchKernelGzip,$(1),$(if $(2),$(2) machtype=$(1),),-initramfs)
-	$(call MkImageGzip,$(1),-initramfs)
-	$(CP) $(KDIR)/uImage-$(1)-initramfs $(BIN_DIR)/$(IMG_PREFIX)-$(1)-uImage-initramfs
-endif
-endef
-
 
 ifeq ($(CONFIG_TARGET_lantiq_falcon),y)
 
@@ -367,6 +339,9 @@ Image/Build/Profile/ARV752DPW=$(call Image/Build/$(1),$(1),ARV752DPW)
 Image/BuildKernel/Profile/ARV752DPW22=$(call Image/BuildKernel/Template,ARV752DPW22)
 Image/Build/Profile/ARV752DPW22=$(call Image/Build/$(1),$(1),ARV752DPW22)
 
+Image/BuildKernel/Profile/ARV8539PW22=$(call Image/BuildKernel/Template,ARV8539PW22)
+Image/Build/Profile/ARV8539PW22=$(call Image/Build/$(1),$(1),ARV8539PW22)
+
 Image/BuildKernel/Profile/GIGASX76X=$(call Image/BuildKernel/Template,GIGASX76X)
 Image/Build/Profile/GIGASX76X=$(call Image/Build/$(1),$(1),GIGASX76X)
 
@@ -414,6 +389,9 @@ Image/Build/Profile/P2812HNUF3=$(call Image/BuildNAND/$(1),$(1),P2812HNUF3)
 Image/BuildKernel/Profile/ARV7519RW22=$(call Image/BuildKernel/Template,ARV7519RW22,$(1))
 Image/Build/Profile/ARV7519RW22=$(call Image/Build/$(1),$(1),ARV7519RW22)
 
+Image/BuildKernel/Profile/BTHOMEHUBV5A=$(call Image/BuildKernel/Template,BTHOMEHUBV5A)
+Image/Build/Profile/BTHOMEHUBV5A=$(call Image/BuildNAND/$(1),$(1),BTHOMEHUBV5A)
+
 Image/BuildKernel/Profile/EASY80920NAND=$(call Image/BuildKernel/Template,EASY80920NAND)
 Image/Build/Profile/EASY80920NAND=$(call Image/Build/$(1),$(1),EASY80920NAND)
 
@@ -432,6 +410,9 @@ Image/Build/Profile/VG3503J_V2=$(call Image/BuildLoader/$(1),$(1),VG3503J_V2)
 Image/BuildKernel/Profile/TDW8970=$(call Image/BuildKernelTPLink/Template,TDW8970,TD-W8970v1,$(1))
 Image/Build/Profile/TDW8970=$(call Image/BuildTPLink/$(1),$(1),TDW8970,TD-W8970v1)
 
+Image/BuildKernel/Profile/TDW8980=$(call Image/BuildKernelTPLink/Template,TDW8980,TD-W8980v1,$(1))
+Image/Build/Profile/TDW8980=$(call Image/BuildTPLink/$(1),$(1),TDW8980,TD-W8980v1)
+
 Image/BuildKernel/Profile/VGV7510KW22NOR=$(call Image/BuildKernel/Template,VGV7510KW22NOR,$(1))
 Image/Build/Profile/VGV7510KW22NOR=$(call Image/Build/$(1),$(1),VGV7510KW22NOR)
 
@@ -448,14 +429,6 @@ define Image/Prepare
 	$(call Image/Prepare/Profile,VG3503J)
 	$(call Image/Prepare/Profile,VG3503J_V2)
 endef
-
-endif
-
-
-ifeq ($(CONFIG_TARGET_lantiq_svip_be),y)
-
-Image/BuildKernel/Profile/EASY33016=$(call Image/BuildKernelGzip/Template,EASY33016)
-Image/Build/Profile/EASY33016=$(call Image/Build/$(1),$(1),EASY33016)
 
 endif
 

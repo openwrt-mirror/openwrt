@@ -4,10 +4,11 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
-include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/image.mk
 
 JFFS2_BLOCKSIZE=256k 512k
+
+include $(TOPDIR)/rules.mk
+include $(INCLUDE_DIR)/image.mk
 
 ifneq ($(CONFIG_TARGET_xburst_qi_lb60),)
 UBI_OPTS = -m 4096 -p 512KiB
@@ -25,7 +26,7 @@ endef
 
 
 define MkImageGzip
-	gzip -9 -c $(1) > $(1).gz
+	gzip -9n -c $(1) > $(1).gz
 	mkimage -A mips -O linux -T kernel -a 0x80010000 -C gzip \
 		-e $(call kernel_entry,$(KDIR)/vmlinux.debug) -n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
 		-d $(1).gz $(2)

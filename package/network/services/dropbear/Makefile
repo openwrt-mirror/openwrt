@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dropbear
-PKG_VERSION:=2015.67
-PKG_RELEASE:=1
+PKG_VERSION:=2015.68
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:= \
 	http://matt.ucc.asn.au/dropbear/releases/ \
 	https://dropbear.nl/mirror/releases/
-PKG_MD5SUM:=e967e320344cd4bfebe321e3ab8514d6
+PKG_MD5SUM:=7664ac10f7cc2301c530eb80c756fc5d
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE libtomcrypt/LICENSE libtommath/LICENSE
@@ -48,7 +48,6 @@ endef
 
 define Package/dropbear/conffiles
 /etc/dropbear/dropbear_rsa_host_key
-/etc/dropbear/dropbear_dss_host_key 
 /etc/config/dropbear 
 endef
 
@@ -118,7 +117,6 @@ define Package/dropbear/install
 	$(INSTALL_DIR) $(1)/usr/lib/opkg/info
 	$(INSTALL_DIR) $(1)/etc/dropbear
 	touch $(1)/etc/dropbear/dropbear_rsa_host_key
-	touch $(1)/etc/dropbear/dropbear_dss_host_key
 endef
 
 define Package/dropbearconvert/install

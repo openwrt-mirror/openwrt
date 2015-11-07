@@ -3,6 +3,7 @@
  *
  * Author: Steven Barth <cyrus@openwrt.org>
  * Copyright (c) 2014-2015 cisco Systems, Inc.
+ * Copyright (c) 2015 Steven Barth <cyrus@openwrt.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2
@@ -112,7 +113,7 @@ static void handle_dump(struct ubus_request *req __attribute__((unused)),
 }
 
 static void match_prefix(int *pdlen, struct in6_addr *pd, struct blob_attr *cur,
-		const struct in6_addr *ipv6prefix, int prefix6len)
+		const struct in6_addr *ipv6prefix, int prefix6len, bool lw4o6)
 {
 	struct blob_attr *d;
 	unsigned drem;
@@ -133,13 +134,17 @@ static void match_prefix(int *pdlen, struct in6_addr *pd, struct blob_attr *cur,
 		inet_pton(AF_INET6, blobmsg_get_string(ptb[PREFIX_ATTR_ADDRESS]), &prefix);
 
 		// lw4over6 /128-address-as-PD matching madness workaround
-		if (mask == 128)
+		if (lw4o6 && mask == 128)
 			mask = 64;
 
 		if (*pdlen < mask && mask >= prefix6len &&
 				!bmemcmp(&prefix, ipv6prefix, prefix6len)) {
 			bmemcpy(pd, &prefix, mask);
 			*pdlen = mask;
+		} else if (lw4o6 && *pdlen < prefix6len && mask < prefix6len &&
+				!bmemcmp(&prefix, ipv6prefix, mask)) {
+			bmemcpy(pd, ipv6prefix, prefix6len);
+			*pdlen = prefix6len;
 		}
 	}
 }
@@ -157,6 +162,8 @@ enum {
 	OPT_PSID,
 	OPT_BR,
 	OPT_DMR,
+	OPT_PD,
+	OPT_PDLEN,
 	OPT_MAX
 };
 
@@ -173,6 +180,8 @@ static char *const token[] = {
 	[OPT_PSID] = "psid",
 	[OPT_BR] = "br",
 	[OPT_DMR] = "dmr",
+	[OPT_PD] = "pd",
+	[OPT_PDLEN] = "pdlen",
 	[OPT_MAX] = NULL
 };
 
@@ -233,16 +242,20 @@ int main(int argc, char *argv[])
 				ealen = intval;
 			} else if (idx == OPT_PREFIX4LEN && (intval = strtoul(value, NULL, 0)) <= 32 && !errno) {
 				prefix4len = intval;
-			} else if (idx == OPT_PREFIX6LEN && (intval = strtoul(value, NULL, 0)) <= 112 && !errno) {
+			} else if (idx == OPT_PREFIX6LEN && (intval = strtoul(value, NULL, 0)) <= 128 && !errno) {
 				prefix6len = intval;
 			} else if (idx == OPT_IPV4PREFIX && inet_pton(AF_INET, value, &ipv4prefix) == 1) {
 				// dummy
 			} else if (idx == OPT_IPV6PREFIX && inet_pton(AF_INET6, value, &ipv6prefix) == 1) {
 				// dummy
+			} else if (idx == OPT_PD && inet_pton(AF_INET6, value, &pd) == 1) {
+				// dummy
 			} else if (idx == OPT_OFFSET && (intval = strtoul(value, NULL, 0)) <= 16 && !errno) {
 				offset = intval;
 			} else if (idx == OPT_PSIDLEN && (intval = strtoul(value, NULL, 0)) <= 16 && !errno) {
 				psidlen = intval;
+			} else if (idx == OPT_PDLEN && (intval = strtoul(value, NULL, 0)) <= 128 && !errno) {
+				pdlen = intval;
 			} else if (idx == OPT_PSID && (intval = strtoul(value, NULL, 0)) <= 65535 && !errno) {
 				psid = intval;
 			} else if (idx == OPT_DMR) {
@@ -270,24 +283,26 @@ int main(int argc, char *argv[])
 		}
 
 		// Find PD
-		struct blob_attr *c;
-		unsigned rem;
-		blobmsg_for_each_attr(c, dump, rem) {
-			struct blob_attr *tb[IFACE_ATTR_MAX];
-			blobmsg_parse(iface_attrs, IFACE_ATTR_MAX, tb, blobmsg_data(c), blobmsg_data_len(c));
+		if (pdlen < 0) {
+			struct blob_attr *c;
+			unsigned rem;
+			blobmsg_for_each_attr(c, dump, rem) {
+				struct blob_attr *tb[IFACE_ATTR_MAX];
+				blobmsg_parse(iface_attrs, IFACE_ATTR_MAX, tb, blobmsg_data(c), blobmsg_data_len(c));
 
-			if (!tb[IFACE_ATTR_INTERFACE] || (strcmp(argv[1], "*") && strcmp(argv[1],
-					blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]))))
-				continue;
+				if (!tb[IFACE_ATTR_INTERFACE] || (strcmp(argv[1], "*") && strcmp(argv[1],
+						blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]))))
+					continue;
 
-			match_prefix(&pdlen, &pd, tb[IFACE_ATTR_PREFIX], &ipv6prefix, prefix6len);
+				match_prefix(&pdlen, &pd, tb[IFACE_ATTR_PREFIX], &ipv6prefix, prefix6len, lw4o6);
 
-			if (lw4o6)
-				match_prefix(&pdlen, &pd, tb[IFACE_ATTR_ADDRESS], &ipv6prefix, prefix6len);
+				if (lw4o6)
+					match_prefix(&pdlen, &pd, tb[IFACE_ATTR_ADDRESS], &ipv6prefix, prefix6len, lw4o6);
 
-			if (pdlen >= 0) {
-				iface = blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]);
-				break;
+				if (pdlen >= 0) {
+					iface = blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]);
+					break;
+				}
 			}
 		}
 
@@ -304,7 +319,9 @@ int main(int argc, char *argv[])
 			psid = be16_to_cpu(psid16);
 		}
 
-		psid16 = cpu_to_be16(psid >> (16 - psidlen));
+		psid = psid >> (16 - psidlen);
+		psid16 = cpu_to_be16(psid);
+		psid = psid << (16 - psidlen);
 
 		if (prefix4len < 0 || prefix6len < 0 || ealen < 0 || ealen < psidlen) {
 			fprintf(stderr, "Skipping invalid or incomplete rule: %s\n", argv[i]);

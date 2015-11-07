@@ -455,12 +455,7 @@ mac80211_prepare_vif() {
 			}
 		;;
 		mesh)
-			json_get_vars key mesh_id
-			if [ -n "$key" ]; then
-				iw phy "$phy" interface add "$ifname" type mp
-			else
-				iw phy "$phy" interface add "$ifname" type mp mesh_id "$mesh_id"
-			fi
+			iw phy "$phy" interface add "$ifname" type mp
 		;;
 		monitor)
 			iw phy "$phy" interface add "$ifname" type monitor
@@ -486,7 +481,7 @@ mac80211_prepare_vif() {
 		# All interfaces must have unique mac addresses
 		# which can either be explicitly set in the device
 		# section, or automatically generated
-		ifconfig "$ifname" hw ether "$macaddr"
+		ip link set dev "$ifname" address "$macaddr"
 	fi
 
 	json_select ..
@@ -582,7 +577,7 @@ mac80211_setup_vif() {
 	json_get_vars mode
 	json_get_var vif_txpower txpower
 
-	ifconfig "$ifname" up || {
+	ip link set dev "$ifname" up || {
 		wireless_setup_vif_failed IFUP_ERROR
 		json_select ..
 		return
@@ -603,6 +598,13 @@ mac80211_setup_vif() {
 					wireless_vif_parse_encryption
 					mac80211_setup_supplicant || failed=1
 				fi
+			else
+				json_get_vars mesh_id mcast_rate
+
+				mcval=
+				[ -n "$mcast_rate" ] && wpa_supplicant_add_rate mcval "$mcast_rate"
+
+				iw dev "$ifname" mesh join "$mesh_id" ${mcval:+mcast-rate $mcval}
 			fi
 
 			for var in $MP_CONFIG_INT $MP_CONFIG_BOOL $MP_CONFIG_STRING; do
@@ -638,7 +640,7 @@ mac80211_interface_cleanup() {
 	local phy="$1"
 
 	for wdev in $(list_phy_interfaces "$phy"); do
-		ifconfig "$wdev" down 2>/dev/null
+		ip link set dev "$wdev" down 2>/dev/null
 		iw dev "$wdev" del
 	done
 }

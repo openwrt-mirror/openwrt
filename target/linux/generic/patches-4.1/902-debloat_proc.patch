@@ -79,17 +79,17 @@
  }
 --- a/kernel/irq/proc.c
 +++ b/kernel/irq/proc.c
-@@ -325,6 +325,9 @@ void register_irq_proc(unsigned int irq,
- {
+@@ -327,6 +327,9 @@ void register_irq_proc(unsigned int irq,
+ 	static DEFINE_MUTEX(register_lock);
  	char name [MAX_NAMELEN];
  
 +	if (IS_ENABLED(CONFIG_PROC_STRIPPED) && !IS_ENABLED(CONFIG_SMP))
 +		return;
 +
- 	if (!root_irq_dir || (desc->irq_data.chip == &no_irq_chip) || desc->dir)
+ 	if (!root_irq_dir || (desc->irq_data.chip == &no_irq_chip))
  		return;
  
-@@ -361,6 +364,9 @@ void unregister_irq_proc(unsigned int ir
+@@ -376,6 +379,9 @@ void unregister_irq_proc(unsigned int ir
  {
  	char name [MAX_NAMELEN];
  
@@ -99,7 +99,7 @@
  	if (!root_irq_dir || !desc->dir)
  		return;
  #ifdef CONFIG_SMP
-@@ -396,6 +402,9 @@ void init_irq_proc(void)
+@@ -411,6 +417,9 @@ void init_irq_proc(void)
  	unsigned int irq;
  	struct irq_desc *desc;
  
@@ -184,7 +184,7 @@
  
 --- a/net/ipv4/fib_trie.c
 +++ b/net/ipv4/fib_trie.c
-@@ -2630,10 +2630,12 @@ static const struct file_operations fib_
+@@ -2626,10 +2626,12 @@ static const struct file_operations fib_
  
  int __net_init fib_proc_init(struct net *net)
  {
@@ -199,7 +199,7 @@
  			 &fib_triestat_fops))
  		goto out2;
  
-@@ -2643,17 +2645,21 @@ int __net_init fib_proc_init(struct net
+@@ -2639,17 +2641,21 @@ int __net_init fib_proc_init(struct net
  	return 0;
  
  out3:

@@ -161,6 +161,11 @@ static struct board_info boards[] = {
 		.hw_rev		= 1,
 		.layout_id	= "8Mltq",
 	}, {
+		.id		= "TD-W8980v1",
+		.hw_id		= 0x89800001,
+		.hw_rev		= 14,
+		.layout_id	= "8Mltq",
+	}, {
 		.id		= "ArcherC20i",
 		.hw_id		= 0xc2000001,
 		.hw_rev		= 58,
@@ -184,7 +189,7 @@ static struct board_info boards[] = {
 #define ERRS(fmt, ...) do { \
 	int save = errno; \
 	fflush(0); \
-	fprintf(stderr, "[%s] *** error: " fmt "\n", \
+	fprintf(stderr, "[%s] *** error: " fmt ": %s\n", \
 			progname, ## __VA_ARGS__, strerror(save)); \
 } while (0)
 

@@ -101,7 +101,7 @@ disable_broadcom() {
 		for dev in /sys/class/net/wds${device##wl}-* /sys/class/net/${device}-* /sys/class/net/${device}; do
 			if [ -e "$dev" ]; then
 				ifname=${dev##/sys/class/net/}
-				ifconfig "$ifname" down
+				ip link set dev "$ifname" down
 				unbridge "$ifname"
 			fi
 		done
@@ -218,7 +218,7 @@ enable_broadcom() {
 	}
 
 	local leddc=$(wlc ifname "$device" leddc)
-	[ "$leddc" -eq 0xffff ] || {
+	[ $((leddc)) -eq $((0xffff)) ] && {
 		leddc=0x005a000a;
 	}
 
@@ -372,11 +372,12 @@ enable_broadcom() {
 		local if_cmd="if_pre_up"
 		[ "$ifname" != "${ifname##${device}-}" ] && if_cmd="if_up"
 		append $if_cmd "macaddr=\$(wlc ifname '$ifname' cur_etheraddr)" ";$N"
-		append $if_cmd "ifconfig '$ifname' \${macaddr:+hw ether \$macaddr}" ";$N"
-		append if_up "ifconfig '$ifname' up" ";$N"
+		append $if_cmd "ip link set dev '$ifname' address \$macaddr" ";$N"
+		append if_up "ip link set dev '$ifname' up" ";$N"
 
 		local net_cfg="$(find_net_config "$vif")"
 		[ -z "$net_cfg" ] || {
+			ubus -t 30 wait_for network.interface."$net_cfg"
 			append if_up "set_wifi_up '$vif' '$ifname'" ";$N"
 			append if_up "start_net '$ifname' '$net_cfg'" ";$N"
 		}

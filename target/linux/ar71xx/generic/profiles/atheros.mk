@@ -71,6 +71,39 @@ endef
 
 $(eval $(call Profile,AP136))
 
+define Profile/AP143
+	NAME:=Qualcomm Atheros AP143 reference board
+	PACKAGES:=kmod-usb-core kmod-usb2 kmod-usb-storage
+endef
+
+define Profile/AP143/Description
+	Package set optimized for the Qualcomm Atheros AP143 reference board.
+endef
+
+$(eval $(call Profile,AP143))
+
+define Profile/AP147
+	NAME:=Qualcomm Atheros AP147 reference board
+	PACKAGES:=kmod-usb-core kmod-usb2 kmod-usb-storage
+endef
+
+define Profile/AP147/Description
+	Package set optimized for the Atheros AP147 reference board.
+endef
+
+$(eval $(call Profile,AP147))
+
+define Profile/AP152
+	NAME:=Qualcomm Atheros AP152 reference board
+	PACKAGES:=kmod-usb-core kmod-usb2 kmod-usb-storage
+endef
+
+define Profile/AP152/Description
+	Package set optimized for the Qualcomm Atheros AP152 reference board.
+endef
+
+$(eval $(call Profile,AP152))
+
 define Profile/AP81
 	NAME:=Atheros AP81 reference board
 	PACKAGES:=kmod-usb-core kmod-usb2

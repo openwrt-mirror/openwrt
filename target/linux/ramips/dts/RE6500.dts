@@ -69,7 +69,7 @@
 			mt76@0,0 {
 				reg = <0x0000 0 0 0 0>;
 				device_type = "pci";
-				mediatek,mtd-eeprom = <&factory 0x8000>;
+				mediatek,mtd-eeprom = <&factory 0x0000>;
 				mediatek,2ghz = <0>;
 			};
 		};
@@ -78,7 +78,7 @@
 			mt76@1,0 {
 				reg = <0x0000 0 0 0 0>;
 				device_type = "pci";
-				mediatek,mtd-eeprom = <&factory 0x0000>;
+				mediatek,mtd-eeprom = <&factory 0x8000>;
 				mediatek,5ghz = <0>;
 			};
 		};
@@ -86,12 +86,14 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		wifi {
-			label = "linksys:orange:wifi";
+			label = "re6500:orange:wifi";
 			gpios = <&gpio0 0 1>;
 		};
+
 		power {
-			label = "linksys:white:power";
+			label = "re6500:white:power";
 			gpios = <&gpio0 9 1>;
 		};
 	};
@@ -101,11 +103,13 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		wps {
 			label = "wps";
 			gpios = <&gpio0 10 1>;
 			linux,code = <0x211>;
 		};
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 11 0>;

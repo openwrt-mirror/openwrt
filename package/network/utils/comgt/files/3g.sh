@@ -96,6 +96,7 @@ proto_3g_setup() {
 		novj \
 		nobsdcomp \
 		noauth \
+		set EXTENDPREFIX=1 \
 		lock \
 		crtscts \
 		115200 "$device"

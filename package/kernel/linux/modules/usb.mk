@@ -279,6 +279,23 @@ endef
 
 $(eval $(call KernelPackage,usb-serial-gadget))
 
+define KernelPackage/usb-mass-storage-gadget
+  TITLE:=USB Mass Storage support
+  KCONFIG:=CONFIG_USB_MASS_STORAGE
+  DEPENDS:=+kmod-usb-gadget +kmod-usb-lib-composite
+  FILES:= \
+	$(LINUX_DIR)/drivers/usb/gadget/function/usb_f_mass_storage.ko \
+	$(LINUX_DIR)/drivers/usb/gadget/legacy/g_mass_storage.ko
+  AUTOLOAD:=$(call AutoLoad,52,usb_f_mass_storage g_mass_storage)
+  $(call AddDepends/usb)
+endef
+
+define KernelPackage/usb-mass-storage-gadget/description
+  Kernel support for USB Gadget Mass Storage
+endef
+
+$(eval $(call KernelPackage,usb-mass-storage-gadget))
+
 
 define KernelPackage/usb-uhci
   TITLE:=Support for UHCI controllers
@@ -315,7 +332,10 @@ define KernelPackage/usb-ohci
   FILES:= \
 	$(LINUX_DIR)/drivers/usb/host/ohci-hcd.ko \
 	$(LINUX_DIR)/drivers/usb/host/ohci-platform.ko
-  AUTOLOAD:=$(call AutoLoad,50,ohci-hcd ohci-platform,1)
+  ifneq ($(wildcard $(LINUX_DIR)/drivers/usb/host/ohci-at91.ko),)
+    FILES+=$(LINUX_DIR)/drivers/usb/host/ohci-at91.ko
+  endif
+  AUTOLOAD:=$(call AutoLoad,50,ohci-hcd ohci-platform ohci-at91,1)
   $(call AddDepends/usb)
 endef
 
@@ -416,14 +436,18 @@ define KernelPackage/usb2
 	CONFIG_USB_EHCI_MXC=y \
 	CONFIG_USB_OCTEON_EHCI=y \
 	CONFIG_USB_EHCI_HCD_ORION=y \
-	CONFIG_USB_EHCI_HCD_PLATFORM=y
+	CONFIG_USB_EHCI_HCD_PLATFORM=y \
+	CONFIG_USB_EHCI_HCD_AT91=y
   FILES:= \
 	$(LINUX_DIR)/drivers/usb/host/ehci-hcd.ko \
 	$(LINUX_DIR)/drivers/usb/host/ehci-platform.ko
   ifneq ($(wildcard $(LINUX_DIR)/drivers/usb/host/ehci-orion.ko),)
     FILES+=$(LINUX_DIR)/drivers/usb/host/ehci-orion.ko
   endif
-  AUTOLOAD:=$(call AutoLoad,40,ehci-hcd ehci-platform ehci-orion,1)
+  ifneq ($(wildcard $(LINUX_DIR)/drivers/usb/host/ehci-atmel.ko),)
+    FILES+=$(LINUX_DIR)/drivers/usb/host/ehci-atmel.ko
+  endif
+  AUTOLOAD:=$(call AutoLoad,40,ehci-hcd ehci-platform ehci-orion ehci-atmel,1)
   $(call AddDepends/usb)
 endef
 
@@ -459,7 +483,8 @@ define KernelPackage/usb-dwc2
 	CONFIG_USB_DWC2_PLATFORM \
 	CONFIG_USB_DWC2_DEBUG=n \
 	CONFIG_USB_DWC2_VERBOSE=n \
-	CONFIG_USB_DWC2_TRACK_MISSED_SOFS=n
+	CONFIG_USB_DWC2_TRACK_MISSED_SOFS=n \
+	CONFIG_USB_DWC2_DEBUG_PERIODIC=n
   FILES:= \
 	$(LINUX_DIR)/drivers/usb/dwc2/dwc2.ko \
 	$(LINUX_DIR)/drivers/usb/dwc2/dwc2_platform.ko

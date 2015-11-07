@@ -121,7 +121,7 @@ dnsmasq() {
 	append_bool "$cfg" nohosts "--no-hosts"
 	append_bool "$cfg" nonegcache "--no-negcache"
 	append_bool "$cfg" strictorder "--strict-order"
-	append_bool "$cfg" logqueries "--log-queries"
+	append_bool "$cfg" logqueries "--log-queries=extra"
 	append_bool "$cfg" noresolv "--no-resolv"
 	append_bool "$cfg" localise_queries "--localise-queries"
 	append_bool "$cfg" readethers "--read-ethers"
@@ -135,6 +135,7 @@ dnsmasq() {
 	append_bool "$cfg" proxydnssec "--proxy-dnssec"
 	append_bool "$cfg" localservice "--local-service"
 	append_bool "$cfg" quietdhcp "--quiet-dhcp"
+	append_bool "$cfg" sequential_ip "--dhcp-sequential-ip"
 
 	append_parm "$cfg" dhcpscript "--dhcp-script"
 	append_parm "$cfg" cachesize "--cache-size"
@@ -175,10 +176,6 @@ dnsmasq() {
 	config_get hostsfile "$cfg" dhcphostsfile
 	[ -e "$hostsfile" ] && xappend "--dhcp-hostsfile=$hostsfile"
 
-	mkdir -p /tmp/hosts /tmp/dnsmasq.d
-	xappend "--addn-hosts=/tmp/hosts"
-	xappend "--conf-dir=/tmp/dnsmasq.d"
-
 	local rebind
 	config_get_bool rebind "$cfg" rebind_protection 1
 	[ $rebind -gt 0 ] && {
@@ -213,6 +210,10 @@ dnsmasq() {
 	dhcp_option_add "$cfg" "" 0
 
 	xappend "--dhcp-broadcast=tag:needs-broadcast"
+
+	mkdir -p /tmp/hosts /tmp/dnsmasq.d
+	xappend "--addn-hosts=/tmp/hosts"
+	xappend "--conf-dir=/tmp/dnsmasq.d"
 
 	echo >> $CONFIGFILE
 }
@@ -556,7 +557,7 @@ start_service() {
 	procd_set_param respawn
 
 	procd_add_jail dnsmasq ubus log
-	procd_add_jail_mount $CONFIGFILE $TRUSTANCHORSFILE $HOSTFILE /etc/passwd /dev/urandom /etc/dnsmasq.conf /tmp/dnsmasq.d /tmp/resolv.conf.auto /etc/hosts /etc/ethers
+	procd_add_jail_mount $CONFIGFILE $TRUSTANCHORSFILE $HOSTFILE /etc/passwd /etc/group /etc/TZ /dev/null /dev/urandom /etc/dnsmasq.conf /tmp/dnsmasq.d /tmp/resolv.conf.auto /etc/hosts /etc/ethers
 	procd_add_jail_mount_rw /var/run/dnsmasq/ /tmp/dhcp.leases $TIMESTAMPFILE
 	
 	procd_close_instance

@@ -5,6 +5,8 @@
 
 setup_interface () {
 	local device="$1"
+	local prefsig=""
+	local addrsig=""
 	proto_init_update "*" 1
 
 	# Merge RA-DNS
@@ -34,6 +36,7 @@ setup_interface () {
 
 	for prefix in $PREFIXES; do
 		proto_add_ipv6_prefix "$prefix"
+		prefsig="$prefsig ${prefix%%,*}"
 		local entry="${prefix#*/}"
 		entry="${entry#*,}"
 		entry="${entry#*,}"
@@ -68,14 +71,21 @@ setup_interface () {
 		local valid="${entry%%,*}"
 
 		proto_add_ipv6_address "$addr" "$mask" "$preferred" "$valid" 1
+		addrsig="$addrsig $addr/$mask"
 
 		if [ -z "$RA_ADDRESSES" -a -z "$RA_ROUTES" -a \
 				-z "$RA_DNS" -a "$FAKE_ROUTES" = 1 ]; then
 			RA_ROUTES="::/0,$SERVER,$valid,4096"
 		fi
+
+		# RFC 7278
+		if [ "$mask" -eq 64 -a -z "$PREFIXES" -a -n "$EXTENDPREFIX" ]; then
+			proto_add_ipv6_prefix "$addr/$mask,$preferred,$valid"
+		fi
 	done
 
 	for entry in $RA_ROUTES; do
+		local duplicate=$NOSOURCEFILTER
 		local addr="${entry%%/*}"
 		entry="${entry#*/}"
 		local mask="${entry%%,*}"
@@ -86,12 +96,16 @@ setup_interface () {
 		entry="${entry#*,}"
 		local metric="${entry%%,*}"
 
-		if [ -z "$gw" ]; then
-			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
+		for xentry in $RA_ROUTES; do
+			local xprefix="${xentry%%,*}"
+			xentry="${xentry#*,}"
+			local xgw="${xentry%%,*}"
 
-			# work around if there is a PIO matching a RIO
-			# Linux seems to prefer source-dest over dest-only even if metric is higher
-			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$addr/$mask"
+			[ -n "$gw" -a -z "$xgw" -a "$addr/$mask" = "$xprefix" ] && duplicate=1
+		done
+
+		if [ -z "$gw" -o "$duplicate" = 1 ]; then
+			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
 		else
 			for prefix in $PREFIXES $ADDRESSES; do
 				local paddr="${prefix%%,*}"
@@ -131,6 +145,8 @@ setup_interface () {
 		json_add_string ifname "@$INTERFACE"
 		json_add_string proto map
 		json_add_string type "$MAPTYPE"
+		json_add_string _prefsig "$prefsig"
+		[ "$MAPTYPE" = lw4o6 ] && json_add_string _addrsig "$addrsig"
 		json_add_string rule "$MAPRULE"
 		json_add_string tunlink "$INTERFACE"
 		[ -n "$ZONE_MAP" ] || ZONE_MAP=$ZONE
@@ -158,6 +174,7 @@ setup_interface () {
 		json_add_string ifname "@$INTERFACE"
 		json_add_string proto "464xlat"
 		json_add_string tunlink "$INTERFACE"
+		json_add_string _addrsig "$addrsig"
 		[ -n "$ZONE_464XLAT" ] || ZONE_464XLAT=$ZONE
 		[ -n "$ZONE_464XLAT" ] && json_add_string zone "$ZONE_464XLAT"
 		[ -n "$IFACE_464XLAT_DELEGATE" ] && json_add_boolean delegate "$IFACE_464XLAT_DELEGATE"
