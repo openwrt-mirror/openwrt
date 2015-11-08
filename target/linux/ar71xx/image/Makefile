@@ -140,20 +140,6 @@ endef
 
 DEVICE_VARS += UBNT_BOARD UBNT_CHIP UBNT_TYPE
 
-define Build/mkubntkernelimage
-	rm -rf $(KDIR_TMP)/ubnt-$(KERNEL_IMAGE)/image && \
-		mkdir -p $(KDIR_TMP)/ubnt-$(KERNEL_IMAGE)/image && \
-		cp $@ $(KDIR_TMP)/ubnt-$(KERNEL_IMAGE)/image/kernel0 && \
-		$(STAGING_DIR_HOST)/bin/mkfs.jffs2 \
-			--pad --big-endian --squash-uids -v -e 64KiB \
-			-o $@.new \
-			-d $(KDIR_TMP)/ubnt-$(KERNEL_IMAGE)/image \
-			2>&1 && \
-		$(STAGING_DIR_HOST)/bin/padjffs2 $@.new -J 64
-	-rm -rf $(KDIR_TMP)/ubnt-$(KERNEL_IMAGE)/image
-	@mv $@.new $@
-endef
-
 define Device/Default
   BOARDNAME :=
   DEVICE_PROFILE = $$(BOARDNAME)
@@ -818,7 +804,14 @@ define Device/tl-wr1043nd-v2
     DEVICE_PROFILE := TLWR1043
     TPLINK_HWID := 0x10430002
 endef
-TARGET_DEVICES += tl-wr1043nd-v1 tl-wr1043nd-v2
+
+define Device/tl-wr1043nd-v3
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR1043ND-v2
+    DEVICE_PROFILE := TLWR1043
+    TPLINK_HWID := 0x10430003
+endef
+TARGET_DEVICES += tl-wr1043nd-v1 tl-wr1043nd-v2 tl-wr1043nd-v3
 
 define Device/tl-wr2543-v1
     $(Device/tplink-8mlzma)
@@ -1157,15 +1150,16 @@ endef
 #TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
 
 define Device/ubnt-uap-pro
+  KERNEL_SIZE := 1536k
   IMAGE_SIZE := 15744k
   MTDPARTS := spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1536k(kernel),14208k(rootfs),256k(cfg)ro,64k(EEPROM)ro,15744k@0x50000(firmware)
   UBNT_TYPE := BZ
   UBNT_CHIP := ar934x
   BOARDNAME := UAP-PRO
   DEVICE_PROFILE := UBNT UAPPRO
-  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | mkubntkernelimage
+  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | jffs2 kernel0
   IMAGES := sysupgrade.bin factory.bin
-  IMAGE/sysupgrade.bin = append-kernel 1536k | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin = append-kernel $$$$(KERNEL_SIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
   IMAGE/factory.bin = $$(IMAGE/sysupgrade.bin) | mkubntimage2
 endef
 
@@ -2129,6 +2123,39 @@ ifdef CONFIG_PACKAGE_uboot-ar71xx-nbg460n_550n_550nh
   endef
 endif
 
+define Device/NBG6616
+	BOARDNAME = NBG6616
+	KERNEL_SIZE = 2048k
+	IMAGE_SIZE = 15323k
+	MTDPARTS = spi0.0:192k(u-boot)ro,64k(env)ro,64k(RFdata)ro,384k(zyxel_rfsd),384k(romd),64k(header),2048k(kernel),13184k(rootfs),15232k@0x120000(firmware)
+	CMDLINE += mem=128M
+	IMAGES := sysupgrade.bin
+	KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | jffs2 boot/vmlinux.lzma.uImage
+	IMAGE/sysupgrade.bin = append-kernel $$$$(KERNEL_SIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+	# We cannot currently build a factory image. It is the sysupgrade image
+	# prefixed with a header (which is actually written into the MTD device).
+	# The header is 2kiB and is filled with 0xff. The format seems to be:
+	#   2 bytes:  0x0000
+	#   2 bytes:  checksum of the data partition (big endian)
+	#   4 bytes:  length of the contained image file (big endian)
+	#  32 bytes:  Firmware Version string (NUL terminated, 0xff padded)
+	#   2 bytes:  0x0000
+	#   2 bytes:  checksum over the header partition (big endian)
+	#  32 bytes:  Model (e.g. "NBG6616", NUL termiated, 0xff padded)
+	#      rest: 0xff padding
+	#
+	# The checksums are calculated by adding up all bytes and if a 16bit
+	# overflow occurs, one is added and the sum is masked to 16 bit:
+	#   csum = csum + databyte; if (csum > 0xffff) { csum += 1; csum &= 0xffff };
+	# Should the file have an odd number of bytes then the byte len-0x800 is
+	# used additionally.
+	# The checksum for the header is calcualted over the first 2048 bytes with
+	# the firmware checksum as the placeholder during calculation.
+	#
+	# The header is padded with 0xff to the erase block size of the device.
+endef
+
+TARGET_DEVICES += NBG6616
 
 define	Image/Build/ZyXELNAND/buildkernel
 	$(eval kernelsize=$(call mtdpartsize,kernel,$(5)))

@@ -348,6 +348,21 @@ define Build/gzip
 	@mv $@.new $@
 endef
 
+define Build/jffs2
+	rm -rf $(KDIR_TMP)/$(DEVICE_NAME)/jffs2 && \
+		mkdir -p $(KDIR_TMP)/$(DEVICE_NAME)/jffs2/$$(dirname $(1)) && \
+		cp $@ $(KDIR_TMP)/$(DEVICE_NAME)/jffs2/$(1) && \
+		$(STAGING_DIR_HOST)/bin/mkfs.jffs2 --pad \
+			$(if $(CONFIG_BIG_ENDIAN),--big-endian,--little-endian) \
+			--squash-uids -v -e $(patsubst %k,%KiB,$(BLOCKSIZE)) \
+			-o $@.new \
+			-d $(KDIR_TMP)/$(DEVICE_NAME)/jffs2 \
+			2>&1 1>/dev/null | awk '/^.+$$$$/' && \
+		$(STAGING_DIR_HOST)/bin/padjffs2 $@.new -J $(patsubst %k,,$(BLOCKSIZE))
+	-rm -rf $(KDIR_TMP)/$(DEVICE_NAME)/jffs2/
+	@mv $@.new $@
+endef
+
 define Build/kernel-bin
 	rm -f $@
 	cp $^ $@
@@ -370,7 +385,8 @@ define Build/append-ubi
 		$(if $(KERNEL_IN_UBI),--kernel $(word 1,$^)) \
 		$(word 2,$^) \
 		$@.tmp \
-		-p $(BLOCKSIZE) -m $(PAGESIZE) -E 5
+		-p $(BLOCKSIZE) -m $(PAGESIZE) -E 5 \
+		$(if $(SUBPAGESIZE),-s $(SUBPAGESIZE))
 	cat $@.tmp >> $@
 	rm $@.tmp
 endef
@@ -433,6 +449,7 @@ define Device/Init
   KERNEL_IMAGE = $$(KERNEL_PREFIX)$$(KERNEL_SUFFIX)
   KERNEL_INITRAMFS_PREFIX = $$(IMAGE_PREFIX)-initramfs
   KERNEL_INITRAMFS_IMAGE = $$(KERNEL_INITRAMFS_PREFIX)$$(KERNEL_SUFFIX)
+  KERNEL_INITRAMFS_NAME = $$(KERNEL_NAME)-initramfs
   KERNEL_INSTALL :=
   KERNEL_NAME := vmlinux
   KERNEL_SIZE :=
@@ -459,11 +476,11 @@ define Device/Build/initramfs
   $(call Device/Export,$(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE),$(1))
   $$(_TARGET): $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE)
 
-  $(KDIR)/$$(KERNEL_NAME)-initramfs: image_prepare
+  $(KDIR)/$$(KERNEL_INITRAMFS_NAME): image_prepare
   $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE)
 	cp $$^ $$@
 
-  $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_NAME)-initramfs
+  $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_INITRAMFS_NAME)
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL_INITRAMFS))
 endef
