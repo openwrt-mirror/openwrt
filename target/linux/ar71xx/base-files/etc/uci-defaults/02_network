@@ -245,6 +245,7 @@ tl-mr3420-v2 |\
 tl-wr841n-v8 |\
 tl-wr842n-v2 |\
 tl-wr941nd-v5 |\
+tl-wr941nd-v6 |\
 tl-wdr6500-v2 |\
 wnr2000-v3 |\
 wnr2000-v4 |\
@@ -389,6 +390,7 @@ wp543)
 	ucidef_set_interface_lan "eth0"
 	;;
 
+arduino-yun | \
 dir-505-a1)
 	ucidef_set_interface_lan "eth1"
 	;;

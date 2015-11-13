@@ -365,6 +365,9 @@ ar71xx_board_detect() {
 	*Antminer-S3)
 		name="antminer-s3"
 		;;
+	*"Arduino Yun")
+		name="arduino-yun"
+		;;
 	*AP113)
 		name="ap113"
 		;;
@@ -844,14 +847,17 @@ ar71xx_board_detect() {
 	*"TL-WR882N v1")
 		name="tl-wr882n-v1"
 		;;
+	*"TL-WR941ND")
+		name="tl-wr941nd"
+		;;
 	*"TL-WR941ND v7")
 		name="tl-wr941nd-v7"
 		;;
 	*"TL-WR941N/ND v5")
 		name="tl-wr941nd-v5"
 		;;
-	*TL-WR941ND)
-		name="tl-wr941nd"
+	*"TL-WR941N/ND v6")
+		name="tl-wr941nd-v6"
 		;;
 	*"TL-WR703N v1")
 		name="tl-wr703n"
