@@ -832,7 +832,7 @@ Image/Build/Profile/CYSWR1100=$(call BuildFirmware/Seama/$(1),$(1),cy-swr1100,CY
 Image/Build/Profile/DIR645=$(call BuildFirmware/Seama/$(1),$(1),dir-645,DIR-645,wrgn39_dlob.hans_dir645,$(ralink_default_fw_size_8M))
 
 hpm_mtd_size=16449536
-Image/Build/Profile/HPM=$(call BuildFirmware/CustomFlash/$(1),$(1),hpm,HPM,$(hpm_mtd_size))
+Image/Build/Profile/HPM=$(call BuildFirmware/CustomFlash/$(0),$(1),hpm,HPM,$(hpm_mtd_size))
 
 define BuildFirmware/RTN56U/squashfs
 	$(call BuildFirmware/Default8M/$(1),$(1),rt-n56u,RT-N56U)
@@ -1005,6 +1005,11 @@ endef
 define Device/zbt-wg2626
   DTS := ZBT-WG2626
   IMAGE_SIZE := $(ralink_default_fw_size_16M)
+endef
+
+define Device/WITI
+  DTS := WITI
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
 endef
 
 #
