@@ -83,6 +83,7 @@ ramips_setup_interfaces()
 	wsr-1166|\
 	wsr-600|\
 	wt1520|\
+	witi |\
 	y1|\
 	zbt-wg2626)
 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"

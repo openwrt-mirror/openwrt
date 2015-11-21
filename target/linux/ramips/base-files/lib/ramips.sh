@@ -439,6 +439,9 @@ ramips_board_detect() {
 	*"WZR-AGL300NH")
 		name="wzr-agl300nh"
 		;;
+	*"Witi")
+		name="witi"
+		;;
 	*"X5")
 		name="x5"
 		;;
