@@ -24,9 +24,9 @@ index 423a1c0..41adade 100644
 --- a/arch/mips/ath79/Makefile
 +++ b/arch/mips/ath79/Makefile
 @@ -137,6 +137,7 @@ obj-$(CONFIG_ATH79_MACH_TL_WR841N_V1)	+= mach-tl-wr841n.o
- obj-$(CONFIG_ATH79_MACH_TL_WR841N_V8)	+= mach-tl-wr841n-v8.o
  obj-$(CONFIG_ATH79_MACH_TL_WR841N_V9)	+= mach-tl-wr841n-v9.o
  obj-$(CONFIG_ATH79_MACH_TL_WR941ND)	+= mach-tl-wr941nd.o
+ obj-$(CONFIG_ATH79_MACH_TL_WR941ND_V6)	+= mach-tl-wr941nd-v6.o
 +obj-$(CONFIG_ATH79_MACH_TL_WR941ND_V7)	+= mach-tl-wr941nd-v7.o
  obj-$(CONFIG_ATH79_MACH_TL_CUS249)	+= mach-tl-cus249.o
  obj-$(CONFIG_ATH79_MACH_TL_WR1041N_V2)	+= mach-tl-wr1041n-v2.o
@@ -36,9 +36,9 @@ index 9ac384d..97ac5d8 100644
 --- a/arch/mips/ath79/machtypes.h
 +++ b/arch/mips/ath79/machtypes.h
 @@ -172,6 +172,7 @@ enum ath79_mach_type {
- 	ATH79_MACH_TL_WR842N_V2,	/* TP-LINK TL-WR842N/ND v2 */
  	ATH79_MACH_TL_WR941ND,		/* TP-LINK TL-WR941ND */
  	ATH79_MACH_TL_WR941ND_V5,	/* TP-LINK TL-WR941ND v5 */
+ 	ATH79_MACH_TL_WR941ND_V6,	/* TP-LINK TL-WR941ND v6 */
 +	ATH79_MACH_TL_WR941ND_V7,		/* TP-LINK TL-WR941ND v7 */
  	ATH79_MACH_TL_WR882N_V1,	/* TP-LINK TL-WR882N v1 */
  	ATH79_MACH_TUBE2H,		/* Alfa Network Tube2H */

@@ -2,9 +2,9 @@ diff -ruN a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt	2015-01-11 12:19:11.000000000 +0800
 +++ b/CMakeLists.txt	2015-01-11 12:29:51.501203247 +0800
 @@ -28,6 +28,8 @@
- 		libblkid-tiny/ubifs.c
  		libblkid-tiny/squashfs.c
  		libblkid-tiny/btrfs.c
+ 		libblkid-tiny/f2fs.c
 +		libblkid-tiny/exfat.c
 +		libblkid-tiny/ntfs.c
  		)
@@ -251,9 +251,9 @@ diff -ruN a/libblkid-tiny/libblkid-tiny.c b/libblkid-tiny/libblkid-tiny.c
  {
  	&vfat_idinfo,
 @@ -168,6 +227,8 @@
- 	&hfsplus_idinfo,
  	&hfs_idinfo,
  	&btrfs_idinfo,
+ 	&f2fs_idinfo,
 +	&ntfs_idinfo,
 +	&exfat_idinfo,
  };
@@ -492,9 +492,9 @@ diff -ruN a/libblkid-tiny/superblocks.h b/libblkid-tiny/superblocks.h
 --- a/libblkid-tiny/superblocks.h	2015-01-11 12:19:11.000000000 +0800
 +++ b/libblkid-tiny/superblocks.h	2015-01-11 12:29:05.324237081 +0800
 @@ -88,5 +88,7 @@
- extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
- extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name);
- 
+ 			     unsigned char *data, size_t len);
+ extern int blkid_probe_set_utf8_id_label(blkid_probe pr, const char *name,
+ 			     unsigned char *data, size_t len, int enc);
 +extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 +			const unsigned char *src, size_t count);
  
