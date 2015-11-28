@@ -211,6 +211,7 @@ platform_check_image() {
 	dir-615-i1 | \
 	dir-825-c1 | \
 	dir-835-a1 | \
+	dlan-hotspot | \
 	dlan-pro-500-wp | \
 	dlan-pro-1200-ac | \
 	dragino2 | \
@@ -219,6 +220,9 @@ platform_check_image() {
 	esr900 | \
 	ew-dorin | \
 	ew-dorin-router | \
+	gl-ar150 | \
+	gl-ar300 | \
+	gl-domino | \
 	hiwifi-hc6361 | \
 	hornet-ub-x2 | \
 	mzk-w04nu | \

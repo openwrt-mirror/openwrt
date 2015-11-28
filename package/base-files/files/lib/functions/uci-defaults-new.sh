@@ -10,7 +10,7 @@ json_select_array() {
 	json_select "$1"
 	[ $? = 0 ] && return
 
-	json_add_array $1
+	json_add_array "$1"
 	json_close_array
 
 	json_select "$1"
@@ -22,17 +22,17 @@ json_select_object() {
 	json_select "$1"
 	[ $? = 0 ] && return
 
-	json_add_object $1
+	json_add_object "$1"
 	json_close_object
 
 	json_select "$1"
 }
 
 _ucidef_set_interface() {
-	local name=$1
-	local iface=$2
+	local name="$1"
+	local iface="$2"
 
-	json_select_object $name
+	json_select_object "$name"
 	json_add_string ifname "${iface%%.*}"
 	[ "$iface" = "${iface%%.*}" ] || json_add_boolean create_vlan 1
 	json_select ..
@@ -41,20 +41,28 @@ _ucidef_set_interface() {
 ucidef_set_interface_loopback()
 {
 	# stub
-	local a=$1
+	local a="$1"
 }
 
 ucidef_set_interface_lan() {
-	local lan_if=$1
+	local lan_if="$1"
 
 	json_select_object network
 	_ucidef_set_interface lan $lan_if
 	json_select ..
 }
 
+ucidef_set_interface_wan() {
+        local wan_if="$1"
+
+        json_select_object network
+        _ucidef_set_interface wan $wan_if
+        json_select ..
+}
+
 ucidef_set_interfaces_lan_wan() {
-	local lan_if=$1
-	local wan_if=$2
+	local lan_if="$1"
+	local wan_if="$2"
 
 	json_select_object network
 	_ucidef_set_interface lan $lan_if
@@ -63,38 +71,119 @@ ucidef_set_interfaces_lan_wan() {
 }
 
 ucidef_add_switch() {
-	local name=$1
-	local reset=$2
-	local enable=$3
+	local name="$1"
+	local reset="$2"
+	local enable="$3"
 
 	json_select_object switch
 
-	json_select_object $name
-	json_add_boolean enable $enable
-	json_add_boolean reset $reset
+	json_select_object "$name"
+	json_add_boolean enable "$enable"
+	json_add_boolean reset "$reset"
 	json_select ..
 
 	json_select ..
 }
 
 ucidef_add_switch_attr() {
-	local name=$1
-	local key=$2
-	local val=$3
+	local name="$1"
+	local key="$2"
+	local val="$3"
 
 	json_select_object switch
+	json_select_object "$name"
 
-	json_select_object $name
-	json_add_string $key $val
+	case "$val" in
+		[0-9]) json_add_int "$key" "$val" ;;
+		*) json_add_string "$key" "$val" ;;
+	esac
+
 	json_select ..
+	json_select ..
+}
 
+ucidef_add_switch_ports() {
+	local name="$1"; shift
+	local port num role dev idx
+
+	json_select_object switch
+	json_select_object "$name"
+	json_select_array ports
+
+	for port in "$@"; do
+		case "$port" in
+			[0-9]*@*)
+				num="${port%%@*}"
+				dev="${port##*@}"
+			;;
+			[0-9]*:*:[0-9]*)
+				num="${port%%:*}"
+				idx="${port##*:}"
+				role="${port#[0-9]*:}"; role="${role%:*}"
+			;;
+			[0-9]*:*)
+				num="${port%%:*}"
+				role="${port##*:}"
+			;;
+		esac
+
+		if [ -n "$num" ] && [ -n "$dev$role" ]; then
+			json_add_object
+			json_add_int num "$num"
+			[ -n "$dev" ] && json_add_string device "$dev"
+			[ -n "$role" ] && json_add_string role "$role"
+			[ -n "$idx" ] && json_add_int index "$idx"
+			json_close_object
+		fi
+
+		unset num dev role idx
+	done
+
+	json_select ..
+	json_select ..
+	json_select ..
+}
+
+ucidef_add_switch_port_attr() {
+	local name="$1"
+	local port="$2"
+	local key="$3"
+	local val="$4"
+	local ports i num
+
+	json_select_object switch
+	json_select_object "$name"
+
+	json_get_keys ports ports
+	json_select_array ports
+
+	for i in $ports; do
+		json_select "$i"
+		json_get_var num num
+
+		if [ -n "$num" ] && [ $num -eq $port ]; then
+			json_select_object attr
+
+			case "$val" in
+				[0-9]) json_add_int "$key" "$val" ;;
+				*) json_add_string "$key" "$val" ;;
+			esac
+
+			json_select ..
+		fi
+
+		json_select ..
+	done
+
+	json_select ..
+	json_select ..
 	json_select ..
 }
 
 ucidef_add_switch_vlan() {
-	local name=$1
-	local vlan=$2
-	local ports=$3
+	local name="$1"
+	local vlan="$2"
+	local ports="$3"
 	local cpu_port=''
 
 	case $vlan in
@@ -104,10 +193,10 @@ ucidef_add_switch_vlan() {
 	esac
 
 	json_select_object switch
-	json_select_object $name
+	json_select_object "$name"
 	json_select_object vlans
 
-	json_add_array $vlan
+	json_add_array "$vlan"
 	for p in $ports; do
 		if [ ${p%t} != $p ]; then
 			cpu_port=$p
@@ -118,58 +207,42 @@ ucidef_add_switch_vlan() {
 	json_close_array
 
 	json_select ..
-	[ -n "$cpu_port" ] && json_add_int cpu_port $cpu_port
+	[ -n "$cpu_port" ] && json_add_int cpu_port "$cpu_port"
 	json_select ..
 	json_select ..
 }
 
 ucidef_set_interface_macaddr() {
-	local network=$1
-	local macaddr=$2
+	local network="$1"
+	local macaddr="$2"
 
 	json_select_object network
 
-	json_select $network
+	json_select "$network"
 	[ $? -eq 0 ] || {
 		json_select ..
 		return
 	}
 
-	json_add_string macaddr $macaddr
+	json_add_string macaddr "$macaddr"
 	json_select ..
-	
+
 	json_select ..
 }
 
 ucidef_set_led_netdev() {
 	local cfg="led_$1"
-	local name=$2
-	local sysfs=$3
-	local dev=$4
+	local name="$2"
+	local sysfs="$3"
+	local dev="$4"
 
 	json_select_object led
-	
-	json_select_object $1
-	json_add_string name $name
+
+	json_select_object "$1"
+	json_add_string name "$name"
 	json_add_string type netdev
-	json_add_string sysfs $sysfs
-	json_add_string device $dev
-	json_select ..
-
-	json_select ..
-}
-
-ucidef_set_led_interface() {
-	local name=$1
-	local sysfs=$2
-
-	json_select_object led
-	
-	json_select_object $1
-	json_add_string name $name
-	json_add_string type interface
-	json_add_string sysfs $sysfs
-	json_add_string interface $name
+	json_add_string sysfs "$sysfs"
+	json_add_string device "$dev"
 	json_select ..
 
 	json_select ..
@@ -177,17 +250,17 @@ ucidef_set_led_interface() {
 
 ucidef_set_led_usbdev() {
 	local cfg="led_$1"
-	local name=$2
-	local sysfs=$3
-	local dev=$4
+	local name="$2"
+	local sysfs="$3"
+	local dev="$4"
 
 	json_select_object led
-	
-	json_select_object $1
-	json_add_string name $name	
+
+	json_select_object "$1"
+	json_add_string name "$name"
 	json_add_string type usb
-	json_add_string sysfs $sysfs
-	json_add_string device $dev
+	json_add_string sysfs "$sysfs"
+	json_add_string device "$dev"
 	json_select ..
 
 	json_select ..
@@ -195,17 +268,17 @@ ucidef_set_led_usbdev() {
 
 ucidef_set_led_wlan() {
 	local cfg="led_$1"
-	local name=$2
-	local sysfs=$3
-	local trigger=$4
+	local name="$2"
+	local sysfs="$3"
+	local trigger="$4"
 
 	json_select_object led
-	
-	json_select_object $1
-	json_add_string name $name
+
+	json_select_object "$1"
+	json_add_string name "$name"
 	json_add_string type trigger
-	json_add_string sysfs $sysfs
-	json_add_string trigger $trigger
+	json_add_string sysfs "$sysfs"
+	json_add_string trigger "$trigger"
 	json_select ..
 
 	json_select ..
@@ -213,19 +286,19 @@ ucidef_set_led_wlan() {
 
 ucidef_set_led_switch() {
 	local cfg="led_$1"
-	local name=$2
-	local sysfs=$3
-	local trigger=$4
-	local port_mask=$5
+	local name="$2"
+	local sysfs="$3"
+	local trigger="$4"
+	local port_mask="$5"
 
 	json_select_object led
-	
-	json_select_object $1
-	json_add_string name $name
+
+	json_select_object "$1"
+	json_add_string name "$name"
 	json_add_string type switch
-	json_add_string sysfs $sysfs
-	json_add_string trigger $trigger
-	json_add_string port_mask $port_mask
+	json_add_string sysfs "$sysfs"
+	json_add_string trigger "$trigger"
+	json_add_string port_mask "$port_mask"
 	json_select ..
 
 	json_select ..
@@ -233,16 +306,37 @@ ucidef_set_led_switch() {
 
 ucidef_set_led_default() {
 	local cfg="led_$1"
-	local name=$2
-	local sysfs=$3
-	local default=$4
+	local name="$2"
+	local sysfs="$3"
+	local default="$4"
 
 	json_select_object led
-	
-	json_select_object $1
-	json_add_string name $name
-	json_add_string sysfs $sysfs
-	json_add_string default $default
+
+	json_select_object "$1"
+	json_add_string name "$name"
+	json_add_string sysfs "$sysfs"
+	json_add_string default "$default"
+	json_select ..
+
+	json_select ..
+}
+
+ucidef_set_led_gpio() {
+	local cfg="led_$1"
+	local name="$2"
+	local sysfs="$3"
+	local gpio="$4"
+	local inverted="$5"
+
+	json_select_object led
+
+	json_select_object "$1"
+	json_add_string type gpio
+	json_add_string name "$name"
+	json_add_string sysfs "$sysfs"
+	json_add_string trigger "$trigger"
+	json_add_int gpio "$gpio"
+	json_add_boolean inverted "$inverted"
 	json_select ..
 
 	json_select ..
@@ -250,25 +344,25 @@ ucidef_set_led_default() {
 
 ucidef_set_led_rssi() {
 	local cfg="led_$1"
-	local name=$2
-	local sysfs=$3
-	local iface=$4
-	local minq=$5
-	local maxq=$6
-	local offset=$7
-	local factor=$8
+	local name="$2"
+	local sysfs="$3"
+	local iface="$4"
+	local minq="$5"
+	local maxq="$6"
+	local offset="$7"
+	local factor="$8"
 
 	json_select_object led
-	
-	json_select_object rssi
-	json_select_object $1
-	json_add_string name $name
-	json_add_string sysfs $sysfs
-	json_add_string minq $minq
-	json_add_string maxq $maxq
-	json_add_string offset $offset
-	json_add_string factor $factor
-	json_select ..
+
+	json_select_object "$1"
+	json_add_string type rssi
+	json_add_string name "$name"
+	json_add_string iface "$iface"
+	json_add_string sysfs "$sysfs"
+	json_add_string minq "$minq"
+	json_add_string maxq "$maxq"
+	json_add_string offset "$offset"
+	json_add_string factor "$factor"
 	json_select ..
 
 	json_select ..
@@ -279,16 +373,15 @@ ucidef_set_rssimon() {
 	local refresh="$2"
 	local threshold="$3"
 
-	json_select_object led
-	
-	json_select_object rssi
-	json_add_string type rssi
-	json_add_string dev $dev
-	json_add_string threshold $threshold
+	json_select_object rssimon
+
+	json_select_object "$dev"
+	[ -n "$refresh" ] && json_add_int refresh "$refresh"
+	[ -n "$threshold" ] && json_add_int threshold "$threshold"
 	json_select ..
 
 	json_select ..
-	
+
 }
 
 board_config_update() {

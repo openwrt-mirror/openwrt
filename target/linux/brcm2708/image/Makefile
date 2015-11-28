@@ -11,20 +11,10 @@ include $(INCLUDE_DIR)/host.mk
 FAT32_BLOCK_SIZE=1024
 FAT32_BLOCKS=$(shell echo $$(($(CONFIG_BRCM2708_SD_BOOT_PARTSIZE)*1024*1024/$(FAT32_BLOCK_SIZE))))
 
-ifneq ($(CONFIG_TARGET_IMAGES_GZIP),)
-  define Image/gzip
-    gzip -9n -c $(1) > $(1).gz
-    mv $(1).gz $(BIN_DIR)
-  endef
-else
-  define Image/gzip
-  endef
-endif
-
 ### Image scripts ###
-define Build/gen-cfg
-	cat config.txt > $@.config
-	echo -e "\ndevice_tree=$(DEVICE_DTS).dtb" >> $@.config
+define Build/kernel-img
+	perl $(LINUX_DIR)/scripts/mkknlimg $@ $@.tmp
+	mv $@.tmp $@
 endef
 
 define Build/boot-img
@@ -38,9 +28,9 @@ define Build/boot-img
 	mcopy -i $@.boot $(KDIR)/fixup.dat ::
 	mcopy -i $@.boot $(KDIR)/fixup_cd.dat ::
 	mcopy -i $@.boot cmdline.txt ::
-	mcopy -i $@.boot $@.config ::config.txt
+	mcopy -i $@.boot config.txt ::
 	mcopy -i $@.boot $(word 1,$^) ::kernel.img
-	mcopy -i $@.boot $(DTS_DIR)/$(DEVICE_DTS).dtb ::$(DEVICE_DTS).dtb
+	$(foreach dts,$(shell echo $(DEVICE_DTS)),mcopy -i $@.boot $(DTS_DIR)/$(dts).dtb ::;)
 	mmd -i $@.boot ::/overlays
 	mcopy -i $@.boot $(DTS_DIR)/overlays/*.dtb ::/overlays/
 	mcopy -i $@.boot $(DTS_DIR)/overlays/README ::/overlays/
@@ -49,16 +39,16 @@ endef
 define Build/sdcard-img
 	./gen_rpi_sdcard_img.sh $@ $@.boot $(word 2,$^) \
 		$(CONFIG_BRCM2708_SD_BOOT_PARTSIZE) $(CONFIG_TARGET_ROOTFS_PARTSIZE)
-	$(call Image/gzip,$@)
+	$(if $(CONFIG_TARGET_IMAGES_GZIP),gzip -9n -c $@ > $(BIN_DIR)/$(notdir $@).gz)
 endef
 
 ### Device macros ###
 define Device/Default
   FILESYSTEMS := ext4
   PROFILES = Default $$(DEVICE_PROFILE)
-  KERNEL := kernel-bin
-  IMAGES := sdcard.bin
-  IMAGE/sdcard.bin := gen-cfg | boot-img | sdcard-img
+  KERNEL := kernel-bin | kernel-img
+  IMAGES := sdcard.img
+  IMAGE/sdcard.img := boot-img | sdcard-img
   DEVICE_PROFILE :=
   DEVICE_DTS :=
 endef
@@ -67,7 +57,7 @@ DEVICE_VARS += DEVICE_PROFILE DEVICE_DTS
 # $(1) = profile
 # $(2) = image name
 # $(3) = dts
-define add_bcm2708
+define bcm270x
   define Device/$(2)
     DEVICE_PROFILE := $(1)
     DEVICE_DTS := $(3)
@@ -77,18 +67,14 @@ endef
 
 ### BCM2708/BCM2835 ###
 ifeq ($(SUBTARGET),bcm2708)
-  # Raspberry Pi Model B
-  $(eval $(call add_bcm2708,RaspberryPi_B,rpi-b,bcm2708-rpi-b))
-  # Raspberry Pi Model B+
-  $(eval $(call add_bcm2708,RaspberryPi_BPlus,rpi-b-plus,bcm2708-rpi-b-plus))
-  # Raspberry Pi Compute Module
-  $(eval $(call add_bcm2708,RaspberryPi_CM,rpi-cm,bcm2708-rpi-cm))
+  # Raspberry Pi Models B/B+/CM
+  $(eval $(call bcm270x,RaspberryPi,rpi,bcm2708-rpi-b bcm2708-rpi-b-plus bcm2708-rpi-cm))
 endif
 
 ### BCM2709/BCM2836 ###
 ifeq ($(SUBTARGET),bcm2709)
   # Raspberry Pi 2 Model B
-  $(eval $(call add_bcm2708,RaspberryPi_2,rpi-2-b,bcm2709-rpi-2-b))
+  $(eval $(call bcm270x,RaspberryPi_2,rpi-2,bcm2709-rpi-2-b))
 endif
 
 $(eval $(call BuildImage))

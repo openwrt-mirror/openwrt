@@ -108,6 +108,7 @@ platform_check_image() {
 	w150m|\
 	w306r-v20|\
 	w502u|\
+	wf-2881|\
 	whr-1166d|\
 	whr-300hp2|\
 	whr-600d|\
@@ -134,7 +135,8 @@ platform_check_image() {
 	zbt-wa05|\
 	zbt-wg2626|\
 	zbt-wr8305rt|\
-	zte-q7)
+	zte-q7|\
+	youku-yk1)
 		[ "$magic" != "27051956" ] && {
 			echo "Invalid image type."
 			return 1

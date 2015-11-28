@@ -376,6 +376,9 @@ ramips_board_detect() {
 	*"WCR-150GN")
 		name="wcr-150gn"
 		;;
+	*"WF-2881")
+		name="wf-2881"
+		;;
 	*"WHR-1166D")
 		name="whr-1166d"
 		;;
@@ -459,6 +462,9 @@ ramips_board_detect() {
 		;;
 	*"ZBT-WR8305RT")
 		name="zbt-wr8305rt"
+		;;
+	*"YK1")
+		name="youku-yk1"
 		;;
 	*)
 		name="generic"
