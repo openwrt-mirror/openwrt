@@ -1,0 +1,77 @@
+/dts-v1/;
+
+/include/ "VGV953.dtsi"
+
+/ {
+	model = "VGV953 - SPEEDPORT W921V";
+
+	fpi@10000000 {
+		localbus@0 {
+			nand-parts@0 {
+				compatible = "gen_nand", "lantiq,nand-xway";
+				lantiq,cs = <1>;
+				bank-width = <2>;
+				reg = <0 0x0 0x2000000>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				partition@0 {
+					label = "uboot";
+					reg = <0x0 0x40000>;
+				};
+				partition@40000 {
+					label = "uboot-env";
+					reg = <0x40000 0x20000>;
+				};
+				partition@60000 {
+					label = "kernel";
+					reg = <0x60000 0x200000>;
+				};
+				partition@260000 {
+					label = "ubi";
+					reg = <0x260000 0x1da0000>;
+				};
+			};
+		};
+		pcie@d900000 {
+			status = "disabled";
+		};
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		waiting {				/* white */
+			label = "waiting";
+			gpios = <&stp 16 1>;
+		};
+		service {				/* white */
+			label = "sevice";
+			gpios = <&stp 17 1>;
+		};
+		telephony {				/* white */
+			label = "telephony";
+			gpios = <&stp 18 1>;
+		};
+		wlan {					/* white */
+			label = "wlan";
+			gpios = <&stp 19 1>;
+		};
+		online {				/* white */
+			label = "online";
+			gpios = <&stp 20 1>;
+		};
+		dsl {					/* white */
+			label = "dsl";
+			gpios = <&stp 21 1>;
+		};
+		power {					/* red */
+			label = "power";
+			gpios = <&stp 22 1>;
+		};
+		power2 {				/* white */
+			label = "power2";
+			gpios = <&stp 23 1>;
+		};
+	};
+};

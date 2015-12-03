@@ -193,6 +193,14 @@ VGV7510KW22)
 	ucidef_add_switch_vlan "switch0" "1" "2 3 4 5 6t"
 	;;
 
+VGV953)
+	lan_mac=$(mtd_get_mac_ascii uboot-env ethaddr)
+	wan_mac=$(macaddr_add "$lan_mac" 1)
+	ucidef_set_interface_lan 'eth0.1'
+	ucidef_add_switch "switch0" "1" "1"
+	ucidef_add_switch_vlan "switch0" "1" "0 1 2 4 6t"
+	;;
+
 esac
 
 [ -z "$(ls /lib/modules/`uname -r`/ltq_atm*)" ] || set_atm_wan "$vpi" "$vci" "$encaps" "$payload"

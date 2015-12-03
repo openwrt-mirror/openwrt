@@ -3,7 +3,7 @@
 
 . /lib/functions/leds.sh
 
-status_led="power"
+status_led="waiting"
 
 set_state() {
 	[ -d /sys/class/leds/power2/ ] && {
