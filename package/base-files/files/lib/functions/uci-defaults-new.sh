@@ -2,6 +2,7 @@
 
 CFG=/etc/board.json
 
+. /lib/functions.sh
 . /usr/share/libubox/jshn.sh
 
 json_select_array() {
@@ -31,33 +32,51 @@ json_select_object() {
 _ucidef_set_interface() {
 	local name="$1"
 	local iface="$2"
+	local proto="$3"
 
 	json_select_object "$name"
-	json_add_string ifname "${iface%%.*}"
-	[ "$iface" = "${iface%%.*}" ] || json_add_boolean create_vlan 1
+	json_add_string ifname "$iface"
+
+	if ! json_is_a protocol string; then
+		case "$proto" in
+			static|dhcp|none) : ;;
+			*)
+				case "$name" in
+					lan) proto="static" ;;
+					wan) proto="dhcp" ;;
+					*) proto="none" ;;
+				esac
+			;;
+		esac
+
+		json_add_string protocol "$proto"
+	fi
+
 	json_select ..
 }
 
-ucidef_set_interface_loopback()
-{
-	# stub
-	local a="$1"
+ucidef_set_board_id() {
+	json_select_object model
+	json_add_string id "$1"
+	json_select ..
+}
+
+ucidef_set_model_name() {
+	json_select_object model
+	json_add_string name "$1"
+	json_select ..
 }
 
 ucidef_set_interface_lan() {
-	local lan_if="$1"
-
 	json_select_object network
-	_ucidef_set_interface lan $lan_if
+	_ucidef_set_interface lan "$@"
 	json_select ..
 }
 
 ucidef_set_interface_wan() {
-        local wan_if="$1"
-
-        json_select_object network
-        _ucidef_set_interface wan $wan_if
-        json_select ..
+	json_select_object network
+	_ucidef_set_interface wan "$@"
+	json_select ..
 }
 
 ucidef_set_interfaces_lan_wan() {
@@ -65,24 +84,151 @@ ucidef_set_interfaces_lan_wan() {
 	local wan_if="$2"
 
 	json_select_object network
-	_ucidef_set_interface lan $lan_if
-	_ucidef_set_interface wan $wan_if
+	_ucidef_set_interface lan "$lan_if"
+	_ucidef_set_interface wan "$wan_if"
 	json_select ..
 }
 
+_ucidef_add_switch_port() {
+	# inherited: $num $device $need_tag $role $index $prev_role
+	# inherited: $n_cpu $n_ports $n_vlan $cpu0 $cpu1 $cpu2 $cpu3 $cpu4 $cpu5
+
+	n_ports=$((n_ports + 1))
+
+	json_select_array ports
+		json_add_object
+			json_add_int num "$num"
+			[ -n "$device"   ] && json_add_string  device   "$device"
+			[ -n "$need_tag" ] && json_add_boolean need_tag "$need_tag"
+			[ -n "$role"     ] && json_add_string  role     "$role"
+			[ -n "$index"    ] && json_add_int     index    "$index"
+		json_close_object
+	json_select ..
+
+	# record pointer to cpu entry for lookup in _ucidef_finish_switch_roles()
+	[ -n "$device" ] && {
+		export "cpu$n_cpu=$n_ports"
+		n_cpu=$((n_cpu + 1))
+	}
+
+	# create/append object to role list
+	[ -n "$role" ] && {
+		json_select_array roles
+
+		if [ "$role" != "$prev_role" ]; then
+			json_add_object
+				json_add_string role "$role"
+				json_add_string ports "$num"
+			json_close_object
+
+			prev_role="$role"
+			n_vlan=$((n_vlan + 1))
+		else
+			json_select_object "$n_vlan"
+				json_get_var port ports
+				json_add_string ports "$port $num"
+			json_select ..
+		fi
+
+		json_select ..
+	}
+}
+
+_ucidef_finish_switch_roles() {
+	# inherited: $name $n_cpu $n_vlan $cpu0 $cpu1 $cpu2 $cpu3 $cpu4 $cpu5
+	local index role roles num device need_tag port ports
+
+	json_select switch
+		json_select "$name"
+			json_get_keys roles roles
+		json_select ..
+	json_select ..
+
+	for index in $roles; do
+		eval "port=\$cpu$(((index - 1) % n_cpu))"
+
+		json_select switch
+			json_select "$name"
+				json_select ports
+					json_select "$port"
+						json_get_vars num device need_tag
+					json_select ..
+				json_select ..
+
+				if [ $n_vlan -gt $n_cpu -o ${need_tag:-0} -eq 1 ]; then
+					num="${num}t"
+					device="${device}.${index}"
+				fi
+
+				json_select roles
+					json_select "$index"
+						json_get_vars role ports
+						json_add_string ports "$ports $num"
+						json_add_string device "$device"
+					json_select ..
+				json_select ..
+			json_select ..
+		json_select ..
+
+		json_select_object network
+			local devices
+
+			json_select_object "$role"
+				# attach previous interfaces (for multi-switch devices)
+				json_get_var devices ifname
+				if ! list_contains devices "$device"; then
+					devices="${devices:+$devices }$device"
+				fi
+			json_select ..
+
+			_ucidef_set_interface "$role" "$devices"
+		json_select ..
+	done
+}
+
 ucidef_add_switch() {
-	local name="$1"
-	local reset="$2"
-	local enable="$3"
+	local name="$1"; shift
+	local port num role device index need_tag prev_role
+	local cpu0 cpu1 cpu2 cpu3 cpu4 cpu5
+	local n_cpu=0 n_vlan=0 n_ports=0
 
 	json_select_object switch
+		json_select_object "$name"
+			json_add_boolean enable 1
+			json_add_boolean reset 1
 
-	json_select_object "$name"
-	json_add_boolean enable "$enable"
-	json_add_boolean reset "$reset"
+			for port in "$@"; do
+				case "$port" in
+					[0-9]*@*)
+						num="${port%%@*}"
+						device="${port##*@}"
+						need_tag=0
+						[ "${num%t}" != "$num" ] && {
+							num="${num%t}"
+							need_tag=1
+						}
+					;;
+					[0-9]*:*:[0-9]*)
+						num="${port%%:*}"
+						index="${port##*:}"
+						role="${port#[0-9]*:}"; role="${role%:*}"
+					;;
+					[0-9]*:*)
+						num="${port%%:*}"
+						role="${port##*:}"
+					;;
+				esac
+
+				if [ -n "$num" ] && [ -n "$device$role" ]; then
+					_ucidef_add_switch_port
+				fi
+
+				unset num device role index need_tag
+			done
+		json_select ..
 	json_select ..
 
-	json_select ..
+	_ucidef_finish_switch_roles
 }
 
 ucidef_add_switch_attr() {
@@ -91,56 +237,15 @@ ucidef_add_switch_attr() {
 	local val="$3"
 
 	json_select_object switch
-	json_select_object "$name"
+		json_select_object "$name"
 
-	case "$val" in
-		[0-9]) json_add_int "$key" "$val" ;;
-		*) json_add_string "$key" "$val" ;;
-	esac
-
-	json_select ..
-	json_select ..
-}
-
-ucidef_add_switch_ports() {
-	local name="$1"; shift
-	local port num role dev idx
-
-	json_select_object switch
-	json_select_object "$name"
-	json_select_array ports
-
-	for port in "$@"; do
-		case "$port" in
-			[0-9]*@*)
-				num="${port%%@*}"
-				dev="${port##*@}"
-			;;
-			[0-9]*:*:[0-9]*)
-				num="${port%%:*}"
-				idx="${port##*:}"
-				role="${port#[0-9]*:}"; role="${role%:*}"
-			;;
-			[0-9]*:*)
-				num="${port%%:*}"
-				role="${port##*:}"
-			;;
+		case "$val" in
+			true|false) [ "$val" != "true" ]; json_add_boolean "$key" $? ;;
+			[0-9]) json_add_int "$key" "$val" ;;
+			*) json_add_string "$key" "$val" ;;
 		esac
 
-		if [ -n "$num" ] && [ -n "$dev$role" ]; then
-			json_add_object
-			json_add_int num "$num"
-			[ -n "$dev" ] && json_add_string device "$dev"
-			[ -n "$role" ] && json_add_string role "$role"
-			[ -n "$idx" ] && json_add_int index "$idx"
-			json_close_object
-		fi
-
-		unset num dev role idx
-	done
-
-	json_select ..
-	json_select ..
+		json_select ..
 	json_select ..
 }
 
@@ -165,6 +270,7 @@ ucidef_add_switch_port_attr() {
 			json_select_object attr
 
 			case "$val" in
+				true|false) [ "$val" != "true" ]; json_add_boolean "$key" $? ;;
 				[0-9]) json_add_int "$key" "$val" ;;
 				*) json_add_string "$key" "$val" ;;
 			esac
@@ -176,38 +282,6 @@ ucidef_add_switch_port_attr() {
 	done
 
 	json_select ..
-	json_select ..
-	json_select ..
-}
-
-ucidef_add_switch_vlan() {
-	local name="$1"
-	local vlan="$2"
-	local ports="$3"
-	local cpu_port=''
-
-	case $vlan in
-	1)	vlan=lan;;
-	2)	vlan=wan;;
-	*)	vlan=vlan$vlan;;
-	esac
-
-	json_select_object switch
-	json_select_object "$name"
-	json_select_object vlans
-
-	json_add_array "$vlan"
-	for p in $ports; do
-		if [ ${p%t} != $p ]; then
-			cpu_port=$p
-		else
-			json_add_int "" $p
-		fi
-	done
-	json_close_array
-
-	json_select ..
-	[ -n "$cpu_port" ] && json_add_int cpu_port "$cpu_port"
 	json_select ..
 	json_select ..
 }
@@ -337,6 +411,42 @@ ucidef_set_led_gpio() {
 	json_add_string trigger "$trigger"
 	json_add_int gpio "$gpio"
 	json_add_boolean inverted "$inverted"
+	json_select ..
+
+	json_select ..
+}
+
+ucidef_set_led_ide() {
+	local cfg="led_$1"
+	local name="$2"
+	local sysfs="$3"
+
+	json_select_object led
+
+	json_select_object "$1"
+	json_add_string name "$name"
+	json_add_string sysfs "$sysfs"
+	json_add_string trigger ide-disk
+	json_select ..
+
+	json_select ..
+}
+
+ucidef_set_led_timer() {
+	local cfg="led_$1"
+	local name="$2"
+	local sysfs="$3"
+	local delayon="$4"
+	local delayoff="$5"
+
+	json_select_object led
+
+	json_select_object "$1"
+	json_add_string type timer
+	json_add_string name "$name"
+	json_add_string sysfs "$sysfs"
+	json_add_int delayon "$delayon"
+	json_add_int delayoff "$delayoff"
 	json_select ..
 
 	json_select ..
