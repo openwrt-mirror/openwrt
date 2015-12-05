@@ -1,5 +1,5 @@
---- a/drivers/net/wireless/rt2x00/rt2800lib.c
-+++ b/drivers/net/wireless/rt2x00/rt2800lib.c
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
 @@ -6635,8 +6635,15 @@
  	rt2800_bbp_write(rt2x00dev, 70, 0x05);
  	rt2800_bbp_write(rt2x00dev, 73, 0x18);
