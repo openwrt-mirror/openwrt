@@ -6,7 +6,11 @@ USE_PROCD=1
 start_daemon() {
 	local cfg="$1"
 
-	local atmdev
+	local atmdev disabled
+
+	config_get_bool disabled "$cfg" disabled 0
+	[ "$disabled" -eq 1 ] && return
+
 	config_get atmdev "$cfg" atmdev 0
 
 	local unit
@@ -76,7 +80,7 @@ service_triggers() {
 
 	procd_open_trigger
 	procd_add_raw_trigger hotplug.atm 2000 /etc/init.d/$name reload
-	procd_add_config_trigger "config.change" "$file" /etc/init.d/$name reload
+	procd_add_config_trigger "config.change" "network" /etc/init.d/$name reload
 	procd_close_trigger
 }
 
