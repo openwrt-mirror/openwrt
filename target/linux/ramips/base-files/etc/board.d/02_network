@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 . /lib/ramips.sh
-. /lib/functions/uci-defaults-new.sh
+. /lib/functions/uci-defaults.sh
 . /lib/functions/system.sh
 
 ramips_setup_rt3x5x_vlans()
@@ -78,6 +78,7 @@ ramips_setup_interfaces()
 	wf-2881|\
 	whr-300hp2|\
 	whr-600d|\
+	witi|\
 	wsr-1166|\
 	wsr-600|\
 	wt1520|\
