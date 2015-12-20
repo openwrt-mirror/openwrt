@@ -212,7 +212,6 @@ define Device/gl-domino
 endef
 TARGET_DEVICES += gl-domino
 
-
 define Device/wndr3700
   BOARDNAME = WNDR3700
   NETGEAR_KERNEL_MAGIC = 0x33373030
@@ -391,6 +390,60 @@ define Device/tl-wdr7500-v3
     TPLINK_HWID := 0x75000003
 endef
 TARGET_DEVICES += archer-c5-v1 archer-c7-v1 archer-c7-v2 tl-wdr7500-v3
+
+define Device/cap324
+  BOARDNAME := CAP324
+  DEVICE_PROFILE := CAP324
+  IMAGE_SIZE = 15296k
+  MTDPARTS = spi0.0:256k(u-boot),64k(u-boot-env)ro,15296k(firmware),640k(certs),64k(nvram),64k(art)
+endef
+
+TARGET_DEVICES += cap324
+
+define Device/cap324-nocloud
+  BOARDNAME := CAP324
+  DEVICE_PROFILE := CAP324
+  IMAGE_SIZE = 16000k
+  MTDPARTS = spi0.0:256k(u-boot),64k(u-boot-env)ro,16000k(firmware),64k(art)
+endef
+
+TARGET_DEVICES += cap324-nocloud
+
+define Device/cr3000
+  BOARDNAME := CR3000
+  DEVICE_PROFILE := CR3000
+  IMAGE_SIZE = 7104k
+  MTDPARTS = spi0.0:256k(u-boot),64k(u-boot-env)ro,7104k(firmware),640k(certs),64k(nvram),64k(art)
+endef
+
+TARGET_DEVICES += cr3000
+
+define Device/cr3000-nocloud
+  BOARDNAME := CR3000
+  DEVICE_PROFILE := CR3000
+  IMAGE_SIZE = 7808k
+  MTDPARTS = spi0.0:256k(u-boot),64k(u-boot-env)ro,7808k(firmware),64k(art)
+endef
+
+TARGET_DEVICES += cr3000-nocloud
+
+define Device/cr5000
+  BOARDNAME := CR5000
+  DEVICE_PROFILE := CR5000
+  IMAGE_SIZE = 7104k
+  MTDPARTS = spi0.0:256k(u-boot),64k(u-boot-env)ro,7104k(firmware),640k(certs),64k(nvram),64k(art)
+endef
+
+TARGET_DEVICES += cr5000
+
+define Device/cr5000-nocloud
+  BOARDNAME := CR5000
+  DEVICE_PROFILE := CR5000
+  IMAGE_SIZE = 7808k
+  MTDPARTS = spi0.0:256k(u-boot),64k(u-boot-env)ro,7808k(firmware),64k(art)
+endef
+
+TARGET_DEVICES += cr5000-nocloud
 
 define Device/antminer-s1
     $(Device/tplink-8mlzma)
@@ -1474,10 +1527,9 @@ define Build/Clean
 	$(LOADER_MAKE) clean
 endef
 
-
-alfa_ap96_mtdlayout=mtdparts=spi0.0:256k(u-boot),256k(u-boot-env)ro,13312k(rootfs),2048k(kernel),512k(caldata)ro,15360k@0x80000(firmware)
-alfa_mtdlayout_8M=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,6144k(rootfs),1600k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
-alfa_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,15936k(firmware),64k(nvram),64k(art)ro
+alfa_ap96_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,256k(u-boot-env)ro,13312k(rootfs),2048k(kernel),512k(caldata)ro,15360k@0x80000(firmware)
+alfa_mtdlayout_8M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6144k(rootfs),1600k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
+alfa_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,15936k(firmware),64k(nvram),64k(art)ro
 all0258n_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),6272k(firmware),1536k(failsafe),64k(art)
 all0315n_mtdlayout=mtdparts=spi0.0:256k(u-boot),256k(u-boot-env),13568k(firmware),2048k(failsafe),256k(art)ro
 ap81_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,5120k(rootfs),2688k(kernel),64k(art)ro,7808k@0x50000(firmware)

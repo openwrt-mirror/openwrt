@@ -42,10 +42,13 @@ enum ath79_mach_type {
 	ATH79_MACH_AW_NR580,		/* AzureWave AW-NR580 */
 	ATH79_MACH_BHU_BXU2000N2_A1,	/* BHU BXU2000n-2 A1 */
 	ATH79_MACH_BSB,			/* Smart Electronics Black Swift board */
+	ATH79_MACH_CAP324,		/* PowerCloud CAP324 */
 	ATH79_MACH_CAP4200AG,		/* Senao CAP4200AG */
 	ATH79_MACH_CARAMBOLA2,		/* 8devices Carambola2 */
 	ATH79_MACH_CF_E316N_V2,		/* COMFAST CF-E316N v2 */
 	ATH79_MACH_CPE510,		/* TP-LINK CPE510 */
+	ATH79_MACH_CR3000,		/* PowerCloud CR3000 */
+	ATH79_MACH_CR5000,		/* PowerCloud CR5000 */
 	ATH79_MACH_DB120,		/* Atheros DB120 reference board */
 	ATH79_MACH_PB44,		/* Atheros PB44 reference board */
 	ATH79_MACH_DGL_5500_A1,		/* D-link DGL-5500 rev. A1 */

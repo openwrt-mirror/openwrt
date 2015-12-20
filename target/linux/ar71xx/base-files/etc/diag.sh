@@ -55,6 +55,9 @@ get_status_led() {
 	bxu2000n-2-a1)
 		status_led="bhu:green:status"
 		;;
+	cap324)
+		status_led="pcs:green:power"
+		;;
 	cap4200ag)
 		status_led="senao:green:pwr"
 		;;
@@ -63,6 +66,12 @@ get_status_led() {
 		;;
 	cpe510)
 		status_led="tp-link:green:link4"
+		;;
+	cr3000)
+		status_led="pcs:amber:power"
+		;;
+	cr5000)
+		status_led="pcs:amber:power"
 		;;
 	db120)
 		status_led="db120:green:status"
