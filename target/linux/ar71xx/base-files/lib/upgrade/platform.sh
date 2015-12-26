@@ -204,6 +204,7 @@ platform_check_image() {
 	ap81 | \
 	ap83 | \
 	ap132 | \
+	c-55 | \
 	cf-e316n-v2 | \
 	dgl-5500-a1 |\
 	dhp-1565-a1 |\
@@ -482,13 +483,20 @@ platform_check_image() {
 		fi
 		return 0
 		;;
-    wnr2000-v4)
+	wnr2000-v4)
 		[ "$magic_long" != "32303034" ] && {
 			echo "Invalid image type."
 			return 1
 		}
 		return 0
 		;;
+	wnr2200)
+                [ "$magic_long" != "32323030" ] && {
+                        echo "Invalid image type."
+                        return 1
+                }
+                return 0
+                ;;
 
 	esac
 
