@@ -3,6 +3,15 @@
 / {
 	chosen {
 		bootargs = "console=ttyLTQ0,115200 init=/etc/preinit";
+
+		leds {
+			boot = &power;
+			failsafe = &power;
+			running = &power;
+
+			usb = &usb1;
+			usb2 = &usb2;
+		};
 	};
 
 	memory@0 {
@@ -293,41 +302,41 @@
 	gpio-leds {
 		compatible = "gpio-leds";
 
-		power {
-			label = "power";
+		power: power {
+			label = "easy80920:green:power";
 			gpios = <&stp 9 0>;
-			default-state = "on";
+			default-state = "keep";
 		};
 		warning {
-			label = "warning";
+			label = "easy80920:green:warning";
 			gpios = <&stp 22 0>;
 		};
 		fxs1 {
-			label = "fxs1";
+			label = "easy80920:green:fxs1";
 			gpios = <&stp 21 0>;
 		};
 		fxs2 {
-			label = "fxs2";
+			label = "easy80920:green:fxs2";
 			gpios = <&stp 20 0>;
 		};
 		fxo {
-			label = "fxo";
+			label = "easy80920:green:fxo";
 			gpios = <&stp 19 0>;
 		};
-		usb1 {
-			label = "usb1";
+		usb1: usb1 {
+			label = "easy80920:green:usb1";
 			gpios = <&stp 18 0>;
 		};
-		usb2 {
-			label = "usb2";
+		usb2: usb2 {
+			label = "easy80920:green:usb2";
 			gpios = <&stp 15 0>;
 		};
 		sd {
-			label = "sd";
+			label = "easy80920:green:sd";
 			gpios = <&stp 14 0>;
 		};
 		wps {
-			label = "wps";
+			label = "easy80920:green:wps";
 			gpios = <&stp 12 0>;
 		};
 	};

@@ -3,6 +3,17 @@
 / {
 	chosen {
 		bootargs-append = "root= console=ttyLTQ0,115200";
+
+		leds {
+			boot = &power_green;
+			failsafe = &power_red;
+			running = &power_green;
+
+			dsl = &dsl;
+			internet = &internet;
+			usb = &usb;
+			wifi = &wifi;
+		};
 	};
 
 	memory@0 {
@@ -150,32 +161,39 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
-		internet {
-			label = "internet";
+		internet: internet {
+			label = "dgn3500:green:internet";
 			gpios = <&gpio 2 1>;
 		};
-		dsl {
-			label = "dsl";
+		/*
+			internet red is missing
+		*/
+		dsl: dsl {
+			label = "dgn3500:green:dsl";
 			gpios = <&gpio 4 1>;
 		};
-		usb {
-			label = "usb";
+		usb: usb {
+			label = "dgn3500:green:usb";
 			gpios = <&gpio 22 1>;
 		};
-		power {
-			label = "power";
+		power_green: power {
+			label = "dgn3500:green:power";
 			gpios = <&gpio 34 1>;
+			default-state = "keep";
 		};
-		power2 {
-			label = "power2";
+		power_red: power2 {
+			label = "dgn3500:red:power";
 			gpios = <&gpio 39 1>;
 		};
-		wifi {
-			label = "wifi";
+        /*
+			power amber is missing
+		*/
+		wifi: wifi {
+			label = "dgn3500:blue:wireless";
 			gpios = <&gpio 51 1>;
 		};
 		wps {
-			label = "wps";
+			label = "dgn3500:green:wps";
 			gpios = <&gpio 52 1>;
 		};
 	};

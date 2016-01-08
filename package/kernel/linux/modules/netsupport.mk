@@ -454,28 +454,6 @@ endef
 $(eval $(call KernelPackage,iptunnel6))
 
 
-define KernelPackage/ipv6
-  SUBMENU:=$(NETWORK_SUPPORT_MENU)
-  TITLE:=IPv6 support
-  DEPENDS:=@IPV6
-  HIDDEN:=1
-  DEFAULT:=y
-  KCONFIG:= \
-	CONFIG_IPV6=y \
-	CONFIG_IPV6_PRIVACY=y \
-	CONFIG_IPV6_MULTIPLE_TABLES=y \
-	CONFIG_IPV6_MROUTE=y \
-	CONFIG_IPV6_PIMSM_V2=n \
-	CONFIG_IPV6_SUBTREES=y
-endef
-
-define KernelPackage/ipv6/description
- Kernel modules for IPv6 support
-endef
-
-$(eval $(call KernelPackage,ipv6))
-
-
 define KernelPackage/sit
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   DEPENDS:=@IPV6 +kmod-iptunnel +kmod-iptunnel4
@@ -732,7 +710,7 @@ $(eval $(call KernelPackage,mppe))
 
 SCHED_MODULES = $(patsubst $(LINUX_DIR)/net/sched/%.ko,%,$(wildcard $(LINUX_DIR)/net/sched/*.ko))
 SCHED_MODULES_CORE = sch_ingress sch_fq_codel sch_hfsc cls_fw cls_route cls_flow cls_tcindex cls_u32 em_u32 act_mirred act_skbedit
-SCHED_MODULES_FILTER = $(SCHED_MODULES_CORE) act_connmark sch_esfq
+SCHED_MODULES_FILTER = $(SCHED_MODULES_CORE) act_connmark sch_esfq sch_netem
 SCHED_MODULES_EXTRA = $(filter-out $(SCHED_MODULES_FILTER),$(SCHED_MODULES))
 SCHED_FILES = $(patsubst %,$(LINUX_DIR)/net/sched/%.ko,$(filter $(SCHED_MODULES_CORE),$(SCHED_MODULES)))
 SCHED_FILES_EXTRA = $(patsubst %,$(LINUX_DIR)/net/sched/%.ko,$(SCHED_MODULES_EXTRA))

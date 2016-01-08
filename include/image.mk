@@ -19,7 +19,12 @@ KDIR_TMP=$(KDIR)/tmp
 DTS_DIR:=$(LINUX_DIR)/arch/$(LINUX_KARCH)/boot/dts
 BUILD_DATE_PREFIX := $(shell date +'%F')
 
-IMG_PREFIX:=openwrt-by-981213-$(BUILD_DATE_PREFIX)-$(if $(CONFIG_VERSION_FILENAMES),$(VERSION_NUMBER)-)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+sanitize = $(call tolower,$(subst _,-,$(1)))
+
+DIST_SANITIZED:=$(call sanitize,$(VERSION_DIST))
+EXTRA_NAME_SANITIZED=$(call sanitize,$(EXTRA_IMAGE_NAME))
+
+IMG_PREFIX:=$(DIST_SANITIZED)-by-981213-$(if $(CONFIG_VERSION_FILENAMES),$(VERSION_NUMBER)-)$(if $(EXTRA_NAME_SANITIZED),$(EXTRA_NAME_SANITIZED)-)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
 MKFS_DEVTABLE_OPT := -D $(INCLUDE_DIR)/device_table.txt
 
@@ -84,18 +89,6 @@ FS_256K := $(filter-out jffs2-%,$(TARGET_FILESYSTEMS)) jffs2-256k
 
 define add_jffs2_mark
 	echo -ne '\xde\xad\xc0\xde' >> $(1)
-endef
-
-define toupper
-$(shell echo $(1) | tr '[:lower:]' '[:upper:]')
-endef
-
-define tolower
-$(shell echo $(1) | tr '[:upper:]' '[:lower:]')
-endef
-
-define sanitize
-$(shell echo $(call tolower,$(1)) | sed 's/_/-/g')
 endef
 
 PROFILE_SANITIZED := $(call sanitize,$(PROFILE))
@@ -365,7 +358,7 @@ endef
 
 define Build/kernel-bin
 	rm -f $@
-	cp $^ $@
+	cp $< $@
 endef
 
 define Build/patch-cmdline
@@ -452,6 +445,7 @@ define Device/Init
   KERNEL_INITRAMFS_NAME = $$(KERNEL_NAME)-initramfs
   KERNEL_INSTALL :=
   KERNEL_NAME := vmlinux
+  KERNEL_DEPENDS :=
   KERNEL_SIZE :=
 
   FILESYSTEMS := $(TARGET_FILESYSTEMS)
@@ -462,7 +456,7 @@ define Device/ExportVar
 
 endef
 define Device/Export
-  $(foreach var,$(DEVICE_VARS) DEVICE_NAME KERNEL KERNEL_INITRAMFS,$(call Device/ExportVar,$(1),$(var)))
+  $(foreach var,$(DEVICE_VARS) DEVICE_NAME KERNEL KERNEL_INITRAMFS KERNEL_INITRAMFS_IMAGE,$(call Device/ExportVar,$(1),$(var)))
   $(1) : FILESYSTEM:=$(2)
 endef
 
@@ -476,11 +470,11 @@ define Device/Build/initramfs
   $(call Device/Export,$(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE),$(1))
   $$(_TARGET): $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE)
 
-  $(KDIR)/$$(KERNEL_INITRAMFS_NAME): image_prepare
+  $(KDIR)/$$(KERNEL_INITRAMFS_NAME):: image_prepare
   $(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE)
 	cp $$^ $$@
 
-  $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_INITRAMFS_NAME)
+  $(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE): $(KDIR)/$$(KERNEL_INITRAMFS_NAME) $(CURDIR)/Makefile $$(KERNEL_DEPENDS)
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL_INITRAMFS))
 endef
@@ -503,7 +497,7 @@ endef
 
 define Device/Build/kernel
   _KERNEL_IMAGES += $(KDIR)/$$(KERNEL_NAME)
-  $(KDIR)/$$(KERNEL_NAME): image_prepare
+  $(KDIR)/$$(KERNEL_NAME):: image_prepare
   $$(_TARGET): $$(if $$(KERNEL_INSTALL),$(BIN_DIR)/$$(KERNEL_IMAGE))
   $(call Device/Export,$(KDIR)/$$(KERNEL_IMAGE),$(1))
   $(BIN_DIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_IMAGE)
@@ -512,7 +506,7 @@ define Device/Build/kernel
     ifdef CONFIG_IB
       install: $(KDIR)/$$(KERNEL_IMAGE)
     endif
-    $(KDIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_NAME)
+    $(KDIR)/$$(KERNEL_IMAGE): $(KDIR)/$$(KERNEL_NAME) $(CURDIR)/Makefile $$(KERNEL_DEPENDS)
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL))
 	$$(if $$(KERNEL_SIZE),$$(call Device/Build/check_size,$$(KERNEL_SIZE)))
@@ -588,9 +582,6 @@ define BuildImage
 
   $(foreach device,$(TARGET_DEVICES),$(call Device,$(device)))
   $(foreach fs,$(TARGET_FILESYSTEMS) $(fs-subtypes-y),$(call BuildImage/mkfs,$(fs)))
-
-  $$(sort $$(_KERNEL_IMAGES)):
-	@touch $$@
 
   install: kernel_prepare
 	$(foreach fs,$(TARGET_FILESYSTEMS),

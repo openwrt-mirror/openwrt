@@ -43,6 +43,7 @@ PKG_DRIVERS = \
 	rtl8180 rtl8187 \
 	rtlwifi rtlwifi-pci rtlwifi-usb rtl8192c-common rtl8192ce rtl8192se \
 	rtl8192de rtl8192cu \
+	rtl8xxxu \
 	wlcore wl12xx wl18xx \
 	zd1211rw
 
@@ -1154,18 +1155,6 @@ define KernelPackage/mac80211-hwsim
   AUTOLOAD:=$(call AutoProbe,mac80211_hwsim)
 endef
 
-PKG_MT7601U_FW_NAME:=DPO_MT7601U_LinuxSTA
-PKG_MT7601U_FW_VERSION:=3.0.0.4_20130913
-PKG_MT7601U_FW_MD5SUM:=5f440dccc8bc952745a191994fc34699
-PKG_MT7601U_FW_SOURCE:=$(PKG_MT7601U_FW_NAME)_$(PKG_MT7601U_FW_VERSION).tar.bz2
-PKG_MT7601U_FW_SOURCE_URL:=http://www.mediatek.com/AmazonS3/Downloads/linux/
-define Download/mt7601u-firmware
-  FILE:=$(PKG_MT7601U_FW_SOURCE)
-  URL:=$(PKG_MT7601U_FW_SOURCE_URL)
-  MD5SUM:=$(PKG_MT7601U_FW_MD5SUM)
-  SUBDIR:=$(PKG_MT7601U_FW_NAME)_$(PKG_MT7601U_FW_VERSION)
-endef
-$(eval $(call Download,mt7601u-firmware))
 
 define KernelPackage/mt7601u
   $(call KernelPackage/mac80211/Default)
@@ -1538,6 +1527,39 @@ define KernelPackage/rtl8192cu/install
 endef
 
 
+define KernelPackage/rtl8xxxu
+  $(call KernelPackage/mac80211/Default)
+  TITLE:=alternative Realtek RTL8XXXU support
+  DEPENDS+= @USB_SUPPORT +kmod-usb-core +kmod-mac80211
+  FILES:= $(PKG_BUILD_DIR)/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.ko
+  AUTOLOAD:=$(call AutoProbe,rtl8xxxu)
+endef
+
+define KernelPackage/rtl8xxxu/description
+  This is an alternative driver for various Realtek RTL8XXX
+  parts written to utilize the Linux mac80211 stack.
+  The driver is known to work with a number of RTL8723AU,
+  RL8188CU, RTL8188RU, RTL8191CU, and RTL8192CU devices
+
+  This driver is under development and has a limited feature
+  set. In particular it does not yet support 40MHz channels
+  and power management. However it should have a smaller
+  memory footprint than the vendor drivers and benetifs
+  from the in kernel mac80211 stack.
+
+  It can coexist with drivers from drivers/staging/rtl8723au,
+  drivers/staging/rtl8192u, and drivers/net/wireless/rtlwifi,
+  but you will need to control which module you wish to load.
+
+  RTL8XXXU_UNTESTED is enabled
+  This option enables detection of Realtek 8723/8188/8191/8192 WiFi
+  USB devices which have not been tested directly by the driver
+  author or reported to be working by third parties.
+
+  Please report your results!
+endef
+
+
 define KernelPackage/wlcore
   $(call KernelPackage/mac80211/Default)
   TITLE:=TI common driver part
@@ -1768,6 +1790,9 @@ config-$(call config_package,rtl8192de) += RTL8192DE
 config-$(call config_package,rtl8192cu) += RTL8192CU
 config-$(CONFIG_PACKAGE_RTLWIFI_DEBUG) += RTLWIFI_DEBUG
 
+config-$(call config_package,rtl8xxxu) += RTL8XXXU
+config-y += RTL8XXXU_UNTESTED
+
 config-$(CONFIG_LEDS_TRIGGERS) += MAC80211_LEDS B43_LEDS B43LEGACY_LEDS
 
 MAKE_OPTS:= -C "$(PKG_BUILD_DIR)" \
@@ -1803,7 +1828,6 @@ define Build/Prepare
 	$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(IPW2200_NAME)-$(IPW2200_VERSION).tgz
 	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(ZD1211FW_NAME)-$(ZD1211FW_VERSION).tar.bz2
 	$(TAR) -C $(PKG_BUILD_DIR) -xJf $(DL_DIR)/$(PKG_LINUX_FIRMWARE_SOURCE)
-	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(PKG_MT7601U_FW_SOURCE)
 	rm -rf \
 		$(PKG_BUILD_DIR)/include/linux/ssb \
 		$(PKG_BUILD_DIR)/include/linux/bcma \
@@ -1965,7 +1989,7 @@ ifneq ($(CONFIG_IWL2030_FW),)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-2030-6.ucode $(1)/lib/firmware
 endif
 ifneq ($(CONFIG_IWL3160_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-3160-13.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-3160-16.ucode $(1)/lib/firmware
 endif
 ifneq ($(CONFIG_IWL5000_FW),)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-5000-5.ucode $(1)/lib/firmware
@@ -1986,14 +2010,14 @@ ifneq ($(CONFIG_IWL6050_FW),)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-6050-5.ucode $(1)/lib/firmware
 endif
 ifneq ($(CONFIG_IWL7260_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7260-13.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7260-16.ucode $(1)/lib/firmware
 endif
 ifneq ($(CONFIG_IWL7265_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265-13.ucode $(1)/lib/firmware
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265D-13.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265-16.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-7265D-16.ucode $(1)/lib/firmware
 endif
 ifneq ($(CONFIG_IWL8000_FW),)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-8000C-13.ucode $(1)/lib/firmware
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/iwlwifi-8000C-16.ucode $(1)/lib/firmware
 endif
 endef
 
@@ -2030,8 +2054,8 @@ endef
 define KernelPackage/mt7601u/install
 	$(INSTALL_DIR) $(1)/lib/firmware
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/$(PKG_MT7601U_FW_NAME)_$(PKG_MT7601U_FW_VERSION)/mcu/bin/MT7601.bin \
-		$(1)/lib/firmware/mt7601u.bin
+		$(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/mt7601u.bin \
+		$(1)/lib/firmware
 endef
 
 define KernelPackage/mwl8k/install
@@ -2182,6 +2206,7 @@ $(eval $(call KernelPackage,rtl8192ce))
 $(eval $(call KernelPackage,rtl8192se))
 $(eval $(call KernelPackage,rtl8192de))
 $(eval $(call KernelPackage,rtl8192cu))
+$(eval $(call KernelPackage,rtl8xxxu))
 $(eval $(call KernelPackage,wlcore))
 $(eval $(call KernelPackage,wl12xx))
 $(eval $(call KernelPackage,wl18xx))

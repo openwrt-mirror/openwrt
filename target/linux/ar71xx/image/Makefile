@@ -461,6 +461,14 @@ define Device/antminer-s3
     CONSOLE := ttyATH0,115200
 endef
 
+define Device/antrouter-r1
+    $(Device/tplink-8mlzma)
+    BOARDNAME := ANTROUTER-R1
+    DEVICE_PROFILE := ANTROUTERR1
+    TPLINK_HWID := 0x44440101
+    CONSOLE := ttyATH0,115200
+endef
+
 define Device/el-m150
     $(Device/tplink-8mlzma)
     BOARDNAME := EL-M150
@@ -476,7 +484,7 @@ define Device/el-mini
     TPLINK_HWID := 0x01530001
     CONSOLE := ttyATH0,115200
 endef
-TARGET_DEVICES += antminer-s1 antminer-s3 el-m150 el-mini
+TARGET_DEVICES += antminer-s1 antminer-s3 antrouter-r1 el-m150 el-mini
 
 define Device/gl-inet-6408A-v1
     $(Device/tplink-8mlzma)
@@ -2484,7 +2492,7 @@ $(eval $(call SingleProfile,MyLoader,64k,WPE72_16M,wpe72,,ttyS0,115200,0x1000000
 
 $(eval $(call SingleProfile,Netgear,64kraw,WNR2000V3,wnr2000v3,WNR2000V3,ttyS0,115200,$$(wnr2000v3_mtdlayout),0x32303033,WNR2000V3,"" NA,-H 29763551+04+32))
 $(eval $(call SingleProfile,NetgearLzma,64kraw,WNR2000V4,wnr2000v4,WNR2000V4,ttyS0,115200,$$(wnr2000v4_mtdlayout),0x32303034,WNR2000V4,"" NA,))
-$(eval $(call SingleProfile,Netgear,64kraw,WNR2200,wnr2200,WNR2200,ttyS0,115200,$$(wnr2200_mtdlayout),0x32323030,WNR2200,"" NA,))
+$(eval $(call SingleProfile,Netgear,64kraw,WNR2200,wnr2200,WNR2200,ttyS0,115200,$$(wnr2200_mtdlayout),0x32323030,wnr2200,"" NA,))
 $(eval $(call SingleProfile,Netgear,64kraw,REALWNR612V2,wnr612v2,WNR612V2,ttyS0,115200,$$(wnr2000v3_mtdlayout),0x32303631,WNR612V2,"",))
 $(eval $(call SingleProfile,Netgear,64kraw,N150R,n150r,WNR612V2,ttyS0,115200,$$(wnr2000v3_mtdlayout),0x32303631,N150R,"",))
 $(eval $(call SingleProfile,Netgear,64kraw,REALWNR1000V2,wnr1000v2,WNR1000V2,ttyS0,115200,$$(wnr2000v3_mtdlayout),0x31303031,WNR1000V2,"",))
