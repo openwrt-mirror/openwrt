@@ -16,7 +16,6 @@ SDK_NAME:=$(VERSION_DIST)-SDK-$(if $(CONFIG_VERSION_FILENAMES),$(VERSION_NUMBER)
 SDK_BUILD_DIR:=$(BUILD_DIR)/$(SDK_NAME)
 
 STAGING_SUBDIR_HOST := staging_dir/host
-STAGING_SUBDIR_TARGET := staging_dir/target-$(ARCH)$(ARCH_SUFFIX)_$(LIBC)-$(LIBCV)$(if $(CONFIG_arm),_eabi)
 STAGING_SUBDIR_TOOLCHAIN := staging_dir/toolchain-$(ARCH)$(ARCH_SUFFIX)_gcc-$(GCCV)_$(LIBC)-$(LIBCV)$(if $(CONFIG_arm),_eabi)
 
 EXCLUDE_DIRS:=*/ccache \
@@ -33,7 +32,6 @@ EXCLUDE_DIRS:=*/ccache \
 
 SDK_DIRS = \
 		$(STAGING_SUBDIR_HOST) \
-		$(STAGING_SUBDIR_TARGET) \
 		$(STAGING_SUBDIR_TOOLCHAIN)
 
 BASE_FEED:=$(shell git config --get remote.origin.url 2>/dev/null | sed -ne 's/^/src-git base /p')
@@ -68,6 +66,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.bz2: clean
 	mkdir -p $(SDK_BUILD_DIR)/dl $(SDK_BUILD_DIR)/package
 	$(CP) $(INCLUDE_DIR) $(SCRIPT_DIR) $(TOPDIR)/docs $(SDK_BUILD_DIR)/
 	$(TAR) -cf - -C $(TOPDIR) \
+		`cd $(TOPDIR); find $(KDIR_BASE) -name \*.ko` \
 		$(foreach exclude,$(EXCLUDE_DIRS),--exclude="$(exclude)") \
 		$(SDK_DIRS) $(KERNEL_FILES) | \
 		$(TAR) -xf - -C $(SDK_BUILD_DIR)
