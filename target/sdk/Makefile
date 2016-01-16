@@ -37,6 +37,7 @@ SDK_DIRS = \
 BASE_FEED:=$(shell git config --get remote.origin.url 2>/dev/null | sed -ne 's/^/src-git base /p')
 BASE_FEED:=$(if $(BASE_FEED),$(BASE_FEED),$(shell cd $(TOPDIR); LC_ALL=C git svn info 2>/dev/null | sed -ne 's/^URL: /src-gitsvn base /p'))
 BASE_FEED:=$(if $(BASE_FEED),$(BASE_FEED),$(shell cd $(TOPDIR); LC_ALL=C svn info 2>/dev/null | sed -ne 's/^URL: /src-svn base /p'))
+BASE_FEED:=$(if $(BASE_FEED),$(BASE_FEED),src-git base https://git.openwrt.org/$(filter-out unknown/ r%/,$(subst $(space),.,$(wordlist 1,2,$(subst .,$(space),$(VERSION_NUMBER))))/)openwrt.git)
 
 KDIR_BASE = $(patsubst $(TOPDIR)/%,%,$(LINUX_DIR))
 
@@ -56,6 +57,7 @@ KERNEL_FILES_BASE := \
 	scripts \
 	include \
 	Module.symvers \
+	modules.builtin \
 	$(addprefix arch/$(LINUX_KARCH)/,$(KERNEL_FILES_ARCH))
 
 KERNEL_FILES := $(patsubst $(TOPDIR)/%,%,$(wildcard $(addprefix $(LINUX_DIR)/,$(KERNEL_FILES_BASE))))
