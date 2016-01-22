@@ -141,6 +141,9 @@ parse_matching_rule() {
 					append "$var" "-i $device"
 				fi
 			;;
+			*:srciface)
+				append "$var" "-i $value"
+			;;
 			1:pktsize)
 				value="$(echo "$value" | sed -e 's,-,:,g')"
 				add_insmod xt_length
@@ -321,7 +324,7 @@ start_interface() {
 			append cstr "$classnr:$prio:$avgrate:$pktsize:$pktdelay:$maxrate:$qdisc:$filter" "$N"
 		done
 		append ${prefix}q "$(tcrules)" "$N"
-		export dev_${dir}="ifconfig $dev up txqueuelen 5 >&- 2>&-
+		export dev_${dir}="ifconfig $dev up >&- 2>&-
 tc qdisc del dev $dev root >&- 2>&-
 tc qdisc add dev $dev root handle 1: hfsc default ${class_default}0
 tc class add dev $dev parent 1: classid 1:1 hfsc sc rate ${rate}kbit ul rate ${rate}kbit"
@@ -427,7 +430,7 @@ ${iptrules:+${iptrules}${N}iptables -t mangle -A qos_${cg}_ct -j CONNMARK --save
 iptables -t mangle -A qos_${cg} -j CONNMARK --restore-mark --mask 0x0f
 iptables -t mangle -A qos_${cg} -m mark --mark 0/0x0f -j qos_${cg}_ct
 $pktrules
-${iptrules:+${iptrules}${N}iptables -t mangle -A qos_${cg} -j CONNMARK --save-mark --mask 0xf0}
+${iptrules:+${iptrules}${N}iptables -t mangle -A qos_${cg} -j CONNMARK --save-mark --mask 0xff}
 $up$N${down:+${down}$N}
 EOF
 	unset INSMOD
