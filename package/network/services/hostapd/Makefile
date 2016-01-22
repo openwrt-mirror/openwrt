@@ -103,7 +103,7 @@ ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS_C += -lrt
 endif
 
-DRV_DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny
+DRV_DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +PACKAGE_qca-hostap-scripts:kmod-qca-wifi-10.4-perf
 
 define Package/hostapd/Default
   SECTION:=net
