@@ -158,19 +158,19 @@ endef
 
 define MkImageTpl/squashfs
 	$(eval output_name=$(IMG_PREFIX)-$(2)-$(1)-$(if $(4),$(4),sysupgrade).bin)
-	$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -j \
+	-$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -j \
 		-o $(KDIR)/$(output_name) \
 		-k $(KDIR)/vmlinux-$(1)$(4).bin.lzma \
-		-r $(KDIR)/root.$(1)
-	$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
+		-r $(KDIR)/root.$(1) && \
+		$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
 endef
 
 define MkImageTpl/initramfs
 	$(eval output_name=$(IMG_PREFIX)-$(2)-$(1).bin)
-	$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -c \
+	-$(STAGING_DIR_HOST)/bin/mktplinkfw2 -V "ver. 2.0" -B "$(2)" -c \
 		-o $(KDIR)/$(output_name) \
-		-k $(KDIR)/vmlinux-$(1).bin.lzma
-	$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
+		-k $(KDIR)/vmlinux-$(1).bin.lzma && \
+		$(CP) $(KDIR)/$(output_name) $(BIN_DIR)/$(output_name)
 endef
 
 # $(1), lowercase board name like "mt7620a_v22sg"
@@ -1010,6 +1010,7 @@ endef
 
 define Device/wsr-600
   DTS := WSR-600
+  IMAGE_SIZE := $(ralink_default_fw_size_16M)
 endef
 
 define Device/re6500
@@ -1019,6 +1020,7 @@ endef
 define Device/wsr-1166
   DTS := WSR-1166
   IMAGE/sysupgrade.bin := trx | pad-rootfs
+  IMAGE_SIZE := $(ralink_default_fw_size_16M)
 endef
 
 define Device/dir-860l-b1
