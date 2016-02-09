@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_BRANCH:=trunk
-PKG_SOURCE_URL:=https://svn.ntop.org/svn/ntop/trunk/n2n/n2n_v2
-PKG_REV:=8368
+PKG_SOURCE_URL:=https://shop.ntop.org/svn/ntop/trunk/n2n/n2n_v2
+PKG_REV:=9345
 
 PKG_NAME:=n2n_v2
 PKG_VERSION:=$(PKG_REV)
-PKG_RELEASE:=4
+PKG_RELEASE:=1
 
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
