@@ -913,6 +913,7 @@ endif
 #
 
 Image/Build/Profile/E1700=$(call BuildFirmware/UMedia/$(1),$(1),e1700,E1700,0x013326)
+Image/Build/Profile/EX2700=$(call BuildFirmware/Default4M/$(1),$(1),ex2700,EX2700)
 Image/Build/Profile/MT7620a=$(call BuildFirmware/Default8M/$(1),$(1),mt7620a,MT7620a)
 Image/Build/Profile/MT7620a_MT7610e=$(call BuildFirmware/Default8M/$(1),$(1),mt7620a_mt7610e,MT7620a_MT7610e)
 Image/Build/Profile/MT7620a_MT7530=$(call BuildFirmware/Default8M/$(1),$(1),mt7620a_mt7530,MT7620a_MT7530)
@@ -958,6 +959,7 @@ Image/Build/Profile/TINY-AC=$(call BuildFirmware/Default8M/$(1),$(1),tiny-ac,TIN
 ifeq ($(SUBTARGET),mt7620)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/E1700,$(1))
+	$(call Image/Build/Profile/EX2700,$(1))
 	$(call Image/Build/Profile/MT7620a,$(1))
 	$(call Image/Build/Profile/MT7620a_MT7610e,$(1))
 	$(call Image/Build/Profile/MT7620a_MT7530,$(1))
@@ -1034,8 +1036,8 @@ define Device/dir-860l-b1
   IMAGE/factory.bin := \
 	append-kernel | pad-offset 65536 64 | append-rootfs | pad-rootfs -x 64 | \
 	seama -m "dev=/dev/mtdblock/2" -m "type=firmware" | \
-	check-size $$$$(IMAGE_SIZE) | \
-	seama-seal -m "signature=wrgac13_dlink.2013gui_dir860lb"
+	seama-seal -m "signature=wrgac13_dlink.2013gui_dir860lb" | \
+	check-size $$$$(IMAGE_SIZE)
 endef
 
 define Device/firewrt

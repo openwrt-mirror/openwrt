@@ -986,6 +986,13 @@ define Device/tl-wa801nd-v2
     TPLINK_HWID := 0x08010002
 endef
 
+define Device/tl-wa801nd-v3
+    $(Device/tplink-4mlzma)
+    BOARDNAME := TL-WA801ND-v3
+    DEVICE_PROFILE := TLWA801
+    TPLINK_HWID := 0x08010003
+endef
+
 define Device/tl-wa830re-v1
     $(Device/tplink-4m)
     BOARDNAME := TL-WA901ND
@@ -1013,7 +1020,7 @@ define Device/tl-wa860re-v1
     DEVICE_PROFILE := TLWA860
     TPLINK_HWID := 0x08600001
 endef
-TARGET_DEVICES += tl-wa801nd-v1 tl-wa801nd-v2 tl-wa830re-v1 tl-wa830re-v2 tl-wa850re-v1 tl-wa860re-v1
+TARGET_DEVICES += tl-wa801nd-v1 tl-wa801nd-v2 tl-wa801nd-v3 tl-wa830re-v1 tl-wa830re-v2 tl-wa850re-v1 tl-wa860re-v1
 
 define Device/tl-wa901nd-v1
     $(Device/tplink-4m)
@@ -1156,12 +1163,21 @@ define Device/ubnt-unifi
   DEVICE_PROFILE := UBNT UBNTUNIFI
 endef
 
+define Device/ubnt-unifiac
+  DEVICE_PROFILE := UBNT UBNTUNIFIAC
+  IMAGE_SIZE := 7744k
+  MTDPARTS = spi0.0:384k(u-boot)ro,64k(u-boot-env)ro,7744k(firmware),7744k(ubnt-airos)ro,128k(bs)ro,256k(cfg)ro,64k(EEPROM)ro
+  IMAGES := sysupgrade.bin
+  IMAGE/sysupgrade.bin = append-kernel $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+  BOARDNAME := UBNT-UF-AC
+endef
+
 define Device/ubnt-unifi-outdoor
   $(Device/ubnt-bz)
   BOARDNAME := UBNT-U20
   DEVICE_PROFILE := UBNT UBNTUNIFIOUTDOOR
 endef
-#TARGET_DEVICES += ubnt-unifi ubnt-unifi-outdoor
+#TARGET_DEVICES += ubnt-unifi ubnt-unifiac ubnt-unifi-outdoor
 
 define Device/ubnt-nano-m-xw
   $(Device/ubnt-xw)
