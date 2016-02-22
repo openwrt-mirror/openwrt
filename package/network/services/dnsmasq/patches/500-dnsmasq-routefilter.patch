@@ -122,7 +122,7 @@ diff -ruN dnsmasq/src/option.c dnsmasq-2.75/src/option.c
  #define LOPT_HOST_INOTIFY  342
  #define LOPT_DNSSEC_STAMP  343
  #define LOPT_TFTP_NO_FAIL  344
-+#define LOPT_FIL_RLIST     345
++#define LOPT_FIL_IPLIST     345
  
  #ifdef HAVE_GETOPT_LONG
  static const struct option opts[] =  
@@ -130,7 +130,7 @@ diff -ruN dnsmasq/src/option.c dnsmasq-2.75/src/option.c
      { "quiet-dhcp6", 0, 0, LOPT_QUIET_DHCP6 },
      { "quiet-ra", 0, 0, LOPT_QUIET_RA },
      { "dns-loop-detect", 0, 0, LOPT_LOOP_DETECT },
-+    { "filter-routelist", 2, 0, LOPT_FIL_RLIST },
++    { "filter-iplist", 2, 0, LOPT_FIL_IPLIST },
      { NULL, 0, 0, 0 }
    };
  
@@ -139,7 +139,7 @@ diff -ruN dnsmasq/src/option.c dnsmasq-2.75/src/option.c
        }
  #endif
 -		
-+		case LOPT_FIL_RLIST:
++		case LOPT_FIL_IPLIST:
 +      parse_chnroute(arg);
 +    break;
      default:
