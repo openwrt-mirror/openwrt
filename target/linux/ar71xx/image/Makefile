@@ -761,7 +761,7 @@ define Device/tl-wr743nd-v2
 endef
 TARGET_DEVICES += tl-wr740n-v1 tl-wr740n-v3 tl-wr740n-v4 tl-wr740n-v5 tl-wr741nd-v1 tl-wr741nd-v2 tl-wr741nd-v4 tl-wr741nd-v5 tl-wr743nd-v1 tl-wr743nd-v2
 
-define Device/tl-wr841nd-v1.5
+define Device/tl-wr841-v1.5
     $(Device/tplink-4m)
     BOARDNAME := TL-WR841N-v1.5
     DEVICE_PROFILE := TLWR841
@@ -769,7 +769,7 @@ define Device/tl-wr841nd-v1.5
     TPLINK_HWREV := 2
 endef
 
-define Device/tl-wr841nd-v3
+define Device/tl-wr841-v3
     $(Device/tplink-8m)
     BOARDNAME := TL-WR941ND
     DEVICE_PROFILE := TLWR841
@@ -777,35 +777,35 @@ define Device/tl-wr841nd-v3
     TPLINK_HWREV := 3
 endef
 
-define Device/tl-wr841nd-v5
+define Device/tl-wr841-v5
     $(Device/tplink-8m)
     BOARDNAME := TL-WR741ND
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410005
 endef
 
-define Device/tl-wr841nd-v7
+define Device/tl-wr841-v7
     $(Device/tplink-4m)
     BOARDNAME := TL-WR841N-v7
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410007
 endef
 
-define Device/tl-wr841n-v8
+define Device/tl-wr841-v8
     $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR841N-v8
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410008
 endef
 
-define Device/tl-wr841n-v9
+define Device/tl-wr841-v9
     $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR841N-v9
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410009
 endef
 
-define Device/tl-wr841n-v10
+define Device/tl-wr841-v10
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WR841N-v9
     DEVICE_PROFILE := TLWR841
@@ -839,7 +839,7 @@ define Device/tl-wr847n-v8
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08470008
 endef
-TARGET_DEVICES += tl-wr841nd-v1.5 tl-wr841nd-v3 tl-wr841nd-v5 tl-wr841nd-v7 tl-wr841n-v8 tl-wr841n-v9 tl-wr841n-v10 tl-wr842n-v1 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
+TARGET_DEVICES += tl-wr841-v1.5 tl-wr841-v3 tl-wr841-v5 tl-wr841-v7 tl-wr841-v8 tl-wr841-v9 tl-wr841-v10 tl-wr842n-v1 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
 
 define Device/tl-wr941nd-v2
     $(Device/tplink-8m)
@@ -935,7 +935,7 @@ define Device/tl-wdr4900-v2
 endef
 TARGET_DEVICES += tl-wdr4900-v2
 
-define Device/tl-wa701n-v1
+define Device/tl-wa701nd-v1
     $(Device/tplink-4m)
     BOARDNAME := TL-WA901ND
     DEVICE_PROFILE := TLWA701
@@ -950,7 +950,7 @@ define Device/tl-wa701nd-v2
     CONSOLE := ttyATH0,115200
 endef
 
-define Device/tl-wa730rev1
+define Device/tl-wa730re-v1
     $(Device/tplink-4m)
     BOARDNAME := TL-WA901ND
     DEVICE_PROFILE := TLWA730RE
@@ -970,7 +970,7 @@ define Device/tl-wa7510n
     DEVICE_PROFILE := TLWA7510
     TPLINK_HWID := 0x75100001
 endef
-TARGET_DEVICES += tl-wa701n-v1 tl-wa701nd-v2 tl-wa730rev1 tl-wa750re-v1 tl-wa7510n
+TARGET_DEVICES += tl-wa701nd-v1 tl-wa701nd-v2 tl-wa730re-v1 tl-wa750re-v1 tl-wa7510n
 
 define Device/tl-wa801nd-v1
     $(Device/tplink-4m)

@@ -1,7 +1,7 @@
-From 3fa74ccc327ddeb8f718cf4c42d61b43cc0a9626 Mon Sep 17 00:00:00 2001
+From 9a08cd1f14fd6e6797ddf99303175088bdb0ff90 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 1 May 2013 19:46:17 +0100
-Subject: [PATCH 029/127] Add dwc_otg driver
+Subject: [PATCH 029/156] Add dwc_otg driver
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -659,7 +659,7 @@ dwc_otg: Remove duplicate gadget probe/unregister function
  }
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
-@@ -4946,7 +4946,7 @@ static void port_event(struct usb_hub *h
+@@ -4967,7 +4967,7 @@ static void port_event(struct usb_hub *h
  	if (portchange & USB_PORT_STAT_C_OVERCURRENT) {
  		u16 status = 0, unused;
  

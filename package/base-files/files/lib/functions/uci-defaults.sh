@@ -410,6 +410,7 @@ ucidef_set_led_switch() {
 	local sysfs="$3"
 	local trigger="$4"
 	local port_mask="$5"
+	local speed_mask="$6"
 
 	json_select_object led
 
@@ -419,6 +420,7 @@ ucidef_set_led_switch() {
 	json_add_string sysfs "$sysfs"
 	json_add_string trigger "$trigger"
 	json_add_string port_mask "$port_mask"
+	json_add_string speed_mask "$speed_mask"
 	json_select ..
 
 	json_select ..
@@ -478,17 +480,18 @@ ucidef_set_led_ide() {
 	json_select ..
 }
 
-ucidef_set_led_timer() {
+__ucidef_set_led_timer() {
 	local cfg="led_$1"
 	local name="$2"
 	local sysfs="$3"
-	local delayon="$4"
-	local delayoff="$5"
+	local trigger="$4"
+	local delayon="$5"
+	local delayoff="$6"
 
 	json_select_object led
 
 	json_select_object "$1"
-	json_add_string type timer
+	json_add_string type "$trigger"
 	json_add_string name "$name"
 	json_add_string sysfs "$sysfs"
 	json_add_int delayon "$delayon"
@@ -496,6 +499,14 @@ ucidef_set_led_timer() {
 	json_select ..
 
 	json_select ..
+}
+
+ucidef_set_led_oneshot() {
+	__ucidef_set_led_timer $1 $2 $3 "oneshot" $4 $5
+}
+
+ucidef_set_led_timer() {
+	__ucidef_set_led_timer $1 $2 $3 "timer" $4 $5
 }
 
 ucidef_set_led_rssi() {
