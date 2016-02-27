@@ -34,6 +34,7 @@ define Package/ChinaDNS
 	CATEGORY:=Network
 	TITLE:=ChinaDNS
 	URL:=https://github.com/clowwindy/ChinaDNS
+	DEPENDS:=+ipip-chnroute
 endef
 
 define Package/ChinaDNS/description
