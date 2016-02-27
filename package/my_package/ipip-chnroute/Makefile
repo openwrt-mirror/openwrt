@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ipip-chnroute
-PKG_VERSION:=8c30b72
+PKG_VERSION:=20160201
 PKG_RELEASE:=1
 PKG_REV:=8c30b72f08167703136e87c5d3a70acbdd00f54a
 
@@ -31,6 +31,9 @@ endef
 
 define Package/ipip-chnroute/description
 
+endef
+
+define Build/Compile
 endef
 
 define Package/ipip-chnroute/install
