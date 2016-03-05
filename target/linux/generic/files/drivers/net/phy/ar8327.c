@@ -139,13 +139,10 @@ ar8327_phy_fixup(struct ar8xxx_priv *priv, int phy)
 		break;
 
 	case 2:
-		ar8xxx_phy_mmd_write(priv, phy, 0x7, 0x3c);
-		ar8xxx_phy_mmd_write(priv, phy, 0x4007, 0x0);
+		ar8xxx_phy_mmd_write(priv, phy, 0x7, 0x3c, 0x0);
 		/* fallthrough */
 	case 4:
-		ar8xxx_phy_mmd_write(priv, phy, 0x3, 0x800d);
-		ar8xxx_phy_mmd_write(priv, phy, 0x4003, 0x803f);
-
+		ar8xxx_phy_mmd_write(priv, phy, 0x3, 0x800d, 0x803f);
 		ar8xxx_phy_dbg_write(priv, phy, 0x3d, 0x6860);
 		ar8xxx_phy_dbg_write(priv, phy, 0x5, 0x2c46);
 		ar8xxx_phy_dbg_write(priv, phy, 0x3c, 0x6000);
@@ -744,8 +741,7 @@ ar8327_read_port_eee_status(struct ar8xxx_priv *priv, int port)
 	phy = port - 1;
 
 	/* EEE Ability Auto-negotiation Result */
-	ar8xxx_phy_mmd_write(priv, phy, 0x7, 0x8000);
-	t = ar8xxx_phy_mmd_read(priv, phy, 0x4007);
+	t = ar8xxx_phy_mmd_read(priv, phy, 0x7, 0x8000);
 
 	return mmd_eee_adv_to_ethtool_adv_t(t);
 }
@@ -1275,6 +1271,13 @@ static const struct switch_attr ar8327_sw_attr_globals[] = {
 		.max = AR8327_NUM_PORTS - 1
  	},
 	{
+		.type = SWITCH_TYPE_INT,
+		.name = "arl_age_time",
+		.description = "ARL age time (secs)",
+		.set = ar8xxx_sw_set_arl_age_time,
+		.get = ar8xxx_sw_get_arl_age_time,
+	},
+	{
 		.type = SWITCH_TYPE_STRING,
 		.name = "arl_table",
 		.description = "Get ARL table",
@@ -1377,6 +1380,7 @@ const struct ar8xxx_chip ar8327_chip = {
 
 	.reg_port_stats_start = 0x1000,
 	.reg_port_stats_length = 0x100,
+	.reg_arl_ctrl = AR8327_REG_ARL_CTRL,
 
 	.hw_init = ar8327_hw_init,
 	.cleanup = ar8327_cleanup,
@@ -1411,6 +1415,7 @@ const struct ar8xxx_chip ar8337_chip = {
 
 	.reg_port_stats_start = 0x1000,
 	.reg_port_stats_length = 0x100,
+	.reg_arl_ctrl = AR8327_REG_ARL_CTRL,
 
 	.hw_init = ar8327_hw_init,
 	.cleanup = ar8327_cleanup,

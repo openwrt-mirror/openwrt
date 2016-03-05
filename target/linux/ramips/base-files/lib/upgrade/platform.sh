@@ -63,6 +63,9 @@ platform_check_image() {
 	ht-tm02|\
 	hw550-3g|\
 	ip2202|\
+	jhr-n805r|\
+	jhr-n825r|\
+	jhr-n926r|\
 	linkits7688|\
 	linkits7688d|\
 	m2m|\
@@ -78,6 +81,7 @@ platform_check_image() {
 	mpr-a1|\
 	mpr-a2|\
 	mr-102n|\
+	mt7628|\
 	mzk-dp150n|\
 	mzk-w300nh2|\
 	nbg-419n|\
@@ -138,6 +142,7 @@ platform_check_image() {
 	y1|\
 	y1s|\
 	zbt-wa05|\
+	zbt-we826|\
 	zbt-wg2626|\
 	zbt-wr8305rt|\
 	zte-q7|\

@@ -114,6 +114,9 @@ ramips_setup_interfaces()
 	f5d8235-v1|\
 	f5d8235-v2|\
 	hg255d|\
+	jhr-n805r|\
+	jhr-n825r|\
+	jhr-n926r|\
 	rt-n14u|\
 	ubnt-erx|\
 	ur-326n4g|\
@@ -209,6 +212,7 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan" "2:lan" "0:wan" "6@eth0"
 		;;
+	zbt-we826|\
 	zbt-wr8305rt)
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6@eth0"
