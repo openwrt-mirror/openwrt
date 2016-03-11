@@ -177,6 +177,7 @@ foreach my $mirror (@ARGV) {
 			push @mirrors, "http://downloads.sourceforge.net/$1";
 		}
 	} elsif ($mirror =~ /^\@APACHE\/(.+)$/) {
+		push @mirrors, "http://mirrors.ustc.edu.cn/gnu/$1";
 		push @mirrors, "http://ftp.tudelft.nl/apache/$1";
 		push @mirrors, "http://apache.openmirror.de/$1";
 		push @mirrors, "http://mirrors.ocf.berkeley.edu/apache/$1";
