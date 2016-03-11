@@ -56,6 +56,9 @@ platform_check_image() {
 	firewrt|\
 	fonera20n|\
 	freestation5|\
+	gl-mt300a|\
+	gl-mt300n|\
+	gl-mt750|\
 	hc5*61|\
 	hg255d|\
 	hlk-rm04|\
@@ -84,6 +87,7 @@ platform_check_image() {
 	mt7628|\
 	mzk-dp150n|\
 	mzk-w300nh2|\
+	mzk-wdpr|\
 	nbg-419n|\
 	nw718|\
 	oy-0001|\

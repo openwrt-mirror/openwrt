@@ -89,6 +89,12 @@ ucidef_set_interfaces_lan_wan() {
 	json_select ..
 }
 
+ucidef_set_interface_raw() {
+	json_select_object network
+	_ucidef_set_interface "$@"
+	json_select ..
+}
+
 _ucidef_add_switch_port() {
 	# inherited: $num $device $need_tag $role $index $prev_role
 	# inherited: $n_cpu $n_ports $n_vlan $cpu0 $cpu1 $cpu2 $cpu3 $cpu4 $cpu5
@@ -335,15 +341,13 @@ ucidef_add_adsl_modem() {
 
 ucidef_add_vdsl_modem() {
 	local annex="$1"
-	local firmware="$2"
-	local tone="$3"
-	local xfer_mode="$4"
+	local tone="$2"
+	local xfer_mode="$3"
 
 	json_select_object dsl
 		json_select_object modem
 			json_add_string type "vdsl"
 			json_add_string annex "$annex"
-			json_add_string firmware "$firmware"
 			json_add_string tone "$tone"
 			json_add_string xfer_mode "$xfer_mode"
 		json_select ..

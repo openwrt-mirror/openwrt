@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -34,58 +34,6 @@ endif
 	$(call prepare_generic_squashfs,$(KDIR)/fs_mark)
 endef
 
-define Image/Build/wgt634u
-	dd if=$(KDIR)/loader.elf of=$(BIN_DIR)/$(IMG_PREFIX)-wgt634u-$(2).bin bs=131072 conv=sync
-	cat $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx >> $(BIN_DIR)/$(IMG_PREFIX)-wgt634u-$(2).bin
-endef
-
-define Image/Build/dwl3150
-	cp $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx $(BIN_DIR)/$(IMG_PREFIX)-dwl3150-$(2).bin
-	echo "BCM-5352-2050-0000000-01" >> $(BIN_DIR)/$(IMG_PREFIX)-dwl3150-$(2).bin
-endef
-
-# $(1): filesystem type.
-# $(2): device model (used for output file).
-# $(3): pattern (device specific magic).
-# $(4): version.
-# $(5): simplified filesystem type (without block size).
-define Image/Build/CyberTAN
-	$(STAGING_DIR_HOST)/bin/addpattern -4 -p $(3) -v v$(4) -i $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx -o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).bin $(if $(6),-s $(6))
-endef
-define Image/Build/CyberTAN2
-	$(STAGING_DIR_HOST)/bin/addpattern -4 -p $(3) -v v$(4) -i $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).noheader.bin -o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).bin $(if $(6),-s $(6))
-endef
-define Image/Build/CyberTANHead
-	$(STAGING_DIR_HOST)/bin/addpattern -5 -p $(3) -v v$(4) -i /dev/null -o $(KDIR)/$(IMG_PREFIX)-$(2)-header.bin $(if $(6),-s $(6))
-endef
-
-define Image/Build/Motorola
-	$(STAGING_DIR_HOST)/bin/motorola-bin -$(3) $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(4).bin
-endef
-
-define Image/Build/USR
-	$(STAGING_DIR_HOST)/bin/trx2usr $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3).bin
-endef
-
-define Image/Build/Edi
-	$(STAGING_DIR_HOST)/bin/trx2edips $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3).bin
-endef
-
-define Image/Build/Huawei
-	dd if=/dev/zero of=$(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3)-gz.bin bs=92 count=1
-	echo -ne 'HDR0\x08\x00\x00\x00' >> $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3)-gz.bin
-	cat $(BIN_DIR)/$(IMG_PREFIX)-$(1)-gz.trx >> $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(3)-gz.bin
-endef
-
-# $(1): filesystem type.
-# $(2): device model (used for output file).
-# $(3): board_id (device specific magic).
-# $(4): region.
-# $(5): simplified filesystem type (without block size).
-define Image/Build/Chk
-	$(STAGING_DIR_HOST)/bin/mkchkimg -o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).chk -k $(BIN_DIR)/$(IMG_PREFIX)-$(1).trx -b $(3) -r $(4)
-endef
-
 define trxalign/jffs2-128k
 -a 0x20000 -f $(KDIR)/root.$(1)
 endef
@@ -94,18 +42,6 @@ define trxalign/jffs2-64k
 endef
 define trxalign/squashfs
 -a 1024 -f $(KDIR)/root.$(1) $(if $(2),-f $(2)) -a 0x10000 -A $(KDIR)/fs_mark
-endef
-
-define Image/Build/trxV2
-	$(call Image/Build/CyberTANHead,$(1),$(2),$(3),$(4),$(5),$(if $(6),$(6)))
-	$(STAGING_DIR_HOST)/bin/trx \
-		-m 33554432 \
-		-2 \
-		-o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(5).noheader.bin \
-		-f $(KDIR)/loader.gz \
-		-f $(KDIR)/vmlinux.lzma \
-		$(call trxalign/$(1),$(1),$(KDIR)/$(IMG_PREFIX)-$(2)-header.bin)
-	$(call Image/Build/CyberTAN2,$(1),$(2),$(3),$(4),$(5),$(if $(6),$(6)))
 endef
 
 #################################################
@@ -121,13 +57,68 @@ define Build/trx-with-loader
 		$(call trxalign/$(FILESYSTEM),$(FILESYSTEM))
 endef
 
+define Build/trx-v2-with-loader
+	$(STAGING_DIR_HOST)/bin/trx \
+		-2 \
+		-m 33554432 \
+		-o $@.new \
+		-f $(KDIR)/loader.gz \
+		-f $(KDIR)/vmlinux.lzma \
+		$(call trxalign/$(FILESYSTEM),$(FILESYSTEM),$@)
+	mv $@.new $@
+endef
+
+define Build/trx-without-loader
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $@ \
+		-f $(word 1,$^) \
+		$(call trxalign/$(FILESYSTEM),$(FILESYSTEM))
+endef
+
 define Build/asus-trx
 	$(STAGING_DIR_HOST)/bin/asustrx -p "$(PRODUCTID)" -i $@ -o $@.new
 	mv $@.new $@
 endef
 
+define Build/edimax-bin
+	$(STAGING_DIR_HOST)/bin/trx2edips $@ $@.new
+	mv $@.new $@
+endef
+
+define Build/huawei-bin
+	dd if=/dev/zero of=$@.new bs=92 count=1
+	echo -ne 'HDR0\x08\x00\x00\x00' >> $@.new
+	cat $@ >> $@.new
+	mv $@.new $@
+endef
+
 define Build/linksys-bin
-	$(STAGING_DIR_HOST)/bin/addpattern -4 -p $(DEVICE_ID) -v v$(VERSION) -i $@ -o $@.new
+	$(STAGING_DIR_HOST)/bin/addpattern -4 -p $(DEVICE_ID) -v v$(VERSION) $(if $(SERIAL),-s $(SERIAL)) -i $@ -o $@.new
+	mv $@.new $@
+endef
+
+define Build/linksys-pattern-partition
+	$(STAGING_DIR_HOST)/bin/addpattern -5 -p $(DEVICE_ID) -v v$(VERSION) $(if $(SERIAL),-s $(SERIAL)) -i /dev/null -o $@
+endef
+
+define Build/motorola-bin
+	$(STAGING_DIR_HOST)/bin/motorola-bin -$(MOTOROLA_DEVICE) $@ $@.new
+	mv $@.new $@
+endef
+
+define Build/prepend-with-elf
+	mv $@ $@.old
+	dd if=$(KDIR)/loader.elf of=$@ bs=131072 conv=sync
+	cat $@.old >> $@
+endef
+
+define Build/tailed-bin
+	echo $(BIN_TAIL) >> $@
+endef
+
+define Build/usrobotics-bin
+	$(STAGING_DIR_HOST)/bin/trx2usr $@ $@.new
 	mv $@.new $@
 endef
 
@@ -136,8 +127,10 @@ endef
 #################################################
 
 DEVICE_VARS += PRODUCTID
-DEVICE_VARS += DEVICE_ID VERSION
+DEVICE_VARS += DEVICE_ID VERSION SERIAL
 DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_REGION
+DEVICE_VARS += MOTOROLA_DEVICE
+DEVICE_VARS += BIN_TAIL
 
 define Device/Default
 	KERNEL := kernel-bin
@@ -175,6 +168,19 @@ define LinksysDevice
   TARGET_DEVICES += linksys-$(1)
 endef
 
+define Device/motorola
+	IMAGES := bin
+	IMAGE/bin := trx-with-loader | motorola-bin
+endef
+
+define MotorolaDevice
+  define Device/motorola-$(1)
+	$$(Device/motorola)
+	MOTOROLA_DEVICE := $(2)
+  endef
+  TARGET_DEVICES += motorola-$(1)
+endef
+
 define Device/netgear
 	IMAGES := chk
 	IMAGE/chk := trx-with-loader | netgear-chk
@@ -209,37 +215,31 @@ endif
 # Subtarget legacy
 #################################################
 
-# $(1): filesystem type.
-define Image/Build/legacy/devices-with-128k-blocks
-	$(call Image/Build/trxV2,$(1),wrt54g3gv2-vf,3G2V,3.00.24,$(patsubst jffs2-%,jffs2,$(1)),6)
-	$(call Image/Build/wgt634u,$(1),$(patsubst jffs2-%,jffs2,$(1)))
+define Device/dlink-dwl-3150
+	IMAGES := bin
+	IMAGE/bin := trx-with-loader | tailed-bin
+	BIN_TAIL := BCM-5352-2050-0000000-01
 endef
 
-# $(1): filesystem type.
-define Image/Build/legacy/devices-with-64k-blocks
-	$(call Image/Build/dwl3150,$(1),$(patsubst jffs2-%,jffs2,$(1)))
-	$(call Image/Build/Edi,$(1),ps1208mfg,$(patsubst jffs2-%,jffs2,$(1)))
-	$(call Image/Build/Huawei,$(1),e970,$(1))
-	$(call Image/Build/Motorola,$(1),wa840g,2,$(patsubst jffs2-%,jffs2,$(1)))
-	$(call Image/Build/Motorola,$(1),we800g,3,$(patsubst jffs2-%,jffs2,$(1)))
-	$(call Image/Build/Motorola,$(1),wr850g,1,$(1))
-	$(call Image/Build/USR,$(1),usr5461,$(1))
+define Device/edimax-ps1208-mfg
+	IMAGES := bin
+	IMAGE/bin := trx-with-loader | edimax-bin
 endef
 
-# $(1): filesystem type.
-define Image/Build/legacy/jffs2-64k
-	$(call Image/Build/legacy/devices-with-64k-blocks,$(1))
+define Device/huawei-e970
+	KERNEL_NAME = vmlinux.gz
+	IMAGES := bin
+	IMAGE/bin := trx-without-loader | huawei-bin
 endef
 
-# $(1): filesystem type.
-define Image/Build/legacy/jffs2-128k
-	$(call Image/Build/legacy/devices-with-128k-blocks,$(1))
-endef
-
-# $(1): filesystem type.
-define Image/Build/legacy/squashfs
-	$(call Image/Build/legacy/devices-with-64k-blocks,$(1))
-	$(call Image/Build/legacy/devices-with-128k-blocks,$(1))
+define Device/linksys-wrt54g3gv2-vf
+	FILESYSTEMS := $(FS_128K)
+	IMAGES := noheader.bin bin
+	IMAGE/noheader.bin := linksys-pattern-partition | trx-v2-with-loader
+	IMAGE/bin := linksys-pattern-partition | trx-v2-with-loader | linksys-bin
+	DEVICE_ID := 3G2V
+	VERSION := 3.00.24
+	SERIAL := 6
 endef
 
 define Device/linksys-wrt54gs
@@ -256,10 +256,27 @@ define Device/linksys-wrtsl54gs
 	VERSION := 2.08.1
 endef
 
+define Device/netgear-wgt634u
+	FILESYSTEMS := $(FS_128K)
+	IMAGES := bin
+	IMAGE/bin := trx-with-loader | prepend-with-elf
+endef
+
+define Device/usrobotics-usr5461
+	IMAGES := bin
+	IMAGE/bin := trx-with-loader | usrobotics-bin
+endef
+
 ifeq ($(SUBTARGET),legacy)
   TARGET_DEVICES += \
+	dlink-dwl-3150 \
+	edimax-ps1208-mfg \
+	huawei-e970 \
+	linksys-wrt54g3gv2-vf \
 	linksys-wrt54gs \
-	linksys-wrtsl54gs
+	linksys-wrtsl54gs \
+	netgear-wgt634u \
+	usrobotics-usr5461
 
   $(eval $(call AsusDevice,wl-300g,WL300g      ))
   $(eval $(call AsusDevice,wl-320gp,WL320gP     ))
@@ -277,6 +294,9 @@ ifeq ($(SUBTARGET),legacy)
   $(eval $(call LinksysDevice,wrt150n,N150,1.51.3))
   $(eval $(call LinksysDevice,wrt160n-v1,N150,1.50.1))
   $(eval $(call LinksysDevice,wrt300n-v1,EWCB,1.03.6))
+  $(eval $(call MotorolaDevice,wa840g,2))
+  $(eval $(call MotorolaDevice,we800g,3))
+  $(eval $(call MotorolaDevice,wr850g,1))
   $(eval $(call NetgearDevice,wgr614-v8,U12H072T00_NETGEAR,2))
   $(eval $(call NetgearDevice,wndr3300-v1,U12H093T00_NETGEAR,2))
   $(eval $(call NetgearDevice,wnr834b-v2,U12H081T00_NETGEAR,2))
@@ -328,6 +348,7 @@ ifeq ($(SUBTARGET),mips74k)
   $(eval $(call NetgearDevice,wndr3400-v2,U12H187T00_NETGEAR,2))
   $(eval $(call NetgearDevice,wndr3400-v3,U12H208T00_NETGEAR,1))
   $(eval $(call NetgearDevice,wndr3700-v3,U12H194T00_NETGEAR,2))
+#  $(eval $(call NetgearDevice,wndr3400-vcna,U12H155T01_NETGEAR,2))
   $(eval $(call NetgearDevice,wndr4000,U12H181T00_NETGEAR,2))
   $(eval $(call NetgearDevice,wnr1000-v3,U12H139T00_NETGEAR,2))
   $(eval $(call NetgearDevice,wnr2000v2,U12H114T00_NETGEAR,2))
@@ -335,7 +356,9 @@ ifeq ($(SUBTARGET),mips74k)
   $(eval $(call NetgearDevice,wnr3500l-v1-north-america,U12H136T99_NETGEAR,2))
   $(eval $(call NetgearDevice,wnr3500l-v1-other-regions,U12H136T99_NETGEAR,1))
   $(eval $(call NetgearDevice,wnr3500l-v2,U12H172T00_NETGEAR,1))
+#  $(eval $(call NetgearDevice,wnr3500u,U12H136T00_NETGEAR,2))
   $(eval $(call NetgearDevice,wnr3500-v2,U12H127T00_NETGEAR,2))
+#  $(eval $(call NetgearDevice,wnr3500-v2-vc,U12H127T70_NETGEAR,2))
 endif
 
 #################################################
@@ -371,11 +394,6 @@ define Image/Build
 		-o $(BIN_DIR)/$(IMG_PREFIX)-$(1)-gz.trx \
 		-f $(KDIR)/vmlinux.gz \
 		$(call trxalign/$(1),$(1))
-	$(call Image/Build/$(SUBTARGET)/$(1),$(1))
-#	$(call Image/Build/Chk,$(1),wgr614_v9,U12H094T00_NETGEAR,2,$(patsubst jffs2-%,jffs2,$(1)))
-#	$(call Image/Build/Chk,$(1),wndr3400_vcna,U12H155T01_NETGEAR,2,$(patsubst jffs2-%,jffs2,$(1)))
-#	$(call Image/Build/Chk,$(1),wnr3500U,U12H136T00_NETGEAR,2,$(patsubst jffs2-%,jffs2,$(1)))
-#	$(call Image/Build/Chk,$(1),wnr3500v2_VC,U12H127T70_NETGEAR,2,$(patsubst jffs2-%,jffs2,$(1)))
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	$(call Image/Build/Initramfs)
 endif

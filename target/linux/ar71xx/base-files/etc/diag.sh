@@ -187,9 +187,6 @@ get_status_led() {
 	mynet-n750)
 		status_led="wd:blue:power"
 		;;
-	qihoo-c301)
-		status_led="360:green:status"
-		;;
 	mynet-rext)
 		status_led="wd:blue:power"
 		;;
@@ -262,6 +259,12 @@ get_status_led() {
 		;;
 	oolite)
 		status_led="oolite:red:system"
+		;;
+	qihoo-c301)
+		status_led="360:green:status"
+		;;
+	tellstick-znet-lite)
+		status_led="tellstick:white:system"
 		;;
 	tew-632brp)
 		status_led="tew-632brp:green:status"

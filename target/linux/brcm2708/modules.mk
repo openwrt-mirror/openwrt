@@ -274,7 +274,6 @@ define KernelPackage/spi-bcm2835
   SUBMENU:=$(SPI_MENU)
   TITLE:=BCM2835 SPI controller driver
   KCONFIG:=\
-    CONFIG_BCM2708_SPIDEV=n \
     CONFIG_SPI=y \
     CONFIG_SPI_BCM2835 \
     CONFIG_SPI_MASTER=y
@@ -288,6 +287,24 @@ define KernelPackage/spi-bcm2835/description
 endef
 
 $(eval $(call KernelPackage,spi-bcm2835))
+
+define KernelPackage/spi-bcm2835-aux
+  SUBMENU:=$(SPI_MENU)
+  TITLE:=BCM2835 Aux SPI controller driver
+  KCONFIG:=\
+    CONFIG_SPI=y \
+    CONFIG_SPI_BCM2835AUX \
+    CONFIG_SPI_MASTER=y
+  FILES:=$(LINUX_DIR)/drivers/spi/spi-bcm2835aux.ko
+  AUTOLOAD:=$(call AutoLoad,89,spi-bcm2835aux)
+  DEPENDS:=@TARGET_brcm2708
+endef
+
+define KernelPackage/spi-bcm2835-aux/description
+  This package contains the Broadcom 2835 Aux SPI master controller driver
+endef
+
+$(eval $(call KernelPackage,spi-bcm2835-aux))
 
 
 define KernelPackage/hwmon-bcm2835
@@ -312,8 +329,7 @@ define KernelPackage/i2c-bcm2708
   $(call i2c_defaults,$(I2C_BCM2708_MODULES),59)
   TITLE:=Broadcom BCM2708 I2C master controller driver
   KCONFIG+= \
-	CONFIG_I2C_BCM2708_BAUDRATE=100000 \
-	CONFIG_MFD_RPISENSE_CORE=n
+	CONFIG_I2C_BCM2708_BAUDRATE=100000
   DEPENDS:=@TARGET_brcm2708 +kmod-i2c-core
 endef
 
@@ -329,8 +345,6 @@ I2C_BCM2835_MODULES:=\
 define KernelPackage/i2c-bcm2835
   $(call i2c_defaults,$(I2C_BCM2835_MODULES),59)
   TITLE:=Broadcom BCM2835 I2C master controller driver
-  KCONFIG+= \
-	CONFIG_MFD_RPISENSE_CORE=n
   DEPENDS:=@TARGET_brcm2708 +kmod-i2c-core
 endef
 
