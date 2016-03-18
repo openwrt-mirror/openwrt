@@ -1,22 +1,23 @@
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -128,6 +128,7 @@ dtb-$(CONFIG_MACH_KIRKWOOD) += kirkwood-
+@@ -183,6 +183,7 @@ dtb-$(CONFIG_MACH_KIRKWOOD) += \
  	kirkwood-is2.dtb \
  	kirkwood-km_kirkwood.dtb \
  	kirkwood-laplug.dtb \
-+	kirkwood-linksys-viper.dtb \
++	kirkwood-linksys-audi.dtb \
+ 	kirkwood-linksys-viper.dtb \
  	kirkwood-lschlv2.dtb \
- 	kirkwood-lsxhl.dtb \
- 	kirkwood-mplcec4.dtb \
+ 	kirkwood-lswvl.dtb \
 --- /dev/null
-+++ b/arch/arm/boot/dts/kirkwood-linksys-viper.dts
-@@ -0,0 +1,187 @@
++++ b/arch/arm/boot/dts/kirkwood-linksys-audi.dts
+@@ -0,0 +1,179 @@
 +/*
-+ * kirkwood-linksys-viper.dts - Device Tree file for Linksys E4200v2/EA4500
++ * kirkwood-linksys-audi.dts - Device Tree file for Linksys EA3500
 + *
 + * (c) 2013 Jonas Gorski <jogo@openwrt.org>
 + * (c) 2013 Deutsche Telekom Innovation Laboratories
 + * (c) 2014 Luka Perkov <luka@openwrt.org>
++ * (c) 2014 Dan Walters <dan@walters.io>
 + *
 + * This file is licensed under the terms of the GNU General Public
 + * License version 2.  This program is licensed "as is" without any
@@ -29,12 +30,12 @@
 +#include "kirkwood-6282.dtsi"
 +
 +/ {
-+	model = "Linksys E4200v2 / EA4500";
-+	compatible = "linksys,viper", "marvell,kirkwood-88f6282", "marvell,kirkwood";
++	model = "Linksys EA3500";
++	compatible = "linksys,audi", "marvell,kirkwood-88f6282", "marvell,kirkwood";
 +
 +	memory {
 +		device_type = "memory";
-+		reg = <0x00000000 0x8000000>;
++		reg = <0x00000000 0x4000000>;
 +	};
 +
 +	chosen {
@@ -57,13 +58,9 @@
 +
 +	ocp@f1000000 {
 +		pinctrl: pin-controller@10000 {
-+			pmx_led_white_health: pmx-led-white-health {
++			pmx_led_green_power: pmx-led-green-power {
 +				marvell,pins = "mpp7";
 +				marvell,function = "gpo";
-+			};
-+			pmx_led_white_pulse: pmx-led-white-pulse {
-+				marvell,pins = "mpp14";
-+				marvell,function = "gpio";
 +			};
 +			pmx_btn_wps: pmx-btn-wps {
 +				marvell,pins = "mpp47";
@@ -107,17 +104,12 @@
 +
 +	gpio-leds {
 +		compatible = "gpio-leds";
-+		pinctrl-0 = < &pmx_led_white_health &pmx_led_white_pulse >;
++		pinctrl-0 = < &pmx_led_green_power >;
 +		pinctrl-names = "default";
 +
-+		white-health {
-+			label = "viper:white:health";
++		green-power {
++			label = "audi:green:power";
 +			gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		white-pulse {
-+			label = "viper:white:pulse";
-+			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
 +		};
 +	};
 +
@@ -145,37 +137,37 @@
 +
 +	partition@80000 {
 +		label = "u_env";
-+		reg = <0x80000 0x20000>;
++		reg = <0x80000 0x4000>;
 +	};
 +
-+	partition@a0000 {
++	partition@84000 {
 +		label = "s_env";
-+		reg = <0xa0000 0x20000>;
++		reg = <0x84000 0x4000>;
 +	};
 +
 +	partition@200000 {
 +		label = "kernel1";
-+		reg = <0x200000 0x1a00000>;
++		reg = <0x200000 0x1400000>;
 +	};
 +
-+	partition@4a0000 {
++	partition@490000 {
 +		label = "rootfs1";
-+		reg = <0x4a0000 0x1760000>;
++		reg = <0x490000 0x1170000>;
 +	};
 +
-+	partition@1c00000 {
++	partition@1600000 {
 +		label = "kernel2";
-+		reg = <0x1c00000 0x1a00000>;
++		reg = <0x1600000 0x1400000>;
 +	};
 +
-+	partition@1ea0000 {
++	partition@1890000 {
 +		label = "rootfs2";
-+		reg = <0x1ea0000 0x1760000>;
++		reg = <0x1890000 0x1170000>;
 +	};
 +
-+	partition@3600000 {
++	partition@2a00000 {
 +		label = "syscfg";
-+		reg = <0x3600000 0x4a00000>;
++		reg = <0x2a00000  0x1600000>;
 +	};
 +};
 +

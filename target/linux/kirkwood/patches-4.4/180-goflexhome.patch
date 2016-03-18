@@ -1,6 +1,6 @@
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -120,6 +120,7 @@ dtb-$(CONFIG_MACH_KIRKWOOD) += kirkwood-
+@@ -175,6 +175,7 @@ dtb-$(CONFIG_MACH_KIRKWOOD) += \
  	kirkwood-ds411.dtb \
  	kirkwood-ds411j.dtb \
  	kirkwood-ds411slim.dtb \
@@ -10,7 +10,7 @@
  	kirkwood-ib62x0.dtb \
 --- /dev/null
 +++ b/arch/arm/boot/dts/kirkwood-goflexhome.dts
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,117 @@
 +/dts-v1/;
 +
 +#include "kirkwood.dtsi"
@@ -109,18 +109,8 @@
 +	};
 +
 +	partition@100000 {
-+		label = "uImage";
-+		reg = <0x0100000 0x400000>;
-+	};
-+
-+	partition@500000 {
-+		label = "pogoplug";
-+		reg = <0x0500000 0x2000000>;
-+	};
-+
-+	partition@2500000 {
-+		label = "root";
-+		reg = <0x02500000 0xd800000>;
++		label = "ubi";
++		reg = <0x100000 0x0ff00000>;
 +	};
 +};
 +

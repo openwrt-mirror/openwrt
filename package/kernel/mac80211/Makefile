@@ -673,6 +673,7 @@ define KernelPackage/brcmfmac/config
 
 	config BRCMFMAC_SDIO
 		bool "Enable SDIO bus interface support"
+		default y if TARGET_brcm2708
 		default n
 		help
 		  Enable support for cards attached to an SDIO bus.
@@ -978,7 +979,7 @@ endef
 define KernelPackage/libertas-spi
   $(call KernelPackage/mac80211/Default)
   SUBMENU:=Wireless Drivers
-  DEPENDS+= +kmod-cfg80211 +kmod-lib80211 +@DRIVER_WEXT_SUPPORT +libertas-spi-firmware
+  DEPENDS+= +kmod-cfg80211 +kmod-lib80211 +@DRIVER_WEXT_SUPPORT @!TARGET_uml +libertas-spi-firmware
   KCONFIG := \
 	CONFIG_SPI=y \
 	CONFIG_SPI_MASTER=y
