@@ -70,7 +70,7 @@ load_all_config_sections()
 	}
 
 	config_load "$config_name"
-	config_foreach "$section_type" get_section_names
+	config_foreach get_section_names "$section_type"
 	echo "$all_config_sections"
 
 }
