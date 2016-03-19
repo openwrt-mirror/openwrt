@@ -1,6 +1,7 @@
 #!/bin/sh /etc/rc.common
-#
-# Copyright Eric Bishop, 2008
+# A Modified QoS script based on qos_gargoyle by Eric Bishop.
+# Copyright (c) 2008 Eric Bishop
+# Copyright (c) 2016 GuoGuo<gch981213@gmail.com>
 # This is free software licensed under the terms of the GNU GPL v2.0
 #
 
@@ -9,10 +10,10 @@ START=50
 EXTRA_COMMANDS=show
 EXTRA_HELP="	show	Show current Qos configuration (if active)"
 
+. ${IPKG_INSTROOT}/lib/functions/network.sh
 include /lib/network
-include /usr/lib/gargoyle_firewall_util
 
-config_file_name="qos_gargoyle"
+config_file_name="qos_guoguo"
 upload_mask="0x007F"
 download_mask="0x7F00"
 qos_mark_file="/etc/qos_class_marks"
@@ -80,46 +81,6 @@ load_all_config_sections()
 
 }
 
-
-
-
-load_and_sort_all_config_sections()
-{
-	local config_name="$1"
-	local section_type="$2"
-	local sort_variable="$3"
-
-	all_config_sections=""
-	defined_option_cb()
-	{
-		if [ "$1" = "$sort_variable" ]; then
-			all_config_sections=" $2:$all_config_sections"
-		fi
-	}
-
-	config_cb()
-	{
-		if [ -n "$2" ] || [ -n "$1" ] ; then
-			if [ -n "$section_type" ] ; then
-				if [ "$1" = "$section_type" ] ; then
-					all_config_sections="$2 $all_config_sections"
-					option_cb() { defined_option_cb $1 $2 ; }
-				else
-					option_cb() { return 0; }
-				fi
-			else
-				all_config_sections="$2 $all_config_sections"
-				option_cb(){ defined_option_cb $1 $2 ; }
-			fi
-		fi
-	}
-
-	config_load "$config_name"
-
-	echo "$all_config_sections" | awk ' {for(i=1; i <= NF; i++){ print $i }}' | sort -n -t ":" | awk 'BEGIN {FS=":"}; {print $2}'
-}
-
-
 get_classname_mark()
 {
 	local class="$1"
@@ -138,7 +99,7 @@ apply_all_rules()
 	local tmp_proto
 
 	# add filter rules
-	rule_list=$(load_and_sort_all_config_sections "$config_file_name" "$rule_type" "test_order")
+	rule_list=$(load_all_config_sections "$config_file_name" "$rule_type")
 	for rule in $rule_list ; do
 		class=""
 		proto=""
@@ -180,15 +141,15 @@ apply_all_rules()
 					need_proto="1"
 
 				;;
-				layer7)
-					layer7_connmark=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $2 }')
-					layer7_mask=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $3 }')
-					if [ -n "$layer7_connmark" ] ; then
-						match_str="$match_str -m connmark --mark $layer7_connmark/$layer7_mask "
-					else
-						match_str="$match_str -m layer7 --l7proto $option_value"
-					fi
-				;;
+#				layer7)
+#					layer7_connmark=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $2 }')
+#					layer7_mask=$(cat /etc/l7marker.marks 2>/dev/null | grep "$option_value" | awk '{ print $3 }')
+#					if [ -n "$layer7_connmark" ] ; then
+#						match_str="$match_str -m connmark --mark $layer7_connmark/$layer7_mask "
+#					else
+#						match_str="$match_str -m layer7 --l7proto $option_value"
+#					fi
+#				;;
 				connbytes_kb)
 					match_str="$match_str -m connbytes --connbytes $(($option_value*1024)): --connbytes-dir both --connbytes-mode bytes"
 				;;
@@ -290,7 +251,7 @@ update_markfile()
 initialize_qos()
 {
 	#initialize layer7_marker if necessary
-	create_l7marker_chain
+#	create_l7marker_chain
 
 	# Now, load/insert necessary kernel modules
 	# The following packages are required for the modules:
@@ -304,7 +265,7 @@ initialize_qos()
 	insmod sch_sfq >&- 2>&-
 
 	#Set the atm parameters if pppoe is being used.
-	wan_proto=$(uci get network.wan.proto 2>/dev/null)
+	network_get_protocol wan_proto $wan_net_name
 	if [ "$wan_proto" = "pppoe" ] ; then
 		#On my PPPoE WAN link I see the following overhead
 		#MAC Header=14 & PPPoE=8 plus I read that an addition ATM=8 is added by the modem"
@@ -651,7 +612,7 @@ initialize_qos()
 			
 			#in case ping target is still not defined use default gateway
 			if [ -z "$ptarget_ip" ] ; then
-				ptarget_ip=$(gargoyle_header_footer -i gargoyle | sed -n 's/.*currentWanGateway.*"\(.*\)".*/\1/p')
+				network_get_gateway ptarget_ip $wan_net_name
 			fi
 		fi
 
@@ -694,24 +655,32 @@ initialize_qos()
 define_interface()
 {
 	#Wait for up to 15 seconds for the wan interface to indicate it is up.
+	network_find_wan wan_net_name
 	wait_sec=15
-	while [ -z $(uci -P /var/state get network.wan.up 2>/dev/null) ] && [ $wait_sec -gt 0 ] ; do
+	while [ -z "$wan_net_name" ] && [ $wait_sec -gt 0 ] ; do
 		sleep 1
 		wait_sec=$(($wait_sec - 1))
+		network_find_wan wan_net_name
 	done
 
-	#The interface name will depend on if pppoe is used or not.  If pppoe is used then 
-	#the name we are looking for is in network.wan.ifname.  If there is nothing there
-	#use the device named by network.wan.device
+	[ -z "$wan_net_name" ] && {
+		echo "Network is not available."
+		exit 0
+	}
 
-	qos_interface=$(uci -P /var/state get network.wan.ifname 2>/dev/null)
-	if [ -z $qos_interface ] ; then
-		qos_interface=$(uci -P /var/state get network.wan.device 2>/dev/null)
-	fi
+	network_get_device qos_interface $wan_net_name
+	network_get_ipaddr wan_ip $wan_net_name
+	network_get_ipaddr local_ip lan
+}
 
-	wan_ip=$(ifconfig $qos_interface | sed -n 's/.*inet addr:\([0-9/.]*\).*/\1/p')
-	local_ip=$(ifconfig br-lan | sed -n 's/.*inet addr:\([0-9/.]*\).*/\1/p')
-
+ipt_delete_rule()
+{
+	linenum=$(iptables -t $1 -nL $2 --line-numbers | grep $3 | cut -d ' ' -f 1 | head -n 1)
+	while [ -n "$linenum" ]
+	do
+		iptables -t $1 -D $2 $linenum
+		linenum=$(iptables -t $1 -nL $2 --line-numbers | grep $3 | cut -d ' ' -f 1 | head -n 1)
+	done
 }
 
 stop()
@@ -736,8 +705,13 @@ stop()
 	done
 
 	# eliminate existing rules in mangle table
-	delete_chain_from_table "mangle" "qos_egress"
-	delete_chain_from_table "mangle" "qos_ingress"
+	ipt_delete_rule "mangle" "POSTROUTING" "qos_egress"
+	ipt_delete_rule "mangle" "FORWARD" "qos_ingress"
+	ipt_delete_rule "mangle" "INPUT" "qos_ingress"
+	iptables -t mangle -F qos_ingress
+	iptables -t mangle -F qos_egress
+	iptables -t mangle -X qos_ingress
+	iptables -t mangle -X qos_egress
 	$echo_off
 
 }
@@ -745,8 +719,8 @@ stop()
 
 start()
 {
-	test_total_up=$(uci get qos_gargoyle.upload.total_bandwidth 2>/dev/null)
-	test_total_down=$(uci get qos_gargoyle.download.total_bandwidth 2>/dev/null)
+	test_total_up=$(uci get qos_guoguo.upload.total_bandwidth 2>/dev/null)
+	test_total_down=$(uci get qos_guoguo.download.total_bandwidth 2>/dev/null)
 	if [ -z "$test_total_up" ] && [ -z "$test_total_down" ] ;then
 		disable
 		exit 0
@@ -774,7 +748,6 @@ start()
 	#load qos_interface from global variables
 	define_interface
 	if [ -n "$qos_interface" ] ; then
-
 		load_all_config_options "$config_file_name" "global"
 		initialize_qos
 	fi
