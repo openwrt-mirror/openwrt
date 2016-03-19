@@ -258,7 +258,7 @@ static void __init wr941ndv7_setup(void)
 	ar8236_reset();
 
 	ath79_setup_qca955x_eth_cfg(QCA955X_ETH_CFG_GE0_MII_EN |
-		QCA955X_ETH_CFG_GE0_MII_SLAVE);
+		QCA955X_ETH_CFG_GE0_MII_SLAVE, 3, 3, 0, 0);
 
 	mdiobus_register_board_info(wr941ndv7_mdio0_info,
 				    ARRAY_SIZE(wr941ndv7_mdio0_info));
