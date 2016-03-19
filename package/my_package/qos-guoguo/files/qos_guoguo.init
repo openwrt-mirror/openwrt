@@ -63,20 +63,14 @@ load_all_config_sections()
 
 	all_config_sections=""
 	section_order=""
-	config_cb()
+
+	get_section_names()
 	{
-		if [ -n "$2" ] || [ -n "$1" ] ; then
-			if [ -n "$section_type" ] ; then
-				if [ "$1" = "$section_type" ] ; then
-					all_config_sections="$all_config_sections $2"
-				fi
-			else
-				all_config_sections="$all_config_sections $2"
-			fi
-		fi
+		all_config_sections="$all_config_sections $1"
 	}
 
 	config_load "$config_name"
+	config_foreach "$section_type" get_section_names
 	echo "$all_config_sections"
 
 }
