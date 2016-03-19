@@ -1670,10 +1670,10 @@ diff --git a/net/core/skbuff.c b/net/core/skbuff.c
 index 20c29b9..e4b01a3 100644
 --- a/net/core/skbuff.c
 +++ b/net/core/skbuff.c
-@@ -80,6 +80,86 @@
- 
- struct kmem_cache *skbuff_head_cache __read_mostly;
+@@ -82,6 +82,86 @@
  static struct kmem_cache *skbuff_fclone_cache __read_mostly;
+ int sysctl_max_skb_frags __read_mostly = MAX_SKB_FRAGS;
+ EXPORT_SYMBOL(sysctl_max_skb_frags);
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +static struct kmem_cache *skbuff_cb_store_cache __read_mostly;
 +#endif
