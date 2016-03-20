@@ -623,7 +623,8 @@ int tc_class_modify(__u32 rate)
             return 1;
     }
 
-    if (rtnl_talk(&rth, &req.n, &req.n, sizeof(req)) < 0)
+
+    if (rtnl_talk(&rth, &req.n, NULL, 0) < 0)
         return 2;
 
     return 0;
