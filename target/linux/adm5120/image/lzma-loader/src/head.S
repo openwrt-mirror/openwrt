@@ -56,7 +56,7 @@
 LEAF(startup)
 	.set noreorder
 	.set mips32
-	
+
 	mtc0	zero, C0_WATCHLO	# clear watch registers
 	mtc0	zero, C0_WATCHHI
 
@@ -195,10 +195,10 @@ noic:
 	sw	a2, 8(sp)
 	sw	a3, 12(sp)
 #endif
-	sw	s3, 16(sp)		/* icache line size */
-	sw	s4, 20(sp)		/* icache size */
-	sw	s1, 24(sp)		/* dcache line size */
-	sw	s2, 28(sp)		/* dcache size */
+	sw	s4, 16(sp)		/* icache size */
+	sw	s3, 20(sp)		/* icache line size */
+	sw	s2, 24(sp)		/* dcache size */
+	sw	s1, 28(sp)		/* dcache line size */
 
 	/* jump to the decompressor routine */
 	la	t0, decompress_entry

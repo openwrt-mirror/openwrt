@@ -354,6 +354,9 @@ ar71xx_board_detect() {
 	*"AirRouter")
 		name="airrouter"
 		;;
+	*"ALFA Network AP120C")
+		name="alfa-ap120c"
+		;;
 	*"ALFA Network AP96")
 		name="alfa-ap96"
 		;;

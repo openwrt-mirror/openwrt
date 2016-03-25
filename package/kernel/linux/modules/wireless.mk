@@ -7,28 +7,14 @@
 
 WIRELESS_MENU:=Wireless Drivers
 
-define KernelPackage/net-airo
-  SUBMENU:=$(WIRELESS_MENU)
-  TITLE:=Cisco Aironet driver
-  DEPENDS:=@PCI_SUPPORT +@DRIVER_WEXT_SUPPORT
-  KCONFIG:=CONFIG_AIRO
-  FILES:=$(LINUX_DIR)/drivers/net/wireless/airo.ko
-  AUTOLOAD:=$(call AutoProbe,airo)
-endef
-
-define KernelPackage/net-airo/description
- Kernel support for Cisco Aironet cards
-endef
-
-$(eval $(call KernelPackage,net-airo))
-
-
 define KernelPackage/net-prism54
   SUBMENU:=$(WIRELESS_MENU)
   TITLE:=Intersil Prism54 support
   DEPENDS:=@PCI_SUPPORT +@DRIVER_WEXT_SUPPORT
   KCONFIG:=CONFIG_PRISM54
-  FILES:=$(LINUX_DIR)/drivers/net/wireless/prism54/prism54.ko
+  FILES:= \
+	$(LINUX_DIR)/drivers/net/wireless/prism54/prism54.ko@lt4.5 \
+	$(LINUX_DIR)/drivers/net/wireless/intersil/prism54/prism54.ko@ge4.5
   AUTOLOAD:=$(call AutoProbe,prism54)
 endef
 
@@ -53,24 +39,6 @@ endef
 $(eval $(call Download,net-prism54))
 $(eval $(call KernelPackage,net-prism54))
 
-define KernelPackage/net-rtl8188eu
-  SUBMENU:=$(WIRELESS_MENU)
-  TITLE:=RTL8188EU support (staging)
-  DEPENDS:=@USB_SUPPORT +@DRIVER_WEXT_SUPPORT +r8188eu-firmware +kmod-usb-core
-  KCONFIG:=\
-	CONFIG_STAGING=y \
-	CONFIG_R8188EU \
-	CONFIG_88EU_AP_MODE=y \
-	CONFIG_88EU_P2P=n
-  FILES:=$(LINUX_DIR)/drivers/staging/rtl8188eu/r8188eu.ko
-  AUTOLOAD:=$(call AutoProbe,r8188eu)
-endef
-
-define KernelPackage/net-rtl8188eu/description
- Kernel modules for RealTek RTL8188EU support
-endef
-
-$(eval $(call KernelPackage,net-rtl8188eu))
 
 define KernelPackage/net-rtl8192su
   SUBMENU:=$(WIRELESS_MENU)
