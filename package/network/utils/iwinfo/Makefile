@@ -27,6 +27,8 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_PACKAGE_kmod-mt7620 \
 	CONFIG_PACKAGE_kmod-rt2860v2_ap \
 	CONFIG_PACKAGE_kmod-mt76x2e-epa \
+	CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf \
+	CONFIG_PACKAGE_kmod-qca-wifi-10.4-akronite-perf \
 	CONFIG_PACKAGE_kmod-cfg80211
 
 include $(INCLUDE_DIR)/package.mk
@@ -36,7 +38,7 @@ define Package/libiwinfo
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Generalized Wireless Information Library (iwinfo)
-  DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +libuci
+  DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +PACKAGE_qca-wifi-fw-empty:kmod-qca-wifi-10.4-perf +libuci
   ABI_VERSION:=$(PKG_RELEASE)
 endef
 
@@ -84,6 +86,8 @@ IWINFO_BACKENDS := \
 	$(if $(CONFIG_PACKAGE_kmod-mt7620),rt2860v2) \
 	$(if $(CONFIG_PACKAGE_kmod-rt2860v2_ap),rt2860v2) \
 	$(if $(CONFIG_PACKAGE_kmod-mt76x2e-epa),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf),qcawifi) \
+	$(if $(CONFIG_PACKAGE_kmod-qca-wifi-10.4-akronite-perf),qcawifi) \
 	$(if $(CONFIG_PACKAGE_kmod-cfg80211),nl80211)
 
 TARGET_CFLAGS += \
