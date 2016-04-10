@@ -214,6 +214,10 @@ get_status_led() {
 	om5p-an)
 		status_led="om5p:blue:power"
 		;;
+	om5p-ac | \
+	om5p-acv2)
+		status_led="om5pac:blue:power"
+		;;
 	omy-x1)
 		status_led="omy:green:power"
 		;;
@@ -301,6 +305,7 @@ get_status_led() {
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
+	tl-wa901nd-v4 | \
 	tl-wdr3320-v2 | \
 	tl-wdr3500 | \
 	tl-wdr6300 | \
@@ -390,6 +395,9 @@ get_status_led() {
 		;;
 	wp543)
 		status_led="wp543:green:diag"
+		;;
+	wpj342)
+		status_led="wpj342:green:sig3"
 		;;
 	wpj344)
 		status_led="wpj344:green:status"

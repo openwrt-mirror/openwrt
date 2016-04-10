@@ -655,6 +655,12 @@ ar71xx_board_detect() {
 	*"OM5P AN")
 		name="om5p-an"
 		;;
+	*"OM5P AC")
+		name="om5p-ac"
+		;;
+	*"OM5P ACv2")
+		name="om5p-acv2"
+		;;
 	*"OMY-X1")
 		name="omy-x1"
 		;;
@@ -865,6 +871,9 @@ ar71xx_board_detect() {
 	*"TL-WA901ND v3")
 		name="tl-wa901nd-v3"
 		;;
+	*"TL-WA901ND v4")
+		name="tl-wa901nd-v4"
+		;;
 	*"TL-WDR3320 v2")
 		name="tl-wdr3320-v2"
 		;;
@@ -978,6 +987,9 @@ ar71xx_board_detect() {
 		;;
 	*WPE72)
 		name="wpe72"
+		;;
+	*WPJ342)
+		name="wpj342"
 		;;
 	*WPJ344)
 		name="wpj344"

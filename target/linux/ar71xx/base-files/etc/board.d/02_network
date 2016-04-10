@@ -366,6 +366,7 @@ tl-wa801nd-v2 |\
 tl-wa901nd |\
 tl-wa901nd-v2 |\
 tl-wa901nd-v3 |\
+tl-wa901nd-v4 |\
 tl-wr703n |\
 tube2h |\
 unifiac |\
@@ -405,6 +406,11 @@ gl-ar300)
 	ucidef_set_interfaces_lan_wan "eth1" "eth0"
 	ucidef_add_switch "switch0" \
 		"0@eth1" "1:lan" "2:lan" "3:lan" "4:lan"
+	;;
+
+wpj342)
+	ucidef_add_switch "switch0" \
+		"0@eth0" "1:lan" "2:wan"
 	;;
 
 wpj344)
