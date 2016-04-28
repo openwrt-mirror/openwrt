@@ -18,13 +18,13 @@ $(eval $(call Profile,BTHOMEHUBV2B))
 
 define Profile/BTHOMEHUBV3A
   NAME:=BT Home Hub 3A
-  PACKAGES:=kmod-ltq-hcd-ar9 kmod-ledtrig-usbdev \
+  PACKAGES:=kmod-usb-dwc2 kmod-ledtrig-usbdev \
 	kmod-ltq-adsl-ar9-mei kmod-ltq-adsl-ar9 \
 	kmod-ltq-adsl-ar9-fw-a kmod-ltq-atm-ar9 \
 	kmod-ltq-deu-ar9 \
 	ltq-adsl-app ppp-mod-pppoa \
 	kmod-ath9k wpad-mini \
-	swconfig
+	swconfig uboot-envtools
 endef
 
 BTHOMEHUBV3A_UBIFS_OPTS:="-m 512 -e 15872 -c 1959"

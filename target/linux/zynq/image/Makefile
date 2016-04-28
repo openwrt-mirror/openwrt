@@ -70,6 +70,13 @@ define Device/ZC702
 	$(call Device/DefaultConfig,zc702)
 endef
 
+define Device/ZED
+	$(call Device/DefaultConfig,zed)
+endef
+
+define Device/ZYBO
+	$(call Device/DefaultConfig,zybo)
+endef
 
 define Image/BuildKernel
 	$(eval $(call Device/$(PROFILE)))

@@ -64,6 +64,19 @@ endef
 BuildFirmware/Tplink/squashfs=$(call BuildFirmware/OF/tplink,$(1),$(2),$(3),$(4))
 BuildFirmware/Tplink/initramfs=$(call BuildFirmware/OF/tplink/initramfs,$(1),$(2),$(3),$(4))
 
+define BuildFirmware/WRH-300CR/squashfs
+	$(call BuildFirmware/Default16M/squashfs,$(1),$(2),$(3))
+	cp $(call sysupname,$(1),$(2)) $(KDIR)/v_0.0.0.bin
+	( \
+		$(STAGING_DIR_HOST)/bin/md5sum $(KDIR)/v_0.0.0.bin | \
+			sed 's/ .*//' && \
+		echo 458 \
+	) | $(STAGING_DIR_HOST)/bin/md5sum | \
+		sed 's/ .*//' > $(KDIR)/v_0.0.0.md5
+	$(STAGING_DIR_HOST)/bin/tar -cf $(call imgname,$(1),$(2))-factory.bin -C $(KDIR) v_0.0.0.bin v_0.0.0.md5
+endef
+BuildFirmware/WRH-300CR/initramfs=$(call BuildFirmware/Default16M/initramfs,$(1),$(2),$(3))
+
 
 Image/Build/Profile/E1700=$(call BuildFirmware/UMedia/$(1),$(1),e1700,E1700,0x013326)
 ex2700_mtd_size=3866624
@@ -82,11 +95,13 @@ whr_1166d_mtd_size=15400960
 Image/Build/Profile/WHR1166D=$(call BuildFirmware/CustomFlash/$(1),$(1),whr-1166d,WHR-1166D,$(whr_1166d_mtd_size))
 dlink810l_mtd_size=6881280
 Image/Build/Profile/CF-WR800N=$(call BuildFirmware/Default8M/$(1),$(1),cf-wr800n,CF-WR800N)
+Image/Build/Profile/CS-QR10=$(call BuildFirmware/Default8M/$(1),$(1),cs-qr10,CS-QR10)
 Image/Build/Profile/DIR-810L=$(call BuildFirmware/CustomFlash/$(1),$(1),dir-810l,DIR-810L,$(dlink810l_mtd_size))
 na930_mtd_size=20971520
 Image/Build/Profile/NA930=$(call BuildFirmware/CustomFlash/$(1),$(1),na930,NA930,$(na930_mtd_size))
 Image/Build/Profile/DB-WRT01=$(call BuildFirmware/Default8M/$(1),$(1),db-wrt01,DB-WRT01)
 Image/Build/Profile/MZK-750DHP=$(call BuildFirmware/Default8M/$(1),$(1),mzk-750dhp,MZK-750DHP)
+Image/Build/Profile/MZK-EX300NP=$(call BuildFirmware/Default8M/$(1),$(1),mzk-ex300np,MZK-EX300NP)
 Image/Build/Profile/HC5661=$(call BuildFirmware/Default16M/$(1),$(1),hc5661,HC5661)
 Image/Build/Profile/HC5761=$(call BuildFirmware/Default16M/$(1),$(1),hc5761,HC5761)
 Image/Build/Profile/HC5861=$(call BuildFirmware/Default16M/$(1),$(1),hc5861,HC5861)
@@ -98,6 +113,7 @@ Image/Build/Profile/MLW221=$(call BuildFirmware/Default16M/$(1),$(1),mlw221,MLW2
 Image/Build/Profile/MLWG2=$(call BuildFirmware/Default16M/$(1),$(1),mlwg2,MLWG2)
 Image/Build/Profile/WMR-300=$(call BuildFirmware/Default8M/$(1),$(1),wmr-300,WMR-300)
 Image/Build/Profile/RT-N14U=$(call BuildFirmware/Default8M/$(1),$(1),rt-n14u,RT-N14U)
+Image/Build/Profile/WRH-300CR=$(call BuildFirmware/WRH-300CR/$(1),$(1),wrh-300cr,WRH-300CR)
 Image/Build/Profile/WRTNODE=$(call BuildFirmware/Default16M/$(1),$(1),wrtnode,WRTNODE)
 Image/Build/Profile/WT3020=$(call BuildFirmware/PorayDualSize/$(1),$(1),wt3020,WT3020)
 Image/Build/Profile/MIWIFI-MINI=$(call BuildFirmware/Default16M/$(1),$(1),miwifi-mini,MIWIFI-MINI)
@@ -124,6 +140,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/MT7620a_V22SG,$(1))
 	$(call Image/Build/Profile/AI-BR100,$(1))
 	$(call Image/Build/Profile/CF-WR800N,$(1))
+	$(call Image/Build/Profile/CS-QR10,$(1))
 	$(call Image/Build/Profile/RP-N53,$(1))
 	$(call Image/Build/Profile/DIR-810L,$(1))
 	$(call Image/Build/Profile/WHR300HP2,$(1))
@@ -131,6 +148,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/WHR1166D,$(1))
 	$(call Image/Build/Profile/DB-WRT01,$(1))
 	$(call Image/Build/Profile/MZK-750DHP,$(1))
+	$(call Image/Build/Profile/MZK-EX300NP,$(1))
 	$(call Image/Build/Profile/NA930,$(1))
 	$(call Image/Build/Profile/HC5661,$(1))
 	$(call Image/Build/Profile/HC5761,$(1))
@@ -143,6 +161,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/MLWG2,$(1))
 	$(call Image/Build/Profile/WMR-300,$(1))
 	$(call Image/Build/Profile/RT-N14U,$(1))
+	$(call Image/Build/Profile/WRH-300CR,$(1))
 	$(call Image/Build/Profile/WRTNODE,$(1))
 	$(call Image/Build/Profile/WT3020,$(1))
 	$(call Image/Build/Profile/MIWIFI-MINI,$(1))

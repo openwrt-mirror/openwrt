@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2015 OpenWrt.org
+# Copyright (C) 2007-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=curl
-PKG_VERSION:=7.47.0
+PKG_VERSION:=7.48.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -18,7 +18,7 @@ PKG_SOURCE_URL:=http://curl.haxx.se/download/ \
 	ftp://ftp.planetmirror.com/pub/curl/ \
 	http://www.mirrormonster.com/curl/download/ \
 	http://curl.mirrors.cyberservers.net/download/
-PKG_MD5SUM:=85c58a00412476993050cb242a3f365d
+PKG_MD5SUM:=d42e0fc34a5cace5739631cc040974fe
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
@@ -65,7 +65,8 @@ PKG_CONFIG_DEPENDS:= \
   CONFIG_LIBCURL_THREADED_RESOLVER \
   CONFIG_LIBCURL_TLS_SRP \
   CONFIG_LIBCURL_UNIX_SOCKETS \
-  CONFIG_LIBCURL_VERBOSE
+  CONFIG_LIBCURL_VERBOSE \
+  CONFIG_LIBCURL_NTLM
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -98,7 +99,9 @@ define Package/libcurl/config
   source "$(SOURCE)/Config.in"
 endef
 
-TARGET_CFLAGS += $(FPIC)
+TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
+TARGET_CPPFLAGS += $(if $(CONFIG_LIBCURL_NTLM),,-DCURL_DISABLE_NTLM)
+TARGET_LDFLAGS += -Wl,--gc-sections
 
 CONFIGURE_ARGS += \
 	--disable-debug \

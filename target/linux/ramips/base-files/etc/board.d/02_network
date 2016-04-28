@@ -81,11 +81,13 @@ ramips_setup_interfaces()
 	whr-300hp2|\
 	whr-600d|\
 	witi|\
+	wndr3700v5|\
 	wsr-1166|\
 	wsr-600|\
 	wt1520|\
 	y1|\
 	zbt-wg2626|\
+	zbt-wg3526|\
 	youku-yk1)
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6@eth0"
@@ -159,10 +161,13 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "9@eth0"
 		;;
+	cs-qr10|\
 	d105|\
 	hpm|\
+	mzk-ex300np|\
 	na930|\
-	wli-tx4-ag300n)
+	wli-tx4-ag300n|\
+	wrh-300cr)
 		ucidef_set_interface_lan "eth0"
 		;;
 	e1700|\

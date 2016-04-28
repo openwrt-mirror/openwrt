@@ -1,18 +1,18 @@
-From a4df3e7e4e906a4e9dac1f8c43f6192f22ef6242 Mon Sep 17 00:00:00 2001
+From 5536a546755527a862cb2494814c5244d3d8e30a Mon Sep 17 00:00:00 2001
 From: John Crispin <blogic@openwrt.org>
 Date: Tue, 5 Jan 2016 12:16:17 +0100
-Subject: [PATCH 23/81] ARM: dts: mediatek: add MT7623 basic support
+Subject: [PATCH 23/90] ARM: dts: mediatek: add MT7623 basic support
 
 This adds basic chip support for Mediatek MT7623.
 
 Signed-off-by: John Crispin <blogic@openwrt.org>
 ---
  arch/arm/boot/dts/Makefile        |    1 +
- arch/arm/boot/dts/mt7623-evb.dts  |  459 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/mt7623.dtsi     |  510 +++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/mt7623-evb.dts  |  474 ++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/mt7623.dtsi     |  583 +++++++++++++++++++++++++++++++++++++
  arch/arm/mach-mediatek/Kconfig    |    4 +
  arch/arm/mach-mediatek/mediatek.c |    1 +
- 5 files changed, 975 insertions(+)
+ 5 files changed, 1063 insertions(+)
  create mode 100644 arch/arm/boot/dts/mt7623-evb.dts
  create mode 100644 arch/arm/boot/dts/mt7623.dtsi
 
@@ -30,10 +30,10 @@ index 30bbc37..2bce370 100644
  dtb-$(CONFIG_ARCH_ZX) += zx296702-ad1.dtb
 diff --git a/arch/arm/boot/dts/mt7623-evb.dts b/arch/arm/boot/dts/mt7623-evb.dts
 new file mode 100644
-index 0000000..5e9381d
+index 0000000..70b92a4
 --- /dev/null
 +++ b/arch/arm/boot/dts/mt7623-evb.dts
-@@ -0,0 +1,459 @@
+@@ -0,0 +1,474 @@
 +/*
 + * Copyright (c) 2016 MediaTek Inc.
 + * Author: John Crispin <blogic@openwrt.org>
@@ -73,6 +73,22 @@ index 0000000..5e9381d
 +		gpio = <&pio 135 GPIO_ACTIVE_HIGH>;
 +		enable-active-high;
 +	};
++};
++
++&cpu0 {
++	proc-supply = <&mt6323_vproc_reg>;
++};
++
++&cpu1 {
++	proc-supply = <&mt6323_vproc_reg>;
++};
++
++&cpu2 {
++	proc-supply = <&mt6323_vproc_reg>;
++};
++
++&cpu3 {
++	proc-supply = <&mt6323_vproc_reg>;
 +};
 +
 +&pwrap {
@@ -461,7 +477,6 @@ index 0000000..5e9381d
 +&usb1 {
 +	vusb33-supply = <&mt6323_vusb_reg>;
 +	vbus-supply = <&usb_p1_vbus>;
-+//	mediatek,wakeup-src = <1>;
 +	status = "okay";
 +};
 +
@@ -495,10 +510,10 @@ index 0000000..5e9381d
 +};
 diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
 new file mode 100644
-index 0000000..c53c10d
+index 0000000..0536b2c
 --- /dev/null
 +++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -0,0 +1,510 @@
+@@ -0,0 +1,583 @@
 +/*
 + * Copyright (c) 2016 MediaTek Inc.
 + * Author: John Crispin <blogic@openwrt.org>
@@ -532,25 +547,65 @@ index 0000000..c53c10d
 +		#size-cells = <0>;
 +		enable-method = "mediatek,mt6589-smp";
 +
-+		cpu@0 {
++		cpu0: cpu@0 {
 +			device_type = "cpu";
 +			compatible = "arm,cortex-a7";
 +			reg = <0x0>;
++			clocks = <&infracfg CLK_INFRA_CPUSEL>,
++				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
++			operating-points = <
++				598000 1150000
++				747500 1150000
++				1040000 1150000
++				1196000 1200000
++				1300000 1300000
++			>;
 +		};
-+		cpu@1 {
++		cpu1: cpu@1 {
 +			device_type = "cpu";
 +			compatible = "arm,cortex-a7";
 +			reg = <0x1>;
++			clocks = <&infracfg CLK_INFRA_CPUSEL>,
++				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
++			operating-points = <
++				598000 1150000
++				747500 1150000
++				1040000 1150000
++				1196000 1200000
++				1300000 1300000
++			>;
 +		};
-+		cpu@2 {
++		cpu2: cpu@2 {
 +			device_type = "cpu";
 +			compatible = "arm,cortex-a7";
 +			reg = <0x2>;
++			clocks = <&infracfg CLK_INFRA_CPUSEL>,
++				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
++			operating-points = <
++				598000 1150000
++				747500 1150000
++				1040000 1150000
++				1196000 1200000
++				1300000 1300000
++			>;
 +		};
-+		cpu@3 {
++		cpu3: cpu@3 {
 +			device_type = "cpu";
 +			compatible = "arm,cortex-a7";
 +			reg = <0x3>;
++			clocks = <&infracfg CLK_INFRA_CPUSEL>,
++				 <&apmixedsys CLK_APMIXED_MAINPLL>;
++			clock-names = "cpu", "intermediate";
++			operating-points = <
++				598000 1150000
++				747500 1150000
++				1040000 1150000
++				1196000 1200000
++				1300000 1300000
++			>;
 +		};
 +	};
 +
@@ -581,6 +636,8 @@ index 0000000..c53c10d
 +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
 +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
 +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++		clock-frequency = <13000000>;
++		arm,cpu-registers-not-fw-configured;
 +	};
 +
 +	topckgen: power-controller@10000000 {
@@ -793,6 +850,18 @@ index 0000000..c53c10d
 +		status = "disabled";
 +	};
 +
++	nand: nfi@1100d000 {
++		compatible = "mediatek,mt2701-nfc";
++		reg = <0 0x1100d000 0 0x1000>, <0 0x1100e000 0 0x1000>;
++		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 55 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&pericfg CLK_PERI_NFI>, <&pericfg CLK_PERI_NFI_ECC>,
++			 <&pericfg CLK_PERI_NFI_PAD>;
++		clock-names = "nfi_clk", "nfiecc_clk", "pad_clk";
++	//	nand-on-flash-bbt;
++		status = "disabled";
++	};
++
 +	mmc0: mmc@11230000 {
 +		compatible = "mediatek,mt7623-mmc",
 +			     "mediatek,mt8135-mmc";
@@ -942,25 +1011,32 @@ index 0000000..c53c10d
 +	};
 +
 +	ethsys: syscon@1b000000 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
 +		compatible = "mediatek,mt2701-ethsys", "syscon";
 +		reg = <0 0x1b000000 0 0x1000>;
++		#reset-cells = <1>;
 +		#clock-cells = <1>;
 +	};
 +
 +	eth: ethernet@1b100000 {
 +		compatible = "mediatek,mt7623-eth";
-+		reg = <0 0x1b100000 0 0x10000>;
++		reg = <0 0x1b100000 0 0x20000>;
 +	
-+		clocks = <&topckgen CLK_TOP_ETHIF_SEL>;
-+		clock-names = "ethif";
++		clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
++			 <&ethsys CLK_ETHSYS_ESW>,
++			 <&ethsys CLK_ETHSYS_GP2>,
++			 <&ethsys CLK_ETHSYS_GP1>;
++		clock-names = "ethif", "esw", "gp2", "gp1";
 +		interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_LOW
 +			      GIC_SPI 199 IRQ_TYPE_LEVEL_LOW
 +			      GIC_SPI 198 IRQ_TYPE_LEVEL_LOW>;
 +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
 +
++		resets = <&ethsys 6>;
++		reset-names = "eth";
++
 +		mediatek,ethsys = <&ethsys>;
++		mediatek,pctl = <&syscfg_pctl_a>;
++
 +		mediatek,switch = <&gsw>;
 +
 +		#address-cells = <1>;
@@ -973,18 +1049,32 @@ index 0000000..c53c10d
 +			reg = <0>;
 +
 +			status = "disabled";
++			
++			phy-mode = "rgmii";
++			
++			fixed-link {
++				speed = <1000>;
++				full-duplex;
++				pause;
++			};
 +		};
 +
 +		gmac2: mac@1 {
 +			compatible = "mediatek,eth-mac";
 +			reg = <1>;
 +
++			phy-handle = <&phy5>;
 +			status = "disabled";
 +		};
 +	
 +		mdio-bus {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
++
++			phy5: ethernet-phy@5 {
++				reg = <5>;
++				phy-mode = "rgmii-rxid";
++			};
 +
 +			phy1f: ethernet-phy@1f {
 +				reg = <0x1f>;
@@ -995,14 +1085,12 @@ index 0000000..c53c10d
 +
 +	gsw: switch@1b100000 {
 +		compatible = "mediatek,mt7623-gsw";
-+		reg = <0 0x1b110000 0 0x300000>;
 +		interrupt-parent = <&pio>;
 +		interrupts = <168 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&apmixedsys CLK_APMIXED_TRGPLL>,
-+			 <&ethsys CLK_ETHSYS_ESW>,
-+			 <&ethsys CLK_ETHSYS_GP2>,
-+			 <&ethsys CLK_ETHSYS_GP1>;
-+		clock-names = "trgpll", "esw", "gp2", "gp1";
++		resets = <&ethsys 2>;
++		reset-names = "eth";
++		clocks = <&apmixedsys CLK_APMIXED_TRGPLL>;
++		clock-names = "trgpll";
 +		mt7530-supply = <&mt6323_vpa_reg>;
 +		mediatek,pctl-regmap = <&syscfg_pctl_a>;
 +		mediatek,ethsys = <&ethsys>;
