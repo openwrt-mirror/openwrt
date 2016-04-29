@@ -11,7 +11,7 @@ EXTRA_COMMANDS=show
 EXTRA_HELP="	show	Show current Qos configuration (if active)"
 
 . ${IPKG_INSTROOT}/lib/functions/network.sh
-include /lib/network
+. ${IPKG_INSTROOT}/lib/network/config.sh
 
 config_file_name="qos_guoguo"
 upload_mask="0x007F"
