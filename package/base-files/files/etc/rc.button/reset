@@ -16,8 +16,6 @@ released)
 	if [ "$SEEN" -lt 1 ]
 	then
 		type hostapd_cli || exit
-		WPS_LED=$(ls /sys/class/leds | grep -E 'qss|wps' | head -n 1)
-		[ -z $WPS_LED ] || led_timer $WPS_LED 150 150
 
 		cd /var/run/hostapd
 		for socket in *; do
@@ -31,8 +29,6 @@ released)
 			}
 		done
 
-		sleep 1
-		[ -z $WPS_LED ] || led_off $WPS_LED
 	elif [ "$SEEN" -le 5 ] && [ "$SEEN" -ge 2 ]
 	then
 		echo "Unmount Hard Disks" > /dev/console
