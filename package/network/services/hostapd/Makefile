@@ -35,6 +35,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_DRIVER_WEXT_SUPPORT \
 	CONFIG_DRIVER_11N_SUPPORT
 
+PKG_BUILD_DEPENDS:=qca-wifi-10.4
+
 LOCAL_TYPE=$(strip \
 		$(if $(findstring wpad,$(BUILD_VARIANT)),wpad, \
 		$(if $(findstring supplicant,$(BUILD_VARIANT)),supplicant, \
@@ -103,7 +105,7 @@ ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS_C += -lrt
 endif
 
-DRV_DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +PACKAGE_qca-wifi-fw-empty:kmod-qca-wifi-10.4-perf
+DRV_DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny
 
 define Package/hostapd/Default
   SECTION:=net
