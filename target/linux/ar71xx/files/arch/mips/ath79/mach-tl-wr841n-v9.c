@@ -21,6 +21,7 @@
 #include "dev-m25p80.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "tplink-wmac.h"
 
 #define TL_WR841NV9_GPIO_LED_WLAN	13
 #define TL_WR841NV9_GPIO_LED_QSS	3
@@ -99,8 +100,6 @@ static struct gpio_keys_button tl_wr841n_v9_gpio_keys[] __initdata = {
 static void __init tl_ap143_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&tl_wr841n_v9_flash_data);
 
@@ -124,8 +123,7 @@ static void __init tl_ap143_setup(void)
 	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
 	ath79_register_eth(0);
 
-	ath79_init_mac(tmpmac, mac, 0);
-	ath79_register_wmac(ee, tmpmac);
+    tplink_register_builtin_wmac1(0x1000, mac, -1);
 }
 
 static void __init tl_wr841n_v9_setup(void)

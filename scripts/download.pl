@@ -188,6 +188,7 @@ foreach my $mirror (@ARGV) {
 			push @mirrors, "https://raw.githubusercontent.com/$1";
 		}
 	} elsif ($mirror =~ /^\@GNU\/(.+)$/) {
+		push @mirrors, "http://mirrors.ustc.edu.cn/gnu/$1";
 		push @mirrors, "http://ftpmirror.gnu.org/$1";
 		push @mirrors, "http://ftp.gnu.org/pub/gnu/$1";
 		push @mirrors, "ftp://ftp.belnet.be/mirror/ftp.gnu.org/gnu/$1";
@@ -206,6 +207,7 @@ foreach my $mirror (@ARGV) {
 			push @extra, "$extra[0]/longterm/v$1";
 		}		
 		foreach my $dir (@extra) {
+			push @mirrors, "http://mirrors.ustc.edu.cn/kernel.org/$dir";
 			push @mirrors, "https://kernel.org/pub/$dir";
 			push @mirrors, "ftp://kernel.org/pub/$dir";
 		}

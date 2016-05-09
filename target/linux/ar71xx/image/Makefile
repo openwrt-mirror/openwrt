@@ -588,7 +588,7 @@ endef
 TARGET_DEVICES += onion-omega
 
 define Device/tl-mr10u-v1
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-MR10U
     DEVICE_PROFILE := TLMR10U
     TPLINK_HWID := 0x00100101
@@ -596,7 +596,7 @@ define Device/tl-mr10u-v1
 endef
 
 define Device/tl-mr11u-v1
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-MR11U
     DEVICE_PROFILE := TLMR11U
     TPLINK_HWID := 0x00110101
@@ -604,7 +604,7 @@ define Device/tl-mr11u-v1
 endef
 
 define Device/tl-mr11u-v2
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-MR11U
     DEVICE_PROFILE := TLMR11U
     TPLINK_HWID := 0x00110102
@@ -612,7 +612,7 @@ define Device/tl-mr11u-v2
 endef
 
 define Device/tl-mr12u-v1
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-MR13U
     DEVICE_PROFILE := TLMR12U
     TPLINK_HWID := 0x00120101
@@ -620,7 +620,7 @@ define Device/tl-mr12u-v1
 endef
 
 define Device/tl-mr13u-v1
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-MR13U
     DEVICE_PROFILE := TLMR13U
     TPLINK_HWID := 0x00130101
@@ -675,7 +675,7 @@ define Device/tl-mr3420-v1
 endef
 
 define Device/tl-mr3420-v2
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-MR3420-v2
     DEVICE_PROFILE := TLMR3420
     TPLINK_HWID := 0x34200002
@@ -683,7 +683,7 @@ endef
 TARGET_DEVICES += tl-mr3020-v1 tl-mr3040-v1 tl-mr3040-v2 tl-mr3220-v1 tl-mr3220-v2 tl-mr3420-v1 tl-mr3420-v2
 
 define Device/tl-wr703n-v1
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR703N
     DEVICE_PROFILE := TLWR703
     TPLINK_HWID := 0x07030101
@@ -716,7 +716,7 @@ define Device/tl-wr710n-v2.1
 endef
 
 define Device/tl-wr720n-v3
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR720N-v3
     DEVICE_PROFILE := TLWR720
     TPLINK_HWID := 0x07200103
@@ -747,7 +747,7 @@ define Device/tl-wr740n-v3
 endef
 
 define Device/tl-wr740n-v4
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR741ND-v4
     DEVICE_PROFILE := TLWR740
     TPLINK_HWID := 0x07400004
@@ -784,7 +784,7 @@ define Device/tl-wr741nd-v2
 endef
 
 define Device/tl-wr741nd-v4
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR741ND-v4
     DEVICE_PROFILE := TLWR741
     TPLINK_HWID := 0x07410004
@@ -815,7 +815,7 @@ define Device/tl-wr743nd-v1
 endef
 
 define Device/tl-wr743nd-v2
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR741ND-v4
     DEVICE_PROFILE := TLWR743
     TPLINK_HWID := 0x07430002
@@ -832,7 +832,7 @@ define Device/tl-wr841-v1.5
 endef
 
 define Device/tl-wr841-v3
-    $(Device/tplink-4m)
+    $(Device/tplink-8m)
     BOARDNAME := TL-WR941ND
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410003
@@ -840,7 +840,7 @@ define Device/tl-wr841-v3
 endef
 
 define Device/tl-wr841-v5
-    $(Device/tplink-4m)
+    $(Device/tplink-8m)
     BOARDNAME := TL-WR741ND
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410005
@@ -854,14 +854,14 @@ define Device/tl-wr841-v7
 endef
 
 define Device/tl-wr841-v8
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR841N-v8
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410008
 endef
 
 define Device/tl-wr841-v9
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR841N-v9
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08410009
@@ -903,7 +903,7 @@ define Device/tl-wr843nd-v1
 endef
 
 define Device/tl-wr847n-v8
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR841N-v8
     DEVICE_PROFILE := TLWR841
     TPLINK_HWID := 0x08470008
@@ -911,7 +911,7 @@ endef
 TARGET_DEVICES += tl-wr841-v1.5 tl-wr841-v3 tl-wr841-v5 tl-wr841-v7 tl-wr841-v8 tl-wr841-v9 tl-wr841-v10 tl-wr841-v11 tl-wr842n-v1 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
 
 define Device/tl-wr941nd-v2
-    $(Device/tplink-4m)
+    $(Device/tplink-8m)
     BOARDNAME := TL-WR941ND
     DEVICE_PROFILE := TLWR941
     TPLINK_HWID := 0x09410002
@@ -919,7 +919,7 @@ define Device/tl-wr941nd-v2
 endef
 
 define Device/tl-wr941nd-v3
-    $(Device/tplink-4m)
+    $(Device/tplink-8m)
     BOARDNAME := TL-WR941ND
     DEVICE_PROFILE := TLWR941
     TPLINK_HWID := 0x09410002
@@ -927,21 +927,21 @@ define Device/tl-wr941nd-v3
 endef
 
 define Device/tl-wr941nd-v4
-    $(Device/tplink-4m)
+    $(Device/tplink-8m)
     BOARDNAME := TL-WR741ND
     DEVICE_PROFILE := TLWR941
     TPLINK_HWID := 0x09410004
 endef
 
 define Device/tl-wr941nd-v5
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR941ND-v5
     DEVICE_PROFILE := TLWR941
     TPLINK_HWID := 0x09410005
 endef
 
 define Device/tl-wr941nd-v6
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR941ND-v6
     DEVICE_PROFILE := TLWR941
     TPLINK_HWID := 0x09410006
@@ -949,7 +949,7 @@ endef
 
 # Chinese version (unlike European) is similar to the TL-WDR3500
 define Device/tl-wr941nd-v6-cn
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WDR3500
     DEVICE_PROFILE := TLWR941
     TPLINK_HWID := 0x09410006
@@ -957,7 +957,7 @@ endef
 TARGET_DEVICES += tl-wr941nd-v2 tl-wr941nd-v3 tl-wr941nd-v4 tl-wr941nd-v5 tl-wr941nd-v6 tl-wr941nd-v6-cn
 
 define Device/tl-wr1041n-v2
-    $(Device/tplink-4mlzma)
+    $(Device/tplink-8mlzma)
     BOARDNAME := TL-WR1041N-v2
     DEVICE_PROFILE := TLWR1041
     TPLINK_HWID := 0x10410002
@@ -1156,6 +1156,28 @@ define Device/oolite
 endef
 TARGET_DEVICES += oolite
 
+define Device/tl-wr941nd-v7
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR941ND-v7
+    DEVICE_PROFILE := TLWR941NV7
+    TPLINK_HWID := 0x09410007
+endef
+
+define Device/tl-wr882n-v1
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR882N-v1
+    DEVICE_PROFILE := TLWR882N
+    TPLINK_HWID := 0x08820001
+endef
+
+define Device/tl-wdr6300-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WDR6300
+    DEVICE_PROFILE := TLWDR6300
+    TPLINK_HWID := 0x63000002
+endef
+TARGET_DEVICES += tl-wr941nd-v7 tl-wr882n-v1 tl-wdr6300-v2
+
 # UBNT_BOARD e.g. one of (XS2, XS5, RS, XM)
 # UBNT_TYPE e.g. one of (BZ, XM, XW)
 # UBNT_CHIP e.g. one of (ar7240, ar933x, ar934x)
@@ -1219,7 +1241,7 @@ define Device/ubnt-nano-m
   $(Device/ubnt-xm)
   BOARDNAME := UBNT-NM
 endef
-TARGET_DEVICES += rw2458n ubnt-airrouter ubnt-bullet-m ubnt-rocket-m ubnt-nano-m
+#TARGET_DEVICES += rw2458n ubnt-airrouter ubnt-bullet-m ubnt-rocket-m ubnt-nano-m
 
 define Device/ubnt-unifi
   $(Device/ubnt-bz)
@@ -1241,7 +1263,7 @@ define Device/ubnt-unifi-outdoor
   BOARDNAME := UBNT-U20
   DEVICE_PROFILE := UBNT UBNTUNIFIOUTDOOR
 endef
-TARGET_DEVICES += ubnt-unifi ubnt-unifiac ubnt-unifi-outdoor
+#TARGET_DEVICES += ubnt-unifi ubnt-unifiac ubnt-unifi-outdoor
 
 define Device/ubnt-nano-m-xw
   $(Device/ubnt-xw)
@@ -1264,7 +1286,7 @@ define Device/ubnt-rocket-m-ti
   UBNT_TYPE := TI
   UBNT_BOARD := XM
 endef
-TARGET_DEVICES += ubnt-nano-m-xw ubnt-loco-m-xw ubnt-rocket-m-xw ubnt-rocket-m-ti
+#TARGET_DEVICES += ubnt-nano-m-xw ubnt-loco-m-xw ubnt-rocket-m-xw ubnt-rocket-m-ti
 
 define Device/ubnt-air-gateway
   $(Device/ubnt-xm)
@@ -1274,7 +1296,7 @@ define Device/ubnt-air-gateway
   UBNT_CHIP := ar933x
   CONSOLE = ttyATH0,115200
 endef
-TARGET_DEVICES += ubnt-air-gateway
+#TARGET_DEVICES += ubnt-air-gateway
 
 define Device/ubnt-air-gateway-pro
   $(Device/ubnt-xm)
@@ -1283,7 +1305,7 @@ define Device/ubnt-air-gateway-pro
   UBNT_CHIP := ar934x
   CONSOLE = ttyS0,115200
 endef
-TARGET_DEVICES += ubnt-air-gateway-pro
+#TARGET_DEVICES += ubnt-air-gateway-pro
 
 define Device/ubdev01
   $(Device/ubnt-xm)
@@ -1294,7 +1316,7 @@ define Device/ubdev01
   UBNT_CHIP := ar7240
 endef
 
-TARGET_DEVICES += ubdev01
+#TARGET_DEVICES += ubdev01
 
 define Device/ubnt-routerstation
   IMAGE_SIZE := 16128k
@@ -1331,7 +1353,7 @@ $(Device/ubnt-routerstation)
   UBNT_CHIP := ar7100
 endef
 
-TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
+#TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
 
 define Device/ubnt-uap-pro
   KERNEL_SIZE := 1536k
@@ -1354,7 +1376,7 @@ $(Device/ubnt-uap-pro)
   DEVICE_PROFILE := UBNT
 endef
 
-TARGET_DEVICES += ubnt-uap-pro ubnt-unifi-outdoor-plus
+#TARGET_DEVICES += ubnt-uap-pro ubnt-unifi-outdoor-plus
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
@@ -1600,10 +1622,10 @@ alfa_ap96_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,256k(u-boot-env)ro,13312k(roo
 alfa_mtdlayout_8M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6144k(rootfs),1600k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
 alfa_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,15936k(firmware),64k(nvram),64k(art)ro
 all0258n_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),6272k(firmware),1536k(failsafe),64k(art)
-all0315n_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,256k(u-boot-env),13568k(firmware),2048k(failsafe),256k(art)ro
-ap81_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,5120k(rootfs),2688k(kernel),64k(art)ro,7808k@0x50000(firmware)
-ap83_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,128k(u-boot-env)ro,4096k(rootfs),3648k(kernel),64k(art)ro,7744k@0x60000(firmware)
-ap96_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,6144k(rootfs),1728k(kernel),64k(art)ro,7872k@0x40000(firmware)
+all0315n_mtdlayout=mtdparts=spi0.0:256k(u-boot),256k(u-boot-env),13568k(firmware),2048k(failsafe),256k(art)ro
+ap81_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,5120k(rootfs),2688k(kernel),64k(art)ro,7808k@0x50000(firmware)
+ap83_mtdlayout=mtdparts=spi0.0:256k(u-boot),128k(u-boot-env)ro,4096k(rootfs),3648k(kernel),64k(art)ro,7744k@0x60000(firmware)
+ap96_mtdlayout=mtdparts=spi0.0:192k(u-boot),64k(u-boot-env)ro,6144k(rootfs),1728k(kernel),64k(art)ro,7872k@0x40000(firmware)
 ap113_mtd_layout=mtdparts=spi0.0:64k(u-boot),3008k(rootfs),896k(uImage),64k(NVRAM),64k(ART),3904k@0x10000(firmware)
 ap121_mtdlayout_2M=mtdparts=spi0.0:64k(u-boot)ro,1216k(rootfs),704k(kernel),64k(art)ro,1920k@0x10000(firmware)
 ap121_mtdlayout_4M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,2448k(rootfs),1200k(kernel),64k(nvram),64k(art)ro,3648k@0x50000(firmware)
@@ -1662,14 +1684,18 @@ wndap360_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1728k(kernel
 wnr2200_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7808k(firmware),64k(art)ro
 wnr2000v3_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,3712k(firmware),64k(art)ro
 wnr2000v4_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env)ro,3776k(firmware),64k(art)ro
-r6100_mtdlayout=mtdparts=ar934x-nfc:128k(u-boot)ro,256k(caldata),256k(caldata-backup),512k(config),512k(pot),2048k(kernel),122240k(ubi),25600k@0x1a0000(firmware),2048k(language),3072k(traffic_meter)
+wndr3700_mtdlayout=mtdparts=spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,7680k(firmware),64k(art)ro
+wndr3700v2_mtdlayout=mtdparts=spi0.0:320k(u-boot)ro,128k(u-boot-env)ro,15872k(firmware),64k(art)ro
 tew823dru_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(nvram)ro,15296k(firmware),192k(lang)ro,512k(my-dlink)ro,64k(mac)ro,64k(art)ro
+r6100_mtdlayout=mtdparts=ar934x-nfc:128k(u-boot)ro,256k(caldata),256k(caldata-backup),512k(config),512k(pot),2048k(kernel),122240k(ubi),25600k@0x1a0000(firmware),2048k(language),3072k(traffic_meter)
 wndr4300_mtdlayout=mtdparts=ar934x-nfc:256k(u-boot)ro,256k(u-boot-env)ro,256k(caldata),512k(pot),2048k(language),512k(config),3072k(traffic_meter),2048k(kernel),23552k(ubi),25600k@0x6c0000(firmware),256k(caldata_backup),-(reserved)
 zcn1523h_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6208k(rootfs),1472k(kernel),64k(configure)ro,64k(mfg)ro,64k(art)ro,7680k@0x50000(firmware)
 mynet_n600_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15872k(firmware),64k(radiocfg)ro
+qihoo_c301_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env)ro,64k(devdata)ro,64k(devconf)ro,15744k(firmware),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware_backup),1024k(privatedata)
+qihoo_c301_dual_flash_mtdlayout=mtdparts=flash:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),32256k(firmware),64k(radiocfg)
+qihoo_c301_flash2_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),64k(devdata),64k(devconf),15744k(firmware_backup),64k(warm_start),64k(action_image_config),64k(radiocfg);spi0.1:15360k(firmware),1024k(privatedata)
 mynet_rext_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,7808k(firmware),64k(nvram)ro,64k(ART)ro
 zyx_nbg6716_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(env)ro,64k(RFdata)ro,-(nbu);ar934x-nfc:2048k(zyxel_rfsd),2048k(romd),1024k(header),2048k(kernel),-(ubi)
-qihoo_c301_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),64k(devdata),64k(devconf),15744k(firmware),64k(warm_start),64k(action_image_config),64k(radiocfg)ro;spi0.1:15360k(upgrade2),1024k(privatedata)
 yun_mtdlayout_8M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6464k(rootfs),1280k(kernel),64k(nvram),64k(art),7744k@0x50000(firmware)
 yun_mtdlayout_16M=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14656k(rootfs),1280k(kernel),64k(nvram),64k(art),15936k@0x50000(firmware)
 
@@ -2062,6 +2088,41 @@ define Image/Build/Seama/initramfs
 	cat $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma.seama > $(call imgname,initramfs,$(2))-seama.bin
 endef
 
+#Qihoo 360 Image builder(Based on Seama builder)
+
+Image/Build/Qihoo/loader=$(call Image/BuildLoader,$(1),bin,$(2) $(3),0x80060000)
+
+define Image/Build/Qihoo
+	[ -e "$(KDIR)/loader-$(2).bin" ]
+	$(call CompressLzma,$(KDIR)/loader-$(2).bin,$(KDIR_TMP)/loader-$(2).bin.lzma)
+	-rm -f $(KDIR_TMP)/image-$(2).tmp
+	$(call CatFiles,$(KDIR_TMP)/loader-$(2).bin.lzma,$$$$(($(6) - 64)),$(KDIR)/root.$(1),$(7),$(KDIR_TMP)/image-$(2).tmp)
+	[ -e "$(KDIR_TMP)/image-$(2).tmp" ] && { \
+		$(STAGING_DIR_HOST)/bin/seama \
+		-i $(KDIR_TMP)/image-$(2).tmp \
+		-m "dev=/dev/mtdblock/1" -m "type=firmware"; \
+		$(STAGING_DIR_HOST)/bin/seama \
+			-s $(call imgname,$(1),$(2))-to-encrypt.bin \
+			-m "signature=$(5)" \
+			-i $(KDIR_TMP)/image-$(2).tmp.seama; \
+	}
+	cat $(KDIR_TMP)/loader-$(2).bin.lzma > $(KDIR_TMP)/image-$(2)-sysupgrade.tmp
+	$(STAGING_DIR_HOST)/bin/seama \
+		-i $(KDIR_TMP)/image-$(2)-sysupgrade.tmp \
+		-m "dev=/dev/mtdblock/1" -m "type=firmware"
+	$(call CatFiles,$(KDIR_TMP)/image-$(2)-sysupgrade.tmp.seama,$(6),$(KDIR)/root.$(1),$(7),$(call sysupname,$(1),$(2)))
+endef
+
+define Image/Build/Qihoo/initramfs
+	$(call PatchKernelLzma,$(2),$(3) $(4),,-initramfs)
+	$(STAGING_DIR_HOST)/bin/seama \
+		-i $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma \
+		-m "dev=/dev/mtdblock/1" -m "type=firmware"
+	cat $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma.seama > $(call imgname,initramfs,$(2))-seama.bin
+endef
+
+#Qihoo 360 image builder end
+
 Image/Build/Senao/buildkernel=$(call MkuImageLzma,$(2),$(3) $(4))
 Image/Build/Senao/initramfs=$(call MkuImageLzma/initramfs,$(2),$(3) $(4))
 
@@ -2445,35 +2506,35 @@ $(eval $(call SingleProfile,CameoAP91,64kraw,FR54RTR,fr-54rtr,DIR-600-A1,ttyS0,1
 $(eval $(call SingleProfile,CameoAP99,64kraw,DIR615E1,dir-615-e1,DIR-615-E1,ttyS0,115200,"AP93-AR7240-RT-081028-00"))
 $(eval $(call SingleProfile,CameoAP99,64kraw,DIR615E4,dir-615-e4,DIR-615-E4,ttyS0,115200,"AP99-AR7240-RT-091105-05"))
 
-$(eval $(call SingleProfile,CameoAP123_4M,64kraw,DIR615I1,dir-615-i1,DIR-615-I1,ttyS0,115200,"00DB120AR9341-RT-1012I1-00"))
-$(eval $(call SingleProfile,CameoAP123_4M,64kraw,DIR615I3,dir-615-i3,DIR-615-I1,ttyS0,115200,"00DB120AR9341-RT-101214-00"))
+#$(eval $(call SingleProfile,CameoAP123_4M,64kraw,DIR615I1,dir-615-i1,DIR-615-I1,ttyS0,115200,"00DB120AR9341-RT-1012I1-00"))
+#$(eval $(call SingleProfile,CameoAP123_4M,64kraw,DIR615I3,dir-615-i3,DIR-615-I1,ttyS0,115200,"00DB120AR9341-RT-101214-00"))
+#
+#$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,A02RBW300N,a02-rb-w300n,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-070614-03"))
+#$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,DIR615C1,dir-615-c1,DIR-615-C1,ttyS0,115200,"AP81-AR9130-RT-070614-02"))
+#$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,TEW632BRP,tew-632brp,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-070614-00"))
+#$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,TEW652BRP_FW,tew-652brp,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-080609-05"))
+#$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,TEW652BRP_RECOVERY,tew-652brp-recovery,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-070614-02"))
 
-$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,A02RBW300N,a02-rb-w300n,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-070614-03"))
-$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,DIR615C1,dir-615-c1,DIR-615-C1,ttyS0,115200,"AP81-AR9130-RT-070614-02"))
-$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,TEW632BRP,tew-632brp,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-070614-00"))
-$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,TEW652BRP_FW,tew-652brp,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-080609-05"))
-$(eval $(call SingleProfile,CameoAP81,64kraw-nojffs,TEW652BRP_RECOVERY,tew-652brp-recovery,TEW-632BRP,ttyS0,115200,"AP81-AR9130-RT-070614-02"))
+#$(eval $(call SingleProfile,CameoAP121,64kraw-nojffs,TEW712BR,tew-712br,TEW-712BR,ttyATH0,115200,"HORNET-RT-TEW712BR-3",1.99,""))
+#$(eval $(call SingleProfile,CameoAP121,64kraw-nojffs,DIR601B1,dir-601-b1,TEW-712BR,ttyATH0,115200,"HORNET-RT-DIR601B1-3",2.99.99,"" "NA"))
+#$(eval $(call SingleProfile,CameoAP121_8M,64kraw-nojffs,DIR505A1,dir-505-a1,DIR-505-A1,ttyATH0,115200,"HORNET-PACKET-DIR505A1-3",1.99.99,""))
 
-$(eval $(call SingleProfile,CameoAP121,64kraw-nojffs,TEW712BR,tew-712br,TEW-712BR,ttyATH0,115200,"HORNET-RT-TEW712BR-3",1.99,""))
-$(eval $(call SingleProfile,CameoAP121,64kraw-nojffs,DIR601B1,dir-601-b1,TEW-712BR,ttyATH0,115200,"HORNET-RT-DIR601B1-3",2.99.99,"" "NA"))
-$(eval $(call SingleProfile,CameoAP121_8M,64kraw-nojffs,DIR505A1,dir-505-a1,DIR-505-A1,ttyATH0,115200,"HORNET-PACKET-DIR505A1-3",1.99.99,""))
+#$(eval $(call SingleProfile,CameoAP135,64kraw,DGL5500A1,dgl-5500-a1,DGL-5500-A1,ttyS0,115200,$$(dgl_5500_mtdlayout),"00AP135AR9558-RT-130508-00"))
+#$(eval $(call SingleProfile,CameoAP135,64kraw,TEW823DRU,tew-823dru,TEW-823DRU,ttyS0,115200,$$(tew823dru_mtdlayout) mem=256M,"00AP135AR9558-RT-131129-00"))
 
-$(eval $(call SingleProfile,CameoAP135,64kraw,DGL5500A1,dgl-5500-a1,DGL-5500-A1,ttyS0,115200,$$(dgl_5500_mtdlayout),"00AP135AR9558-RT-130508-00"))
-$(eval $(call SingleProfile,CameoAP135,64kraw,TEW823DRU,tew-823dru,TEW-823DRU,ttyS0,115200,$$(tew823dru_mtdlayout) mem=256M,"00AP135AR9558-RT-131129-00"))
+#$(eval $(call SingleProfile,CameoDB120,64kraw,DHP1565A1,dhp-1565-a1,DHP-1565-A1,ttyS0,115200,"00DB120AR9344-RT-101214-00"))
+#$(eval $(call SingleProfile,CameoDB120,64kraw,DIR825C1,dir-825-c1,DIR-825-C1,ttyS0,115200,"00DB120AR9344-RT-101214-00"))
+#$(eval $(call SingleProfile,CameoDB120,64kraw,DIR835A1,dir-835-a1,DIR-835-A1,ttyS0,115200,"00DB120AR9344-RT-101214-00"))
 
-$(eval $(call SingleProfile,CameoDB120,64kraw,DHP1565A1,dhp-1565-a1,DHP-1565-A1,ttyS0,115200,"00DB120AR9344-RT-101214-00"))
-$(eval $(call SingleProfile,CameoDB120,64kraw,DIR825C1,dir-825-c1,DIR-825-C1,ttyS0,115200,"00DB120AR9344-RT-101214-00"))
-$(eval $(call SingleProfile,CameoDB120,64kraw,DIR835A1,dir-835-a1,DIR-835-A1,ttyS0,115200,"00DB120AR9344-RT-101214-00"))
+#$(eval $(call SingleProfile,CameoDB120_8M,64kraw,TEW732BR,tew-732br,TEW-732BR,ttyS0,115200,"00DB120AR9341-RT-120906-NA"))
 
-$(eval $(call SingleProfile,CameoDB120_8M,64kraw,TEW732BR,tew-732br,TEW-732BR,ttyS0,115200,"00DB120AR9341-RT-120906-NA"))
+#$(eval $(call SingleProfile,CyberTANGZIP,64k,WRT160NL,wrt160nl,WRT160NL,ttyS0,115200,,1.00.01))
 
-$(eval $(call SingleProfile,CyberTANGZIP,64k,WRT160NL,wrt160nl,WRT160NL,ttyS0,115200,,1.00.01))
+#$(eval $(call SingleProfile,CyberTANLZMA,64k,MYNETREXT,mynet-rext,MYNET-REXT,ttyS0,115200,$$(mynet_rext_mtdlayout) root=31:2,1.00.01))
 
-$(eval $(call SingleProfile,CyberTANLZMA,64k,MYNETREXT,mynet-rext,MYNET-REXT,ttyS0,115200,$$(mynet_rext_mtdlayout) root=31:2,1.00.01))
-
-$(eval $(call SingleProfile,CameoAP94,64kraw,DIR825B1,dir-825-b1,DIR-825-B1,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
-$(eval $(call SingleProfile,CameoAP94,64kraw,TEW673GRU,tew-673gru,TEW-673GRU,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-01,00AP94-AR7161-RT-080619-01))
-$(eval $(call SingleProfile,CameoAP94,64kraw,DLRTDEV01,dlrtdev01,DIR-825-B1,ttyS0,115200,$$(dlrtdev_mtdlayout),$$(dlrtdev_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
+#$(eval $(call SingleProfile,CameoAP94,64kraw,DIR825B1,dir-825-b1,DIR-825-B1,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
+#$(eval $(call SingleProfile,CameoAP94,64kraw,TEW673GRU,tew-673gru,TEW-673GRU,ttyS0,115200,$$(cameo_ap94_mtdlayout),$$(cameo_ap94_mtdlayout_fat),01AP94-AR7161-RT-080619-01,00AP94-AR7161-RT-080619-01))
+#$(eval $(call SingleProfile,CameoAP94,64kraw,DLRTDEV01,dlrtdev01,DIR-825-B1,ttyS0,115200,$$(dlrtdev_mtdlayout),$$(dlrtdev_mtdlayout_fat),01AP94-AR7161-RT-080619-00,00AP94-AR7161-RT-080619-00))
 
 $(eval $(call SingleProfile,dLANLzma,64k,dLAN_Hotspot,dlan-hotspot,dLAN-Hotspot,ttyATH0,115200,$$(dlan_hotspot_mtdlayout) mem=64M,KRuImage,65536))
 $(eval $(call SingleProfile,dLANLzma,64k,dLAN_pro_500_wp,dlan-pro-500-wp,dLAN-pro-500-wp,ttyS0,115200,$$(dlan_pro_500_wp_mtdlayout) mem=128M,KRuImage,65536))
@@ -2523,7 +2584,9 @@ $(eval $(call SingleProfile,Planex,64kraw,MZKW300NH,mzk-w300nh,MZK-W300NH,ttyS0,
 $(eval $(call SingleProfile,Seama,64k,MYNETN600,mynet-n600,MYNET-N600,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd16_wd_db600,65536,16187392))
 $(eval $(call SingleProfile,Seama,64k,MYNETN750,mynet-n750,MYNET-N750,ttyS0,115200,$$(mynet_n600_mtdlayout),wrgnd13_wd_av,65536,16187392))
 
-$(eval $(call SingleProfile,Seama,64k,QIHOO360,qihoo-c301,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),wrgac26_qihoo360_360rg,65536,16121856))
+$(eval $(call SingleProfile,Seama,64k,QIHOOC301FLASH1,qihoo-c301-flash1,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_mtdlayout),wrgac26_qihoo360_360rg,1310720,16121856))
+$(eval $(call SingleProfile,Seama,64k,QIHOOC301FLASH2,qihoo-c301-flash2,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_flash2_mtdlayout),wrgac26_qihoo360_360rg,1310720,15728640))
+$(eval $(call SingleProfile,Seama,64k,QIHOOC301DUALFLASH,qihoo-c301-dual-flash,QIHOO-C301,ttyS0,115200,$$(qihoo_c301_dual_flash_mtdlayout),wrgac26_qihoo360_360rg,1310720,33030144))
 
 $(eval $(call SingleProfile,Senao,squashfs-only,EAP300V2,eap300v2,EAP300V2,ttyS0,115200,$$(eap300v2_mtdlayout)))
 
@@ -2553,6 +2616,7 @@ $(eval $(call MultiProfile,AP147,AP147_010))
 $(eval $(call MultiProfile,AP152,AP152_16M))
 $(eval $(call MultiProfile,DIR615IX,DIR615I1 DIR615I3))
 $(eval $(call MultiProfile,EWDORIN, EWDORINAP EWDORINRT EWDORIN16M))
+$(eval $(call MultiProfile,QIHOOC301,QIHOOC301FLASH1 QIHOOC301FLASH2 QIHOOC301DUALFLASH))
 $(eval $(call MultiProfile,OPENMESH,OM2P OM5P OM5PAC MR600 MR900 MR1750))
 $(eval $(call MultiProfile,TEW652BRP,TEW652BRP_FW TEW652BRP_RECOVERY))
 $(eval $(call MultiProfile,TUBE2H,TUBE2H8M TUBE2H16M))

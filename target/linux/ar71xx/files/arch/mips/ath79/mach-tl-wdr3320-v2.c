@@ -27,6 +27,7 @@
 #include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "tplink-wmac.h"
 
 #define WDR3320_GPIO_LED_WLAN5G		12
 #define WDR3320_GPIO_LED_SYSTEM		14
@@ -86,8 +87,6 @@ static struct gpio_keys_button wdr3320_gpio_keys[] __initdata = {
 static void __init wdr3320_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wdr3320_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(wdr3320_leds_gpio),
@@ -96,12 +95,10 @@ static void __init wdr3320_setup(void)
 					ARRAY_SIZE(wdr3320_gpio_keys),
 					wdr3320_gpio_keys);
 
-	ath79_init_mac(tmpmac, mac, 0);
-	ath79_register_wmac(art + WDR3320_WMAC_CALDATA_OFFSET, tmpmac);
+	tplink_register_builtin_wmac1(WDR3320_WMAC_CALDATA_OFFSET, mac, -1);
 
-	ath79_init_mac(tmpmac, mac, -1);
 	ap9x_pci_setup_wmac_led_pin(0, 0);
-	ap91_pci_init(art + WDR3320_PCIE_CALDATA_OFFSET, tmpmac);
+	tplink_register_ap91_wmac2(WDR3320_PCIE_CALDATA_OFFSET, mac, 2);
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE);
 

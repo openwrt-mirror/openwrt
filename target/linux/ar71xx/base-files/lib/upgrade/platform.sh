@@ -370,8 +370,10 @@ platform_check_image() {
 	tl-wa901nd-v4 | \
 	tl-wdr3320-v2 | \
 	tl-wdr3500 | \
+	mw4530r | \
 	tl-wdr4300 | \
 	tl-wdr4900-v2 | \
+	tl-wdr6300 | \
 	tl-wdr6500-v2 | \
 	tl-wr703n | \
 	tl-wr710n | \
@@ -385,7 +387,9 @@ platform_check_image() {
 	tl-wr841n-v8 | \
 	tl-wr841n-v9 | \
 	tl-wr842n-v2 | \
+	tl-wr882n-v1 | \
 	tl-wr941nd | \
+	tl-wr941nd-v7 | \
 	tl-wr941nd-v5 | \
 	tl-wr941nd-v6 | \
 	tl-wr1041n-v2 | \

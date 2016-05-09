@@ -30,9 +30,12 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_hostapd \
 	CONFIG_PACKAGE_hostapd-mini \
 	CONFIG_PACKAGE_kmod-hostap \
+	CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf \
 	CONFIG_WPA_RFKILL_SUPPORT \
 	CONFIG_DRIVER_WEXT_SUPPORT \
 	CONFIG_DRIVER_11N_SUPPORT
+
+PKG_BUILD_DEPENDS:=qca-wifi-10.4
 
 LOCAL_TYPE=$(strip \
 		$(if $(findstring wpad,$(BUILD_VARIANT)),wpad, \
@@ -67,6 +70,8 @@ DRIVER_MAKEOPTS= \
 	CONFIG_ACS=$(CONFIG_PACKAGE_kmod-cfg80211) \
 	CONFIG_DRIVER_NL80211=$(CONFIG_PACKAGE_kmod-cfg80211) \
 	CONFIG_DRIVER_HOSTAP=$(CONFIG_PACKAGE_kmod-hostap) \
+	CONFIG_DRIVER_ATHEROS=$(CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf) \
+	CONFIG_DRIVER_ATHR=$(CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf) \
 	CONFIG_IEEE80211N=$(HOSTAPD_IEEE80211N) \
 	CONFIG_DRIVER_WEXT=$(CONFIG_DRIVER_WEXT_SUPPORT) \
 
@@ -392,9 +397,10 @@ Package/hostapd-mini/install = $(Package/hostapd/install)
 
 ifneq ($(LOCAL_TYPE),supplicant)
   define Package/hostapd-utils/install
-	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/rc.button
+	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/rc.button $(1)/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/hostapd/hostapd_cli $(1)/usr/sbin/
 	$(INSTALL_BIN) ./files/wps-hotplug.sh $(1)/etc/rc.button/wps
+	$(INSTALL_BIN) ./files/hostapd_wps_led.sh $(1)/lib/
   endef
 endif
 

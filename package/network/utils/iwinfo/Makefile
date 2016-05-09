@@ -23,7 +23,15 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_PACKAGE_kmod-brcm-wl-mini \
 	CONFIG_PACKAGE_kmod-brcm-wl-mimo \
 	CONFIG_PACKAGE_kmod-madwifi \
+	CONFIG_PACKAGE_kmod-mt7628 \
+	CONFIG_PACKAGE_kmod-mt7620 \
+	CONFIG_PACKAGE_kmod-rt2860v2_ap \
+	CONFIG_PACKAGE_kmod-mt76x2e-epa \
+	CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf \
+	CONFIG_PACKAGE_kmod-qca-wifi-10.4-akronite-perf \
 	CONFIG_PACKAGE_kmod-cfg80211
+
+PKG_BUILD_DEPENDS:=qca-wifi-10.4
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -76,6 +84,12 @@ IWINFO_BACKENDS := \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl-mini),wl) \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl-mimo),wl) \
 	$(if $(CONFIG_PACKAGE_kmod-madwifi),madwifi) \
+	$(if $(CONFIG_PACKAGE_kmod-mt7628),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-mt7620),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-rt2860v2_ap),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-mt76x2e-epa),rt2860v2) \
+	$(if $(CONFIG_PACKAGE_kmod-qca-wifi-10.4-perf),qcawifi) \
+	$(if $(CONFIG_PACKAGE_kmod-qca-wifi-10.4-akronite-perf),qcawifi) \
 	$(if $(CONFIG_PACKAGE_kmod-cfg80211),nl80211)
 
 TARGET_CFLAGS += \

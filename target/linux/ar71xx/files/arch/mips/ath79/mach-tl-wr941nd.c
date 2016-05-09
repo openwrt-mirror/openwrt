@@ -17,13 +17,18 @@
 #include "dev-gpio-buttons.h"
 #include "dev-leds-gpio.h"
 #include "dev-m25p80.h"
+#include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
+#include "tplink-wmac.h"
 
+#define TL_WR941ND_GPIO_LED_USB         1
 #define TL_WR941ND_GPIO_LED_SYSTEM	2
 #define TL_WR941ND_GPIO_LED_QSS_RED	4
 #define TL_WR941ND_GPIO_LED_QSS_GREEN	5
 #define TL_WR941ND_GPIO_LED_WLAN	9
+#define TL_WR941ND_GPIO_LED_GPIO0	0
+#define TL_WR941ND_GPIO_LED_GPIO6	6
 
 #define TL_WR941ND_GPIO_BTN_RESET	3
 #define TL_WR941ND_GPIO_BTN_QSS		7
@@ -42,6 +47,18 @@ static struct flash_platform_data tl_wr941nd_flash_data = {
 
 static struct gpio_led tl_wr941nd_leds_gpio[] __initdata = {
 	{
+		.name		= "tp-link:blue:gpio0",
+		.gpio		= TL_WR941ND_GPIO_LED_GPIO0,
+		.active_low	= 1,
+	},	{
+		.name		= "tp-link:blue:gpio6",
+		.gpio		= TL_WR941ND_GPIO_LED_GPIO6,
+		.active_low	= 1,
+	},	{
+		.name		= "tp-link:green:usb",
+		.gpio		= TL_WR941ND_GPIO_LED_USB,
+		.active_low	= 1,
+	},{
 		.name		= "tp-link:green:system",
 		.gpio		= TL_WR941ND_GPIO_LED_SYSTEM,
 		.active_low	= 1,
@@ -93,7 +110,6 @@ static struct dsa_platform_data tl_wr941nd_dsa_data = {
 static void __init tl_wr941nd_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *eeprom = (u8 *) KSEG1ADDR(0x1fff1000);
 
 	ath79_register_mdio(0, 0x0);
 
@@ -103,6 +119,7 @@ static void __init tl_wr941nd_setup(void)
 	ath79_eth0_data.duplex = DUPLEX_FULL;
 
 	ath79_register_eth(0);
+	ath79_register_usb();
 	ath79_register_dsa(&ath79_eth0_device.dev, &ath79_mdio0_device.dev,
 			   &tl_wr941nd_dsa_data);
 
@@ -114,7 +131,7 @@ static void __init tl_wr941nd_setup(void)
 	ath79_register_gpio_keys_polled(-1, TL_WR941ND_KEYS_POLL_INTERVAL,
 					ARRAY_SIZE(tl_wr941nd_gpio_keys),
 					tl_wr941nd_gpio_keys);
-	ath79_register_wmac(eeprom, mac);
+    tplink_register_builtin_wmac1(0x1000, mac, -1);
 }
 
 MIPS_MACHINE(ATH79_MACH_TL_WR941ND, "TL-WR941ND", "TP-LINK TL-WR941ND",

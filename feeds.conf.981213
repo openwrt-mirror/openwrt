@@ -1,0 +1,14 @@
+src-git packages https://github.com/981213/packages.git
+src-git luci https://github.com/981213/luci-1.git
+src-git routing https://github.com/openwrt-routing/packages.git
+src-git telephony http://git.openwrt.org/feed/telephony.git
+src-git management https://github.com/openwrt-management/packages.git
+src-git oldpackages http://git.openwrt.org/packages.git
+#src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package
+#src-svn phone svn://svn.openwrt.org/openwrt/feeds/phone
+#src-svn efl svn://svn.openwrt.org/openwrt/feeds/efl
+#src-svn xorg svn://svn.openwrt.org/openwrt/feeds/xorg
+#src-svn desktop svn://svn.openwrt.org/openwrt/feeds/desktop
+#src-svn xfce svn://svn.openwrt.org/openwrt/feeds/xfce
+#src-svn lxde svn://svn.openwrt.org/openwrt/feeds/lxde
+#src-link custom /usr/src/openwrt/custom-feed

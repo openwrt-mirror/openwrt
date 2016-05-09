@@ -201,6 +201,9 @@ tplink_board_detect() {
 	"086000"*)
 		model="TP-Link TL-WA860RE"
 		;;
+	"088200"*)
+		model="TP-Link TL-WR882N"
+		;;
 	"090100"*)
 		model="TP-Link TL-WA901N/ND"
 		;;
@@ -266,6 +269,9 @@ tplink_board_detect() {
 		;;
 	"49000002")
 		model="TP-Link TL-WDR4900"
+		;;
+	"630000"*)
+		model="TP-Link TL-WDR6300"
 		;;
 	"65000002")
 		model="TP-Link TL-WDR6500"
@@ -607,6 +613,9 @@ ar71xx_board_detect() {
 	*"My Net N600")
 		name="mynet-n600"
 		;;
+	*"360 C301")
+		name="qihoo-c301"
+		;;
 	*"My Net N750")
 		name="mynet-n750"
 		;;
@@ -672,9 +681,6 @@ ar71xx_board_detect() {
 		;;
 	*PB92)
 		name="pb92"
-		;;
-	*"Qihoo 360 C301")
-		name="qihoo-c301"
 		;;
 	*"RouterBOARD 411/A/AH")
 		name="rb-411"
@@ -880,6 +886,12 @@ ar71xx_board_detect() {
 	*"TL-WDR3500")
 		name="tl-wdr3500"
 		;;
+	*"TL-WDR6300")
+		name="tl-wdr6300"
+		;;
+    *"MW4530R")
+        name="mw4530r"
+        ;;
 	*"TL-WDR3600/4300/4310")
 		name="tl-wdr4300"
 		;;
@@ -910,8 +922,14 @@ ar71xx_board_detect() {
 	*"TL-WR842N/ND v2")
 		name="tl-wr842n-v2"
 		;;
-	*TL-WR941ND)
+	*"TL-WR882N v1")
+		name="tl-wr882n-v1"
+		;;
+	*"TL-WR941ND")
 		name="tl-wr941nd"
+		;;
+	*"TL-WR941ND v7")
+		name="tl-wr941nd-v7"
 		;;
 	*"TL-WR941N/ND v5")
 		name="tl-wr941nd-v5"
