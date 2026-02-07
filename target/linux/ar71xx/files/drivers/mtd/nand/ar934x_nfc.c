@@ -1376,7 +1376,7 @@ ar934x_nfc_probe(struct platform_device *pdev)
 	}
 
 	init_waitqueue_head(&nfc->irq_waitq);
-	ret = request_irq(nfc->irq, ar934x_nfc_irq_handler, IRQF_DISABLED,
+	ret = request_irq(nfc->irq, ar934x_nfc_irq_handler, 0,
 			  dev_name(&pdev->dev), nfc);
 	if (ret) {
 		dev_err(&pdev->dev, "requast_irq failed, err:%d\n", ret);
@@ -1435,6 +1435,10 @@ ar934x_nfc_probe(struct platform_device *pdev)
 	switch (pdata->ecc_mode) {
 	case AR934X_NFC_ECC_SOFT:
 		nand->ecc.mode = NAND_ECC_SOFT;
+		break;
+
+	case AR934X_NFC_ECC_SOFT_BCH:
+		nand->ecc.mode = NAND_ECC_SOFT_BCH;
 		break;
 
 	case AR934X_NFC_ECC_HW:

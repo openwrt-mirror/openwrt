@@ -8,7 +8,7 @@
 define Profile/VENTANA
   NAME:=Gateworks Ventana family
   PACKAGES:= \
-	kmod-thermal-imx kmod-sky2 kmod-usb-chipidea kmod-usb-mxs-phy \
+	kmod-thermal-imx kmod-sky2 kmod-usb-chipidea-imx kmod-usb-mxs-phy \
 	kmod-sound-core kmod-sound-soc-imx kmod-sound-soc-imx-sgtl5000 \
 	kmod-can kmod-can-flexcan kmod-can-raw \
 	kmod-rtc-ds1672 kmod-gpio-pca953x kmod-hwmon-gsc kmod-eeprom-at24 \
@@ -35,18 +35,5 @@ define Profile/VENTANA/Description
   * User GPIO
   * mSATA
 endef
-
-VENTANA_DTS:= \
-	imx6dl-gw51xx \
-	imx6dl-gw52xx \
-	imx6dl-gw53xx \
-	imx6dl-gw54xx \
-	imx6dl-gw552x \
-	imx6q-gw51xx \
-	imx6q-gw52xx \
-	imx6q-gw53xx \
-	imx6q-gw54xx \
-	imx6q-gw5400-a \
-	imx6q-gw552x
 
 $(eval $(call Profile,VENTANA))

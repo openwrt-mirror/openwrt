@@ -1,18 +1,12 @@
 /dts-v1/;
 
-/include/ "mt7620a.dtsi"
+#include "mt7620a.dtsi"
 
 / {
 	compatible = "ralink,mt7620a-eval-board", "ralink,mt7620a-soc";
 	model = "Ralink MT7620A evaluation board";
 
 	palmbus@10000000 {
-		sysc@0 {
-			ralink,gpiomux = "i2c", "jtag";
-			ralink,uartmux = "gpio";
-			ralink,wdtmux = <1>;
-		};
-
 		gpio0: gpio@600 {
 			status = "okay";
 		};
@@ -23,7 +17,7 @@
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "en25q64";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80", "en25q64";
 				spi-max-frequency = <1000000>;
@@ -56,15 +50,13 @@
 
 	ethernet@10100000 {
 		status = "okay";
-
 		pinctrl-names = "default";
 		pinctrl-0 = <&ephy_pins>;
-
-		ralink,port-map = "llllw";
+		mediatek,portmap = "llllw";
 	};
 
 	gsw@10110000 {
-		ralink,port4 = "ephy";
+		mediatek,port4 = "ephy";
 	};
 
 	sdhci@10130000 {
@@ -80,11 +72,13 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		wps {
 			label = "wps";
 			gpios = <&gpio0 12 1>;
 			linux,code = <0x100>;
 		};
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 13 1>;

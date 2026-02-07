@@ -17,6 +17,14 @@ kirkwood_board_detect() {
 		name="dockstar"
 		;;
 
+        "Seagate GoFlex Home")
+                name="goflexhome"
+                ;;
+
+	"Seagate GoFlex Net")
+		name="goflexnet"
+		;;
+
 	"Iomega Iconnect")
 		name="iconnect"
 		;;
@@ -30,11 +38,27 @@ kirkwood_board_detect() {
 		;;
 
 	"Linksys EA3500")
-		name="ea3500"
+		name="linksys-audi"
 		;;
 
-	"Linksys EA4500")
-		name="ea4500"
+	"Linksys E4200v2 / EA4500")
+		name="linksys-viper"
+		;;
+
+	"Globalscale Technologies Guruplug Server Plus")
+		name="guruplug-server-plus"
+		;;
+
+	"Globalscale Technologies SheevaPlug")
+		name="sheevaplug"
+		;;
+
+	"Globalscale Technologies eSATA SheevaPlug")
+		name="sheevaplug-esata"
+		;;
+
+	"ZyXEL NSA310S")
+		name="nsa310s"
 		;;
 
 	*)

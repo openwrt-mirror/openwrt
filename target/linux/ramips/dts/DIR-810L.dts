@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "mt7620a.dtsi"
+#include "mt7620a.dtsi"
 
 / {
 	compatible = "dlink,dir-810l", "ralink,mt7620a-soc";
@@ -13,7 +13,7 @@
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "mx25l6405d";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80";
 				spi-max-frequency = <10000000>;
@@ -79,12 +79,11 @@
 
 	ethernet@10100000 {
 		mtd-mac-address = <&factory 0x28>;
-		ralink,port-map = "llllw";
+		mediatek,portmap = "llllw";
 	};
 
 	gsw@10110000 {
-		ralink,port4 = "ephy";
-
+		mediatek,port4 = "ephy";
 		pinctrl-names = "default";
 		pinctrl-0 = <&ephy_pins>;
 	};
@@ -102,11 +101,13 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 1 1>;
 			linux,code = <0x100>;
 		};
+
 		wps {
 			label = "wps";
 			gpios = <&gpio0 2 1>;
@@ -116,16 +117,19 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		power {
-			label = "d-link:green:power";
+			label = "dir-810l:green:power";
 			gpios = <&gpio0 9 0>;
 		};
+
 		wan {
-			label = "d-link:orange:wan";
+			label = "dir-810l:orange:wan";
 			gpios = <&gpio0 12 0>;
 		};
+
 		status {
-			label = "d-link:orange:power";
+			label = "dir-810l:orange:power";
 			gpios = <&gpio0 13 0>;
 		};
 	};

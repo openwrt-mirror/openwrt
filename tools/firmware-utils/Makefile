@@ -12,12 +12,13 @@ include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 define cc
-	$(HOSTCC) $(HOST_CFLAGS) -include endian.h $(HOST_STATIC_LINKING) $(HOST_LDFLAGS) -o $(HOST_BUILD_DIR)/bin/$(firstword $(1)) $(foreach src,$(1),src/$(src).c) $(2)
+	$(HOSTCC) $(HOST_CFLAGS) -include endian.h $(HOST_LDFLAGS) -o $(HOST_BUILD_DIR)/bin/$(firstword $(1)) $(foreach src,$(1),src/$(src).c) $(2)
 endef
 
 define Host/Compile
 	mkdir -p $(HOST_BUILD_DIR)/bin
 	$(call cc,addpattern)
+	$(call cc,asustrx)
 	$(call cc,trx)
 	$(call cc,motorola-bin)
 	$(call cc,dgfirmware)
@@ -31,15 +32,15 @@ define Host/Compile
 	$(call cc,mkzynfw)
 	$(call cc,lzma2eva,-lz)
 	$(call cc,mkcasfw)
-	$(call cc,mkfwimage,-lz)
+	$(call cc,mkfwimage,-lz -Wall)
 	$(call cc,mkfwimage2,-lz)
-	$(call cc,imagetag imagetag_cmdline)
+	$(call cc,imagetag imagetag_cmdline cyg_crc32)
 	$(call cc,add_header)
 	$(call cc,makeamitbin)
 	$(call cc,encode_crc)
 	$(call cc,nand_ecc)
 	$(call cc,mkplanexfw sha1)
-	$(call cc,mktplinkfw md5)
+	$(call cc,mktplinkfw md5, -Wall)
 	$(call cc,mktplinkfw2 md5)
 	$(call cc,tplink-safeloader md5, -Wall)
 	$(call cc,pc1crypt)
@@ -63,6 +64,7 @@ define Host/Compile
 	$(call cc,mkdapimg)
 	$(call cc, mkcameofw, -Wall)
 	$(call cc,seama md5)
+	$(call cc,oseama md5, -Wall)
 	$(call cc,fix-u-media-header cyg_crc32,-Wall)
 	$(call cc,hcsmakeimage bcmalgo)
 	$(call cc,mkporayfw, -Wall)
@@ -71,6 +73,9 @@ define Host/Compile
 	$(call cc,mkheader_gemtek,-lz)
 	$(call cc,mkrtn56uimg, -lz)
 	$(call cc,dgn3500sum)
+	$(call cc,edimax_fw_header, -Wall)
+	$(call cc,mkmerakifw sha1, -Wall)
+	$(call cc,jcgimage, -lz -Wall)
 endef
 
 define Host/Install

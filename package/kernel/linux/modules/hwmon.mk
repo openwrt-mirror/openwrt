@@ -46,7 +46,6 @@ $(eval $(call KernelPackage,hwmon-vid))
 
 define KernelPackage/hwmon-adt7410
   TITLE:=ADT7410 monitoring support
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.10.0)),1)
   KCONFIG:= \
 	CONFIG_SENSORS_ADT7X10 \
 	CONFIG_SENSORS_ADT7410
@@ -54,12 +53,7 @@ ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.10.0)),1)
 	$(LINUX_DIR)/drivers/hwmon/adt7x10.ko \
 	$(LINUX_DIR)/drivers/hwmon/adt7410.ko
   AUTOLOAD:=$(call AutoLoad,60,adt7x10 adt7410)
-else
-  KCONFIG:=CONFIG_SENSORS_ADT7410
-  FILES:=$(LINUX_DIR)/drivers/hwmon/adt7410.ko
-  AUTOLOAD:=$(call AutoLoad,60,adt7410)
-endif
-  $(call AddDepends/hwmon,+kmod-i2c-core @!(LINUX_3_3||LINUX_3_6))
+  $(call AddDepends/hwmon,+kmod-i2c-core)
 endef
 
 define KernelPackage/hwmon-adt7410/description
@@ -89,7 +83,7 @@ define KernelPackage/hwmon-ina2xx
   KCONFIG:=CONFIG_SENSORS_INA2XX
   FILES:=$(LINUX_DIR)/drivers/hwmon/ina2xx.ko
   AUTOLOAD:=$(call AutoProbe,ina2xx)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +LINUX_4_4:kmod-regmap)
 endef
 
 define KernelPackage/hwmon-ina2xx/description
@@ -280,7 +274,7 @@ define KernelPackage/hwmon-gpiofan
   KCONFIG:=CONFIG_SENSORS_GPIO_FAN
   FILES:=$(LINUX_DIR)/drivers/hwmon/gpio-fan.ko
   AUTOLOAD:=$(call AutoLoad,60,gpio-fan)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
+  $(call AddDepends/hwmon,+kmod-i2c-core +PACKAGE_kmod-thermal:kmod-thermal)
 endef
 
 define KernelPackage/hwmon-gpiofan/description
@@ -290,12 +284,27 @@ endef
 $(eval $(call KernelPackage,hwmon-gpiofan))
 
 
+define KernelPackage/hwmon-pwmfan
+  TITLE:=Generic PWM FAN support
+  KCONFIG:=CONFIG_SENSORS_PWM_FAN
+  FILES:=$(LINUX_DIR)/drivers/hwmon/pwm-fan.ko
+  AUTOLOAD:=$(call AutoLoad,60,pwm-fan)
+  $(call AddDepends/hwmon, +PACKAGE_kmod-thermal:kmod-thermal)
+endef
+
+define KernelPackage/hwmon-pwmfan/description
+  Kernel module for PWM controlled FANs
+endef
+
+$(eval $(call KernelPackage,hwmon-pwmfan))
+
+
 define KernelPackage/hwmon-k10temp
   TITLE:=AMD Family 10h+ temperature sensor
   KCONFIG:=CONFIG_SENSORS_K10TEMP
   FILES:=$(LINUX_DIR)/drivers/hwmon/k10temp.ko
   AUTOLOAD:=$(call AutoLoad,60,k10temp)
-  $(call AddDepends/hwmon,@PCI_SUPPORT @(x86||x86_64))
+  $(call AddDepends/hwmon,@PCI_SUPPORT @TARGET_x86)
 endef
 
 define KernelPackage/hwmon-k10temp/description

@@ -68,7 +68,11 @@ void board_init(void)
 			chipid_reg = 0xfffe0000;
 		break;
 	case PRID_IMP_BMIPS43XX:
-		if ((prid & 0xff) >= 0x30)
+		if ((prid & 0xff) == 0x04)
+			chipid_reg = 0xfff8c000;
+		else if ((prid & 0xff) == 0x70)
+			chipid_reg = 0xb4e00000;
+		else if ((prid & 0xff) >= 0x30)
 			chipid_reg = 0xb0000000;
 		else
 			chipid_reg = 0xfffe0000;
@@ -80,6 +84,7 @@ void board_init(void)
 	chipid = READREG(chipid_reg);
 
 	switch (chipid >> 16) {
+	case 0x3368:
 	case 0x6318:
 	case 0x6328:
 	case 0x6358:
@@ -91,6 +96,9 @@ void board_init(void)
 	case 0x6316:
 	case 0x6326:
 		uart_base = chipid_reg + 0x180;
+		break;
+	case 0x3380:
+		uart_base = chipid_reg + 0x200;
 		break;
 	case 0x6338:
 	case 0x6345:

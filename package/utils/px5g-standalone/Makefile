@@ -7,11 +7,10 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=px5g
+PKG_NAME:=px5g-standalone
 PKG_RELEASE:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-PKG_CHECK_FORMAT_SECURITY:=0
 
 include $(INCLUDE_DIR)/package.mk
 

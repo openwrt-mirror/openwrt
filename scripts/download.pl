@@ -11,14 +11,18 @@ use warnings;
 use File::Basename;
 use File::Copy;
 
-@ARGV > 2 or die "Syntax: $0 <target dir> <filename> <md5sum> [<mirror> ...]\n";
+@ARGV > 2 or die "Syntax: $0 <target dir> <filename> <hash> <url filename> [<mirror> ...]\n";
 
+my $url_filename;
 my $target = shift @ARGV;
 my $filename = shift @ARGV;
-my $md5sum = shift @ARGV;
+my $file_hash = shift @ARGV;
+$url_filename = shift @ARGV unless $ARGV[0] =~ /:\/\//;
 my $scriptdir = dirname($0);
 my @mirrors;
 my $ok;
+
+$url_filename or $url_filename = $filename;
 
 sub localmirrors {
 	my @mlist;
@@ -40,6 +44,9 @@ sub localmirrors {
 		close CONFIG;
 	};
 
+	my $mirror = $ENV{'DOWNLOAD_MIRROR'};
+	$mirror and push @mlist, split(/;/, $mirror);
+
 	return @mlist;
 }
 
@@ -52,8 +59,20 @@ sub which($) {
 	return $res;
 }
 
-my $md5cmd = which("md5sum") || which("md5") || die 'no md5 checksum program found, please install md5 or md5sum';
-chomp $md5cmd;
+sub hash_cmd() {
+	my $len = length($file_hash);
+	my $cmd;
+
+	$len == 64 and return "openssl dgst -sha256 | sed -e 's,.*= ,,'";
+	$len == 32 and do {
+		my $cmd = which("md5sum") || which("md5") || die 'no md5 checksum program found, please install md5 or md5sum';
+		chomp $cmd;
+		return $cmd;
+	};
+	return undef;
+}
+
+my $hash_cmd = hash_cmd();
 
 sub download
 {
@@ -98,20 +117,24 @@ sub download
 		print("Copying $filename from $link\n");
 		copy($link, "$target/$filename.dl");
 
-		if (system("$md5cmd '$target/$filename.dl' > '$target/$filename.md5sum'")) {
-			print("Failed to generate md5 sum for $filename\n");
-			return;
-		}
+		$hash_cmd and do {
+			if (system("cat '$target/$filename.dl' | $hash_cmd > '$target/$filename.hash'")) {
+				print("Failed to generate hash for $filename\n");
+				return;
+			}
+		};
 	} else {
-		open WGET, "wget -t5 --timeout=20 --no-check-certificate $options -O- '$mirror/$filename' |" or die "Cannot launch wget.\n";
-		open MD5SUM, "| $md5cmd > '$target/$filename.md5sum'" or die "Cannot launch md5sum.\n";
+		open WGET, "wget -t5 --timeout=20 --no-check-certificate $options -O- '$mirror/$url_filename' |" or die "Cannot launch wget.\n";
+		$hash_cmd and do {
+			open MD5SUM, "| $hash_cmd > '$target/$filename.hash'" or die "Cannot launch $hash_cmd.\n";
+		};
 		open OUTPUT, "> $target/$filename.dl" or die "Cannot create file $target/$filename.dl: $!\n";
 		my $buffer;
 		while (read WGET, $buffer, 1048576) {
-			print MD5SUM $buffer;
+			$hash_cmd and print MD5SUM $buffer;
 			print OUTPUT $buffer;
 		}
-		close MD5SUM;
+		$hash_cmd and close MD5SUM;
 		close WGET;
 		close OUTPUT;
 
@@ -122,15 +145,17 @@ sub download
 		}
 	}
 
-	my $sum = `cat "$target/$filename.md5sum"`;
-	$sum =~ /^(\w+)\s*/ or die "Could not generate md5sum\n";
-	$sum = $1;
+	$hash_cmd and do {
+		my $sum = `cat "$target/$filename.hash"`;
+		$sum =~ /^(\w+)\s*/ or die "Could not generate file hash\n";
+		$sum = $1;
 
-	if (($md5sum =~ /\w{32}/) and ($sum ne $md5sum)) {
-		print STDERR "MD5 sum of the downloaded file does not match (file: $sum, requested: $md5sum) - deleting download.\n";
-		cleanup();
-		return;
-	}
+		if ($sum ne $file_hash) {
+			print STDERR "MD5 sum of the downloaded file does not match (file: $sum, requested: $file_hash) - deleting download.\n";
+			cleanup();
+			return;
+		}
+	};
 
 	unlink "$target/$filename";
 	system("mv", "$target/$filename.dl", "$target/$filename");
@@ -140,7 +165,7 @@ sub download
 sub cleanup
 {
 	unlink "$target/$filename.dl";
-	unlink "$target/$filename.md5sum";
+	unlink "$target/$filename.hash";
 }
 
 @mirrors = localmirrors();
@@ -150,6 +175,17 @@ foreach my $mirror (@ARGV) {
 		# give sourceforge a few more tries, because it redirects to different mirrors
 		for (1 .. 5) {
 			push @mirrors, "http://downloads.sourceforge.net/$1";
+		}
+	} elsif ($mirror =~ /^\@APACHE\/(.+)$/) {
+		push @mirrors, "http://ftp.tudelft.nl/apache/$1";
+		push @mirrors, "http://apache.openmirror.de/$1";
+		push @mirrors, "http://mirrors.ocf.berkeley.edu/apache/$1";
+		push @mirrors, "http://mirror.cc.columbia.edu/pub/software/apache/$1";
+		push @mirrors, "http://ftp.jaist.ac.jp/pub/apache/$1";
+	} elsif ($mirror =~ /^\@GITHUB\/(.+)$/) {
+		# give github a few more tries (different mirrors)
+		for (1 .. 5) {
+			push @mirrors, "https://raw.githubusercontent.com/$1";
 		}
 	} elsif ($mirror =~ /^\@GNU\/(.+)$/) {
 		push @mirrors, "http://ftpmirror.gnu.org/$1";
@@ -170,20 +206,15 @@ foreach my $mirror (@ARGV) {
 			push @extra, "$extra[0]/longterm/v$1";
 		}		
 		foreach my $dir (@extra) {
-			push @mirrors, "ftp://ftp.all.kernel.org/pub/$dir";
-			push @mirrors, "http://ftp.all.kernel.org/pub/$dir";
+			push @mirrors, "https://kernel.org/pub/$dir";
+			push @mirrors, "ftp://kernel.org/pub/$dir";
 		}
     } elsif ($mirror =~ /^\@GNOME\/(.+)$/) {
 		push @mirrors, "http://ftp.gnome.org/pub/GNOME/sources/$1";
-		push @mirrors, "http://ftp.unina.it/pub/linux/GNOME/sources/$1";
+		push @mirrors, "http://www.mirrorservice.org/sites/ftp.gnome.org/pub/GNOME/sources/$1";
 		push @mirrors, "http://fr2.rpmfind.net/linux/gnome.org/sources/$1";
-		push @mirrors, "ftp://ftp.dit.upm.es/pub/GNOME/sources/$1";
-		push @mirrors, "ftp://ftp.no.gnome.org/pub/GNOME/sources/$1";
 		push @mirrors, "http://ftp.acc.umu.se/pub/GNOME/sources/$1";
-		push @mirrors, "http://ftp.belnet.be/mirror/ftp.gnome.org/sources/$1";
-		push @mirrors, "http://linorg.usp.br/gnome/sources/$1";
-		push @mirrors, "http://mirror.aarnet.edu.au/pub/GNOME/sources/$1";
-		push @mirrors, "http://mirrors.ibiblio.org/pub/mirrors/gnome/sources/$1";
+		push @mirrors, "http://ftp.belnet.be/ftp.gnome.org/sources/$1";
 		push @mirrors, "ftp://ftp.cse.buffalo.edu/pub/Gnome/sources/$1";
 		push @mirrors, "ftp://ftp.nara.wide.ad.jp/pub/X11/GNOME/sources/$1";
     }

@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ustream-ssl
-PKG_VERSION:=2014-03-25
+PKG_VERSION:=2016-02-21
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git://nbd.name/ustream-ssl.git
+PKG_SOURCE_URL=$(OPENWRT_GIT)/project/ustream-ssl.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=fc0b5ec804ee43c532978dd04ab0509c34baefb0
+PKG_SOURCE_VERSION:=6ba14990e63fc956e8aff3b0b09be1fd3aaa6d75
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 CMAKE_INSTALL:=1
 
@@ -16,7 +16,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_SOURCE_SUBDIR)
 PKG_LICENSE:=ISC
 PKG_LICENSE_FILES:=
 
-PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -51,12 +51,23 @@ define Package/libustream-polarssl
   DEFAULT_VARIANT:=1
 endef
 
+define Package/libustream-mbedtls
+  $(Package/libustream/default)
+  TITLE += (mbedtls)
+  DEPENDS += +libmbedtls
+  VARIANT:=mbedtls
+  DEFAULT_VARIANT:=1
+endef
+
 ifeq ($(BUILD_VARIANT),cyassl)
-  TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/cyassl
+  TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/cyassl -DHAVE_SNI
   CMAKE_OPTIONS += -DCYASSL=on
 endif
 ifeq ($(BUILD_VARIANT),polarssl)
   CMAKE_OPTIONS += -DPOLARSSL=on
+endif
+ifeq ($(BUILD_VARIANT),mbedtls)
+  CMAKE_OPTIONS += -DMBEDTLS=on
 endif
 
 define Package/libustream/default/install
@@ -67,7 +78,9 @@ endef
 Package/libustream-openssl/install = $(Package/libustream/default/install)
 Package/libustream-cyassl/install = $(Package/libustream/default/install)
 Package/libustream-polarssl/install = $(Package/libustream/default/install)
+Package/libustream-mbedtls/install = $(Package/libustream/default/install)
 
 $(eval $(call BuildPackage,libustream-polarssl))
+$(eval $(call BuildPackage,libustream-mbedtls))
 $(eval $(call BuildPackage,libustream-cyassl))
 $(eval $(call BuildPackage,libustream-openssl))

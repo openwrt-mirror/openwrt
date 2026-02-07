@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "mt7620a.dtsi"
+#include "mt7620a.dtsi"
 
 / {
 	compatible = "ralink,mt7620a-soc";
@@ -17,7 +17,7 @@
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "en25q64";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80", "mx25l6405d";
 				spi-max-frequency = <10000000>;
@@ -42,12 +42,7 @@
 
 				partition@50000 {
 					label = "firmware";
-					reg = <0x50000 0xeb0000>;
-				};
-
-				partition@e00000 {
-					label = "usercfg";
-					reg = <0xf00000 0x100000>;
+					reg = <0x50000 0xfb0000>;
 				};
 			};
 		};
@@ -83,7 +78,7 @@
 	};
 
 	gsw@10110000 {
-		ralink,port4 = "ephy";
+		mediatek,port4 = "ephy";
 	};
 
 	wmac@10180000 {
@@ -102,35 +97,42 @@
 			};
 		};
 	};
-	
+
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		power {
-			label = "buffalo:red:power";
+			label = "whr-1166d:red:power";
 			gpios = <&gpio0 7 1>;
 		};
-		status {
-			label = "buffalo:green:status";
+
+		wifi {
+			label = "whr-1166d:green:wifi";
 			gpios = <&gpio0 8 1>;
 		};
+
 		power2 {
-			label = "buffalo:green:power";
+			label = "whr-1166d:green:power";
 			gpios = <&gpio0 9 1>;
 		};
-		status2 {
-			label = "buffalo:orange:status";
+
+		wifi2 {
+			label = "whr-1166d:orange:wifi";
 			gpios = <&gpio0 10 1>;
 		};
+
 		internet {
-			label = "buffalo:green:internet";
+			label = "whr-1166d:green:internet";
 			gpios = <&gpio2 17 1>;
 		};
+
 		router {
-			label = "buffalo:green:router";
+			label = "whr-1166d:orange:router";
 			gpios = <&gpio2 18 1>;
 		};
+
 		router2 {
-			label = "buffalo:orange:router";
+			label = "whr-1166d:green:router";
 			gpios = <&gpio2 19 1>;
 		};
 	};
@@ -140,25 +142,31 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
-		s1 {
+
+		reset {
 			label = "reset";
 			gpios = <&gpio2 12 1>;
-			linux,code = <0x100>;
+			linux,code = <0x198>;
 		};
-		s2 {
+
+		aoss {
 			label = "aoss";
 			gpios = <&gpio2 13 1>;
-			linux,code = <0x101>;
+			linux,code = <0x211>;
 		};
-		s3 {
+
+		ap {
 			label = "ap";
 			gpios = <&gpio2 14 1>;
-			linux,code = <0x102>;
+			linux,code = <0x100>;
+			linux,input-type = <5>; /* EV_SW */
 		};
-		s4 {
+
+		bridge {
 			label = "bridge";
 			gpios = <&gpio2 15 1>;
-			linux,code = <0x103>;
+			linux,code = <0x100>;
+			linux,input-type = <5>; /* EV_SW */
 		};
 	};
 };

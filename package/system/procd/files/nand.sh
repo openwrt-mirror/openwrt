@@ -275,6 +275,10 @@ nand_upgrade_tar() {
 nand_do_upgrade_stage2() {
 	local file_type=$(identify $1)
 
+	if type 'platform_nand_pre_upgrade' >/dev/null 2>/dev/null; then
+		platform_nand_pre_upgrade "$1"
+	fi
+
 	[ ! "$(find_mtd_index "$CI_UBIPART")" ] && CI_UBIPART="rootfs"
 
 	case "$file_type" in
@@ -322,7 +326,6 @@ nand_upgrade_stage1() {
 		exit 0
 	}
 }
-append sysupgrade_pre_upgrade nand_upgrade_stage1
 
 # Check if passed file is a valid one for NAND sysupgrade. Currently it accepts
 # 3 types of files:
@@ -348,8 +351,14 @@ nand_do_platform_check() {
 		return 1
 	}
 
-	echo -n $2 > /tmp/sysupgrade-nand-path
-	cp /sbin/upgraded /tmp/
-
 	return 0
+}
+
+# Start NAND upgrade process
+#
+# $(1): file to be used for upgrade
+nand_do_upgrade() {
+	echo -n $1 > /tmp/sysupgrade-nand-path
+	cp /sbin/upgraded /tmp/
+	nand_upgrade_stage1
 }

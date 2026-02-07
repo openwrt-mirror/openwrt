@@ -1,5 +1,5 @@
-# 
-# Copyright (C) 2006 OpenWrt.org
+#
+# Copyright (C) 2006-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -7,12 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ca-certificates
-PKG_VERSION:=20141019
+PKG_VERSION:=20160104
+PKG_MAINTAINER:=Christian Schoenebeck <christian.schoenebeck@gmail.com>
 
 PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.xz
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=http://ftp.debian.org/debian/pool/main/c/ca-certificates
-PKG_MD5SUM:=f619282081c8bfc65ea64c37fa5285ed
+PKG_MD5SUM:=d9665a83d0d3ef8176a38e6aa20458e9
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 PKG_INSTALL:=1
 
@@ -22,6 +23,7 @@ define Package/ca-certificates
   SECTION:=base
   CATEGORY:=Base system
   TITLE:=System CA certificates
+  PKGARCH:=all
 endef
 
 define Build/Install
@@ -41,7 +43,7 @@ define Package/ca-certificates/install
 		while [ -h "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ]; do \
 			let "SUFFIX += 1" ; \
 		done ; \
-		ln -s "$$$$CERTFILE" "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ; \
+		$(LN) "$$$$CERTFILE" "$(1)/etc/ssl/certs/$$$$HASH.$$$$SUFFIX" ; \
 	done
 endef
 

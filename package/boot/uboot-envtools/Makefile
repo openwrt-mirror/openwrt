@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uboot-envtools
 PKG_DISTNAME:=u-boot
-PKG_VERSION:=2014.10
+PKG_VERSION:=2015.10
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/u-boot-$(PKG_VERSION)
@@ -17,7 +17,7 @@ PKG_SOURCE:=$(PKG_DISTNAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=\
 	http://mirror2.openwrt.org/sources \
 	ftp://ftp.denx.de/pub/u-boot
-PKG_MD5SUM:=3ddcaee2f05b7c464778112ec83664b5
+PKG_MD5SUM:=7c203b0fc3390a122d8e8b75f147eac5
 
 PKG_BUILD_DEPENDS:=+fstools
 
@@ -46,6 +46,8 @@ endef
 define Build/Configure
 	touch $(PKG_BUILD_DIR)/include/config.mk
 	touch $(PKG_BUILD_DIR)/include/config.h
+	mkdir -p $(PKG_BUILD_DIR)/include/generated
+	touch $(PKG_BUILD_DIR)/include/generated/autoconf.h
 endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
@@ -55,6 +57,8 @@ define Build/Compile
 		CROSS_COMPILE="$(TARGET_CROSS)" \
 		TARGET_CFLAGS="$(TARGET_CFLAGS)" \
 		UBI="$(CONFIG_UBOOT_ENVTOOLS_UBI)" \
+		dot-config=0 \
+		HOSTLDFLAGS= \
 		env
 endef
 
@@ -66,7 +70,7 @@ endef
 define Package/uboot-envtools/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/tools/env/fw_printenv $(1)/usr/sbin
-	ln -s fw_printenv $(1)/usr/sbin/fw_setenv
+	$(LN) fw_printenv $(1)/usr/sbin/fw_setenv
 	$(INSTALL_DIR) $(1)/lib
 	$(INSTALL_DATA) ./files/uboot-envtools.sh $(1)/lib
 ifneq ($(CONFIG_TARGET_ar71xx),)

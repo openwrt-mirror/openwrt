@@ -1,344 +1,111 @@
 --- a/nl80211.h
 +++ b/nl80211.h
-@@ -503,6 +503,9 @@
-  *	TX status event pertaining to the TX request.
-  *	%NL80211_ATTR_TX_NO_CCK_RATE is used to decide whether to send the
-  *	management frames at CCK rate or not in 2GHz band.
-+ *	%NL80211_ATTR_CSA_C_OFFSETS_TX is an array of offsets to CSA
-+ *	counters which will be updated to the current value. This attribute
-+ *	is used during CSA period.
-  * @NL80211_CMD_FRAME_WAIT_CANCEL: When an off-channel TX was requested, this
-  *	command may be used with the corresponding cookie to cancel the wait
-  *	time if it is known that it is no longer necessary.
-@@ -719,6 +722,22 @@
-  *	QoS mapping is relevant for IP packets, it is only valid during an
-  *	association. This is cleared on disassociation and AP restart.
+@@ -10,6 +10,7 @@
+  * Copyright 2008, 2009 Luis R. Rodriguez <lrodriguez@atheros.com>
+  * Copyright 2008 Jouni Malinen <jouni.malinen@atheros.com>
+  * Copyright 2008 Colin McCabe <colin@cozybit.com>
++ * Copyright 2015	Intel Deutschland GmbH
   *
-+ * @NL80211_CMD_ADD_TX_TS: Ask the kernel to add a traffic stream for the given
-+ *	%NL80211_ATTR_TSID and %NL80211_ATTR_MAC with %NL80211_ATTR_USER_PRIO
-+ *	and %NL80211_ATTR_ADMITTED_TIME parameters.
-+ *	Note that the action frame handshake with the AP shall be handled by
-+ *	userspace via the normal management RX/TX framework, this only sets
-+ *	up the TX TS in the driver/device.
-+ *	If the admitted time attribute is not added then the request just checks
-+ *	if a subsequent setup could be successful, the intent is to use this to
-+ *	avoid setting up a session with the AP when local restrictions would
-+ *	make that impossible. However, the subsequent "real" setup may still
-+ *	fail even if the check was successful.
-+ * @NL80211_CMD_DEL_TX_TS: Remove an existing TS with the %NL80211_ATTR_TSID
-+ *	and %NL80211_ATTR_MAC parameters. It isn't necessary to call this
-+ *	before removing a station entry entirely, or before disassociating
-+ *	or similar, cleanup will happen in the driver/device in this case.
-+ *
-  * @NL80211_CMD_MAX: highest used command number
-  * @__NL80211_CMD_AFTER_LAST: internal use
-  */
-@@ -890,6 +909,9 @@ enum nl80211_commands {
- 
- 	NL80211_CMD_SET_QOS_MAP,
- 
-+	NL80211_CMD_ADD_TX_TS,
-+	NL80211_CMD_DEL_TX_TS,
-+
- 	/* add new commands above here */
- 
- 	/* used to define NL80211_CMD_MAX below */
-@@ -1525,10 +1547,10 @@ enum nl80211_commands {
-  *	operation).
-  * @NL80211_ATTR_CSA_IES: Nested set of attributes containing the IE information
-  *	for the time while performing a channel switch.
-- * @NL80211_ATTR_CSA_C_OFF_BEACON: Offset of the channel switch counter
-- *	field in the beacons tail (%NL80211_ATTR_BEACON_TAIL).
-- * @NL80211_ATTR_CSA_C_OFF_PRESP: Offset of the channel switch counter
-- *	field in the probe response (%NL80211_ATTR_PROBE_RESP).
-+ * @NL80211_ATTR_CSA_C_OFF_BEACON: An array of offsets (u16) to the channel
-+ *	switch counters in the beacons tail (%NL80211_ATTR_BEACON_TAIL).
-+ * @NL80211_ATTR_CSA_C_OFF_PRESP: An array of offsets (u16) to the channel
-+ *	switch counters in the probe response (%NL80211_ATTR_PROBE_RESP).
+  * Permission to use, copy, modify, and/or distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+@@ -328,7 +329,15 @@
+  *	partial scan results may be available
   *
-  * @NL80211_ATTR_RXMGMT_FLAGS: flags for nl80211_send_mgmt(), u32.
-  *	As specified in the &enum nl80211_rxmgmt_flags.
-@@ -1576,9 +1598,49 @@ enum nl80211_commands {
-  *	advertise values that cannot always be met. In such cases, an attempt
-  *	to add a new station entry with @NL80211_CMD_NEW_STATION may fail.
+  * @NL80211_CMD_START_SCHED_SCAN: start a scheduled scan at certain
+- *	intervals, as specified by %NL80211_ATTR_SCHED_SCAN_INTERVAL.
++ *	intervals and certain number of cycles, as specified by
++ *	%NL80211_ATTR_SCHED_SCAN_PLANS. If %NL80211_ATTR_SCHED_SCAN_PLANS is
++ *	not specified and only %NL80211_ATTR_SCHED_SCAN_INTERVAL is specified,
++ *	scheduled scan will run in an infinite loop with the specified interval.
++ *	These attributes are mutually exculsive,
++ *	i.e. NL80211_ATTR_SCHED_SCAN_INTERVAL must not be passed if
++ *	NL80211_ATTR_SCHED_SCAN_PLANS is defined.
++ *	If for some reason scheduled scan is aborted by the driver, all scan
++ *	plans are canceled (including scan plans that did not start yet).
+  *	Like with normal scans, if SSIDs (%NL80211_ATTR_SCAN_SSIDS)
+  *	are passed, they are used in the probe requests.  For
+  *	broadcast, a broadcast SSID must be passed (ie. an empty
+@@ -1761,6 +1770,22 @@ enum nl80211_commands {
+  * @NL80211_ATTR_REG_INDOOR: flag attribute, if set indicates that the device
+  *      is operating in an indoor environment.
   *
-+ * @NL80211_ATTR_CSA_C_OFFSETS_TX: An array of csa counter offsets (u16) which
-+ *	should be updated when the frame is transmitted.
-+ * @NL80211_ATTR_MAX_CSA_COUNTERS: U8 attribute used to advertise the maximum
-+ *	supported number of csa counters.
-+ *
-  * @NL80211_ATTR_TDLS_PEER_CAPABILITY: flags for TDLS peer capabilities, u32.
-  *	As specified in the &enum nl80211_tdls_peer_capability.
-  *
-+ * @NL80211_ATTR_IFACE_SOCKET_OWNER: flag attribute, if set during interface
-+ *	creation then the new interface will be owned by the netlink socket
-+ *	that created it and will be destroyed when the socket is closed
-+ *
-+ * @NL80211_ATTR_TDLS_INITIATOR: flag attribute indicating the current end is
-+ *	the TDLS link initiator.
-+ *
-+ * @NL80211_ATTR_USE_RRM: flag for indicating whether the current connection
-+ *	shall support Radio Resource Measurements (11k). This attribute can be
-+ *	used with %NL80211_CMD_ASSOCIATE and %NL80211_CMD_CONNECT requests.
-+ *	User space applications are expected to use this flag only if the
-+ *	underlying device supports these minimal RRM features:
-+ *		%NL80211_FEATURE_DS_PARAM_SET_IE_IN_PROBES,
-+ *		%NL80211_FEATURE_QUIET,
-+ *	If this flag is used, driver must add the Power Capabilities IE to the
-+ *	association request. In addition, it must also set the RRM capability
-+ *	flag in the association request's Capability Info field.
-+ *
-+ * @NL80211_ATTR_WIPHY_DYN_ACK: flag attribute used to enable ACK timeout
-+ *	estimation algorithm (dynack). In order to activate dynack
-+ *	%NL80211_FEATURE_ACKTO_ESTIMATION feature flag must be set by lower
-+ *	drivers to indicate dynack capability. Dynack is automatically disabled
-+ *	setting valid value for coverage class.
-+ *
-+ * @NL80211_ATTR_TSID: a TSID value (u8 attribute)
-+ * @NL80211_ATTR_USER_PRIO: user priority value (u8 attribute)
-+ * @NL80211_ATTR_ADMITTED_TIME: admitted time in units of 32 microseconds
-+ *	(per second) (u16 attribute)
-+ *
-+ * @NL80211_ATTR_SMPS_MODE: SMPS mode to use (ap mode). see
-+ *	&enum nl80211_smps_mode.
++ * @NL80211_ATTR_MAX_NUM_SCHED_SCAN_PLANS: maximum number of scan plans for
++ *	scheduled scan supported by the device (u32), a wiphy attribute.
++ * @NL80211_ATTR_MAX_SCAN_PLAN_INTERVAL: maximum interval (in seconds) for
++ *	a scan plan (u32), a wiphy attribute.
++ * @NL80211_ATTR_MAX_SCAN_PLAN_ITERATIONS: maximum number of iterations in
++ *	a scan plan (u32), a wiphy attribute.
++ * @NL80211_ATTR_SCHED_SCAN_PLANS: a list of scan plans for scheduled scan.
++ *	Each scan plan defines the number of scan iterations and the interval
++ *	between scans. The last scan plan will always run infinitely,
++ *	thus it must not specify the number of iterations, only the interval
++ *	between scans. The scan plans are executed sequentially.
++ *	Each scan plan is a nested attribute of &enum nl80211_sched_scan_plan.
 + *
 + * @NL80211_ATTR_WIPHY_ANTENNA_GAIN: Configured antenna gain. Used to reduce
 + *	transmit power to stay within regulatory limits. u32, dBi.
 + *
+  * @NUM_NL80211_ATTR: total number of nl80211_attrs available
   * @NL80211_ATTR_MAX: highest attribute number currently defined
   * @__NL80211_ATTR_AFTER_LAST: internal use
-  */
-@@ -1914,6 +1976,25 @@ enum nl80211_attrs {
+@@ -2130,6 +2155,13 @@ enum nl80211_attrs {
  
- 	NL80211_ATTR_TDLS_PEER_CAPABILITY,
+ 	NL80211_ATTR_REG_INDOOR,
  
-+	NL80211_ATTR_IFACE_SOCKET_OWNER,
-+
-+	NL80211_ATTR_CSA_C_OFFSETS_TX,
-+	NL80211_ATTR_MAX_CSA_COUNTERS,
-+
-+	NL80211_ATTR_TDLS_INITIATOR,
-+
-+	NL80211_ATTR_USE_RRM,
-+
-+	NL80211_ATTR_WIPHY_DYN_ACK,
-+
-+	NL80211_ATTR_TSID,
-+	NL80211_ATTR_USER_PRIO,
-+	NL80211_ATTR_ADMITTED_TIME,
-+
-+	NL80211_ATTR_SMPS_MODE,
++	NL80211_ATTR_MAX_NUM_SCHED_SCAN_PLANS,
++	NL80211_ATTR_MAX_SCAN_PLAN_INTERVAL,
++	NL80211_ATTR_MAX_SCAN_PLAN_ITERATIONS,
++	NL80211_ATTR_SCHED_SCAN_PLANS,
 +
 +	NL80211_ATTR_WIPHY_ANTENNA_GAIN,
 +
  	/* add attributes here, update the policy in nl80211.c */
  
  	__NL80211_ATTR_AFTER_LAST,
-@@ -2182,6 +2263,8 @@ enum nl80211_sta_bss_param {
-  *	Contains a nested array of signal strength attributes (u8, dBm)
-  * @NL80211_STA_INFO_CHAIN_SIGNAL_AVG: per-chain signal strength average
-  *	Same format as NL80211_STA_INFO_CHAIN_SIGNAL.
-+ * @NL80211_STA_EXPECTED_THROUGHPUT: expected throughput considering also the
-+ *	802.11 header (u32, kbps)
-  * @__NL80211_STA_INFO_AFTER_LAST: internal
-  * @NL80211_STA_INFO_MAX: highest possible station info attribute
-  */
-@@ -2213,6 +2296,7 @@ enum nl80211_sta_info {
- 	NL80211_STA_INFO_TX_BYTES64,
- 	NL80211_STA_INFO_CHAIN_SIGNAL,
- 	NL80211_STA_INFO_CHAIN_SIGNAL_AVG,
-+	NL80211_STA_INFO_EXPECTED_THROUGHPUT,
- 
- 	/* keep last */
- 	__NL80211_STA_INFO_AFTER_LAST,
-@@ -2336,9 +2420,34 @@ enum nl80211_band_attr {
-  *	using this channel as the primary or any of the secondary channels
-  *	isn't possible
-  * @NL80211_FREQUENCY_ATTR_DFS_CAC_TIME: DFS CAC time in milliseconds.
-+ * @NL80211_FREQUENCY_ATTR_INDOOR_ONLY: Only indoor use is permitted on this
-+ *	channel. A channel that has the INDOOR_ONLY attribute can only be
-+ *	used when there is a clear assessment that the device is operating in
-+ *	an indoor surroundings, i.e., it is connected to AC power (and not
-+ *	through portable DC inverters) or is under the control of a master
-+ *	that is acting as an AP and is connected to AC power.
-+ * @NL80211_FREQUENCY_ATTR_GO_CONCURRENT: GO operation is allowed on this
-+ *	channel if it's connected concurrently to a BSS on the same channel on
-+ *	the 2 GHz band or to a channel in the same UNII band (on the 5 GHz
-+ *	band), and IEEE80211_CHAN_RADAR is not set. Instantiating a GO on a
-+ *	channel that has the GO_CONCURRENT attribute set can be done when there
-+ *	is a clear assessment that the device is operating under the guidance of
-+ *	an authorized master, i.e., setting up a GO while the device is also
-+ *	connected to an AP with DFS and radar detection on the UNII band (it is
-+ *	up to user-space, i.e., wpa_supplicant to perform the required
-+ *	verifications)
-+ * @NL80211_FREQUENCY_ATTR_NO_20MHZ: 20 MHz operation is not allowed
-+ *	on this channel in current regulatory domain.
-+ * @NL80211_FREQUENCY_ATTR_NO_10MHZ: 10 MHz operation is not allowed
-+ *	on this channel in current regulatory domain.
-  * @NL80211_FREQUENCY_ATTR_MAX: highest frequency attribute number
-  *	currently defined
-  * @__NL80211_FREQUENCY_ATTR_AFTER_LAST: internal use
-+ *
-+ * See https://apps.fcc.gov/eas/comments/GetPublishedDocument.html?id=327&tn=528122
-+ * for more information on the FCC description of the relaxations allowed
-+ * by NL80211_FREQUENCY_ATTR_INDOOR_ONLY and
-+ * NL80211_FREQUENCY_ATTR_GO_CONCURRENT.
-  */
- enum nl80211_frequency_attr {
- 	__NL80211_FREQUENCY_ATTR_INVALID,
-@@ -2355,6 +2464,10 @@ enum nl80211_frequency_attr {
- 	NL80211_FREQUENCY_ATTR_NO_80MHZ,
- 	NL80211_FREQUENCY_ATTR_NO_160MHZ,
- 	NL80211_FREQUENCY_ATTR_DFS_CAC_TIME,
-+	NL80211_FREQUENCY_ATTR_INDOOR_ONLY,
-+	NL80211_FREQUENCY_ATTR_GO_CONCURRENT,
-+	NL80211_FREQUENCY_ATTR_NO_20MHZ,
-+	NL80211_FREQUENCY_ATTR_NO_10MHZ,
- 
- 	/* keep last */
- 	__NL80211_FREQUENCY_ATTR_AFTER_LAST,
-@@ -2573,10 +2686,13 @@ enum nl80211_dfs_regions {
-  *	present has been registered with the wireless core that
-  *	has listed NL80211_FEATURE_CELL_BASE_REG_HINTS as a
-  *	supported feature.
-+ * @NL80211_USER_REG_HINT_INDOOR: a user sent an hint indicating that the
-+ *	platform is operating in an indoor environment.
-  */
- enum nl80211_user_reg_hint_type {
- 	NL80211_USER_REG_HINT_USER	= 0,
- 	NL80211_USER_REG_HINT_CELL_BASE = 1,
-+	NL80211_USER_REG_HINT_INDOOR    = 2,
- };
- 
- /**
-@@ -2998,14 +3114,20 @@ enum nl80211_bss_scan_width {
-  * @NL80211_BSS_BSSID: BSSID of the BSS (6 octets)
-  * @NL80211_BSS_FREQUENCY: frequency in MHz (u32)
-  * @NL80211_BSS_TSF: TSF of the received probe response/beacon (u64)
-+ *	(if @NL80211_BSS_PRESP_DATA is present then this is known to be
-+ *	from a probe response, otherwise it may be from the same beacon
-+ *	that the NL80211_BSS_BEACON_TSF will be from)
-  * @NL80211_BSS_BEACON_INTERVAL: beacon interval of the (I)BSS (u16)
-  * @NL80211_BSS_CAPABILITY: capability field (CPU order, u16)
-  * @NL80211_BSS_INFORMATION_ELEMENTS: binary attribute containing the
-  *	raw information elements from the probe response/beacon (bin);
-- *	if the %NL80211_BSS_BEACON_IES attribute is present, the IEs here are
-- *	from a Probe Response frame; otherwise they are from a Beacon frame.
-+ *	if the %NL80211_BSS_BEACON_IES attribute is present and the data is
-+ *	different then the IEs here are from a Probe Response frame; otherwise
-+ *	they are from a Beacon frame.
-  *	However, if the driver does not indicate the source of the IEs, these
-  *	IEs may be from either frame subtype.
-+ *	If present, the @NL80211_BSS_PRESP_DATA attribute indicates that the
-+ *	data here is known to be from a probe response, without any heuristics.
-  * @NL80211_BSS_SIGNAL_MBM: signal strength of probe response/beacon
-  *	in mBm (100 * dBm) (s32)
-  * @NL80211_BSS_SIGNAL_UNSPEC: signal strength of the probe response/beacon
-@@ -3017,6 +3139,10 @@ enum nl80211_bss_scan_width {
-  *	yet been received
-  * @NL80211_BSS_CHAN_WIDTH: channel width of the control channel
-  *	(u32, enum nl80211_bss_scan_width)
-+ * @NL80211_BSS_BEACON_TSF: TSF of the last received beacon (u64)
-+ *	(not present if no beacon frame has been received yet)
-+ * @NL80211_BSS_PRESP_DATA: the data in @NL80211_BSS_INFORMATION_ELEMENTS and
-+ *	@NL80211_BSS_TSF is known to be from a probe response (flag attribute)
+@@ -3364,6 +3396,9 @@ enum nl80211_bss_scan_width {
+  *	(not present if no beacon frame has been received yet)
+  * @NL80211_BSS_PRESP_DATA: the data in @NL80211_BSS_INFORMATION_ELEMENTS and
+  *	@NL80211_BSS_TSF is known to be from a probe response (flag attribute)
++ * @NL80211_BSS_LAST_SEEN_BOOTTIME: CLOCK_BOOTTIME timestamp when this entry
++ *	was last updated by a received frame. The value is expected to be
++ *	accurate to about 10ms. (u64, nanoseconds)
   * @__NL80211_BSS_AFTER_LAST: internal
   * @NL80211_BSS_MAX: highest BSS attribute
   */
-@@ -3034,6 +3160,8 @@ enum nl80211_bss {
- 	NL80211_BSS_SEEN_MS_AGO,
- 	NL80211_BSS_BEACON_IES,
+@@ -3383,6 +3418,7 @@ enum nl80211_bss {
  	NL80211_BSS_CHAN_WIDTH,
-+	NL80211_BSS_BEACON_TSF,
-+	NL80211_BSS_PRESP_DATA,
+ 	NL80211_BSS_BEACON_TSF,
+ 	NL80211_BSS_PRESP_DATA,
++	NL80211_BSS_LAST_SEEN_BOOTTIME,
  
  	/* keep last */
  	__NL80211_BSS_AFTER_LAST,
-@@ -3650,6 +3778,8 @@ enum nl80211_iface_limit_attrs {
-  *	different channels may be used within this group.
-  * @NL80211_IFACE_COMB_RADAR_DETECT_WIDTHS: u32 attribute containing the bitmap
-  *	of supported channel widths for radar detection.
-+ * @NL80211_IFACE_COMB_RADAR_DETECT_REGIONS: u32 attribute containing the bitmap
-+ *	of supported regulatory regions for radar detection.
-  * @NUM_NL80211_IFACE_COMB: number of attributes
-  * @MAX_NL80211_IFACE_COMB: highest attribute number
-  *
-@@ -3683,6 +3813,7 @@ enum nl80211_if_combination_attrs {
- 	NL80211_IFACE_COMB_STA_AP_BI_MATCH,
- 	NL80211_IFACE_COMB_NUM_CHANNELS,
- 	NL80211_IFACE_COMB_RADAR_DETECT_WIDTHS,
-+	NL80211_IFACE_COMB_RADAR_DETECT_REGIONS,
- 
- 	/* keep last */
- 	NUM_NL80211_IFACE_COMB,
-@@ -3893,6 +4024,29 @@ enum nl80211_ap_sme_features {
-  *	interface. An active monitor interface behaves like a normal monitor
-  *	interface, but gets added to the driver. It ensures that incoming
-  *	unicast packets directed at the configured interface address get ACKed.
-+ * @NL80211_FEATURE_AP_MODE_CHAN_WIDTH_CHANGE: This driver supports dynamic
-+ *	channel bandwidth change (e.g., HT 20 <-> 40 MHz channel) during the
-+ *	lifetime of a BSS.
-+ * @NL80211_FEATURE_DS_PARAM_SET_IE_IN_PROBES: This device adds a DS Parameter
-+ *	Set IE to probe requests.
-+ * @NL80211_FEATURE_WFA_TPC_IE_IN_PROBES: This device adds a WFA TPC Report IE
-+ *	to probe requests.
-+ * @NL80211_FEATURE_QUIET: This device, in client mode, supports Quiet Period
-+ *	requests sent to it by an AP.
-+ * @NL80211_FEATURE_TX_POWER_INSERTION: This device is capable of inserting the
-+ *	current tx power value into the TPC Report IE in the spectrum
-+ *	management TPC Report action frame, and in the Radio Measurement Link
-+ *	Measurement Report action frame.
-+ * @NL80211_FEATURE_ACKTO_ESTIMATION: This driver supports dynamic ACK timeout
-+ *	estimation (dynack). %NL80211_ATTR_WIPHY_DYN_ACK flag attribute is used
-+ *	to enable dynack.
-+ * @NL80211_FEATURE_STATIC_SMPS: Device supports static spatial
-+ *	multiplexing powersave, ie. can turn off all but one chain
-+ *	even on HT connections that should be using more chains.
-+ * @NL80211_FEATURE_DYNAMIC_SMPS: Device supports dynamic spatial
-+ *	multiplexing powersave, ie. can turn off all but one chain
-+ *	and then wake the rest up as required after, for example,
-+ *	rts/cts handshake.
-  */
- enum nl80211_feature_flags {
- 	NL80211_FEATURE_SK_TX_STATUS			= 1 << 0,
-@@ -3913,6 +4067,14 @@ enum nl80211_feature_flags {
- 	NL80211_FEATURE_FULL_AP_CLIENT_STATE		= 1 << 15,
- 	NL80211_FEATURE_USERSPACE_MPM			= 1 << 16,
- 	NL80211_FEATURE_ACTIVE_MONITOR			= 1 << 17,
-+	NL80211_FEATURE_AP_MODE_CHAN_WIDTH_CHANGE	= 1 << 18,
-+	NL80211_FEATURE_DS_PARAM_SET_IE_IN_PROBES	= 1 << 19,
-+	NL80211_FEATURE_WFA_TPC_IE_IN_PROBES		= 1 << 20,
-+	NL80211_FEATURE_QUIET				= 1 << 21,
-+	NL80211_FEATURE_TX_POWER_INSERTION		= 1 << 22,
-+	NL80211_FEATURE_ACKTO_ESTIMATION		= 1 << 23,
-+	NL80211_FEATURE_STATIC_SMPS			= 1 << 24,
-+	NL80211_FEATURE_DYNAMIC_SMPS			= 1 << 25,
+@@ -4589,4 +4625,28 @@ enum nl80211_tdls_peer_capability {
+ 	NL80211_TDLS_PEER_WMM = 1<<2,
  };
  
- /**
-@@ -3987,6 +4149,25 @@ enum nl80211_acl_policy {
- };
- 
- /**
-+ * enum nl80211_smps_mode - SMPS mode
-+ *
-+ * Requested SMPS mode (for AP mode)
-+ *
-+ * @NL80211_SMPS_OFF: SMPS off (use all antennas).
-+ * @NL80211_SMPS_STATIC: static SMPS (use a single antenna)
-+ * @NL80211_SMPS_DYNAMIC: dynamic smps (start with a single antenna and
-+ *	turn on other antennas after CTS/RTS).
++/**
++ * enum nl80211_sched_scan_plan - scanning plan for scheduled scan
++ * @__NL80211_SCHED_SCAN_PLAN_INVALID: attribute number 0 is reserved
++ * @NL80211_SCHED_SCAN_PLAN_INTERVAL: interval between scan iterations. In
++ *	seconds (u32).
++ * @NL80211_SCHED_SCAN_PLAN_ITERATIONS: number of scan iterations in this
++ *	scan plan (u32). The last scan plan must not specify this attribute
++ *	because it will run infinitely. A value of zero is invalid as it will
++ *	make the scan plan meaningless.
++ * @NL80211_SCHED_SCAN_PLAN_MAX: highest scheduled scan plan attribute number
++ *	currently defined
++ * @__NL80211_SCHED_SCAN_PLAN_AFTER_LAST: internal use
 + */
-+enum nl80211_smps_mode {
-+	NL80211_SMPS_OFF,
-+	NL80211_SMPS_STATIC,
-+	NL80211_SMPS_DYNAMIC,
++enum nl80211_sched_scan_plan {
++	__NL80211_SCHED_SCAN_PLAN_INVALID,
++	NL80211_SCHED_SCAN_PLAN_INTERVAL,
++	NL80211_SCHED_SCAN_PLAN_ITERATIONS,
 +
-+	__NL80211_SMPS_AFTER_LAST,
-+	NL80211_SMPS_MAX = __NL80211_SMPS_AFTER_LAST - 1
++	/* keep last */
++	__NL80211_SCHED_SCAN_PLAN_AFTER_LAST,
++	NL80211_SCHED_SCAN_PLAN_MAX =
++		__NL80211_SCHED_SCAN_PLAN_AFTER_LAST - 1
 +};
 +
-+/**
-  * enum nl80211_radar_event - type of radar event for DFS operation
-  *
-  * Type of event to be used with NL80211_ATTR_RADAR_EVENT to inform userspace
+ #endif /* __LINUX_NL80211_H */

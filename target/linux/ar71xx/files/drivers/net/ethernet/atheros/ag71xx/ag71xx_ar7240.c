@@ -1,7 +1,7 @@
 /*
  *  Driver for the built-in ethernet switch of the Atheros AR7240 SoC
  *  Copyright (c) 2010 Gabor Juhos <juhosg@openwrt.org>
- *  Copyright (c) 2010 Felix Fietkau <nbd@openwrt.org>
+ *  Copyright (c) 2010 Felix Fietkau <nbd@nbd.name>
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License version 2 as published
@@ -445,7 +445,7 @@ static int __ar7240sw_reg_wait(struct mii_bus *mii, u32 reg, u32 mask, u32 val,
 		if ((t & mask) == val)
 			return 0;
 
-		msleep(1);
+		usleep_range(1000, 2000);
 	}
 
 	return -ETIMEDOUT;
@@ -618,6 +618,31 @@ static void ar7240sw_setup(struct ar7240sw *as)
 	ar7240sw_reg_rmw(mii, AR7240_REG_SERVICE_TAG, AR7240_SERVICE_TAG_M, 0);
 }
 
+/* inspired by phy_poll_reset in drivers/net/phy/phy_device.c */
+static int
+ar7240sw_phy_poll_reset(struct mii_bus *bus)
+{
+	const unsigned int sleep_msecs = 20;
+	int ret, elapsed, i;
+
+	for (elapsed = sleep_msecs; elapsed <= 600;
+	     elapsed += sleep_msecs) {
+		msleep(sleep_msecs);
+		for (i = 0; i < AR7240_NUM_PHYS; i++) {
+			ret = ar7240sw_phy_read(bus, i, MII_BMCR);
+			if (ret < 0)
+				return ret;
+			if (ret & BMCR_RESET)
+				break;
+			if (i == AR7240_NUM_PHYS - 1) {
+				usleep_range(1000, 2000);
+				return 0;
+			}
+		}
+	}
+	return -ETIMEDOUT;
+}
+
 static int ar7240sw_reset(struct ar7240sw *as)
 {
 	struct mii_bus *mii = as->mii_bus;
@@ -629,7 +654,7 @@ static int ar7240sw_reset(struct ar7240sw *as)
 		ar7240sw_disable_port(as, i);
 
 	/* Wait for transmit queues to drain. */
-	msleep(2);
+	usleep_range(2000, 3000);
 
 	/* Reset the switch. */
 	ar7240sw_reg_write(mii, AR7240_REG_MASK_CTRL,
@@ -646,7 +671,9 @@ static int ar7240sw_reset(struct ar7240sw *as)
 		ar7240sw_phy_write(mii, i, MII_BMCR,
 				   BMCR_RESET | BMCR_ANENABLE);
 	}
-	msleep(1000);
+	ret = ar7240sw_phy_poll_reset(mii);
+	if (ret)
+		return ret;
 
 	ar7240sw_setup(as);
 	return ret;

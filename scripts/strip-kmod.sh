@@ -18,13 +18,18 @@ else
 	ARGS="-x -G __this_module --strip-unneeded"
 fi
 
+if [ -z "$KEEP_BUILD_ID" ]; then
+    ARGS="$ARGS -R .note.gnu.build-id"
+fi
+
 ${CROSS}objcopy \
 	-R .comment \
 	-R .pdr \
 	-R .mdebug.abi32 \
-	-R .note.gnu.build-id \
 	-R .gnu.attributes \
 	-R .reginfo \
+	-R .MIPS.abiflags \
+	-R .note.GNU-stack \
 	$ARGS \
 	"$MODULE" "$MODULE.tmp"
 

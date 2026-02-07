@@ -20,6 +20,12 @@
 		compatible = "mti,cpu-interrupt-controller";
 	};
 
+	aliases {
+		spi0 = &spi0;
+		spi1 = &spi1;
+		serial0 = &uartlite;
+	};
+
 	palmbus@10000000 {
 		compatible = "palmbus";
 		reg = <0x10000000 0x200000>;
@@ -89,9 +95,6 @@
 
 			reg-shift = <2>;
 
-			pinctrl-names = "default";
-			pinctrl-0 = <&uartf_pins>;
-
 			status = "disabled";
 		};
 
@@ -150,9 +153,9 @@
 			status = "disabled";
 		};
 
-		spi@b00 {
-			compatible = "ralink,rt5350-spi";
-			reg = <0xb00 0x100>;
+		spi0: spi@b00 {
+			compatible = "ralink,rt5350-spi", "ralink,rt2880-spi";
+			reg = <0xb00 0x40>;
 
 			resets = <&rstctrl 18>;
 			reset-names = "spi";
@@ -161,12 +164,28 @@
 			#size-cells = <1>;
 
 			pinctrl-names = "default";
-			pinctrl-0 = <&spi_pins &spi_cs1>;
+			pinctrl-0 = <&spi_pins>;
 
 			status = "disabled";
 		};
 
-		uartlite@c00 {
+		spi1: spi@b40 {
+			compatible = "ralink,rt5350-spi", "ralink,rt2880-spi";
+			reg = <0xb40 0x60>;
+
+			resets = <&rstctrl 18>;
+			reset-names = "spi";
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi_cs1>;
+
+			status = "disabled";
+		};
+
+		uartlite: uartlite@c00 {
 			compatible = "ralink,rt5350-uart", "ralink,rt2880-uart", "ns16550a";
 			reg = <0xc00 0x100>;
 
@@ -206,30 +225,35 @@
 				ralink,function = "spi";
 			};
 		};
+
 		i2c_pins: i2c {
 			i2c {
 				ralink,group = "i2c";
 				ralink,function = "i2c";
 			};
 		};
+
 		phy_led_pins: phy_led {
 			phy_led {
 				ralink,group = "led";
 				ralink,function = "led";
 			};
 		};
+
 		uartlite_pins: uartlite {
 			uart {
 				ralink,group = "uartlite";
 				ralink,function = "uartlite";
 			};
 		};
+
 		uartf_pins: uartf {
 			uartf {
 				ralink,group = "uartf";
 				ralink,function = "uartf";
 			};
 		};
+
 		spi_cs1: spi1 {
 			spi1 {
 				ralink,group = "spi_cs1";
@@ -243,8 +267,9 @@
 		#reset-cells = <1>;
 	};
 
-	usbphy {
-		compatible = "ralink,rt3xxx-usbphy";
+	usbphy: usbphy {
+		compatible = "ralink,rt3352-usbphy";
+		#phy-cells = <1>;
 
 		resets = <&rstctrl 22 &rstctrl 25>;
 		reset-names = "host", "device";
@@ -252,15 +277,23 @@
 
 	ethernet@10100000 {
 		compatible = "ralink,rt5350-eth";
-		reg = <0x10100000 10000>;
+		reg = <0x10100000 0x10000>;
+
+		resets = <&rstctrl 21 &rstctrl 23>;
+		reset-names = "fe", "esw";
 
 		interrupt-parent = <&cpuintc>;
 		interrupts = <5>;
+
+		mediatek,switch = <&esw>;
 	};
 
-	esw@10110000 {
+	esw: esw@10110000 {
 		compatible = "ralink,rt3050-esw";
-		reg = <0x10110000 8000>;
+		reg = <0x10110000 0x8000>;
+
+		resets = <&rstctrl 23>;
+		reset-names = "esw";
 
 		interrupt-parent = <&intc>;
 		interrupts = <17>;
@@ -268,7 +301,7 @@
 
 	wmac@10180000 {
 		compatible = "ralink,rt5350-wmac", "ralink,rt2880-wmac";
-		reg = <0x10180000 40000>;
+		reg = <0x10180000 0x40000>;
 
 		interrupt-parent = <&cpuintc>;
 		interrupts = <6>;
@@ -277,16 +310,22 @@
 	};
 
 	ehci@101c0000 {
-		compatible = "ralink,rt3xxx-ehci", "ehci-platform";
+		compatible = "generic-ehci";
 		reg = <0x101c0000 0x1000>;
+
+		phys = <&usbphy 1>;
+		phy-names = "usb";
 
 		interrupt-parent = <&intc>;
 		interrupts = <18>;
 	};
 
 	ohci@101c1000 {
-		compatible = "ralink,rt3xxx-ohci", "ohci-platform";
+		compatible = "generic-ohci";
 		reg = <0x101c1000 0x1000>;
+
+		phys = <&usbphy 1>;
+		phy-names = "usb";
 
 		interrupt-parent = <&intc>;
 		interrupts = <18>;

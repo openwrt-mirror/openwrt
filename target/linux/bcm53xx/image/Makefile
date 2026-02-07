@@ -8,90 +8,177 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 
 define Image/Prepare
+	$(CP) $(DTS_DIR)/*.dtb $(KDIR)/
+
 	rm -f $(KDIR)/fs_mark
 	echo -ne '\xde\xad\xc0\xde' > $(KDIR)/fs_mark
 	$(call prepare_generic_squashfs,$(KDIR)/fs_mark)
 
+	# For UBI we want only one extra block
+	rm -f $(KDIR)/ubi_mark
+	echo -ne '\xde\xad\xc0\xde' > $(KDIR)/ubi_mark
+
 	$(CP) ./ubinize.cfg $(KDIR)
 endef
 
-define trx2ndpart/serial
--a 1024 -f $(KDIR)/root.squashfs -a 0x10000 -A $(KDIR)/fs_mark
+define Build/append-dtb
+	cat $(KDIR)/$(DT).dtb >> $@
 endef
 
-define trx2ndpart/nand-0x20000-0x800
--a 0x20000 -f $(KDIR)/root-block-0x20000-min-0x800.ubi -a 0x20000 -A $(KDIR)/fs_mark
+define Build/lzma-d16
+	$(STAGING_DIR_HOST)/bin/lzma e $@ -d16 $(1) $@.new
+	@mv $@.new $@
 endef
 
-# $(1): dts filename (also used for the firmware file).
-# $(2): flash type (not used).
-define Image/Build/initramfs/DTB
-	$(call Image/Build/DTB,zImage-initramfs,$(1))
-	$(STAGING_DIR_HOST)/bin/trx -o $(KDIR)/$(IMG_PREFIX)-$(1)-initramfs.trx \
-		-f $(KDIR)/zImage-initramfs-$(1).lzma
-endef
-
-# $(1): dts filename (also used for the firmware file).
-# $(2): flash type.
-define Image/Build/squashfs/DTB
-	$(call Image/Build/DTB,zImage,$(1))
-	$(STAGING_DIR_HOST)/bin/trx -o $(KDIR)/$(IMG_PREFIX)-$(1)-squashfs.trx \
-		-f $(KDIR)/zImage-$(1).lzma \
-		$(call trx2ndpart/$(2))
-endef
-
-# $(1): kernel (Linux) image file
-# $(2): dts filename (also used for the firmware file).
-define Image/Build/DTB
-	rm -f $(KDIR)/$(1)-$(2).lzma
-	rm -f $(KDIR)/$(1)-$(2).dts
-	cat $(KDIR)/$(1) $(DTS_DIR)/$(2).dtb > $(KDIR)/$(1)-$(2).dts;
-	$(STAGING_DIR_HOST)/bin/lzma e $(KDIR)/$(1)-$(2).dts $(KDIR)/$(1)-$(2).lzma -d16
-endef
-
-# $(1): filesystem type (e.g. squashfs, initramfs).
-# $(2): dts filename (also used for the firmware file).
-# $(3): flash type.
-# $(4): device specific magic.
-define Image/Build/AsusTrx
-	$(call Image/Build/$(1)/DTB,$(2),$(3))
-	# TODO: Put magic in TRX file
-	cp $(KDIR)/$(IMG_PREFIX)-$(2)-$(1).trx $(BIN_DIR)/
-endef
-
-# $(1): filesystem type (e.g. squashfs, initramfs).
-# $(2): dts filename (also used for the firmware file).
-# $(3): flash type.
-define Image/Build/Trx
-	$(call Image/Build/$(1)/DTB,$(2),$(3))
-	cp $(KDIR)/$(IMG_PREFIX)-$(2)-$(1).trx $(BIN_DIR)/
-endef
-
-# $(1): filesystem type (e.g. squashfs, initramfs).
-# $(2): dts filename (also used for the firmware file).
-# $(3): flash type.
-# $(4): board_id (device specific magic).
-# $(5): region.
-define Image/Build/Chk
-	$(call Image/Build/$(1)/DTB,$(2),$(3))
-	$(STAGING_DIR_HOST)/bin/mkchkimg -o $(BIN_DIR)/$(IMG_PREFIX)-$(2)-$(1).chk -k $(KDIR)/$(IMG_PREFIX)-$(2)-$(1).trx -b $(4) -r $(5)
-endef
-
-# $(1): filesystem type (e.g. squashfs, initramfs).
-define Image/Build
+define Build/mkfs/squashfs
 	( cd $(KDIR); $(STAGING_DIR_HOST)/bin/ubinize -p 128KiB -m 2048 -o $(KDIR)/root-block-0x20000-min-0x800.ubi ubinize.cfg )
-
-	$(call Image/Build/AsusTrx,$(1),bcm47081-asus-rt-n18u,nand-0x20000-0x800,RT-N18U)
-
-	$(call Image/Build/Chk,$(1),bcm4708-netgear-r6250,nand-0x20000-0x800,U12H245T00_NETGEAR,1)
-	$(call Image/Build/Chk,$(1),bcm4708-netgear-r6300-v2,nand-0x20000-0x800,U12H240T00_NETGEAR,1)
- 
-	$(call Image/Build/Trx,$(1),bcm4708-buffalo-wzr-1750dhp,nand-0x20000-0x800)
-	$(call Image/Build/Trx,$(1),bcm47081-buffalo-wzr-600dhp2,nand-0x20000-0x800)
 endef
 
-define Image/Build/Initramfs
-	$(call Image/Build,initramfs)
+define Build/trx-serial
+	$(STAGING_DIR_HOST)/bin/trx \
+		-o $@ \
+		-m 33554432 \
+		-f $(word 1,$^) -a 1024 \
+		-f $(KDIR)/root.squashfs -a 0x10000 -A $(KDIR)/fs_mark
 endef
+
+define Build/trx-nand
+	# kernel: always use 4 MiB (-28 B or TRX header) to allow upgrades even
+	#	  if it grows up between releases
+	# root: UBI with one extra block containing UBI mark to trigger erasing
+	#	rest of partition
+	$(STAGING_DIR_HOST)/bin/trx \
+		-o $@ \
+		-m 33554432 \
+		-f $(word 1,$^) -a 0x20000 -b 0x400000 \
+		-f $(KDIR)/root-block-0x20000-min-0x800.ubi \
+		-A $(KDIR)/ubi_mark -a 0x20000
+endef
+
+define Build/asus-trx
+	$(STAGING_DIR_HOST)/bin/asustrx \
+		-p $(PRODUCTID) -i $@ -o $@.new
+	mv $@.new $@
+endef
+
+define Build/seama-nand
+	# Seama entity
+	$(STAGING_DIR_HOST)/bin/oseama \
+		entity $@.entity \
+		-m "dev=/dev/mtdblock/7" \
+		-m "type=firmware" \
+		-f $(word 1,$^) \
+		-b 0x400000 \
+		-f $(KDIR)/root-block-0x20000-min-0x800.ubi \
+		-f $(KDIR)/ubi_mark
+	# Seama container
+	$(STAGING_DIR_HOST)/bin/seama \
+		-s $@ \
+		-m "signature=$(SIGNATURE)" \
+		-i $@.entity
+endef
+
+DEVICE_VARS += DT PRODUCTID SIGNATURE NETGEAR_BOARD_ID NETGEAR_REGION
+
+define Device/Default
+  # .dtb files are prefixed by SoC type, e.g. bcm4708- which is not included in device/image names
+  # extract the full dtb name based on the device info
+  DT := $(patsubst %.dtb,%,$(notdir $(wildcard $(if $(IB),$(KDIR),$(DTS_DIR))/*-$(1).dtb)))
+  KERNEL := kernel-bin | append-dtb | lzma-d16
+  KERNEL_DEPENDS = $$(wildcard $(KDIR)/$$(DT).dts)
+  FILESYSTEMS := squashfs
+  KERNEL_NAME := zImage
+  IMAGE_NAME = $$(IMAGE_PREFIX)-$$(1).$$(2)
+  IMAGES := trx
+  IMAGE/trx := trx-nand
+endef
+
+define Device/asus
+  IMAGES := trx
+  IMAGE/trx := trx-nand | asus-trx
+endef
+
+define AsusDevice
+  define Device/asus-$(1)
+	$$(Device/asus)
+	PRODUCTID := $(2)
+  endef
+  TARGET_DEVICES += asus-$(1)
+endef
+
+define Device/linksys
+  IMAGES := trx
+  IMAGE/trx := trx-nand
+endef
+
+define LinksysDevice
+  define Device/linksys-$(1)
+	$$(Device/linksys)
+  endef
+  TARGET_DEVICES += linksys-$(1)
+endef
+
+define Device/dlink
+  IMAGES := bin
+  IMAGE/bin := seama-nand
+endef
+
+define DLinkDevice
+  define Device/dlink-$(1)
+	$$(Device/dlink)
+	SIGNATURE := $(2)
+  endef
+  TARGET_DEVICES += dlink-$(1)
+endef
+
+define Device/netgear
+  IMAGES := chk
+  IMAGE/chk := trx-nand | netgear-chk
+  NETGEAR_REGION := 1
+endef
+
+define NetgearDevice
+  define Device/netgear-$(1)
+	$$(Device/netgear)
+	NETGEAR_BOARD_ID := $(2)
+  endef
+  TARGET_DEVICES += netgear-$(1)
+endef
+
+define Device/netgear-r6250
+  $(Device/netgear)
+  NETGEAR_BOARD_ID := U12H245T00_NETGEAR
+endef
+
+define Device/netgear-r6300-v2
+  $(Device/netgear)
+  NETGEAR_BOARD_ID := U12H240T00_NETGEAR
+endef
+
+define Device/netgear-r8000
+  $(Device/netgear)
+  NETGEAR_BOARD_ID := U12H315T00_NETGEAR
+endef
+
+define Device/smartrg-sr400ac
+  IMAGES := trx
+  IMAGE/trx := trx-serial
+endef
+
+TARGET_DEVICES += \
+	buffalo-wzr-1750dhp buffalo-wzr-600dhp2 buffalo-wzr-900dhp \
+	buffalo-wxr-1900dhp \
+	netgear-r6250 netgear-r6300-v2 netgear-r8000 \
+	smartrg-sr400ac
+
+$(eval $(call AsusDevice,rt-ac56u,RT-AC56U))
+$(eval $(call AsusDevice,rt-ac68u,RT-AC68U))
+$(eval $(call AsusDevice,rt-ac87u,RT-AC87U))
+$(eval $(call AsusDevice,rt-n18u,RT-N18U))
+$(eval $(call DLinkDevice,dir-885l,wrgac42_dlink.2015_dir885l))
+$(eval $(call LinksysDevice,ea6300-v1))
+$(eval $(call NetgearDevice,r7000,U12H270T00_NETGEAR))
+$(eval $(call NetgearDevice,r7900,U12H315T30_NETGEAR))
+# $(eval $(call NetgearDevice,r8500,U12H334T00_NETGEAR))
 
 $(eval $(call BuildImage))

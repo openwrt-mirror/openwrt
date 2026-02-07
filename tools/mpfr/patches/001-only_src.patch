@@ -1,7 +1,7 @@
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -12,7 +12,7 @@
- AUTOMAKE_OPTIONS = gnu
+@@ -18,7 +18,7 @@ AUTOMAKE_OPTIONS = gnu
+ # old Automake version.
  ACLOCAL_AMFLAGS = -I m4
  
 -SUBDIRS = doc src tests tune
@@ -11,9 +11,9 @@
    examples/ReadMe examples/divworst.c examples/rndo-add.c examples/sample.c \
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -294,7 +294,7 @@ top_builddir = @top_builddir@
- top_srcdir = @top_srcdir@
- AUTOMAKE_OPTIONS = gnu
+@@ -378,7 +378,7 @@ AUTOMAKE_OPTIONS = gnu
+ # libtoolize and in case some developer needs to switch back to an
+ # old Automake version.
  ACLOCAL_AMFLAGS = -I m4
 -SUBDIRS = doc src tests tune
 +SUBDIRS = src

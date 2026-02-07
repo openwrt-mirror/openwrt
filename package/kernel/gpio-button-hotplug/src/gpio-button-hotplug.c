@@ -1,12 +1,12 @@
 /*
  *  GPIO Button Hotplug driver
  *
- *  Copyright (C) 2012 Felix Fietkau <nbd@openwrt.org>
+ *  Copyright (C) 2012 Felix Fietkau <nbd@nbd.name>
  *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
  *
  *  Based on the diag.c - GPIO interface driver for Broadcom boards
  *    Copyright (C) 2006 Mike Baker <mbm@openwrt.org>,
- *    Copyright (C) 2006-2007 Felix Fietkau <nbd@openwrt.org>
+ *    Copyright (C) 2006-2007 Felix Fietkau <nbd@nbd.name>
  *    Copyright (C) 2008 Andy Boyett <agb@openwrt.org>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -101,8 +101,8 @@ static struct bh_map button_map[] = {
 
 /* -------------------------------------------------------------------------*/
 
-static int bh_event_add_var(struct bh_event *event, int argv,
-		const char *format, ...)
+static __printf(3, 4)
+int bh_event_add_var(struct bh_event *event, int argv, const char *format, ...)
 {
 	static char buf[128];
 	char *s;
@@ -117,8 +117,7 @@ static int bh_event_add_var(struct bh_event *event, int argv,
 	va_end(args);
 
 	if (len >= sizeof(buf)) {
-		BH_ERR("buffer size too small\n");
-		WARN_ON(1);
+		WARN(1, "buffer size too small");
 		return -ENOMEM;
 	}
 
@@ -384,7 +383,18 @@ gpio_keys_get_devtree_pdata(struct device *dev)
 		button = &pdata->buttons[i++];
 
 		button->gpio = of_get_gpio_flags(pp, 0, &flags);
-		button->active_low = flags & OF_GPIO_ACTIVE_LOW;
+		if (button->gpio < 0) {
+			error = button->gpio;
+			if (error != -ENOENT) {
+				if (error != -EPROBE_DEFER)
+					dev_err(dev,
+						"Failed to get gpio flags, error: %d\n",
+						error);
+				return ERR_PTR(error);
+			}
+		} else {
+			button->active_low = flags & OF_GPIO_ACTIVE_LOW;
+		}
 
 		if (of_property_read_u32(pp, "linux,code", &button->code)) {
 			dev_err(dev, "Button without keycode: 0x%x\n",
@@ -545,20 +555,17 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		struct gpio_keys_button *button = &pdata->buttons[i];
 		struct gpio_keys_button_data *bdata = &bdev->data[i];
 
-		if (bdata->can_sleep) {
-			dev_err(&pdev->dev, "skipping gpio:%d, it can sleep\n", button->gpio);
-			continue;
-		}
 		if (!button->irq)
 			button->irq = gpio_to_irq(button->gpio);
 		if (button->irq < 0) {
 			dev_err(&pdev->dev, "failed to get irq for gpio:%d\n", button->gpio);
 			continue;
 		}
-		ret = devm_request_irq(&pdev->dev, button->irq, button_handle_irq,
-					IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
-					dev_name(&pdev->dev), bdata);
-		if (ret)
+
+		ret = devm_request_threaded_irq(&pdev->dev, button->irq, NULL, button_handle_irq,
+						IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+						dev_name(&pdev->dev), bdata);
+		if (ret < 0)
 			dev_err(&pdev->dev, "failed to request irq:%d for gpio:%d\n", button->irq, button->gpio);
 		else
 			dev_dbg(&pdev->dev, "gpio:%d has irq:%d\n", button->gpio, button->irq);
@@ -654,7 +661,7 @@ module_init(gpio_button_init);
 module_exit(gpio_button_exit);
 
 MODULE_AUTHOR("Gabor Juhos <juhosg@openwrt.org>");
-MODULE_AUTHOR("Felix Fietkau <nbd@openwrt.org>");
+MODULE_AUTHOR("Felix Fietkau <nbd@nbd.name>");
 MODULE_DESCRIPTION("Polled GPIO Buttons hotplug driver");
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("platform:" DRV_NAME);

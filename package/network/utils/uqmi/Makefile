@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uqmi
-PKG_VERSION:=2014-12-01
+PKG_VERSION:=2015-09-17
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git://nbd.name/uqmi.git
+PKG_SOURCE_URL=$(OPENWRT_GIT)/project/uqmi.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=046710fb3950355abc7f0714a43cce1c2a1a6392
+PKG_SOURCE_VERSION:=8a97586e9445a60e355dea13aa87885ab3dcb277
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_MAINTAINER:=Matti Laakso <malaakso@elisanet.fi>
 # PKG_MIRROR_MD5SUM:=
@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/uqmi
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+libubox +libblobmsg-json +kmod-usb-net +kmod-usb-net-qmi-wwan
+  DEPENDS:=+libubox +libblobmsg-json +kmod-usb-net +kmod-usb-net-qmi-wwan +wwan
   TITLE:=Control utility for mobile broadband modems
 endef
 

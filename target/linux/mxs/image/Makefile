@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 OpenWrt.org
+# Copyright (C) 2013-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -12,16 +12,10 @@ BOARDS:= \
 	imx23-olinuxino \
 	imx28-duckbill
 
-define Image/BuildKernel/olinuxino-bootlet
-	cat $(LINUX_DIR)/arch/arm/boot/zImage $(DTS_DIR)/imx23-olinuxino.dtb > $(STAGING_DIR)/zImage_dtb
-	(cd $(STAGING_DIR); \
-	$(STAGING_DIR)/../host/bin/elftosb -z -c ./linux_prebuilt.db -o linux.sb; \
-	dd if=/dev/zero of=sd_mmc_bootstream.raw bs=512 count=4; \
-	dd if=linux.sb of=$(BIN_DIR)/openwrt-imx23-sbImage ibs=512 seek=4; \
-	)
-endef
+FAT32_BLOCK_SIZE=1024
+FAT32_BLOCKS=$(shell echo $$(($(CONFIG_TARGET_BOOTFS_PARTSIZE)*1024*1024/$(FAT32_BLOCK_SIZE))))
 
-define Image/BuildKernel/mxs-uboot
+define Image/BuildKernel
 	mkimage -A arm -O linux -T kernel -C none \
 		-a 0x40008000 -e 0x40008000 \
 		-n 'ARM OpenWrt Linux-$(LINUX_VERSION)' \
@@ -29,27 +23,16 @@ define Image/BuildKernel/mxs-uboot
 	cp $(KDIR)/uImage $(BIN_DIR)/$(IMG_PREFIX)-uImage
 endef
 
-define Image/BuildKernel
-
-  ifeq ($(CONFIG_PACKAGE_imx-bootlets),y)
-	$(call Image/BuildKernel/olinuxino-bootlet)
-  endif
-
-  ifeq ($(CONFIG_PACKAGE_uboot-mxs-mx23_olinuxino),y)
-	$(call Image/BuildKernel/mxs-uboot)
-  endif
-  
-	$(CP) $(LINUX_DIR)/arch/arm/boot/zImage $(BIN_DIR)/openwrt-$(BOARD)-zImage
-	$(foreach board,$(BOARDS),
-		$(CP) $(DTS_DIR)/$(board).dtb $(BIN_DIR)/
-	)
-endef
-
 define Image/InstallKernel
 
-  ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_KERNEL),)
+  ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_ZIMAGE),)
 	mkdir -p $(TARGET_DIR)/boot
-	$(CP) $(LINUX_DIR)/arch/arm/boot/zImage $(TARGET_DIR)/boot/
+	cp $(KDIR)/zImage $(TARGET_DIR)/boot/
+  endif
+
+  ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_UIMAGE),)
+	mkdir -p $(TARGET_DIR)/boot
+	cp $(KDIR)/uImage $(TARGET_DIR)/boot/
   endif
   
   ifneq ($(CONFIG_TARGET_ROOTFS_INCLUDE_DTB),)
@@ -61,8 +44,45 @@ define Image/InstallKernel
 
 endef
 
+define Image/Build/SDCard-vfat-ext4
+	rm -f $(KDIR)/boot.img
+	mkdosfs $(KDIR)/boot.img -C $(FAT32_BLOCKS)
+
+	mcopy -i $(KDIR)/boot.img $(DTS_DIR)/$(3).dtb ::$(3).dtb
+	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/$(IMG_PREFIX)-uImage ::uImage
+
+	./gen_sdcard_vfat_ext4.sh \
+		$(BIN_DIR)/$(2) \
+		$(BIN_DIR)/uboot-mxs-$(4)/uboot-mxs-$(4).sb \
+		$(KDIR)/boot.img \
+		$(KDIR)/root.$(1) \
+		$(CONFIG_TARGET_BOOTFS_PARTSIZE) \
+		$(CONFIG_TARGET_ROOTFS_PARTSIZE)
+endef
+
+define Image/Build/SDCard-ext4-ext4
+	./gen_sdcard_ext4_ext4.sh \
+		$(BIN_DIR)/$(2) \
+		$(BIN_DIR)/uboot-mxs-$(4)/uboot-mxs-$(4).sb \
+		$(KDIR)/root.$(1) \
+		$(CONFIG_TARGET_ROOTFS_PARTSIZE)
+endef
+
+define Image/Build/Profile/olinuxino-maxi
+	$(call Image/Build/SDCard-vfat-ext4,$(1),$(2),imx23-olinuxino,mx23_olinuxino)
+endef
+
+define Image/Build/Profile/olinuxino-micro
+	$(call Image/Build/SDCard-vfat-ext4,$(1),$(2),imx23-olinuxino,mx23_olinuxino)
+endef
+
+define Image/Build/Profile/duckbill
+	$(call Image/Build/SDCard-ext4-ext4,$(1),$(2),imx28-duckbill,duckbill)
+endef
+
 define Image/Build
-	$(call Image/Build/$(1))
+	$(call Image/Build/$(1),$(1))
+	$(call Image/Build/Profile/$(PROFILE),$(1),$(IMG_PREFIX)-$(PROFILE)-sdcard.img)
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
 endef
 

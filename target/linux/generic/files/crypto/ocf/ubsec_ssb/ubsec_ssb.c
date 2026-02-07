@@ -178,7 +178,7 @@ static struct proc_dir_entry *procdebug;
 static struct ssb_device_id ubsec_ssb_tbl[] = {
     /* Broadcom BCM5365P IPSec Core */
     SSB_DEVICE(SSB_VENDOR_BROADCOM, SSB_DEV_IPSEC, SSB_ANY_REV),
-    SSB_DEVTABLE_END
+    {},
 };
 
 static struct ssb_driver ubsec_ssb_driver = {
@@ -499,7 +499,7 @@ ubsec_ssb_probe(struct ssb_device *sdev,
     }
 
     err = request_irq(sdev->irq, (irq_handler_t)ubsec_ssb_isr, 
-        IRQF_DISABLED | IRQF_SHARED, DRV_MODULE_NAME, sdev);
+        IRQF_SHARED, DRV_MODULE_NAME, sdev);
     if (err) {
         dev_err(sdev->dev, "Could not request irq\n");
         goto err_out_powerdown;

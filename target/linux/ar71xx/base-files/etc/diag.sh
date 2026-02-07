@@ -12,12 +12,24 @@ get_status_led() {
 	all0305)
 		status_led="eap7660d:green:ds4"
 		;;
+	antminer-s1)
+		status_led="antminer-s1:green:system"
+		;;
+	antminer-s3)
+		status_led="antminer-s3:green:system"
+		;;
+	antminer-r1)
+		status_led="antminer-r1:green:system"
+		;;
 	ap132)
 		status_led="ap132:green:status"
 		;;
 	ap136-010|\
 	ap136-020)
 		status_led="ap136:green:status"
+		;;
+	ap147-010)
+		status_led="ap147:green:status"
 		;;
 	ap135-020)
 		status_led="ap135:green:status"
@@ -34,17 +46,38 @@ get_status_led() {
 	aw-nr580)
 		status_led="aw-nr580:green:ready"
 		;;
-	bullet-m | rocket-m | nano-m | nanostation-m | nanostation-m-xw | loco-m-xw)
+	bsb)
+		status_led="bsb:red:sys"
+		;;
+	bullet-m | rocket-m | rocket-m-xw | nano-m | nanostation-m | nanostation-m-xw | loco-m-xw)
 		status_led="ubnt:green:link4"
+		;;
+	rocket-m-ti)
+		status_led="ubnt:green:link6"
 		;;
 	bxu2000n-2-a1)
 		status_led="bhu:green:status"
 		;;
+	cap324)
+		status_led="pcs:green:power"
+		;;
+	c-55)
+		status_led="c-55:green:pwr"
+		;;
 	cap4200ag)
 		status_led="senao:green:pwr"
 		;;
+	cf-e316n-v2)
+		status_led="$(ar71xx_board_name):blue:wan"
+		;;
 	cpe510)
 		status_led="tp-link:green:link4"
+		;;
+	cr3000)
+		status_led="pcs:amber:power"
+		;;
+	cr5000)
+		status_led="pcs:amber:power"
 		;;
 	db120)
 		status_led="db120:green:status"
@@ -54,6 +87,7 @@ get_status_led() {
 	dir-505-a1 |\
 	dir-600-a1 |\
 	dir-615-e1 |\
+	dir-615-i1 |\
 	dir-615-e4)
 		status_led="d-link:green:power"
 		;;
@@ -66,6 +100,18 @@ get_status_led() {
 	dir-825-c1 |\
 	dir-835-a1)
 		status_led="d-link:amber:power"
+		;;
+	dlan-hotspot)
+		status_led="devolo:green:wifi"
+		;;
+	dlan-pro-500-wp)
+		status_led="devolo:green:wlan-2g"
+		;;
+	dlan-pro-1200-ac)
+		status_led="devolo:status:wlan"
+		;;
+	dr344)
+		status_led="dr344:green:status"
 		;;
 	dragino2)
 		status_led="dragino2:red:system"
@@ -80,8 +126,17 @@ get_status_led() {
 	el-m150)
 		status_led="easylink:green:system"
 		;;
+	ew-dorin | ew-dorin-router)
+		status_led="dorin:green:status"
+		;;
+	f9k1115v2)
+		status_led="belkin:blue:status"
+		;;
 	gl-inet)
 		status_led="gl-connect:green:lan"
+		;;
+	epg5000)
+		status_led="epg5000:amber:power"
 		;;
 	esr1750)
 		status_led="esr1750:amber:power"
@@ -92,7 +147,8 @@ get_status_led() {
 	hiwifi-hc6361)
 		status_led="hiwifi:blue:system"
 		;;
-	hornet-ub)
+	hornet-ub | \
+	hornet-ub-x2)
 		status_led="alfa:blue:wps"
 		;;
 	ja76pf | \
@@ -102,11 +158,26 @@ get_status_led() {
 	ls-sr71)
 		status_led="ubnt:green:d22"
 		;;
+	mc-mac1200r)
+		status_led="mercury:green:system"
+		;;
+	mr12)
+		status_led="mr12:green:power"
+		;;
+	mr16)
+		status_led="mr16:green:power"
+		;;
+	mr18)
+		status_led="mr18:green:tricolor0"
+		;;
 	mr600)
 		status_led="mr600:orange:power"
 		;;
 	mr600v2)
 		status_led="mr600:blue:power"
+		;;
+	mr1750)
+		status_led="mr1750:blue:power"
 		;;
 	mr900 | \
 	mr900v2)
@@ -126,6 +197,9 @@ get_status_led() {
 	nbg460n_550n_550nh)
 		status_led="nbg460n:green:power"
 		;;
+	nbg6616)
+		status_led="nbg6616:green:power"
+		;;
 	nbg6716)
 		status_led="nbg6716:white:power"
 		;;
@@ -136,8 +210,22 @@ get_status_led() {
 	om2p-lc)
 		status_led="om2p:blue:power"
 		;;
-	om5p)
+	om5p | \
+	om5p-an)
 		status_led="om5p:blue:power"
+		;;
+	om5p-ac | \
+	om5p-acv2)
+		status_led="om5pac:blue:power"
+		;;
+	omy-g1)
+		status_led="omy:green:wlan"
+		;;
+	omy-x1)
+		status_led="omy:green:power"
+		;;
+	onion-omega)
+		status_led="onion:amber:system"
 		;;
 	pb44)
 		status_led="pb44:amber:jump1"
@@ -154,6 +242,7 @@ get_status_led() {
 		status_led="rb750:green:act"
 		;;
 	rb-911g-2hpnd|\
+	rb-911g-5hpacd|\
 	rb-911g-5hpnd|\
 	rb-912uag-2hpnd|\
 	rb-912uag-5hpnd)
@@ -175,11 +264,17 @@ get_status_led() {
 	smart-300)
 		status_led="nc-link:green:system"
 		;;
+	minibox-v1)
+		status_led="minibox-v1:green:system"
+		;;
 	oolite)
 		status_led="oolite:red:system"
 		;;
 	qihoo-c301)
 		status_led="qihoo:green:status"
+		;;
+	tellstick-znet-lite)
+		status_led="tellstick:white:system"
 		;;
 	tew-632brp)
 		status_led="tew-632brp:green:status"
@@ -188,7 +283,8 @@ get_status_led() {
 		status_led="trendnet:blue:wps"
 		;;
 	tew-712br|\
-	tew-732br)
+	tew-732br|\
+	tew-823dru)
 		status_led="trendnet:green:power"
 		;;
 	tl-mr3020)
@@ -207,10 +303,13 @@ get_status_led() {
 	tl-mr3220-v2 | \
 	tl-mr3420 | \
 	tl-mr3420-v2 | \
+	tl-wa701nd-v2 | \
 	tl-wa801nd-v2 | \
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
+	tl-wa901nd-v4 | \
+	tl-wdr3320-v2 | \
 	tl-wdr3500 | \
 	tl-wr1041n-v2 | \
 	tl-wr1043nd | \
@@ -222,18 +321,22 @@ get_status_led() {
 	tl-wr841n-v8 | \
 	tl-wa830re-v2 | \
 	tl-wr842n-v2 | \
-	tl-wr941nd)
+	tl-wr941nd | \
+	tl-wr941nd-v5)
 		status_led="tp-link:green:system"
 		;;
 	archer-c5 | \
 	archer-c7 | \
 	tl-wdr4900-v2 | \
 	tl-mr10u | \
+	tl-mr12u | \
 	tl-mr13u | \
 	tl-wdr4300 | \
 	tl-wr703n | \
 	tl-wr710n | \
-	tl-wr720n-v3)
+	tl-wr720n-v3 | \
+	tl-wr810n | \
+	tl-wr941nd-v6)
 		status_led="tp-link:blue:system"
 		;;
 	tl-wr841n-v9)
@@ -242,16 +345,24 @@ get_status_led() {
 	tl-wr2543n)
 		status_led="tp-link:green:wps"
 		;;
+	tl-wdr6500-v2)
+		status_led="tp-link:white:system"
+		;;
 	tube2h)
 		status_led="alfa:green:signal4"
 		;;
 	unifi)
 		status_led="ubnt:green:dome"
 		;;
-	uap-pro)
+	uap-pro | \
+	unifiac)
 		status_led="ubnt:white:dome"
 		;;
-	airgateway)
+	unifi-outdoor-plus)
+		status_led="ubnt:white:front"
+		;;
+	airgateway | \
+	airgatewaypro)
 		status_led="ubnt:white:status"
 		;;
 	whr-g301n | \
@@ -273,12 +384,27 @@ get_status_led() {
 	wndr3700v4 | \
 	wndr4300 | \
 	wnr2000 | \
+	wnr2000-v3 |\
 	wnr2200 |\
-	wnr612-v2)
+	wnr612-v2 |\
+	wnr1000-v2 |\
+	wpn824n)
 		status_led="netgear:green:power"
 		;;
 	wp543)
 		status_led="wp543:green:diag"
+		;;
+	wpj342)
+		status_led="wpj342:green:sig3"
+		;;
+	wpj344)
+		status_led="wpj344:green:status"
+		;;
+	wpj531)
+		status_led="wpj531:green:sig3"
+		;;
+	wpj558)
+		status_led="wpj558:green:sig3"
 		;;
 	wrt400n)
 		status_led="wrt400n:blue:wps"
@@ -304,6 +430,9 @@ set_state() {
 		;;
 	failsafe)
 		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
 		status_led_on

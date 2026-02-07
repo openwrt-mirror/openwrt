@@ -3,7 +3,7 @@ broadcast, unicast, etc.) on packet sockets via setsockopt.
 This can reduce the load in situations where only a limited number
 of packet types are necessary
 
-Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 
 --- a/include/uapi/linux/if_packet.h
 +++ b/include/uapi/linux/if_packet.h
@@ -51,7 +51,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  		goto out;
  
  	if (!net_eq(dev_net(dev), sock_net(sk)))
-@@ -1756,12 +1758,12 @@ static int packet_rcv(struct sk_buff *sk
+@@ -1748,12 +1750,12 @@ static int packet_rcv(struct sk_buff *sk
  	int skb_len = skb->len;
  	unsigned int snaplen, res;
  
@@ -67,7 +67,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  	if (!net_eq(dev_net(dev), sock_net(sk)))
  		goto drop;
  
-@@ -1881,12 +1883,12 @@ static int tpacket_rcv(struct sk_buff *s
+@@ -1873,12 +1875,12 @@ static int tpacket_rcv(struct sk_buff *s
  	BUILD_BUG_ON(TPACKET_ALIGN(sizeof(*h.h2)) != 32);
  	BUILD_BUG_ON(TPACKET_ALIGN(sizeof(*h.h3)) != 48);
  
@@ -83,7 +83,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  	if (!net_eq(dev_net(dev), sock_net(sk)))
  		goto drop;
  
-@@ -2823,6 +2825,7 @@ static int packet_create(struct net *net
+@@ -2828,6 +2830,7 @@ static int packet_create(struct net *net
  	spin_lock_init(&po->bind_lock);
  	mutex_init(&po->pg_vec_lock);
  	po->prot_hook.func = packet_rcv;
@@ -91,7 +91,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  
  	if (sock->type == SOCK_PACKET)
  		po->prot_hook.func = packet_rcv_spkt;
-@@ -3403,6 +3406,16 @@ packet_setsockopt(struct socket *sock, i
+@@ -3408,6 +3411,16 @@ packet_setsockopt(struct socket *sock, i
  		po->xmit = val ? packet_direct_xmit : dev_queue_xmit;
  		return 0;
  	}
@@ -108,7 +108,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  	default:
  		return -ENOPROTOOPT;
  	}
-@@ -3454,6 +3467,13 @@ static int packet_getsockopt(struct sock
+@@ -3459,6 +3472,13 @@ static int packet_getsockopt(struct sock
  	case PACKET_VNET_HDR:
  		val = po->has_vnet_hdr;
  		break;

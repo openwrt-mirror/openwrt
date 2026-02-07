@@ -11,7 +11,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libiconv
-PKG_RELEASE:=7
+PKG_RELEASE:=8
 
 PKG_LICENSE:=LGPL-2.1
 PKG_LICENSE_FILES:=LICENSE
@@ -70,14 +70,14 @@ define Host/Compile
 endef
 
 define Host/Install
-	$(INSTALL_DIR) $(STAGING_DIR_HOST)/lib
-	$(INSTALL_DATA) $(HOST_BUILD_DIR)/libiconv.a $(STAGING_DIR_HOST)/lib/
+	$(INSTALL_DIR) $(STAGING_DIR)/host/lib
+	$(INSTALL_DATA) $(HOST_BUILD_DIR)/libiconv.a $(STAGING_DIR)/host/lib/
 
-	$(INSTALL_DIR) $(STAGING_DIR_HOST)/include
-	$(INSTALL_DATA) ./src/include/iconv.h $(STAGING_DIR_HOST)/include/
+	$(INSTALL_DIR) $(STAGING_DIR)/host/include
+	$(INSTALL_DATA) ./src/include/iconv.h $(STAGING_DIR)/host/include/
 
-	$(INSTALL_DIR) $(STAGING_DIR_HOST)/share/aclocal
-	$(INSTALL_DATA) ./src/m4/* $(STAGING_DIR_HOST)/share/aclocal/
+	$(INSTALL_DIR) $(STAGING_DIR)/host/share/aclocal
+	$(INSTALL_DATA) ./src/m4/* $(STAGING_DIR)/host/share/aclocal/
 endef
 
 $(eval $(call HostBuild))

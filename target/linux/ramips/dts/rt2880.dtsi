@@ -13,6 +13,10 @@
 		bootargs = "console=ttyS0,57600";
 	};
 
+	aliases {
+		serial0 = &uartlite;
+	};
+
 	cpuintc: cpuintc@0 {
 		#address-cells = <0>;
 		#interrupt-cells = <1>;
@@ -23,7 +27,7 @@
 	palmbus@300000 {
 		compatible = "palmbus";
 		reg = <0x300000 0x200000>;
-                ranges = <0x0 0x300000 0x1FFFFF>;
+		ranges = <0x0 0x300000 0x1FFFFF>;
 
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -110,7 +114,7 @@
 			status = "disabled";
 		};
 
-		uartlite@c00 {
+		uartlite: uartlite@c00 {
 			compatible = "ralink,rt2880-uart", "ns16550a";
 			reg = <0xc00 0x100>;
 
@@ -149,12 +153,20 @@
 		};
 	};
 
+	rstctrl: rstctrl {
+		compatible = "ralink,rt2880-reset";
+		#reset-cells = <1>;
+	};
+
 	ethernet@400000 {
 		compatible = "ralink,rt2880-eth";
-		reg = <0x00400000 10000>;
+		reg = <0x00400000 0x10000>;
 
 		#address-cells = <1>;
 		#size-cells = <0>;
+
+		resets = <&rstctrl 18>;
+		reset-names = "fe";
 
 		interrupt-parent = <&cpuintc>;
 		interrupts = <5>;
@@ -162,7 +174,7 @@
 		status = "disabled";
 
 		port@0 {
-			compatible = "ralink,rt2880-port", "ralink,eth-port";
+			compatible = "ralink,rt2880-port", "mediatek,eth-port";
 			reg = <0>;
 		};
 
@@ -176,12 +188,11 @@
 
 	wmac@480000 {
 		compatible = "ralink,rt2880-wmac";
-		reg = <0x480000 40000>;
+		reg = <0x480000 0x40000>;
 
 		interrupt-parent = <&cpuintc>;
 		interrupts = <6>;
 
 		ralink,eeprom = "soc_wmac.eeprom";
 	};
-
 };

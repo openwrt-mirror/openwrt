@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2014 OpenWrt.org
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=iproute2
-PKG_VERSION:=3.16.0
+PKG_VERSION:=4.4.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://kernel.org/pub/linux/utils/net/iproute2/
-PKG_MD5SUM:=6c823b40fdcfa7b8120743349a52ac18
+PKG_MD5SUM:=d762653ec3e1ab0d4a9689e169ca184f
 PKG_BUILD_PARALLEL:=1
 PKG_LICENSE:=GPL-2.0
 
@@ -39,14 +39,6 @@ endef
 
 Package/ip-full=$(call Package/iproute2/Default,full,Full)
 
-define Package/ip/conffiles
-/etc/iproute2/rt_tables
-endef
-
-define Package/ip-$(BUILD_VARIANT)/conffiles
-$(Package/ip/conffiles)
-endef
-
 define Package/tc
 $(call Package/iproute2/Default)
   TITLE:=Traffic control utility
@@ -58,9 +50,19 @@ $(call Package/iproute2/Default)
   TITLE:=General netlink utility frontend
 endef
 
+define Package/ip-bridge
+$(call Package/iproute2/Default)
+  TITLE:=Bridge configuration utility from iproute2
+endef
+
 define Package/ss
 $(call Package/iproute2/Default)
   TITLE:=Socket statistics utility
+endef
+
+define Package/nstat
+$(call Package/iproute2/Default)
+  TITLE:=Network statistics utility
 endef
 
 ifeq ($(BUILD_VARIANT),tiny)
@@ -77,22 +79,14 @@ define Build/Configure
 		> $(PKG_BUILD_DIR)/include/SNAPSHOT.h
 endef
 
-ifdef CONFIG_USE_EGLIBC
-  ifndef CONFIG_EGLIBC_VERSION_2_13
-    TARGET_CFLAGS += -DHAVE_SETNS
-  endif
-endif
-ifdef CONFIG_USE_MUSL
-  TARGET_CFLAGS += -DHAVE_SETNS
-endif
-
+TARGET_CFLAGS += -DHAVE_SETNS
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
 
 MAKE_FLAGS += \
 	EXTRA_CCOPTS="$(TARGET_CFLAGS) -I../include -I$(STAGING_DIR)/usr/include/libnl-tiny" \
 	KERNEL_INCLUDE="$(LINUX_DIR)/include" \
 	SHARED_LIBS="" \
-	LDFLAGS="-Wl,--gc-sections" \
+	LDFLAGS="$(TARGET_LDFLAGS) -Wl,--gc-sections" \
 	IP_CONFIG_TINY=$(IP_CONFIG_TINY) \
 	FPIC="$(FPIC)"
 
@@ -108,14 +102,13 @@ define Build/InstallDev
 endef
 
 define Package/ip/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_DIR) $(1)/etc/iproute2
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/etc/iproute2/rt_tables $(1)/etc/iproute2
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ip/ip $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ip/ip $(1)/usr/bin/
 endef
 
-define Package/ip-$(BUILD_VARIANT)/install
-	$(Package/ip/install)
+define Package/ip-full/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ip/ip $(1)/usr/sbin/
 endef
 
 define Package/tc/install
@@ -130,13 +123,25 @@ define Package/genl/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/genl/genl $(1)/usr/sbin/
 endef
 
+define Package/ip-bridge/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bridge/bridge $(1)/usr/sbin/
+endef
+
 define Package/ss/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/misc/ss $(1)/usr/sbin/
+endef
+
+define Package/nstat/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/misc/nstat $(1)/usr/sbin/
 endef
 
 $(eval $(call BuildPackage,ip))
 $(eval $(call BuildPackage,ip-full))
 $(eval $(call BuildPackage,tc))
 $(eval $(call BuildPackage,genl))
+$(eval $(call BuildPackage,ip-bridge))
 $(eval $(call BuildPackage,ss))
+$(eval $(call BuildPackage,nstat))

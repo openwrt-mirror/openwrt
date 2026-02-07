@@ -9,7 +9,6 @@
 #include <linux/err.h>
 #include <linux/init.h>
 #include <linux/module.h>
-#include <linux/version.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_address.h>
@@ -27,6 +26,8 @@
 #include <linux/pinctrl/pinmux.h>
 /* Since we request GPIOs from ourself */
 #include <linux/pinctrl/consumer.h>
+#include <linux/spinlock.h>
+#include <linux/version.h>
 
 #include "core.h"
 
@@ -41,6 +42,7 @@ struct oxnas_gpio_chip {
 	void __iomem		*regbase;  /* GPIOA/B virtual address */
 	void __iomem		*ctrlbase; /* SYS/SEC_CTRL virtual address */
 	struct irq_domain	*domain;   /* associated irq domain */
+	spinlock_t		lock;
 };
 
 #define to_oxnas_gpio_chip(c) container_of(c, struct oxnas_gpio_chip, chip)
@@ -563,30 +565,6 @@ static int oxnas_pmx_set_mux(struct pinctrl_dev *pctldev, unsigned selector,
 	return 0;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0))
-static void oxnas_pmx_disable(struct pinctrl_dev *pctldev, unsigned selector,
-			      unsigned group)
-{
-	struct oxnas_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
-	const struct oxnas_pmx_pin *pins_conf = info->groups[group].pins_conf;
-	const struct oxnas_pmx_pin *pin;
-	uint32_t npins = info->groups[group].npins;
-	int i;
-	unsigned mask;
-	void __iomem *pio;
-	void __iomem *cio;
-
-	for (i = 0; i < npins; i++) {
-		pin = &pins_conf[i];
-		oxnas_pin_dbg(info->dev, pin);
-		pio = pin_to_gpioctrl(info, pin->bank);
-		cio = pin_to_muxctrl(info, pin->bank);
-		mask = pin_to_mask(pin->pin);
-		oxnas_mux_gpio_enable(cio, pio, mask, 1);
-	}
-}
-#endif
-
 static int oxnas_pmx_get_funcs_count(struct pinctrl_dev *pctldev)
 {
 	struct oxnas_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
@@ -660,14 +638,7 @@ static const struct pinmux_ops oxnas_pmx_ops = {
 	.get_functions_count	= oxnas_pmx_get_funcs_count,
 	.get_function_name	= oxnas_pmx_get_func_name,
 	.get_function_groups	= oxnas_pmx_get_groups,
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 18, 0))
 	.set_mux		= oxnas_pmx_set_mux,
-#else
-	.enable			= oxnas_pmx_set_mux,
-#endif
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0))
-	.disable		= oxnas_pmx_disable,
-#endif
 	.gpio_request_enable	= oxnas_gpio_request_enable,
 	.gpio_disable_free	= oxnas_gpio_disable_free,
 };
@@ -1176,12 +1147,17 @@ static void gpio_irq_mask(struct irq_data *d)
 	void __iomem	*pio = oxnas_gpio->regbase;
 	unsigned	mask = 1 << d->hwirq;
 	unsigned	type = irqd_get_trigger_type(d);
+	unsigned long	flags;
 
-	/* FIXME: need proper lock */
+	if (!(type & IRQ_TYPE_EDGE_BOTH))
+		return;
+
+	spin_lock_irqsave(&oxnas_gpio->lock, flags);
 	if (type & IRQ_TYPE_EDGE_RISING)
 		oxnas_register_clear_mask(pio + RE_IRQ_ENABLE, mask);
 	if (type & IRQ_TYPE_EDGE_FALLING)
 		oxnas_register_clear_mask(pio + FE_IRQ_ENABLE, mask);
+	spin_unlock_irqrestore(&oxnas_gpio->lock, flags);
 }
 
 static void gpio_irq_unmask(struct irq_data *d)
@@ -1190,12 +1166,17 @@ static void gpio_irq_unmask(struct irq_data *d)
 	void __iomem	*pio = oxnas_gpio->regbase;
 	unsigned	mask = 1 << d->hwirq;
 	unsigned	type = irqd_get_trigger_type(d);
+	unsigned long	flags;
 
-	/* FIXME: need proper lock */
+	if (!(type & IRQ_TYPE_EDGE_BOTH))
+		return;
+
+	spin_lock_irqsave(&oxnas_gpio->lock, flags);
 	if (type & IRQ_TYPE_EDGE_RISING)
 		oxnas_register_set_mask(pio + RE_IRQ_ENABLE, mask);
 	if (type & IRQ_TYPE_EDGE_FALLING)
 		oxnas_register_set_mask(pio + FE_IRQ_ENABLE, mask);
+	spin_unlock_irqrestore(&oxnas_gpio->lock, flags);
 }
 
 
@@ -1219,7 +1200,11 @@ static struct irq_chip gpio_irqchip = {
 	.irq_set_type	= gpio_irq_type,
 };
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
 static void gpio_irq_handler(unsigned irq, struct irq_desc *desc)
+#else
+static void gpio_irq_handler(struct irq_desc *desc)
+#endif
 {
 	struct irq_chip *chip = irq_desc_get_chip(desc);
 	struct irq_data *idata = irq_desc_get_irq_data(desc);
@@ -1260,7 +1245,9 @@ static int oxnas_gpio_irq_map(struct irq_domain *h, unsigned int virq,
 	irq_set_lockdep_class(virq, &gpio_lock_class);
 
 	irq_set_chip_and_handler(virq, &gpio_irqchip, handle_edge_irq);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,2,0)
 	set_irq_flags(virq, IRQF_VALID);
+#endif
 	irq_set_chip_data(virq, oxnas_gpio);
 
 	return 0;
@@ -1383,6 +1370,8 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
 	}
 
 	oxnas_chip->chip = oxnas_gpio_template;
+
+	spin_lock_init(&oxnas_chip->lock);
 
 	chip = &oxnas_chip->chip;
 	chip->of_node = np;

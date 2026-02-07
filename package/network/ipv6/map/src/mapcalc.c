@@ -2,7 +2,8 @@
  * mapcalc - MAP parameter calculation
  *
  * Author: Steven Barth <cyrus@openwrt.org>
- * Copyright (c) 2014 cisco Systems, Inc.
+ * Copyright (c) 2014-2015 cisco Systems, Inc.
+ * Copyright (c) 2015 Steven Barth <cyrus@openwrt.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2
@@ -37,12 +38,14 @@ static const struct blobmsg_policy dump_attrs[DUMP_ATTR_MAX] = {
 enum {
 	IFACE_ATTR_INTERFACE,
 	IFACE_ATTR_PREFIX,
+	IFACE_ATTR_ADDRESS,
 	IFACE_ATTR_MAX,
 };
 
 static const struct blobmsg_policy iface_attrs[IFACE_ATTR_MAX] = {
 	[IFACE_ATTR_INTERFACE] = { .name = "interface", .type = BLOBMSG_TYPE_STRING },
 	[IFACE_ATTR_PREFIX] = { .name = "ipv6-prefix", .type = BLOBMSG_TYPE_ARRAY },
+	[IFACE_ATTR_ADDRESS] = { .name = "ipv6-address", .type = BLOBMSG_TYPE_ARRAY },
 };
 
 
@@ -109,6 +112,43 @@ static void handle_dump(struct ubus_request *req __attribute__((unused)),
 	dump = blob_memdup(tb[DUMP_ATTR_INTERFACE]);
 }
 
+static void match_prefix(int *pdlen, struct in6_addr *pd, struct blob_attr *cur,
+		const struct in6_addr *ipv6prefix, int prefix6len, bool lw4o6)
+{
+	struct blob_attr *d;
+	unsigned drem;
+
+	if (!cur || blobmsg_type(cur) != BLOBMSG_TYPE_ARRAY || !blobmsg_check_attr(cur, NULL))
+		return;
+
+	blobmsg_for_each_attr(d, cur, drem) {
+		struct blob_attr *ptb[PREFIX_ATTR_MAX];
+		blobmsg_parse(prefix_attrs, PREFIX_ATTR_MAX, ptb,
+				blobmsg_data(d), blobmsg_data_len(d));
+
+		if (!ptb[PREFIX_ATTR_ADDRESS] || !ptb[PREFIX_ATTR_MASK])
+			continue;
+
+		struct in6_addr prefix = IN6ADDR_ANY_INIT;
+		int mask = blobmsg_get_u32(ptb[PREFIX_ATTR_MASK]);
+		inet_pton(AF_INET6, blobmsg_get_string(ptb[PREFIX_ATTR_ADDRESS]), &prefix);
+
+		// lw4over6 /128-address-as-PD matching madness workaround
+		if (lw4o6 && mask == 128)
+			mask = 64;
+
+		if (*pdlen < mask && mask >= prefix6len &&
+				!bmemcmp(&prefix, ipv6prefix, prefix6len)) {
+			bmemcpy(pd, &prefix, mask);
+			*pdlen = mask;
+		} else if (lw4o6 && *pdlen < prefix6len && mask < prefix6len &&
+				!bmemcmp(&prefix, ipv6prefix, mask)) {
+			bmemcpy(pd, ipv6prefix, prefix6len);
+			*pdlen = prefix6len;
+		}
+	}
+}
+
 enum {
 	OPT_TYPE,
 	OPT_FMR,
@@ -122,6 +162,8 @@ enum {
 	OPT_PSID,
 	OPT_BR,
 	OPT_DMR,
+	OPT_PD,
+	OPT_PDLEN,
 	OPT_MAX
 };
 
@@ -138,6 +180,8 @@ static char *const token[] = {
 	[OPT_PSID] = "psid",
 	[OPT_BR] = "br",
 	[OPT_DMR] = "dmr",
+	[OPT_PD] = "pd",
+	[OPT_PDLEN] = "pdlen",
 	[OPT_MAX] = NULL
 };
 
@@ -198,16 +242,20 @@ int main(int argc, char *argv[])
 				ealen = intval;
 			} else if (idx == OPT_PREFIX4LEN && (intval = strtoul(value, NULL, 0)) <= 32 && !errno) {
 				prefix4len = intval;
-			} else if (idx == OPT_PREFIX6LEN && (intval = strtoul(value, NULL, 0)) <= 112 && !errno) {
+			} else if (idx == OPT_PREFIX6LEN && (intval = strtoul(value, NULL, 0)) <= 128 && !errno) {
 				prefix6len = intval;
 			} else if (idx == OPT_IPV4PREFIX && inet_pton(AF_INET, value, &ipv4prefix) == 1) {
 				// dummy
 			} else if (idx == OPT_IPV6PREFIX && inet_pton(AF_INET6, value, &ipv6prefix) == 1) {
 				// dummy
+			} else if (idx == OPT_PD && inet_pton(AF_INET6, value, &pd) == 1) {
+				// dummy
 			} else if (idx == OPT_OFFSET && (intval = strtoul(value, NULL, 0)) <= 16 && !errno) {
 				offset = intval;
 			} else if (idx == OPT_PSIDLEN && (intval = strtoul(value, NULL, 0)) <= 16 && !errno) {
 				psidlen = intval;
+			} else if (idx == OPT_PDLEN && (intval = strtoul(value, NULL, 0)) <= 128 && !errno) {
+				pdlen = intval;
 			} else if (idx == OPT_PSID && (intval = strtoul(value, NULL, 0)) <= 65535 && !errno) {
 				psid = intval;
 			} else if (idx == OPT_DMR) {
@@ -226,60 +274,60 @@ int main(int argc, char *argv[])
 		if (offset < 0)
 			offset = (lw4o6) ? 0 : (legacy) ? 4 : 6;
 
+		// LW4over6 doesn't have an EALEN and has no psid-autodetect
+		if (lw4o6) {
+			if (psidlen < 0)
+				psidlen = 0;
+
+			ealen = psidlen;
+		}
+
 		// Find PD
-		struct blob_attr *c, *cur;
-		unsigned rem;
-		blobmsg_for_each_attr(c, dump, rem) {
-			struct blob_attr *tb[IFACE_ATTR_MAX];
-			blobmsg_parse(iface_attrs, IFACE_ATTR_MAX, tb, blobmsg_data(c), blobmsg_data_len(c));
+		if (pdlen < 0) {
+			struct blob_attr *c;
+			unsigned rem;
+			blobmsg_for_each_attr(c, dump, rem) {
+				struct blob_attr *tb[IFACE_ATTR_MAX];
+				blobmsg_parse(iface_attrs, IFACE_ATTR_MAX, tb, blobmsg_data(c), blobmsg_data_len(c));
 
-			if (!tb[IFACE_ATTR_INTERFACE] || (strcmp(argv[1], "*") && strcmp(argv[1],
-					blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]))))
-				continue;
-
-			if ((cur = tb[IFACE_ATTR_PREFIX])) {
-				if (blobmsg_type(cur) != BLOBMSG_TYPE_ARRAY || !blobmsg_check_attr(cur, NULL))
+				if (!tb[IFACE_ATTR_INTERFACE] || (strcmp(argv[1], "*") && strcmp(argv[1],
+						blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]))))
 					continue;
 
-				struct blob_attr *d;
-				unsigned drem;
-				blobmsg_for_each_attr(d, cur, drem) {
-					struct blob_attr *ptb[PREFIX_ATTR_MAX];
-					blobmsg_parse(prefix_attrs, PREFIX_ATTR_MAX, ptb,
-							blobmsg_data(d), blobmsg_data_len(d));
+				match_prefix(&pdlen, &pd, tb[IFACE_ATTR_PREFIX], &ipv6prefix, prefix6len, lw4o6);
 
-					if (!ptb[PREFIX_ATTR_ADDRESS] || !ptb[PREFIX_ATTR_MASK])
-						continue;
+				if (lw4o6)
+					match_prefix(&pdlen, &pd, tb[IFACE_ATTR_ADDRESS], &ipv6prefix, prefix6len, lw4o6);
 
-					struct in6_addr prefix = IN6ADDR_ANY_INIT;
-					int mask = blobmsg_get_u32(ptb[PREFIX_ATTR_MASK]);
-					inet_pton(AF_INET6, blobmsg_get_string(ptb[PREFIX_ATTR_ADDRESS]), &prefix);
-
-					if (mask >= prefix6len && !bmemcmp(&prefix, &ipv6prefix, prefix6len)) {
-						pd = prefix;
-						pdlen = mask;
-						iface = blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]);
-						break;
-					}
-				}
-
-				if (pdlen >= 0)
+				if (pdlen >= 0) {
+					iface = blobmsg_get_string(tb[IFACE_ATTR_INTERFACE]);
 					break;
+				}
 			}
 		}
 
 		if (ealen < 0 && pdlen >= 0)
 			ealen = pdlen - prefix6len;
 
-		if (psidlen < 0)
+		if (psidlen <= 0) {
 			psidlen = ealen - (32 - prefix4len);
+			psid = -1;
+		}
 
 		if (psid < 0 && psidlen <= 16 && psidlen >= 0 && pdlen >= 0 && ealen >= psidlen) {
 			bmemcpys64(&psid16, &pd, prefix6len + ealen - psidlen, psidlen);
 			psid = be16_to_cpu(psid16);
 		}
 
-		psid16 = cpu_to_be16(psid >> (16 - psidlen));
+		psid = psid >> (16 - psidlen);
+		psid16 = cpu_to_be16(psid);
+		psid = psid << (16 - psidlen);
+
+		if (prefix4len < 0 || prefix6len < 0 || ealen < 0 || ealen < psidlen) {
+			fprintf(stderr, "Skipping invalid or incomplete rule: %s\n", argv[i]);
+			status = 1;
+			continue;
+		}
 
 		if ((pdlen >= 0 || ealen == psidlen) && ealen >= psidlen) {
 			bmemcpys64(&ipv4addr, &pd, prefix6len, ealen - psidlen);
@@ -288,12 +336,6 @@ int main(int argc, char *argv[])
 
 			if (prefix4len + ealen < 32)
 				addr4len = prefix4len + ealen;
-		}
-
-		if (prefix4len < 0 || prefix6len < 0 || ealen < 0 || ealen < psidlen) {
-			fprintf(stderr, "Skipping invalid or incomplete rule: %s\n", argv[i]);
-			status = 1;
-			continue;
 		}
 
 		if (pdlen < 0 && !fmr) {

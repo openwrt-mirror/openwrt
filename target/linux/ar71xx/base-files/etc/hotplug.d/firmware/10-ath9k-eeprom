@@ -1,5 +1,11 @@
 #!/bin/sh
 
+[ -e /lib/firmware/$FIRMWARE ] && exit 0
+
+. /lib/ar71xx.sh
+. /lib/functions.sh
+. /lib/functions/system.sh
+
 ath9k_eeprom_die() {
 	echo "ath9k eeprom: " "$*"
 	exit 1
@@ -19,6 +25,21 @@ ath9k_eeprom_extract() {
 		ath9k_eeprom_die "failed to extract from $mtd"
 }
 
+ath9k_ubi_eeprom_extract() {
+	local part=$1
+	local offset=$2
+	local count=$3
+	local ubidev=$(nand_find_ubi $CI_UBIPART)
+	local ubi
+
+	ubi=$(nand_find_volume $ubidev $part)
+	[ -n "$ubi" ] || \
+		ath9k_eeprom_die "no UBI volume found for $part"
+
+	dd if=/dev/$ubi of=/lib/firmware/$FIRMWARE bs=1 skip=$offset count=$count 2>/dev/null || \
+		ath9k_eeprom_die "failed to extract from $ubi"
+}
+
 ath9k_patch_firmware_mac() {
 	local mac=$1
 
@@ -27,17 +48,25 @@ ath9k_patch_firmware_mac() {
 	macaddr_2bin $mac | dd of=/lib/firmware/$FIRMWARE conv=notrunc bs=1 seek=2 count=6
 }
 
-[ -e /lib/firmware/$FIRMWARE ] && exit 0
-
-. /lib/ar71xx.sh
-. /lib/functions.sh
-. /lib/functions/system.sh
-
 board=$(ar71xx_board_name)
 
 case "$FIRMWARE" in
 "soc_wmac.eeprom")
 	case $board in
+	c-55)
+		ath9k_eeprom_extract "art" 4096 2048
+		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary art 0) +1)
+		;;
+	mr18)
+		. /lib/upgrade/nand.sh
+
+		if [ -n "$(nand_find_volume ubi0 caldata)" ]; then
+			ath9k_ubi_eeprom_extract "caldata" 4096 2048
+		else
+			ath9k_eeprom_extract "odm-caldata" 4096 2048
+		fi
+		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary_ubi board-config 102) +1)
+		;;
 	r6100 | \
 	wndr3700v4 | \
 	wndr4300)
@@ -52,10 +81,42 @@ case "$FIRMWARE" in
 
 "pci_wmac0.eeprom")
 	case $board in
+	c-55)
+		ath9k_eeprom_extract "art" 20480 2048
+		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary art 0) +2)
+		;;
+	mr18)
+		. /lib/upgrade/nand.sh
+
+		if [ -n "$(nand_find_volume ubi0 caldata)" ]; then
+			ath9k_ubi_eeprom_extract "caldata" 20480 2048
+		else
+			ath9k_eeprom_extract "odm-caldata" 20480 2048
+		fi
+		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary_ubi board-config 102) +2)
+		;;
 	wndr3700v4 | \
 	wndr4300)
 		ath9k_eeprom_extract "caldata" 20480 2048
 		ath9k_patch_firmware_mac $(mtd_get_mac_binary caldata 12)
+		;;
+	*)
+		ath9k_eeprom_die "board $board is not supported yet"
+		;;
+	esac
+	;;
+
+"pci_wmac1.eeprom")
+	case $board in
+	mr18)
+		. /lib/upgrade/nand.sh
+
+		if [ -n "$(nand_find_volume ubi0 caldata)" ]; then
+			ath9k_ubi_eeprom_extract "caldata" 36864 2048
+		else
+			ath9k_eeprom_extract "odm-caldata" 36864 2048
+		fi
+		ath9k_patch_firmware_mac $(macaddr_add $(mtd_get_mac_binary_ubi board-config 102) +3)
 		;;
 	*)
 		ath9k_eeprom_die "board $board is not supported yet"

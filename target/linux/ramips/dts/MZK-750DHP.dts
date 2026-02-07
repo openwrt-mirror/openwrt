@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "mt7620a.dtsi"
+#include "mt7620a.dtsi"
 
 / {
 	compatible = "ralink,mt7620a-soc";
@@ -11,13 +11,17 @@
 			status = "okay";
 		};
 
+		gpio2: gpio@660 {
+			status = "okay";
+		};
+
 		spi@b00 {
 			status = "okay";
 
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "en25q64";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80", "mx25l6405d";
 				spi-max-frequency = <10000000>;
@@ -51,7 +55,7 @@
 	pinctrl {
 		state_default: pinctrl0 {
 			gpio {
-				ralink,group = "i2c", "spi refclk", "rgmii1";
+				ralink,group = "i2c", "spi refclk", "rgmii1", "nd_sd";
 				ralink,function = "gpio";
 			};
 		};
@@ -60,13 +64,12 @@
 	ethernet@10100000 {
 		pinctrl-names = "default";
 		pinctrl-0 = <&ephy_pins>;
-
 		mtd-mac-address = <&factory 0x4>;
-		ralink,port-map = "llllw";
+		mediatek,portmap = "llllw";
 	};
 
 	gsw@10110000 {
-		ralink,port4 = "ephy";
+		mediatek,port4 = "ephy";
 	};
 
 	wmac@10180000 {
@@ -75,17 +78,33 @@
 
 	pcie@10140000 {
 		status = "okay";
+
+		pcie-bridge {
+			mt76@0,0 {
+				reg = <0x0000 0 0 0 0>;
+				device_type = "pci";
+				mediatek,mtd-eeprom = <&factory 0x8000>;
+				mediatek,2ghz = <0>;
+			};
+		};
 	};
 	
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		wps {
-			label = "mzk750:green:wps";
-			gpios = <&gpio1 11 1>;
+			label = "mzk-750dhp:green:wps";
+			gpios = <&gpio2 15 1>;
 		};
+
 		power {
-			label = "mzk750:green:power";
+			label = "mzk-750dhp:green:power";
 			gpios = <&gpio1 15 1>;
+		};
+
+		wlan5g {
+			label = "mzk-750dhp:green:wlan5g";
+			gpios = <&gpio1 14 1>;
 		};
 	};
 
@@ -94,14 +113,16 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		s1 {
 			label = "reset";
 			gpios = <&gpio0 1 1>;
-			linux,code = <0x100>;
+			linux,code = <0x198>;
 		};
+
 		s2 {
 			label = "wps";
-			gpios = <&gpio0 2 1>;
+			gpios = <&gpio2 19 1>;
 			linux,code = <0x211>;
 		};
 	};

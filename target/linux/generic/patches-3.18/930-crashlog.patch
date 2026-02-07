@@ -46,7 +46,7 @@
 @@ -0,0 +1,181 @@
 +/*
 + * Crash information logger
-+ * Copyright (C) 2010 Felix Fietkau <nbd@openwrt.org>
++ * Copyright (C) 2010 Felix Fietkau <nbd@nbd.name>
 + *
 + * Based on ramoops.c
 + *   Copyright (C) 2010 Marco Stornelli <marco.stornelli@gmail.com>
@@ -121,7 +121,7 @@
 +#endif
 +
 +#ifdef CONFIG_HAVE_MEMBLOCK
-+void __meminit crashlog_init_memblock(phys_addr_t addr, phys_addr_t size)
++void __init_memblock crashlog_init_memblock(phys_addr_t addr, phys_addr_t size)
 +{
 +	if (crashlog_addr)
 +		return;

@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "rt5350.dtsi"
+#include "rt5350.dtsi"
 
 / {
 	compatible = "X5", "ralink,rt5350-soc";
@@ -9,10 +9,11 @@
 	palmbus@10000000 {
 		spi@b00 {
 			status = "okay";
+
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "gd25q64";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80", "gd25q64";
 				spi-max-frequency = <10000000>;
@@ -57,24 +58,28 @@
 	};
 
 	esw@10110000 {
-		ralink,portmap = <0x2f>;
-		ralink,led_polarity = <1>;
+		mediatek,portmap = <0x2f>;
+		mediatek,led_polarity = <1>;
 	};
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		power {
 			label = "x5:green:power";
 			gpios = <&gpio0 13 1>;
 		};
+
 		20 {
 			label = "x5:green:20";
 			gpios = <&gpio0 12 1>;
 		};
+
 		50 {
 			label = "x5:green:50";
 			gpios = <&gpio0 11 1>;
 		};
+
 		80 {
 			label = "x5:green:80";
 			gpios = <&gpio0 7 1>;
@@ -86,16 +91,19 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		bat {
 			label = "bat";
 			gpios = <&gpio0 9 1>;
 			linux,code = <0x211>;
 		};
+
 		reset {
 			label = "reset";
 			gpios = <&gpio0 10 1>;
 			linux,code = <0x198>;
 		};
+
 		mode {
 			label = "mode";
 			gpios = <&gpio0 14 1>;
@@ -107,6 +115,7 @@
 	gpio_export {
 		compatible = "gpio-export";
 		#size-cells = <0>;
+
 		usb-mode {
 			gpio-export,name = "usb-mode";
 			gpio-export,output = <0>;

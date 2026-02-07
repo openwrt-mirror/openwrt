@@ -1,6 +1,6 @@
 --- a/source3/Makefile.in
 +++ b/source3/Makefile.in
-@@ -1019,7 +1019,7 @@ TEST_LP_LOAD_OBJ = param/test_lp_load.o
+@@ -1025,7 +1025,7 @@ TEST_LP_LOAD_OBJ = param/test_lp_load.o
  
  PASSWD_UTIL_OBJ = utils/passwd_util.o
  
@@ -9,7 +9,7 @@
  		$(PARAM_OBJ) $(LIBSMB_OBJ) $(PASSDB_OBJ) \
  		$(GROUPDB_OBJ) $(LIB_NONSMBD_OBJ) $(KRBCLIENT_OBJ) \
  		$(POPT_LIB_OBJ) $(SMBLDAP_OBJ) \
-@@ -1791,7 +1791,7 @@ nmbd/nmbd_multicall.o: nmbd/nmbd.c nmbd/
+@@ -1813,7 +1813,7 @@ nmbd/nmbd_multicall.o: nmbd/nmbd.c nmbd/
  		echo "$(COMPILE_CC_PATH)" 1>&2;\
  		$(COMPILE_CC_PATH) >/dev/null 2>&1
  
@@ -18,7 +18,7 @@
  	@echo Compiling $<.c
  	@$(COMPILE_CC_PATH) -Dmain=smbpasswd_main && exit 0;\
  		echo "The following command failed:" 1>&2;\
-@@ -1800,7 +1800,7 @@ utils/smbpasswd_multicall.o: utils/smbpa
+@@ -1822,7 +1822,7 @@ utils/smbpasswd_multicall.o: utils/smbpa
  
  SMBD_MULTI_O = $(patsubst smbd/server.o,smbd/server_multicall.o,$(SMBD_OBJ))
  NMBD_MULTI_O = $(patsubst nmbd/nmbd.o,nmbd/nmbd_multicall.o,$(filter-out $(LIB_DUMMY_OBJ),$(NMBD_OBJ)))
@@ -31,7 +31,7 @@
 +++ b/source3/utils/owrt_smbpasswd.c
 @@ -0,0 +1,249 @@
 +/*
-+ * Copyright (C) 2012 Felix Fietkau <nbd@openwrt.org>
++ * Copyright (C) 2012 Felix Fietkau <nbd@nbd.name>
 + * Copyright (C) 2008 John Crispin <blogic@openwrt.org>
 + *
 + * This program is free software; you can redistribute it and/or modify it

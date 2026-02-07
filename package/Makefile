@@ -20,8 +20,11 @@ ifneq ($(IGNORE_ERRORS),)
   package-n-filter := $(filter-out $(package-y) $(package-m),$(package-))
   package-ignore-errors := $(filter n m y,$(IGNORE_ERRORS))
   package-ignore-errors := $(if $(package-ignore-errors),$(package-ignore-errors),n m)
-  $(curdir)/builddirs-ignore-download := $(foreach m,$(package-ignore-errors),$(package-$(m)-filter))
-  $(curdir)/builddirs-ignore-compile := $(foreach m,$(package-ignore-errors),$(package-$(m)-filter))
+  package-ignore-subdirs := $(sort $(foreach m,$(package-ignore-errors),$(package-$(m)-filter)))
+  $(curdir)/builddirs-ignore-download := $(package-ignore-subdirs)
+  $(curdir)/builddirs-ignore-compile := $(package-ignore-subdirs)
+  $(curdir)/builddirs-ignore-host-download := $(package-ignore-subdirs)
+  $(curdir)/builddirs-ignore-host-compile := $(package-ignore-subdirs)
 endif
 
 ifdef CONFIG_USE_MKLIBS
@@ -41,7 +44,7 @@ ifdef CONFIG_USE_MKLIBS
 		--sysroot $(STAGING_DIR_ROOT) \
 		`cat $(TMP_DIR)/mklibs-libs | sed 's:/*[^/]\+/*$$::' | uniq | sed 's:^$(STAGING_DIR_ROOT):-L :'` \
 		--ldlib $(patsubst $(STAGING_DIR_ROOT)/%,/%,$(firstword $(wildcard \
-			$(foreach name,ld-uClibc.so.* ld-linux.so.* ld-*.so, \
+			$(foreach name,ld-uClibc.so.* ld-linux.so.* ld-*.so ld-musl-*.so.*, \
 			  $(STAGING_DIR_ROOT)/lib/$(name) \
 			)))) \
 		--target $(REAL_GNU_TARGET_NAME) \
@@ -91,7 +94,7 @@ PACKAGE_INSTALL_FILES:= \
 $(curdir)/cleanup: $(TMP_DIR)/.build
 	rm -rf $(STAGING_DIR_ROOT)
 
-$(curdir)/install: $(TMP_DIR)/.build
+$(curdir)/install: $(TMP_DIR)/.build $(curdir)/system/opkg/host/install
 	- find $(STAGING_DIR_ROOT) -type d | $(XARGS) chmod 0755
 	rm -rf $(TARGET_DIR)
 	[ -d $(TARGET_DIR)/tmp ] || mkdir -p $(TARGET_DIR)/tmp
@@ -111,10 +114,16 @@ $(curdir)/install: $(TMP_DIR)/.build
 		cd $(TARGET_DIR); \
 		for script in ./usr/lib/opkg/info/*.postinst; do \
 			IPKG_INSTROOT=$(TARGET_DIR) $$(which bash) $$script; \
+		done; \
+		for script in ./etc/init.d/*; do \
+			grep '#!/bin/sh /etc/rc.common' $$script >/dev/null || continue; \
+			IPKG_INSTROOT=$(TARGET_DIR) $$(which bash) ./etc/rc.common $$script enable; \
 		done || true \
 	)
+	$(if $(SOURCE_DATE_EPOCH),sed -i "s/Installed-Time: .*/Installed-Time: $(SOURCE_DATE_EPOCH)/" $(TARGET_DIR)/usr/lib/opkg/status)
 	@-find $(TARGET_DIR) -name CVS   | $(XARGS) rm -rf
 	@-find $(TARGET_DIR) -name .svn  | $(XARGS) rm -rf
+	@-find $(TARGET_DIR) -name .git  | $(XARGS) rm -rf
 	@-find $(TARGET_DIR) -name '.#*' | $(XARGS) rm -f
 	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.postinst*
 	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.prerm*
@@ -132,17 +141,29 @@ endif
 
 PACKAGE_SUBDIRS=.
 ifneq ($(CONFIG_PER_FEED_REPO),)
-  PACKAGE_SUBDIRS=base $(FEEDS_ENABLED)
+  ifneq ($(CONFIG_PER_FEED_REPO_ADD_DISABLED),)
+    PACKAGE_SUBDIRS=base kernel $(FEEDS_AVAILABLE)
+  else
+    PACKAGE_SUBDIRS=base kernel $(FEEDS_ENABLED)
+  endif
 endif
 
 $(curdir)/index: FORCE
 	@echo Generating package index...
 	@for d in $(PACKAGE_SUBDIRS); do ( \
+		mkdir -p $(PACKAGE_DIR)/$$d; \
+		cd $(PACKAGE_DIR)/$$d || continue; \
+		$(SCRIPT_DIR)/ipkg-make-index.sh . 2>&1 > Packages && \
+			gzip -9nc Packages > Packages.gz; \
+	); done
+ifdef CONFIG_SIGNED_PACKAGES
+	@echo Signing package index...
+	@for d in $(PACKAGE_SUBDIRS); do ( \
 		[ -d $(PACKAGE_DIR)/$$d ] && \
 			cd $(PACKAGE_DIR)/$$d || continue; \
-		$(SCRIPT_DIR)/ipkg-make-index.sh . 2>&1 > Packages && \
-			gzip -9c Packages > Packages.gz; \
+		$(STAGING_DIR_HOST)/bin/usign -S -m Packages -s $(BUILD_KEY); \
 	); done
+else
 ifeq ($(call qstrip,$(CONFIG_OPKGSMIME_KEY)),)
 	@echo Signing key has not been configured
 else
@@ -159,6 +180,7 @@ else
 			-inkey $(CONFIG_OPKGSMIME_KEY) \
 			$(PASSOPT) $(PASSARG); \
 	); done
+endif
 endif
 endif
 

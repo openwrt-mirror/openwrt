@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "rt3352.dtsi"
+#include "rt3352.dtsi"
 
 / {
 	compatible = "DIR-620-D1", "ralink,rt3352-soc";
@@ -9,10 +9,11 @@
 	palmbus@10000000 {
 		spi@b00 {
 			status = "okay";
+
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "mx25l6405d";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80", "mx25l6405d";
 				spi-max-frequency = <10000000>;
@@ -49,10 +50,12 @@
 				ralink,group = "i2c", "jtag", "uartf";
 				ralink,function = "gpio";
 			};
+
 			rgmii {
 				ralink,group = "rgmii";
 				ralink,function = "rgmii";
 			};
+
 			mdio {
 				ralink,group = "mdio";
 				ralink,function = "mdio";
@@ -65,7 +68,7 @@
 	};
 
 	esw@10110000 {
-		ralink,portmap = <0x2f>;
+		mediatek,portmap = <0x2f>;
 	};
 
 	wmac@10180000 {
@@ -74,12 +77,14 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		status {
-			label = "d-link:green:status";
+			label = "dir-620-d1:green:status";
 			gpios = <&gpio0 9 1>;
 		};
+
 		wifi {
-			label = "d-link:green:wifi";
+			label = "dir-620-d1:green:wifi";
 			gpios = <&gpio0 17 1>;
 		};
 	};
@@ -89,6 +94,7 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		poll-interval = <20>;
+
 		reset_wps {
 			label = "reset_wps";
 			gpios = <&gpio0 7 1>;

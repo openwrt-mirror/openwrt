@@ -1,6 +1,6 @@
 /dts-v1/;
 
-/include/ "rt5350.dtsi"
+#include "rt5350.dtsi"
 
 / {
 	compatible = "ALL5003", "ralink,rt5350-soc";
@@ -13,10 +13,11 @@
 
 		spi@b00 {
 			status = "okay";
+
 			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "mx25l25635e";
+				compatible = "jedec,spi-nor";
 				reg = <0 0>;
 				linux,modalias = "m25p80", "mx25l25635e";
 				spi-max-frequency = <10000000>;
@@ -61,7 +62,7 @@
 	};
 
 	esw@10110000 {
-		ralink,portmap = <0x3f>;
+		mediatek,portmap = <0x3f>;
 	};
 
 	wmac@10180000 {
@@ -78,7 +79,6 @@
 
 	i2c-gpio {
 		compatible = "i2c-gpio";
-
 		gpios = <&gpio0 1 0 &gpio0 2 0>;
 		i2c-gpio,delay-us = <10>;
 
@@ -97,12 +97,14 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
+
 		ld1 {
-			label = "allnet:green:ld1";
+			label = "all5003:green:ld1";
 			gpios = <&pcf0 0 1>;
 		};
+
 		ld2 {
-			label = "allnet:green:ld2";
+			label = "all5003:green:ld2";
 			gpios = <&pcf0 1 1>;
 		};
 	};

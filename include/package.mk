@@ -14,7 +14,7 @@ PKG_INSTALL_DIR ?= $(PKG_BUILD_DIR)/ipkg-install
 PKG_MD5SUM ?= unknown
 PKG_BUILD_PARALLEL ?=
 PKG_USE_MIPS16 ?= 1
-PKG_CHECK_FORMAT_SECURITY ?= 1
+PKG_IREMAP ?= 1
 
 ifneq ($(CONFIG_PKG_BUILD_USE_JOBSERVER),)
   MAKE_J:=$(if $(MAKE_JOBSERVER),$(MAKE_JOBSERVER) -j)
@@ -34,12 +34,12 @@ ifdef CONFIG_USE_MIPS16
     TARGET_CFLAGS += -mips16 -minterlink-mips16
   endif
 endif
-ifdef CONFIG_PKG_CHECK_FORMAT_SECURITY
-  ifeq ($(strip $(PKG_CHECK_FORMAT_SECURITY)),1)
-    TARGET_CFLAGS += -Wformat -Werror=format-security
-  endif
+ifeq ($(strip $(PKG_IREMAP)),1)
+  IREMAP_CFLAGS = $(call iremap,$(PKG_BUILD_DIR),$(notdir $(PKG_BUILD_DIR)))
+  TARGET_CFLAGS += $(IREMAP_CFLAGS)
 endif
 
+include $(INCLUDE_DIR)/hardening.mk
 include $(INCLUDE_DIR)/prereq.mk
 include $(INCLUDE_DIR)/host.mk
 include $(INCLUDE_DIR)/unpack.mk
@@ -54,6 +54,7 @@ find_library_dependencies = $(wildcard $(patsubst %,$(STAGING_DIR)/pkginfo/%.ver
 		) \
 	))))
 
+PKG_DIR_NAME:=$(lastword $(subst /,$(space),$(CURDIR)))
 STAMP_NO_AUTOREBUILD=$(wildcard $(PKG_BUILD_DIR)/.no_autorebuild)
 PREV_STAMP_PREPARED:=$(if $(STAMP_NO_AUTOREBUILD),$(wildcard $(PKG_BUILD_DIR)/.prepared*))
 ifneq ($(PREV_STAMP_PREPARED),)
@@ -62,12 +63,23 @@ ifneq ($(PREV_STAMP_PREPARED),)
 else
   STAMP_PREPARED=$(PKG_BUILD_DIR)/.prepared$(if $(QUILT)$(DUMP),,_$(shell $(call find_md5,${CURDIR} $(PKG_FILE_DEPENDS),))$(call confvar,$(PKG_PREPARED_DEPENDS)))
 endif
-STAMP_CONFIGURED:=$(PKG_BUILD_DIR)/.configured$(if $(DUMP),,_$(call confvar,$(PKG_CONFIG_DEPENDS)))
+STAMP_CONFIGURED=$(PKG_BUILD_DIR)/.configured$(if $(DUMP),,_$(call confvar,$(PKG_CONFIG_DEPENDS)))
 STAMP_CONFIGURED_WILDCARD=$(patsubst %_$(call confvar,$(PKG_CONFIG_DEPENDS)),%_*,$(STAMP_CONFIGURED))
 STAMP_BUILT:=$(PKG_BUILD_DIR)/.built
-STAMP_INSTALLED:=$(STAGING_DIR)/stamp/.$(PKG_NAME)_installed
+STAMP_INSTALLED:=$(STAGING_DIR)/stamp/.$(PKG_DIR_NAME)$(if $(BUILD_VARIANT),.$(BUILD_VARIANT),)_installed
 
-STAGING_FILES_LIST:=$(PKG_NAME)$(if $(BUILD_VARIANT),.$(BUILD_VARIANT),).list
+STAGING_FILES_LIST:=$(PKG_DIR_NAME)$(if $(BUILD_VARIANT),.$(BUILD_VARIANT),).list
+
+define CleanStaging
+	rm -f $(STAMP_INSTALLED)
+	@-(\
+		cd "$(STAGING_DIR)"; \
+		if [ -f packages/$(STAGING_FILES_LIST) ]; then \
+			cat packages/$(STAGING_FILES_LIST) | xargs -r rm -f 2>/dev/null; \
+		fi; \
+	)
+endef
+
 ifneq ($(if $(CONFIG_SRC_TREE_OVERRIDE),$(wildcard ./git-src)),)
   USE_GIT_TREE:=1
   QUILT:=1
@@ -79,7 +91,6 @@ ifneq ($(wildcard $(PKG_BUILD_DIR)/.source_dir),)
   QUILT:=1
 endif
 
-PKG_DIR_NAME:=$(lastword $(subst /,$(space),$(CURDIR)))
 PKG_INSTALL_STAMP:=$(PKG_INFO_DIR)/$(PKG_DIR_NAME).$(if $(BUILD_VARIANT),$(BUILD_VARIANT),default).install
 
 include $(INCLUDE_DIR)/download.mk
@@ -91,11 +102,11 @@ include $(INCLUDE_DIR)/package-bin.mk
 include $(INCLUDE_DIR)/autotools.mk
 
 override MAKEFLAGS=
-CONFIG_SITE:=$(INCLUDE_DIR)/site/$(REAL_GNU_TARGET_NAME)
+CONFIG_SITE:=$(INCLUDE_DIR)/site/$(ARCH)
 CUR_MAKEFILE:=$(filter-out Makefile,$(firstword $(MAKEFILE_LIST)))
 SUBMAKE:=$(NO_TRACE_MAKE) $(if $(CUR_MAKEFILE),-f $(CUR_MAKEFILE))
 PKG_CONFIG_PATH=$(STAGING_DIR)/usr/lib/pkgconfig:$(STAGING_DIR)/usr/share/pkgconfig
-unexport QUIET
+unexport QUIET CONFIG_SITE
 
 ifeq ($(DUMP)$(filter prereq clean refresh update,$(MAKECMDGOALS)),)
   ifneq ($(if $(QUILT),,$(CONFIG_AUTOREBUILD)),)
@@ -166,6 +177,7 @@ define Build/DefaultTargets
 
   $(call Build/Exports,$(STAMP_CONFIGURED))
   $(STAMP_CONFIGURED): $(STAMP_PREPARED)
+	$(CleanStaging)
 	$(foreach hook,$(Hooks/Configure/Pre),$(call $(hook))$(sep))
 	$(Build/Configure)
 	$(foreach hook,$(Hooks/Configure/Post),$(call $(hook))$(sep))
@@ -183,29 +195,28 @@ define Build/DefaultTargets
 
   $(STAMP_INSTALLED) : export PATH=$$(TARGET_PATH_PKG)
   $(STAMP_INSTALLED): $(STAMP_BUILT)
-	$(SUBMAKE) -j1 clean-staging
-	rm -rf $(TMP_DIR)/stage-$(PKG_NAME)
-	mkdir -p $(TMP_DIR)/stage-$(PKG_NAME)/host $(STAGING_DIR)/packages $(STAGING_DIR_HOST)/packages
+	rm -rf $(TMP_DIR)/stage-$(PKG_DIR_NAME)
+	mkdir -p $(TMP_DIR)/stage-$(PKG_DIR_NAME)/host $(STAGING_DIR)/packages $(STAGING_DIR_HOST)/packages
 	$(foreach hook,$(Hooks/InstallDev/Pre),\
-		$(call $(hook),$(TMP_DIR)/stage-$(PKG_NAME),$(TMP_DIR)/stage-$(PKG_NAME)/host)$(sep)\
+		$(call $(hook),$(TMP_DIR)/stage-$(PKG_DIR_NAME),$(TMP_DIR)/stage-$(PKG_DIR_NAME)/host)$(sep)\
 	)
-	$(call Build/InstallDev,$(TMP_DIR)/stage-$(PKG_NAME),$(TMP_DIR)/stage-$(PKG_NAME)/host)
+	$(call Build/InstallDev,$(TMP_DIR)/stage-$(PKG_DIR_NAME),$(TMP_DIR)/stage-$(PKG_DIR_NAME)/host)
 	$(foreach hook,$(Hooks/InstallDev/Post),\
-		$(call $(hook),$(TMP_DIR)/stage-$(PKG_NAME),$(TMP_DIR)/stage-$(PKG_NAME)/host)$(sep)\
+		$(call $(hook),$(TMP_DIR)/stage-$(PKG_DIR_NAME),$(TMP_DIR)/stage-$(PKG_DIR_NAME)/host)$(sep)\
 	)
 	if [ -f $(STAGING_DIR)/packages/$(STAGING_FILES_LIST) ]; then \
 		$(SCRIPT_DIR)/clean-package.sh \
 			"$(STAGING_DIR)/packages/$(STAGING_FILES_LIST)" \
 			"$(STAGING_DIR)"; \
 	fi
-	if [ -d $(TMP_DIR)/stage-$(PKG_NAME) ]; then \
-		(cd $(TMP_DIR)/stage-$(PKG_NAME); find ./ > $(TMP_DIR)/stage-$(PKG_NAME).files); \
+	if [ -d $(TMP_DIR)/stage-$(PKG_DIR_NAME) ]; then \
+		(cd $(TMP_DIR)/stage-$(PKG_DIR_NAME); find ./ > $(TMP_DIR)/stage-$(PKG_DIR_NAME).files); \
 		$(call locked, \
-			mv $(TMP_DIR)/stage-$(PKG_NAME).files $(STAGING_DIR)/packages/$(STAGING_FILES_LIST) && \
-			$(CP) $(TMP_DIR)/stage-$(PKG_NAME)/* $(STAGING_DIR)/; \
+			mv $(TMP_DIR)/stage-$(PKG_DIR_NAME).files $(STAGING_DIR)/packages/$(STAGING_FILES_LIST) && \
+			$(CP) $(TMP_DIR)/stage-$(PKG_DIR_NAME)/* $(STAGING_DIR)/; \
 		,staging-dir); \
 	fi
-	rm -rf $(TMP_DIR)/stage-$(PKG_NAME)
+	rm -rf $(TMP_DIR)/stage-$(PKG_DIR_NAME)
 	touch $$@
 
   ifdef Build/InstallDev
@@ -222,7 +233,7 @@ define Build/DefaultTargets
 endef
 
 define Build/IncludeOverlay
-  $(eval -include $(wildcard $(TOPDIR)/overlay/*/$(PKG_NAME).mk))
+  $(eval -include $(wildcard $(TOPDIR)/overlay/*/$(PKG_DIR_NAME).mk))
   define Build/IncludeOverlay
   endef
 endef
@@ -294,16 +305,9 @@ prepare:
 configure:
 compile: prepare-package-install
 install: compile
-clean-staging: FORCE
-	rm -f $(STAMP_INSTALLED)
-	@-(\
-		cd "$(STAGING_DIR)"; \
-		if [ -f packages/$(STAGING_FILES_LIST) ]; then \
-			cat packages/$(STAGING_FILES_LIST) | xargs -r rm -f 2>/dev/null; \
-		fi; \
-	)
 
-clean: clean-staging FORCE
+clean: FORCE
+	$(CleanStaging)
 	$(call Build/UninstallDev,$(STAGING_DIR),$(STAGING_DIR_HOST))
 	$(Build/Clean)
 	rm -f $(STAGING_DIR)/packages/$(STAGING_FILES_LIST) $(STAGING_DIR_HOST)/packages/$(STAGING_FILES_LIST)
@@ -311,6 +315,6 @@ clean: clean-staging FORCE
 
 dist:
 	$(Build/Dist)
-   
+
 distcheck:
-	$(Build/DistCheck) 
+	$(Build/DistCheck)

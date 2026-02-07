@@ -45,8 +45,11 @@ generate_keys() {
 
 	[ -x "$PX5G_BIN" ] && {
 		$PX5G_BIN selfsigned -der \
-			-days ${days:-730} -newkey rsa:${bits:-1024} -keyout "$UHTTPD_KEY" -out "$UHTTPD_CERT" \
+			-days ${days:-730} -newkey rsa:${bits:-2048} -keyout "${UHTTPD_KEY}.new" -out "${UHTTPD_CERT}.new" \
 			-subj /C="${country:-DE}"/ST="${state:-Saxony}"/L="${location:-Leipzig}"/CN="${commonname:-OpenWrt}"
+		sync
+		mv "${UHTTPD_KEY}.new" "${UHTTPD_KEY}"
+		mv "${UHTTPD_CERT}.new" "${UHTTPD_CERT}"
 	}
 }
 
@@ -61,6 +64,7 @@ start_instance()
 
 	procd_open_instance
 	procd_set_param respawn
+	procd_set_param stderr 1
 	procd_set_param command "$UHTTPD_BIN" -f
 
 	append_arg "$cfg" home "-h"
@@ -76,6 +80,7 @@ start_instance()
 	[ -f /usr/lib/uhttpd_ubus.so ] && {
 		append_arg "$cfg" ubus_prefix "-u"
 		append_arg "$cfg" ubus_socket "-U"
+		append_bool "$cfg" ubus_cors "-X" 0
 	}
 	append_arg "$cfg" script_timeout "-t"
 	append_arg "$cfg" network_timeout "-T"
@@ -89,6 +94,11 @@ start_instance()
 	append_bool "$cfg" no_symlinks "-S" 0
 	append_bool "$cfg" no_dirlists "-D" 0
 	append_bool "$cfg" rfc1918_filter "-R" 0
+
+	config_get alias_list "$cfg" alias
+	for alias in $alias_list; do
+		 procd_append_param command -y "$alias"
+	done
 
 	config_get http "$cfg" listen_http
 	for listen in $http; do
@@ -110,7 +120,7 @@ start_instance()
 	config_get UHTTPD_CERT "$cfg" cert /etc/uhttpd.crt
 
 	[ -f /lib/libustream-ssl.so ] && [ -n "$https" ] && {
-		[ -f "$UHTTPD_CERT" -a -f "$UHTTPD_KEY" ] || {
+		[ -s "$UHTTPD_CERT" -a -s "$UHTTPD_KEY" ] || {
 			config_foreach generate_keys cert
 		}
 
@@ -122,14 +132,15 @@ start_instance()
 				procd_append_param command -s "$listen"
 			done
 		}
+
+		append_bool "$cfg" redirect_https "-q" 0
 	}
 
-	procd_close_instance
+	for file in /etc/uhttpd/*.json; do
+		[ -s "$file" ] && procd_append_param command -H "$file"
+	done
 
-	# Check if daemon is running, if not then
-	# re-execute in foreground to display error.
-#	sleep 1 && service_check $UHTTPD_BIN || \
-#		$UHTTPD_BIN -f $UHTTPD_ARGS
+	procd_close_instance
 }
 
 service_triggers()

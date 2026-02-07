@@ -18,8 +18,8 @@ PKG_MD5SUM:=d49499368c3cf15f73a05d9bce8824a8
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
-PKG_CHECK_FORMAT_SECURITY:=0
 PKG_LICENSE:=GPL-2.0+
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -177,10 +177,14 @@ define Package/atm-diagnostics/install
 endef
 
 define Package/br2684ctl/install
-	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/hotplug.d/atm $(1)/usr/sbin $(1)/lib/netifd
+	$(INSTALL_BIN) ./files/br2684-up $(1)/lib/netifd/br2684-up
 	$(INSTALL_BIN) ./files/br2684ctl $(1)/etc/init.d/
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/br2684ctl $(1)/usr/sbin/
+	$(INSTALL_DATA) ./files/atm.hotplug $(1)/etc/hotplug.d/atm/00-trigger
+	$(INSTALL_BIN) \
+		./files/br2684ctl_wrap \
+		$(PKG_INSTALL_DIR)/usr/sbin/br2684ctl \
+		$(1)/usr/sbin/
 endef
 
 $(eval $(call BuildPackage,linux-atm))

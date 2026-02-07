@@ -1,20 +1,23 @@
 #
-# Copyright (C) 2013-2014 OpenWrt.org
+# Copyright (C) 2013-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
 
 include $(TOPDIR)/rules.mk
+include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=u-boot
-PKG_VERSION:=2014.04
+PKG_VERSION:=2016.03
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:= \
 	http://mirror2.openwrt.org/sources \
 	ftp://ftp.denx.de/pub/u-boot
-PKG_SOURCE_VERSION:=6d2116d1385a66e9a59742caa9d62a54
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
+
+PKG_MD5SUM:=973c1d896be751321cc3aafa564f64b2
+
+PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0 GPL-2.0+
 PKG_LICENSE_FILES:=Licenses/README
@@ -35,7 +38,7 @@ define uboot/A13-OLinuXino
   TITLE:=U-Boot for the A13 OlinuXino
 endef
 
-define uboot/A20-OLinuXino_Lime
+define uboot/A20-OLinuXino-Lime
   TITLE:=U-Boot for the A20 OLinuXino LIME
 endef
 
@@ -45,6 +48,10 @@ endef
 
 define uboot/Bananapi
   TITLE:=U-Boot for Bananapi
+endef
+
+define uboot/Bananapro
+  TITLE:=U-Boot for Bananapro
 endef
 
 define uboot/Cubieboard
@@ -59,35 +66,56 @@ define uboot/Cubietruck
   TITLE:=U-Boot for Cubietruck
 endef
 
-define uboot/Hackberry
-  TITLE:=U-Boot for the Hackbeery
+define uboot/Hummingbird_A31
+  TITLE:=U-Boot for the Hummingbird A31 board
 endef
 
-define uboot/OLIMEX-A13-SOM
+define uboot/Mele_M9
+  TITLE:=U-Boot for the Mele M9 (A31)
+endef
+
+define uboot/OLIMEX_A13_SOM
   TITLE:=U-Boot for the Olimex A13 SOM
 endef
 
-define uboot/pcDuino
-  TITLE:=U-Boot for pcDuino
+define uboot/Linksprite_pcDuino
+  TITLE:=U-Boot for Linksprite pcDuino
 endef  
 
 define uboot/Linksprite_pcDuino3
   TITLE:=U-Boot for Linksprite pcDuino3
 endef  
 
+define uboot/Lamobo_R1
+  TITLE:=U-Boot for Lamobo R1
+endef
+
+define uboot/pangolin
+  TITLE:=U-Boot for Theobroma A31-yQ7 devboard
+endef
+
+define uboot/orangepi_plus
+  TITLE:=U-Boot for Orange Pi Plus (H3)
+endef
+
 UBOOTS:= \
 	A10-OLinuXino-Lime \
 	A13-OLinuXino \
-	A20-OLinuXino_Lime \
+	A20-OLinuXino-Lime \
 	A20-OLinuXino_MICRO \
 	Bananapi \
+	Bananapro \
 	Cubieboard \
 	Cubieboard2 \
 	Cubietruck \
-	Hackberry \
-	OLIMEX-A13-SOM \
-	pcDuino \
+	Hummingbird_A31 \
+	Mele_M9 \
+	OLIMEX_A13_SOM \
+	Linksprite_pcDuino \
 	Linksprite_pcDuino3 \
+	Lamobo_R1 \
+	orangepi_plus \
+	pangolin
 
 define Package/uboot/template
 define Package/uboot-sunxi-$(1)
@@ -113,26 +141,35 @@ UBOOT_CONFIG:=$(if $(CONFIG),$(CONFIG),$(BUILD_VARIANT))
 UBOOT_IMAGE:=$(if $(IMAGE),$(IMAGE),openwrt-$(BOARD)-$(BUILD_VARIANT)-u-boot.bin)
 endif
 
+# check if any specialized uEnv bootconfig is required
+ifeq ($(UBOOT_CONFIG),pangolin)
+	UENV:=pangolin
+else
+	UENV:=default
+endif
+
 define Build/Configure
 	$(MAKE) -C $(PKG_BUILD_DIR) \
-		USE_PRIVATE_LIBGCC=yes $(UBOOT_CONFIG)_config
+		USE_PRIVATE_LIBGCC=yes $(UBOOT_CONFIG)_defconfig
 endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
-		CROSS_COMPILE=$(TARGET_CROSS)
+		CROSS_COMPILE=$(TARGET_CROSS) \
+		DTCDIR=$(LINUX_DIR)/scripts/dtc/
 endef
 
 define Package/uboot/install/default
-	$(INSTALL_DIR) $(BIN_DIR)/uboot-$(BOARD)-$(1)
 	$(CP) $(PKG_BUILD_DIR)/u-boot.bin \
-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-u-boot.bin
+		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-u-boot.bin
 	$(CP) $(PKG_BUILD_DIR)/spl/sunxi-spl.bin \
-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-spl.bin
+		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-spl.bin
 	$(CP) $(PKG_BUILD_DIR)/u-boot-sunxi-with-spl.bin \
-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-u-boot-with-spl.bin
-	$(CP) uEnv.txt \
-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-uEnv.txt
+		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-u-boot-with-spl.bin
+	$(CP) uEnv-$(UENV).txt \
+		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-uEnv.txt
+	mkimage -C none -A arm -T script -d $(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-uEnv.txt \
+		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-boot.scr
 endef
 
 define Package/uboot/install/template

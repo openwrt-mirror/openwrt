@@ -5,6 +5,8 @@
 
 	aliases {
 		pflash = &pflash;
+		gpio0 = &gpio0;
+		gpio1 = &gpio1;
 	};
 
 	cpus {
@@ -45,7 +47,7 @@
 		compatible = "simple-bus";
 
 		periph_intc: interrupt-controller@fffe000c {
-			compatible = "brcm,bcm6345-l2-intc";
+			compatible = "brcm,bcm6345-periph-intc";
 			reg = <0xfffe000c 0x8>;
 
 			interrupt-controller;
@@ -56,7 +58,7 @@
 		};
 
 		ext_intc: interrupt-controller@fffe0014 {
-			compatible = "brcm,bcm6348-ext-intc";
+			compatible = "brcm,bcm6345-ext-intc";
 			reg = <0xfffe0014 0x4>;
 
 			interrupt-controller;
@@ -64,6 +66,26 @@
 
 			interrupt-parent = <&cpu_intc>;
 			interrupts = <3>, <4>, <5>, <6>;
+
+			brcm,field-width = <5>;
+		};
+
+		gpio1: gpio-controller@fffe0400 {
+			compatible = "brcm,bcm6345-gpio";
+			reg = <0xfffe0400 4>, <0xfffe0408 4>;
+
+			gpio-controller;
+			#gpio-cells = <2>;
+
+			ngpios = <5>;
+		};
+
+		gpio0: gpio-controller@fffe0404 {
+			compatible = "brcm,bcm6345-gpio";
+			reg = <0xfffe0404 4>, <0xfffe040c 4>;
+
+			gpio-controller;
+			#gpio-cells = <2>;
 		};
 	};
 };

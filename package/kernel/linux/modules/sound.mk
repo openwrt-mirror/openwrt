@@ -17,7 +17,8 @@ SOUNDCORE_LOAD ?= \
 	snd-timer \
 	snd-pcm \
 	snd-mixer-oss \
-	snd-pcm-oss
+	snd-pcm-oss \
+	snd-compress
 
 SOUNDCORE_FILES ?= \
 	$(LINUX_DIR)/sound/soundcore.ko \
@@ -28,36 +29,19 @@ SOUNDCORE_FILES ?= \
 	$(LINUX_DIR)/sound/core/snd-timer.ko \
 	$(LINUX_DIR)/sound/core/snd-pcm.ko \
 	$(LINUX_DIR)/sound/core/oss/snd-mixer-oss.ko \
-	$(LINUX_DIR)/sound/core/oss/snd-pcm-oss.ko
-
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.3.0)),1)
-SOUNDCORE_LOAD += \
-	snd-compress
-
-SOUNDCORE_FILES += \
+	$(LINUX_DIR)/sound/core/oss/snd-pcm-oss.ko \
 	$(LINUX_DIR)/sound/core/snd-compress.ko
-endif
 
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.12.0)),1)
 SOUNDCORE_LOAD += \
 	$(if $(CONFIG_SND_DMAENGINE_PCM),snd-pcm-dmaengine)
 
 SOUNDCORE_FILES += \
 	$(if $(CONFIG_SND_DMAENGINE_PCM),$(LINUX_DIR)/sound/core/snd-pcm-dmaengine.ko)
-endif
-
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),lt,3.14.0)),1)
-SOUNDCORE_LOAD += \
-	snd-page-alloc
-
-SOUNDCORE_FILES += \
-	$(LINUX_DIR)/sound/core/snd-page-alloc.ko
-endif
 
 define KernelPackage/sound-core
   SUBMENU:=$(SOUND_MENU)
   TITLE:=Sound support
-  DEPENDS:=@AUDIO_SUPPORT
+  DEPENDS:=@AUDIO_SUPPORT +kmod-input-core
   KCONFIG:= \
 	CONFIG_SOUND \
 	CONFIG_SND \
@@ -76,7 +60,6 @@ define KernelPackage/sound-core
 	CONFIG_SND_COMPRESS_OFFLOAD
   FILES:=$(SOUNDCORE_FILES)
   AUTOLOAD:=$(call AutoLoad,30,$(SOUNDCORE_LOAD))
-  $(call AddDepends/input)
 endef
 
 define KernelPackage/sound-core/uml
@@ -116,6 +99,23 @@ endef
 $(eval $(call KernelPackage,ac97))
 
 
+define KernelPackage/sound-mpu401
+  TITLE:=MPU-401 uart driver
+  KCONFIG:=CONFIG_SND_MPU401_UART
+  FILES:= \
+	$(LINUX_DIR)/sound/drivers/mpu401/snd-mpu401-uart.ko
+  AUTOLOAD:=$(call AutoLoad,35,snd-mpu401-uart)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-mpu401/description
+ support for MIDI ports compatible with the Roland MPU-401
+ interface in UART mode.
+endef
+
+$(eval $(call KernelPackage,sound-mpu401))
+
+
 define KernelPackage/sound-seq
   TITLE:=Sequencer support
   FILES:= \
@@ -151,20 +151,21 @@ endef
 $(eval $(call KernelPackage,sound-i8x0))
 
 
-define KernelPackage/sound-cs5535audio
-  TITLE:=CS5535 PCI Controller
-  DEPENDS:=+kmod-ac97
-  KCONFIG:=CONFIG_SND_CS5535AUDIO
-  FILES:=$(LINUX_DIR)/sound/pci/cs5535audio/snd-cs5535audio.ko
-  AUTOLOAD:=$(call AutoLoad,36,snd-cs5535audio)
+define KernelPackage/sound-via82xx
+  TITLE:=VIA 82xx AC97 Controller
+  DEPENDS:=+kmod-ac97 +kmod-sound-mpu401
+  KCONFIG:=CONFIG_SND_VIA82XX
+  FILES:=$(LINUX_DIR)/sound/pci/snd-via82xx.ko
+  AUTOLOAD:=$(call AutoLoad,36,snd-via82xx)
   $(call AddDepends/sound)
 endef
 
-define KernelPackage/sound-cs5535audio/description
- Support for the integrated AC97 sound device on olpc
+define KernelPackage/sound-via82xx/description
+ support for the integrated AC97 sound device on motherboards
+ with VIA chipsets.
 endef
 
-$(eval $(call KernelPackage,sound-cs5535audio))
+$(eval $(call KernelPackage,sound-via82xx))
 
 
 define KernelPackage/sound-soc-core
@@ -187,7 +188,7 @@ define KernelPackage/sound-soc-ac97
   KCONFIG:=CONFIG_SND_SOC_AC97_CODEC
   FILES:=$(LINUX_DIR)/sound/soc/codecs/snd-soc-ac97.ko
   AUTOLOAD:=$(call AutoLoad,57,snd-soc-ac97)
-  DEPENDS:=+kmod-ac97 +kmod-sound-soc-core +TARGET_ep93xx:kmod-sound-soc-ep93xx-ac97
+  DEPENDS:=+kmod-ac97 +kmod-sound-soc-core
   $(call AddDepends/sound)
 endef
 
@@ -196,18 +197,6 @@ $(eval $(call KernelPackage,sound-soc-ac97))
 
 define KernelPackage/sound-soc-imx
   TITLE:=IMX SoC support
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),lt,3.12.0)),1)
-  KCONFIG:=\
-	CONFIG_SND_IMX_SOC \
-	CONFIG_SND_SOC_IMX_AUDMUX \
-	CONFIG_SND_SOC_FSL_SSI \
-	CONFIG_SND_SOC_IMX_PCM
-  FILES:= \
-	$(LINUX_DIR)/sound/soc/fsl/snd-soc-imx-audmux.ko \
-	$(LINUX_DIR)/sound/soc/fsl/snd-soc-fsl-ssi.ko \
-	$(LINUX_DIR)/sound/soc/fsl/snd-soc-imx-pcm.ko
-  AUTOLOAD:=$(call AutoLoad,56,snd-soc-imx-audmux snd-soc-fsl-ssi snd-soc-imx-pcm)
-else
   KCONFIG:=\
 	CONFIG_SND_IMX_SOC \
 	CONFIG_SND_SOC_IMX_AUDMUX \
@@ -218,7 +207,6 @@ else
 	$(LINUX_DIR)/sound/soc/fsl/snd-soc-fsl-ssi.ko \
 	$(LINUX_DIR)/sound/soc/fsl/imx-pcm-dma.ko
   AUTOLOAD:=$(call AutoLoad,56,snd-soc-imx-audmux snd-soc-fsl-ssi snd-soc-imx-pcm)
-endif
   DEPENDS:=@TARGET_imx6 +kmod-sound-soc-core
   $(call AddDepends/sound)
 endef
@@ -268,7 +256,7 @@ $(eval $(call KernelPackage,sound-soc-gw_avila))
 
 
 define KernelPackage/pcspkr
-  DEPENDS:=@TARGET_x86
+  DEPENDS:=@TARGET_x86 +kmod-input-core
   TITLE:=PC speaker support
   KCONFIG:= \
 	CONFIG_INPUT_PCSPKR \
@@ -277,7 +265,6 @@ define KernelPackage/pcspkr
 	$(LINUX_DIR)/drivers/input/misc/pcspkr.ko \
 	$(LINUX_DIR)/sound/drivers/pcsp/snd-pcsp.ko
   AUTOLOAD:=$(call AutoLoad,50,pcspkr snd-pcsp)
-  $(call AddDepends/input)
   $(call AddDepends/sound)
 endef
 
@@ -286,3 +273,19 @@ define KernelPackage/pcspkr/description
 endef
 
 $(eval $(call KernelPackage,pcspkr))
+
+define KernelPackage/sound-dummy
+  $(call AddDepends/sound)
+  TITLE:=Null sound output driver (sink)
+  KCONFIG:= \
+	CONFIG_SND_DUMMY
+  FILES:= \
+	$(LINUX_DIR)/sound/drivers/snd-dummy.ko
+  AUTOLOAD:=$(call AutoLoad,32,snd-dummy)
+endef
+
+define KernelPackage/sound_dummy/description
+ Dummy sound device for Alsa when no hardware present
+endef
+
+$(eval $(call KernelPackage,sound-dummy))

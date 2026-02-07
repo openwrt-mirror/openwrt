@@ -14,7 +14,7 @@ PKG_RELEASE:=8
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SF/igmpproxy
 PKG_MD5SUM:=c56f41ec195bc1fe016369bf74efc5a1
-PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -25,7 +25,7 @@ define Package/igmpproxy
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Routing and Redirection
-  DEPENDS:=+USE_EGLIBC:librt
+  DEPENDS:=+USE_GLIBC:librt
   TITLE:=Multicast Routing Daemon
   URL:=http://sourceforge.net/projects/igmpproxy
 endef

@@ -3,7 +3,7 @@
  *
  * swconfig interface based on ar8216.c
  *
- * Copyright (c) 2008 Felix Fietkau <nbd@openwrt.org>
+ * Copyright (c) 2008 Felix Fietkau <nbd@nbd.name>
  * VLAN support Copyright (c) 2010, 2011 Peter Lebbing <peter@digitalbrains.com>
  * Copyright (c) 2013 Hauke Mehrtens <hauke@hauke-m.de>
  * Copyright (c) 2014 Matti Laakso <malaakso@elisanet.fi>
@@ -876,7 +876,7 @@ adm6996_sw_get_port_mib(struct switch_dev *dev,
 		reg = r16(priv, adm6996_mibs[i].offset + ADM_OFFSET_PORT(port));
 		reg += r16(priv, adm6996_mibs[i].offset + ADM_OFFSET_PORT(port) + 1) << 16;
 		len += snprintf(buf + len, sizeof(priv->buf) - len,
-				"%-12s: %lu\n",
+				"%-12s: %u\n",
 				adm6996_mibs[i].name,
 				reg);
 	}
@@ -1099,6 +1099,11 @@ static void adm6996_remove(struct phy_device *pdev)
 		unregister_switch(&priv->dev);
 }
 
+static int adm6996_soft_reset(struct phy_device *phydev)
+{
+	/* we don't need an extra reset */
+	return 0;
+}
 
 static struct phy_driver adm6996_phy_driver = {
 	.name		= "Infineon ADM6996",
@@ -1110,6 +1115,7 @@ static struct phy_driver adm6996_phy_driver = {
 	.config_init	= &adm6996_config_init,
 	.config_aneg	= &adm6996_config_aneg,
 	.read_status	= &adm6996_read_status,
+	.soft_reset	= adm6996_soft_reset,
 	.driver		= { .owner = THIS_MODULE,},
 };
 

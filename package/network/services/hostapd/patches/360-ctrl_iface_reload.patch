@@ -1,32 +1,25 @@
 --- a/hostapd/ctrl_iface.c
 +++ b/hostapd/ctrl_iface.c
-@@ -43,6 +43,7 @@
- #include "wps/wps.h"
+@@ -47,6 +47,7 @@
+ #include "fst/fst_ctrl_iface.h"
  #include "config_file.h"
  #include "ctrl_iface.h"
 +#include "config_file.h"
  
  
- struct wpa_ctrl_dst {
-@@ -53,6 +54,7 @@ struct wpa_ctrl_dst {
+ #define HOSTAPD_CLI_DUP_VALUE_MAX_LEN 256
+@@ -59,6 +60,7 @@ struct wpa_ctrl_dst {
  	int errors;
  };
  
 +static char *reload_opts = NULL;
  
  static void hostapd_ctrl_iface_send(struct hostapd_data *hapd, int level,
- 				    const char *buf, size_t len);
-@@ -162,6 +164,68 @@ static int hostapd_ctrl_iface_new_sta(st
+ 				    enum wpa_msg_type type,
+@@ -169,6 +171,61 @@ static int hostapd_ctrl_iface_new_sta(st
  	return 0;
  }
  
-+static int hostapd_ctrl_iface_set_down(struct hostapd_data *hapd)
-+{
-+	if (hapd->driver->stop_ap)
-+		hapd->driver->stop_ap(hapd->drv_priv);
-+	return 0;
-+}
-+
 +static char *get_option(char *opt, char *str)
 +{
 +	int len = strlen(str);
@@ -85,14 +78,27 @@
  
  #ifdef CONFIG_IEEE80211W
  #ifdef NEED_AP_MLME
-@@ -1761,6 +1825,10 @@ static void hostapd_ctrl_iface_receive(i
+@@ -2257,6 +2314,8 @@ static int hostapd_ctrl_iface_receive_pr
  	} else if (os_strncmp(buf, "VENDOR ", 7) == 0) {
  		reply_len = hostapd_ctrl_iface_vendor(hapd, buf + 7, reply,
  						      reply_size);
-+	} else if (os_strcmp(buf, "DOWN") == 0) {
-+		hostapd_ctrl_iface_set_down(hapd);
 +	} else if (os_strncmp(buf, "UPDATE ", 7) == 0) {
 +		hostapd_ctrl_iface_update(hapd, buf + 7);
+ 	} else if (os_strcmp(buf, "ERP_FLUSH") == 0) {
+ 		ieee802_1x_erp_flush(hapd);
+ #ifdef RADIUS_SERVER
+--- a/src/ap/ctrl_iface_ap.c
++++ b/src/ap/ctrl_iface_ap.c
+@@ -552,5 +552,11 @@ int hostapd_parse_csa_settings(const cha
  
- 	} else {
- 		os_memcpy(reply, "UNKNOWN COMMAND\n", 16);
+ int hostapd_ctrl_iface_stop_ap(struct hostapd_data *hapd)
+ {
+-	return hostapd_drv_stop_ap(hapd);
++	struct hostapd_iface *iface = hapd->iface;
++	int i;
++
++	for (i = 0; i < iface->num_bss; i++)
++		hostapd_drv_stop_ap(iface->bss[i]);
++
++	return 0;
+ }

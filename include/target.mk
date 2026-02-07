@@ -12,11 +12,11 @@ __target_inc=1
 DEVICE_TYPE?=router
 
 # Default packages - the really basic set
-DEFAULT_PACKAGES:=base-files libc libgcc busybox dropbear mtd uci opkg netifd fstools
+DEFAULT_PACKAGES:=base-files libc libgcc busybox dropbear mtd uci opkg netifd fstools uclient-fetch logd
 # For nas targets
-DEFAULT_PACKAGES.nas:=block-mount fdisk lvm2 lsblk mdadm
+DEFAULT_PACKAGES.nas:=block-mount fdisk lsblk mdadm
 # For router targets
-DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe kmod-nf-nathelper firewall odhcpd odhcp6c
+DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe firewall odhcpd odhcp6c
 DEFAULT_PACKAGES.bootloader:=
 
 ifneq ($(DUMP),)
@@ -56,14 +56,14 @@ DEFAULT_PACKAGES += $(DEFAULT_PACKAGES.$(DEVICE_TYPE))
 filter_packages = $(filter-out -% $(patsubst -%,%,$(filter -%,$(1))),$(1))
 extra_packages = $(if $(filter wpad-mini wpad nas,$(1)),iwinfo)
 
-define Profile/Default
+define ProfileDefault
   NAME:=
   PACKAGES:=
 endef
 
 ifndef Profile
 define Profile
-  $(eval $(call Profile/Default))
+  $(eval $(call ProfileDefault))
   $(eval $(call Profile/$(1)))
   dumpinfo : $(call shexport,Profile/$(1)/Config)
   dumpinfo : $(call shexport,Profile/$(1)/Description)
@@ -212,6 +212,7 @@ ifeq ($(DUMP),1)
     CPU_CFLAGS_mips32 = -mips32 -mtune=mips32
     CPU_CFLAGS_mips32r2 = -mips32r2 -mtune=mips32r2
     CPU_CFLAGS_mips64 = -mips64 -mtune=mips64 -mabi=64
+    CPU_CFLAGS_24kc = -mips32r2 -mtune=24kc
     CPU_CFLAGS_24kec = -mips32r2 -mtune=24kec
     CPU_CFLAGS_34kc = -mips32r2 -mtune=34kc
     CPU_CFLAGS_74kc = -mips32r2 -mtune=74kc
@@ -222,6 +223,7 @@ ifeq ($(DUMP),1)
   ifeq ($(ARCH),i386)
     CPU_TYPE ?= i486
     CPU_CFLAGS_i486 = -march=i486
+    CPU_CFLAGS_pentium4 = -march=pentium4
     CPU_CFLAGS_geode = -march=geode -mmmx -m3dnow
   endif
   ifneq ($(findstring arm,$(ARCH)),)
@@ -235,6 +237,7 @@ ifeq ($(DUMP),1)
     CPU_CFLAGS_cortex-a8 = -march=armv7-a -mtune=cortex-a8
     CPU_CFLAGS_cortex-a9 = -march=armv7-a -mtune=cortex-a9
     CPU_CFLAGS_cortex-a15 = -march=armv7-a -mtune=cortex-a15
+    CPU_CFLAGS_cortex-a53 = -march=armv8-a -mtune=cortex-a53
     CPU_CFLAGS_fa526 = -march=armv4 -mtune=fa526
     CPU_CFLAGS_mpcore = -march=armv6k -mtune=mpcore
     CPU_CFLAGS_xscale = -march=armv5te -mtune=xscale
@@ -242,6 +245,7 @@ ifeq ($(DUMP),1)
       CPU_CFLAGS_neon = -mfpu=neon
       CPU_CFLAGS_vfp = -mfpu=vfp
       CPU_CFLAGS_vfpv3 = -mfpu=vfpv3-d16
+      CPU_CFLAGS_neon-vfpv4 = -mfpu=neon-vfpv4
     endif
   endif
   ifeq ($(ARCH),powerpc)
@@ -257,6 +261,12 @@ ifeq ($(DUMP),1)
   ifeq ($(ARCH),aarch64)
     CPU_TYPE ?= armv8-a
     CPU_CFLAGS_armv8-a = -mcpu=armv8-a
+  endif
+  ifeq ($(ARCH),arc)
+    CPU_TYPE ?= arc700
+    CPU_CFLAGS += -matomic
+    CPU_CFLAGS_arc700 = -marc700
+    CPU_CFLAGS_archs = -marchs
   endif
   DEFAULT_CFLAGS=$(strip $(CPU_CFLAGS) $(CPU_CFLAGS_$(CPU_TYPE)) $(CPU_CFLAGS_$(CPU_SUBTYPE)))
 endif

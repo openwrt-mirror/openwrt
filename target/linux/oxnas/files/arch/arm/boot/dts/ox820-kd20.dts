@@ -26,6 +26,7 @@
 
 	sata@45900000 {
 		status = "okay";
+		nr-ports = <2>;
 	};
 
 	nand@41000000 {
@@ -106,6 +107,7 @@
 		hdd1blue {
 			label = "kd20:blue:hdd1";
 			gpios = <&GPIOA 27 0>;
+			linux,default-trigger = "ata1";
 		};
 		hdd1red {
 			label = "kd20:red:hdd1";
@@ -114,6 +116,7 @@
 		hdd2blue {
 			label = "kd20:blue:hdd2";
 			gpios = <&GPIOB 6 0>;
+			linux,default-trigger = "ata2";
 		};
 		hdd2red {
 			label = "kd20:red:hdd2";
@@ -133,5 +136,12 @@
 	gpio-fan {
 		compatible = "gpio-fan";
 		gpios = <&GPIOA 2 1>;
+		gpio-fan,speed-map = <0    0
+				      3000 1>;
+	};
+
+	gpio-poweroff {
+		compatible = "gpio-poweroff";
+		gpios = <&GPIOA 9 0>;
 	};
 };

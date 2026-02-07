@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2013 OpenWrt.org
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gettext-full
-PKG_VERSION:=0.18.2.1
-PKG_RELEASE:=1
+PKG_VERSION:=0.19.6
+PKG_RELEASE:=2
 
-PKG_SOURCE:=gettext-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=gettext-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/gettext
-PKG_MD5SUM:=034c8103b14654ebd300fadac44d6f14
+PKG_MD5SUM:=69d79254ee3b41df23f41c2f4fd720d9
 PKG_BUILD_DIR:=$(BUILD_DIR)/gettext-$(PKG_VERSION)
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/gettext-$(PKG_VERSION)
 
@@ -24,7 +24,6 @@ PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=0
 PKG_BUILD_DEPENDS:=gettext-full/host
-PKG_CHECK_FORMAT_SECURITY:=0
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
@@ -38,7 +37,7 @@ endef
 
 TARGET_CFLAGS += $(FPIC)
 ifneq ($(HOST_OS),Linux)
-  TARGET_CFLAGS += -I$(STAGING_DIR_HOST)/include
+  TARGET_CFLAGS += -I$(STAGING_DIR)/host/include
 endif
 ifdef CONFIG_USE_MUSL
   TARGET_CFLAGS += -D__UCLIBC__
@@ -52,6 +51,7 @@ CONFIGURE_ARGS += \
 	--disable-java \
 	--disable-native-java \
 	--disable-openmp \
+	--disable-curses \
 	--with-included-gettext \
 	--without-libintl-prefix \
 	--without-libexpat-prefix \

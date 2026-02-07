@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2013 OpenWrt.org
+# Copyright (C) 2013-2014 OpenWrt.org
 
 . /lib/functions/leds.sh
 . /lib/mxs.sh
@@ -13,7 +13,7 @@ get_status_led() {
 		status_led="green"
 		;;
 	*)
-		status_led=$(cd /sys/class/leds && ls -1 *:status 2> /dev/null | head -n 1)
+		status_led=$(cd /sys/class/leds && ls -1d *:status 2> /dev/null | head -n 1)
 		;;
 	esac
 }
@@ -27,6 +27,9 @@ set_state() {
 		;;
 	failsafe)
 		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
 		status_led_on

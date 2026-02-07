@@ -1,5 +1,5 @@
-# 
-# Copyright (C) 2006-2011 OpenWrt.org
+#
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,10 +8,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qos-scripts
-PKG_VERSION:=1.2.1
-PKG_RELEASE:=6
+PKG_VERSION:=1.3.0
+PKG_RELEASE:=1
 
-PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -20,7 +20,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/qos-scripts
   SECTION:=utils
   CATEGORY:=Base system
-  DEPENDS:=+tc +kmod-sched-core +kmod-sched-connmark +kmod-ifb +iptables +iptables-mod-filter +iptables-mod-ipopt +iptables-mod-conntrack-extra
+  DEPENDS:=+tc +kmod-sched-core +kmod-sched-connmark +kmod-ifb +iptables +iptables-mod-ipopt +iptables-mod-conntrack-extra
   TITLE:=QoS scripts
   PKGARCH:=all
 endef

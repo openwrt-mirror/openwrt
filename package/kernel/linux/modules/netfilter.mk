@@ -80,7 +80,7 @@ define KernelPackage/nf-conntrack6
   SUBMENU:=$(NF_MENU)
   TITLE:=Netfilter IPv6 connection tracking
   KCONFIG:=$(KCONFIG_NF_CONNTRACK6)
-  DEPENDS:=+kmod-ipv6 +kmod-nf-conntrack
+  DEPENDS:=@IPV6 +kmod-nf-conntrack
   FILES:=$(foreach mod,$(NF_CONNTRACK6-m),$(LINUX_DIR)/net/$(mod).ko)
   AUTOLOAD:=$(call AutoProbe,$(notdir $(NF_CONNTRACK6-m)))
 endef
@@ -171,7 +171,6 @@ endef
 define KernelPackage/ipt-filter/description
  Netfilter (IPv4) kernel modules for packet content inspection
  Includes:
- - layer7
  - string
 endef
 
@@ -222,6 +221,54 @@ define KernelPackage/ipt-ipsec/description
 endef
 
 $(eval $(call KernelPackage,ipt-ipsec))
+
+IPSET_MODULES:= \
+	ipset/ip_set \
+	ipset/ip_set_bitmap_ip \
+	ipset/ip_set_bitmap_ipmac \
+	ipset/ip_set_bitmap_port \
+	ipset/ip_set_hash_ip \
+	ipset/ip_set_hash_ipmark \
+	ipset/ip_set_hash_ipport \
+	ipset/ip_set_hash_ipportip \
+	ipset/ip_set_hash_ipportnet \
+	ipset/ip_set_hash_mac \
+	ipset/ip_set_hash_netportnet \
+	ipset/ip_set_hash_net \
+	ipset/ip_set_hash_netnet \
+	ipset/ip_set_hash_netport \
+	ipset/ip_set_hash_netiface \
+	ipset/ip_set_list_set \
+	xt_set
+
+define KernelPackage/ipt-ipset
+  SUBMENU:=Netfilter Extensions
+  TITLE:=IPset netfilter modules
+  DEPENDS+= +kmod-ipt-core +kmod-nfnetlink
+  KCONFIG:= \
+	CONFIG_IP_SET \
+	CONFIG_IP_SET_MAX=256 \
+	CONFIG_NETFILTER_XT_SET \
+	CONFIG_IP_SET_BITMAP_IP \
+	CONFIG_IP_SET_BITMAP_IPMAC \
+	CONFIG_IP_SET_BITMAP_PORT \
+	CONFIG_IP_SET_HASH_IP \
+	CONFIG_IP_SET_HASH_IPMARK \
+	CONFIG_IP_SET_HASH_IPPORT \
+	CONFIG_IP_SET_HASH_IPPORTIP \
+	CONFIG_IP_SET_HASH_IPPORTNET \
+	CONFIG_IP_SET_HASH_MAC \
+	CONFIG_IP_SET_HASH_NET \
+	CONFIG_IP_SET_HASH_NETNET \
+	CONFIG_IP_SET_HASH_NETIFACE \
+	CONFIG_IP_SET_HASH_NETPORT \
+	CONFIG_IP_SET_HASH_NETPORTNET \
+	CONFIG_IP_SET_LIST_SET \
+	CONFIG_NET_EMATCH_IPSET=n
+  FILES:=$(foreach mod,$(IPSET_MODULES),$(LINUX_DIR)/net/netfilter/$(mod).ko)
+  AUTOLOAD:=$(call AutoLoad,49,$(notdir $(IPSET_MODULES)))
+endef
+$(eval $(call KernelPackage,ipt-ipset))
 
 
 define KernelPackage/ipt-nat
@@ -322,24 +369,6 @@ endef
 $(eval $(call KernelPackage,nf-nathelper-extra))
 
 
-define KernelPackage/ipt-queue
-  TITLE:=Module for user-space packet queueing
-  KCONFIG:=$(KCONFIG_IPT_QUEUE)
-  DEPENDS:=@!LINUX_3_6
-  FILES:=$(foreach mod,$(IPT_QUEUE-m),$(LINUX_DIR)/net/$(mod).ko)
-  AUTOLOAD:=$(call AutoProbe,$(notdir $(IPT_QUEUE-m)))
-  $(call AddDepends/ipt)
-endef
-
-define KernelPackage/ipt-queue/description
- Netfilter (IPv4) module for user-space packet queueing
- Includes:
- - QUEUE
-endef
-
-$(eval $(call KernelPackage,ipt-queue))
-
-
 define KernelPackage/ipt-ulog
   TITLE:=Module for user-space packet logging
   KCONFIG:=$(KCONFIG_IPT_ULOG)
@@ -425,13 +454,12 @@ $(eval $(call KernelPackage,ipt-led))
 
 define KernelPackage/ipt-tproxy
   TITLE:=Transparent proxying support
-  DEPENDS+=+kmod-ipt-conntrack +IPV6:kmod-ipv6 +IPV6:kmod-ip6tables
+  DEPENDS+=+kmod-ipt-conntrack +IPV6:kmod-ip6tables
   KCONFIG:= \
   	CONFIG_NETFILTER_TPROXY \
   	CONFIG_NETFILTER_XT_MATCH_SOCKET \
   	CONFIG_NETFILTER_XT_TARGET_TPROXY
   FILES:= \
-	$(if $(call kernel_patchver_lt,3.12),$(LINUX_DIR)/net/netfilter/nf_tproxy_core.ko) \
   	$(foreach mod,$(IPT_TPROXY-m),$(LINUX_DIR)/net/$(mod).ko)
   AUTOLOAD:=$(call AutoProbe,$(notdir nf_tproxy_core $(IPT_TPROXY-m)))
   $(call AddDepends/ipt)
@@ -445,7 +473,7 @@ $(eval $(call KernelPackage,ipt-tproxy))
 
 define KernelPackage/ipt-tee
   TITLE:=TEE support
-  DEPENDS:=+kmod-ipt-conntrack +IPV6:kmod-ipv6
+  DEPENDS:=+kmod-ipt-conntrack @!LINUX_4_4
   KCONFIG:= \
   	CONFIG_NETFILTER_XT_TARGET_TEE
   FILES:= \
@@ -746,7 +774,7 @@ $(eval $(call KernelPackage,nfnetlink-queue))
 define KernelPackage/nf-conntrack-netlink
   TITLE:=Connection tracking netlink interface
   FILES:=$(LINUX_DIR)/net/netfilter/nf_conntrack_netlink.ko
-  KCONFIG:=CONFIG_NF_CT_NETLINK
+  KCONFIG:=CONFIG_NF_CT_NETLINK CONFIG_NF_CONNTRACK_EVENTS=y
   AUTOLOAD:=$(call AutoProbe,nf_conntrack_netlink)
   $(call AddDepends/nfnetlink,+kmod-ipt-conntrack)
 endef

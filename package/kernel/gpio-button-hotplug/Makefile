@@ -9,13 +9,12 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=gpio-button-hotplug
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/gpio-button-hotplug
   SUBMENU:=Other modules
-  DEPENDS:=@!LINUX_3_3
   TITLE:=Simple GPIO Button Hotplug driver
   FILES:=$(PKG_BUILD_DIR)/gpio-button-hotplug.ko
   AUTOLOAD:=$(call AutoLoad,30,gpio-button-hotplug,1)

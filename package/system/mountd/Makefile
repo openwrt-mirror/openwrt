@@ -4,17 +4,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mountd
-PKG_VERSION:=0.1
-PKG_RELEASE:=6
+PKG_VERSION:=2015-11-22
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://mirror2.openwrt.org/sources
-PKG_MD5SUM:=b77253ee4321d24d200fffc4f7ca3d15
+PKG_RELEASE=$(PKG_SOURCE_VERSION)
+
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL=$(OPENWRT_GIT)/project/mountd.git
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=8476a03b25d457e99f59e6372b8d9faebe2266f8
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+CMAKE_INSTALL:=1
+
 PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
-PKG_CHECK_FORMAT_SECURITY:=0
 PKG_LICENSE:=GPL-2.0
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/mountd
   SECTION:=utils
@@ -30,13 +35,6 @@ endef
 
 define Package/mountd/conffiles
 /etc/config/mountd
-endef
-
-define Build/Compile
-	$(TARGET_CONFIGURE_OPTS) \
-		CFLAGS="$(TARGET_CFLAGS) -I$(STAGING_DIR)/usr/include -I$(PKG_BUILD_DIR)" \
-		LDFLAGS="$(TARGET_LDFLAGS)" \
-		$(MAKE) -C $(PKG_BUILD_DIR)
 endef
 
 define Package/mountd/install

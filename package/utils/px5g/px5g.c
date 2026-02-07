@@ -2,7 +2,7 @@
  * px5g - Embedded x509 key and certificate generator based on PolarSSL
  *
  *   Copyright (C) 2009 Steven Barth <steven@midlink.org>
- *   Copyright (C) 2014 Felix Fietkau <nbd@openwrt.org>
+ *   Copyright (C) 2014 Felix Fietkau <nbd@nbd.name>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -188,7 +188,7 @@ int selfsigned(char **arg)
 				}
 				memcpy(newc, oldc, delim - oldc);
 				newc += delim - oldc;
-				*newc++ = ';';
+				*newc++ = ',';
 				oldc = delim + 1;
 			} while(*delim);
 			arg++;
@@ -212,7 +212,7 @@ int selfsigned(char **arg)
 			" and validity %s-%s\n", subject, fstr, tstr);
 
 	x509write_crt_init(&cert);
-	x509write_crt_set_md_alg(&cert, POLARSSL_MD_SHA1);
+	x509write_crt_set_md_alg(&cert, POLARSSL_MD_SHA256);
 	x509write_crt_set_issuer_key(&cert, &key);
 	x509write_crt_set_subject_key(&cert, &key);
 	x509write_crt_set_subject_name(&cert, subject);

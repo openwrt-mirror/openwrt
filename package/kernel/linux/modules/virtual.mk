@@ -117,11 +117,11 @@ define KernelPackage/xen-fbdev
   	CONFIG_FB_SYS_IMAGEBLIT \
   	CONFIG_FIRMWARE_EDID=n
   FILES:= \
-  	$(LINUX_DIR)/drivers/video/xen-fbfront.ko \
-  	$(LINUX_DIR)/drivers/video/syscopyarea.ko \
-  	$(LINUX_DIR)/drivers/video/sysfillrect.ko \
-  	$(LINUX_DIR)/drivers/video/fb_sys_fops.ko \
-  	$(LINUX_DIR)/drivers/video/sysimgblt.ko
+  	$(LINUX_DIR)/drivers/video/fbdev/xen-fbfront.ko \
+  	$(LINUX_DIR)/drivers/video/fbdev/core/syscopyarea.ko \
+  	$(LINUX_DIR)/drivers/video/fbdev/core/sysfillrect.ko \
+  	$(LINUX_DIR)/drivers/video/fbdev/core/fb_sys_fops.ko \
+  	$(LINUX_DIR)/drivers/video/fbdev/core/sysimgblt.ko
   AUTOLOAD:=$(call AutoLoad,07, \
   	fb \
   	syscopyarea \
@@ -137,23 +137,6 @@ define KernelPackage/xen-fbdev/description
 endef
 
 $(eval $(call KernelPackage,xen-fbdev))
-
-
-define KernelPackage/xen-kbddev
-  SUBMENU:=$(VIRTUAL_MENU)
-  TITLE:=Xen virtual keyboard and mouse
-  DEPENDS:=@TARGET_x86_xen_domu +kmod-input-core
-  KCONFIG:=CONFIG_INPUT_MISC=y \
-	CONFIG_INPUT_XEN_KBDDEV_FRONTEND
-  FILES:=$(LINUX_DIR)/drivers/input/misc/xen-kbdfront.ko
-  AUTOLOAD:=$(call AutoLoad,08,xen-kbdfront)
-endef
-
-define KernelPackage/xen-kbddev/description
- Kernel module for the Xen virtual keyboard and mouse
-endef
-
-$(eval $(call KernelPackage,xen-kbddev))
 
 
 define KernelPackage/xen-netdev

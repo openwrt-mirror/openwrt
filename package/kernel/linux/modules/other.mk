@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2012 OpenWrt.org
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -10,26 +10,27 @@ OTHER_MENU:=Other modules
 WATCHDOG_DIR:=watchdog
 
 
-define KernelPackage/6lowpan-iphc
-  USBMENU:=$(OTHER_MENU)
-  TITLE:=6lowpan shared code
-  DEPENDS:=@!LINUX_3_3 @!LINUX_3_8 @!LINUX_3_10 @!LINUX_3_13
-  KCONFIG:=CONFIG_6LOWPAN_IPHC
-  HIDDEN:=1
-  FILES:=$(LINUX_DIR)/net/ieee802154/6lowpan_iphc.ko
-  AUTOLOAD:=$(call Autoprobe,6lowpan_iphc)
+define KernelPackage/6lowpan
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=6LoWPAN shared code
+  KCONFIG:= \
+	CONFIG_6LOWPAN \
+	CONFIG_6LOWPAN_NHC=n
+  FILES:=$(LINUX_DIR)/net/6lowpan/6lowpan.ko
+  AUTOLOAD:=$(call AutoProbe,6lowpan)
 endef
 
-define KernelPackage/6lowpan-iphc/description
+define KernelPackage/6lowpan/description
   Shared 6lowpan code for IEEE 802.15.4 and Bluetooth.
 endef
 
-$(eval $(call KernelPackage,6lowpan-iphc))
+$(eval $(call KernelPackage,6lowpan))
+
 
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +(!LINUX_3_3&&!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13):kmod-6lowpan-iphc
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-crypto-ecb +kmod-lib-crc16 +kmod-hid +!LINUX_3_18:kmod-crypto-cmac +LINUX_4_4:kmod-regmap
   KCONFIG:= \
 	CONFIG_BLUEZ \
 	CONFIG_BLUEZ_L2CAP \
@@ -40,18 +41,22 @@ define KernelPackage/bluetooth
 	CONFIG_BLUEZ_HCIUSB \
 	CONFIG_BLUEZ_HIDP \
 	CONFIG_BT \
+	CONFIG_BT_BREDR=y \
+	CONFIG_BT_DEBUGFS=n \
 	CONFIG_BT_L2CAP=y \
+	CONFIG_BT_LE=y \
 	CONFIG_BT_SCO=y \
 	CONFIG_BT_RFCOMM \
 	CONFIG_BT_BNEP \
 	CONFIG_BT_HCIBTUSB \
+	CONFIG_BT_HCIBTUSB_BCM=n \
 	CONFIG_BT_HCIUSB \
 	CONFIG_BT_HCIUART \
+	CONFIG_BT_HCIUART_BCM=n \
+	CONFIG_BT_HCIUART_INTEL=n \
 	CONFIG_BT_HCIUART_H4 \
 	CONFIG_BT_HIDP \
 	CONFIG_HID_SUPPORT=y
-  $(call AddDepends/crc16)
-  $(call AddDepends/hid)
   $(call AddDepends/rfkill)
   FILES:= \
 	$(LINUX_DIR)/net/bluetooth/bluetooth.ko \
@@ -60,6 +65,10 @@ define KernelPackage/bluetooth
 	$(LINUX_DIR)/net/bluetooth/hidp/hidp.ko \
 	$(LINUX_DIR)/drivers/bluetooth/hci_uart.ko \
 	$(LINUX_DIR)/drivers/bluetooth/btusb.ko
+ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,4.1.0)),1)
+  FILES+= \
+	$(LINUX_DIR)/drivers/bluetooth/btintel.ko
+endif
   AUTOLOAD:=$(call AutoProbe,bluetooth rfcomm bnep hidp hci_uart btusb)
 endef
 
@@ -68,6 +77,41 @@ define KernelPackage/bluetooth/description
 endef
 
 $(eval $(call KernelPackage,bluetooth))
+
+define KernelPackage/ath3k
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ATH3K Kernel Module support
+  DEPENDS:=+kmod-bluetooth +ar3k-firmware
+  KCONFIG:= \
+	CONFIG_BT_ATH3K \
+	CONFIG_BT_HCIUART_ATH3K=y
+  $(call AddDepends/bluetooth)
+  FILES:= \
+	$(LINUX_DIR)/drivers/bluetooth/ath3k.ko
+  AUTOLOAD:=$(call AutoProbe,ath3k)
+endef
+
+define KernelPackage/ath3k/description
+ Kernel support for ATH3K Module
+endef
+
+$(eval $(call KernelPackage,ath3k))
+
+
+define KernelPackage/bluetooth_6lowpan
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Bluetooth 6LoWPAN support
+  DEPENDS:=+kmod-6lowpan +kmod-bluetooth
+  KCONFIG:=CONFIG_BT_6LOWPAN
+  FILES:=$(LINUX_DIR)/net/bluetooth/bluetooth_6lowpan.ko
+  AUTOLOAD:=$(call AutoProbe,bluetooth_6lowpan)
+endef
+
+define KernelPackage/bluetooth_6lowpan/description
+ Kernel support for 6LoWPAN over Bluetooth Low Energy devices
+endef
+
+$(eval $(call KernelPackage,bluetooth_6lowpan))
 
 
 define KernelPackage/bluetooth-hci-h4p
@@ -84,6 +128,16 @@ define KernelPackage/bluetooth-hci-h4p/description
 endef
 
 $(eval $(call KernelPackage,bluetooth-hci-h4p))
+
+
+define KernelPackage/dma-buf
+  TITLE:=DMA shared buffer support
+  HIDDEN:=1
+  KCONFIG:=CONFIG_DMA_SHARED_BUFFER
+  FILES:=$(LINUX_DIR)/drivers/dma-buf/dma-shared-buffer.ko
+  AUTOLOAD:=$(call AutoLoad,20,dma-shared-buffer)
+endef
+$(eval $(call KernelPackage,dma-buf))
 
 
 define KernelPackage/eeprom-93cx6
@@ -211,7 +265,6 @@ $(eval $(call KernelPackage,gpio-pcf857x))
 
 define KernelPackage/iio-core
   SUBMENU:=$(OTHER_MENU)
-  DEPENDS:=@!LINUX_3_3 @!LINUX_3_6
   TITLE:=Industrial IO core
   KCONFIG:= \
 	CONFIG_IIO \
@@ -221,8 +274,10 @@ define KernelPackage/iio-core
 	CONFIG_IIO_TRIGGERED_BUFFER
   FILES:= \
 	$(LINUX_DIR)/drivers/iio/industrialio.ko \
-	$(if $(CONFIG_IIO_TRIGGERED_BUFFER),$(LINUX_DIR)/drivers/iio/industrialio-triggered-buffer.ko) \
-	$(LINUX_DIR)/drivers/iio/kfifo_buf.ko
+	$(if $(CONFIG_IIO_TRIGGERED_BUFFER),$(LINUX_DIR)/drivers/iio/industrialio-triggered-buffer.ko@lt4.4) \
+	$(if $(CONFIG_IIO_TRIGGERED_BUFFER),$(LINUX_DIR)/drivers/iio/buffer/industrialio-triggered-buffer.ko@ge4.4) \
+	$(LINUX_DIR)/drivers/iio/kfifo_buf.ko@lt4.4 \
+	$(LINUX_DIR)/drivers/iio/buffer/kfifo_buf.ko@ge4.4
   AUTOLOAD:=$(call AutoLoad,55,industrialio kfifo_buf industrialio-triggered-buffer)
 endef
 
@@ -242,11 +297,7 @@ define KernelPackage/iio-ad799x
   KCONFIG:= \
 	CONFIG_AD799X_RING_BUFFER=y \
 	CONFIG_AD799X
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.16.0)),1)
   FILES:=$(LINUX_DIR)/drivers/iio/adc/ad799x.ko
-else
-  FILES:=$(LINUX_DIR)/drivers/staging/iio/adc/ad799x.ko
-endif
   AUTOLOAD:=$(call AutoLoad,56,ad799x)
 endef
 
@@ -281,7 +332,6 @@ $(eval $(call KernelPackage,iio-dht11))
 define KernelPackage/lp
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Parallel port and line printer support
-  DEPENDS:=@BROKEN
   KCONFIG:= \
 	CONFIG_PARPORT \
 	CONFIG_PRINTER \
@@ -290,7 +340,7 @@ define KernelPackage/lp
 	$(LINUX_DIR)/drivers/parport/parport.ko \
 	$(LINUX_DIR)/drivers/char/lp.ko \
 	$(LINUX_DIR)/drivers/char/ppdev.ko
-  AUTOLOAD:=$(call AutoLoad,50,parport lp)
+  AUTOLOAD:=$(call AutoLoad,50,parport lp ppdev)
 endef
 
 $(eval $(call KernelPackage,lp))
@@ -343,21 +393,6 @@ endef
 $(eval $(call KernelPackage,sdhci))
 
 
-define KernelPackage/oprofile
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=OProfile profiling support
-  KCONFIG:=CONFIG_OPROFILE
-  FILES:=$(LINUX_DIR)/arch/$(LINUX_KARCH)/oprofile/oprofile.ko
-  DEPENDS:=@KERNEL_PROFILING
-endef
-
-define KernelPackage/oprofile/description
- Kernel module for support for oprofile system profiling
-endef
-
-$(eval $(call KernelPackage,oprofile))
-
-
 define KernelPackage/rfkill
   SUBMENU:=$(OTHER_MENU)
   TITLE:=RF switch subsystem support
@@ -385,7 +420,7 @@ define KernelPackage/softdog
   TITLE:=Software watchdog driver
   KCONFIG:=CONFIG_SOFT_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/softdog.ko
-  AUTOLOAD:=$(call AutoLoad,50,softdog)
+  AUTOLOAD:=$(call AutoLoad,50,softdog,1)
 endef
 
 define KernelPackage/softdog/description
@@ -424,7 +459,7 @@ $(eval $(call KernelPackage,ssb))
 define KernelPackage/bcma
   SUBMENU:=$(OTHER_MENU)
   TITLE:=BCMA support
-  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx
+  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx @!TARGET_bcm53xx
   KCONFIG:=\
 	CONFIG_BCMA \
 	CONFIG_BCMA_POSSIBLE=y \
@@ -453,7 +488,7 @@ define KernelPackage/wdt-omap
   DEPENDS:=@(TARGET_omap24xx||TARGET_omap35xx)
   KCONFIG:=CONFIG_OMAP_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/omap_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,omap_wdt.ko)
+  AUTOLOAD:=$(call AutoLoad,50,omap_wdt,1)
 endef
 
 define KernelPackage/wdt-omap/description
@@ -469,7 +504,7 @@ define KernelPackage/wdt-orion
   DEPENDS:=@TARGET_orion||TARGET_kirkwood||TARGET_mvebu
   KCONFIG:=CONFIG_ORION_WATCHDOG
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/orion_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,orion_wdt)
+  AUTOLOAD:=$(call AutoLoad,50,orion_wdt,1)
 endef
 
 define KernelPackage/wdt-orion/description
@@ -485,7 +520,7 @@ define KernelPackage/booke-wdt
   DEPENDS:=@(TARGET_mpc85xx||TARGET_ppc40x||TARGET_ppc44x)
   KCONFIG:=CONFIG_BOOKE_WDT
   FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/booke_wdt.ko
-  AUTOLOAD:=$(call AutoLoad,50,booke_wdt)
+  AUTOLOAD:=$(call AutoLoad,50,booke_wdt,1)
 endef
 
 define KernelPackage/booke-wdt/description
@@ -495,26 +530,12 @@ endef
 $(eval $(call KernelPackage,booke-wdt))
 
 
-define KernelPackage/pwm
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=PWM generic API
-  KCONFIG:=CONFIG_GENERIC_PWM
-  FILES:=$(LINUX_DIR)/drivers/pwm/pwm.ko
-endef
-
-define KernelPackage/pwm/description
- Kernel module that implement a generic PWM API
-endef
-
-$(eval $(call KernelPackage,pwm))
-
-
 define KernelPackage/rtc-ds1307
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Dallas/Maxim DS1307 (and compatible) RTC support
-  $(call AddDepends/rtc)
-  DEPENDS+=+kmod-i2c-core
-  KCONFIG:=CONFIG_RTC_DRV_DS1307
+  DEPENDS:=@RTC_SUPPORT +kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_DS1307 \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-ds1307.ko
   AUTOLOAD:=$(call AutoProbe,rtc-ds1307)
 endef
@@ -530,9 +551,9 @@ $(eval $(call KernelPackage,rtc-ds1307))
 define KernelPackage/rtc-ds1672
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Dallas/Maxim DS1672 RTC support
-  $(call AddDepends/rtc)
-  DEPENDS+=+kmod-i2c-core
-  KCONFIG:=CONFIG_RTC_DRV_DS1672
+  DEPENDS:=@RTC_SUPPORT +kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_DS1672 \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-ds1672.ko
   AUTOLOAD:=$(call AutoProbe,rtc-ds1672)
 endef
@@ -547,9 +568,9 @@ $(eval $(call KernelPackage,rtc-ds1672))
 define KernelPackage/rtc-isl1208
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Intersil ISL1208 RTC support
-  $(call AddDepends/rtc)
-  DEPENDS+=+kmod-i2c-core
-  KCONFIG:=CONFIG_RTC_DRV_ISL1208
+  DEPENDS:=@RTC_SUPPORT +kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_ISL1208 \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-isl1208.ko
   AUTOLOAD:=$(call AutoProbe,rtc-isl1208)
 endef
@@ -564,9 +585,9 @@ $(eval $(call KernelPackage,rtc-isl1208))
 define KernelPackage/rtc-marvell
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Marvell SoC built-in RTC support
-  $(call AddDepends/rtc)
-  DEPENDS+=@TARGET_kirkwood||TARGET_orion||TARGET_mvebu
-  KCONFIG:=CONFIG_RTC_DRV_MV
+  DEPENDS:=@RTC_SUPPORT @TARGET_kirkwood||TARGET_orion||TARGET_mvebu
+  KCONFIG:=CONFIG_RTC_DRV_MV \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-mv.ko
   AUTOLOAD:=$(call AutoProbe,rtc-mv)
 endef
@@ -577,11 +598,30 @@ endef
 
 $(eval $(call KernelPackage,rtc-marvell))
 
+
+define KernelPackage/rtc-armada38x
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Marvell Armada 38x SoC built-in RTC support
+  DEPENDS:=@RTC_SUPPORT @TARGET_mvebu
+  KCONFIG:=CONFIG_RTC_DRV_ARMADA38X \
+	CONFIG_RTC_CLASS=y
+  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-armada38x.ko
+  AUTOLOAD:=$(call AutoProbe,rtc-armada38x)
+endef
+
+define KernelPackage/rtc-armada38x/description
+ Kernel module for Marvell Armada 38x SoC built-in RTC.
+endef
+
+$(eval $(call KernelPackage,rtc-armada38x))
+
+
 define KernelPackage/rtc-pcf8563
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Philips PCF8563/Epson RTC8564 RTC support
-  $(call AddDepends/rtc,+kmod-i2c-core)
-  KCONFIG:=CONFIG_RTC_DRV_PCF8563
+  DEPENDS:=@RTC_SUPPORT +kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_PCF8563 \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-pcf8563.ko
   AUTOLOAD:=$(call AutoProbe,rtc-pcf8563)
 endef
@@ -597,8 +637,9 @@ $(eval $(call KernelPackage,rtc-pcf8563))
 define KernelPackage/rtc-pcf2123
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Philips PCF2123 RTC support
-  $(call AddDepends/rtc)
-  KCONFIG:=CONFIG_RTC_DRV_PCF2123
+  DEPENDS:=@RTC_SUPPORT
+  KCONFIG:=CONFIG_RTC_DRV_PCF2123 \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-pcf2123.ko
   AUTOLOAD:=$(call AutoProbe,rtc-pcf2123)
 endef
@@ -612,8 +653,9 @@ $(eval $(call KernelPackage,rtc-pcf2123))
 define KernelPackage/rtc-pt7c4338
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Pericom PT7C4338 RTC support
-  $(call AddDepends/rtc,+kmod-i2c-core)
-  KCONFIG:=CONFIG_RTC_DRV_PT7C4338
+  DEPENDS:=@RTC_SUPPORT +kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_PT7C4338 \
+	CONFIG_RTC_CLASS=y
   FILES:=$(LINUX_DIR)/drivers/rtc/rtc-pt7c4338.ko
   AUTOLOAD:=$(call AutoProbe,rtc-pt7c4338)
 endef
@@ -624,12 +666,27 @@ endef
 
 $(eval $(call KernelPackage,rtc-pt7c4338))
 
+define KernelPackage/rtc-snvs
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Freescale SNVS RTC support
+  DEPENDS:=@TARGET_imx6 @RTC_SUPPORT
+  KCONFIG:=CONFIG_RTC_DRV_SNVS \
+	CONFIG_RTC_CLASS=y
+  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-snvs.ko
+  AUTOLOAD:=$(call AutoLoad,50,rtc-snvs,1)
+endef
+
+define KernelPackage/rtc-snvs/description
+ Kernel module for Freescale SNVS RTC on chip module
+endef
+
+$(eval $(call KernelPackage,rtc-snvs))
+
 
 define KernelPackage/mtdtests
   SUBMENU:=$(OTHER_MENU)
   TITLE:=MTD subsystem tests
   KCONFIG:=CONFIG_MTD_TESTS
-  DEPENDS:=+kmod-nand
   FILES:=\
 	$(LINUX_DIR)/drivers/mtd/tests/mtd_nandecctest.ko \
 	$(LINUX_DIR)/drivers/mtd/tests/mtd_oobtest.ko \
@@ -648,40 +705,6 @@ endef
 $(eval $(call KernelPackage,mtdtests))
 
 
-define KernelPackage/nand
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=NAND flash support
-  KCONFIG:=CONFIG_MTD_NAND \
-	CONFIG_MTD_NAND_IDS \
-	CONFIG_MTD_NAND_ECC
-  FILES:= \
-	$(LINUX_DIR)/drivers/mtd/nand/nand_ids.ko \
-	$(LINUX_DIR)/drivers/mtd/nand/nand_ecc.ko \
-	$(LINUX_DIR)/drivers/mtd/nand/nand.ko
-  AUTOLOAD:=$(call AutoLoad,20,nand_ids nand_ecc nand)
-endef
-
-define KernelPackage/nand/description
- Kernel module for NAND support
-endef
-
-$(eval $(call KernelPackage,nand))
-
-
-define KernelPackage/nandsim
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=NAND simulator
-  DEPENDS:=+kmod-nand
-  KCONFIG:=CONFIG_MTD_NAND_NANDSIM
-  FILES:=$(LINUX_DIR)/drivers/mtd/nand/nandsim.ko
-endef
-
-define KernelPackage/nandsim/description
- Kernel module for NAND flash simulation.
-endef
-
-$(eval $(call KernelPackage,nandsim))
-
 define KernelPackage/serial-8250
   SUBMENU:=$(OTHER_MENU)
   TITLE:=8250 UARTs
@@ -693,7 +716,9 @@ define KernelPackage/serial-8250
 	CONFIG_SERIAL_8250_SHARE_IRQ=y \
 	CONFIG_SERIAL_8250_DETECT_IRQ=n \
 	CONFIG_SERIAL_8250_RSA=n
-  FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250$(if $(call kernel_patchver_ge,3.7),$(if $(call kernel_patchver_le,3.8),_core)).ko
+  FILES:= \
+	$(LINUX_DIR)/drivers/tty/serial/8250/8250.ko \
+	$(LINUX_DIR)/drivers/tty/serial/8250/8250_base.ko@ge4.4
 endef
 
 define KernelPackage/serial-8250/description
@@ -708,14 +733,16 @@ define KernelPackage/regmap
   TITLE:=Generic register map support
   DEPENDS:=+kmod-lib-lzo +kmod-i2c-core
   KCONFIG:=CONFIG_REGMAP \
+	   CONFIG_REGMAP_MMIO \
 	   CONFIG_REGMAP_SPI \
 	   CONFIG_REGMAP_I2C \
 	   CONFIG_SPI=y
   FILES:= \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-core.ko \
 	$(LINUX_DIR)/drivers/base/regmap/regmap-i2c.ko \
+	$(LINUX_DIR)/drivers/base/regmap/regmap-mmio.ko \
 	$(if $(CONFIG_SPI),$(LINUX_DIR)/drivers/base/regmap/regmap-spi.ko)
-  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-spi)
+  AUTOLOAD:=$(call AutoLoad,21,regmap-core regmap-i2c regmap-mmio regmap-spi)
 endef
 
 define KernelPackage/regmap/description
@@ -743,22 +770,17 @@ $(eval $(call KernelPackage,ikconfig))
 define KernelPackage/zram
   SUBMENU:=$(OTHER_MENU)
   TITLE:=ZRAM
-  DEPENDS:=@!LINUX_3_3 +kmod-lib-lzo
+  DEPENDS:=+kmod-lib-lzo +kmod-lib-lz4
   KCONFIG:= \
 	CONFIG_ZSMALLOC \
 	CONFIG_ZRAM \
 	CONFIG_ZRAM_DEBUG=n \
 	CONFIG_PGTABLE_MAPPING=n \
+	CONFIG_ZSMALLOC_STAT=n \
 	CONFIG_ZRAM_LZ4_COMPRESS=y
-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.14.0)),1)
-  FILES:=\
+  FILES:= \
 	$(LINUX_DIR)/mm/zsmalloc.ko \
 	$(LINUX_DIR)/drivers/block/zram/zram.ko
-else
-  FILES:= \
-	$(LINUX_DIR)/drivers/staging/zsmalloc/zsmalloc.ko \
-	$(LINUX_DIR)/drivers/staging/zram/zram.ko
-endif
   AUTOLOAD:=$(call AutoLoad,20,zsmalloc zram)
 endef
 
@@ -824,7 +846,9 @@ define KernelPackage/ptp
   SUBMENU:=$(OTHER_MENU)
   TITLE:=PTP clock support
   DEPENDS:=+kmod-pps
-  KCONFIG:=CONFIG_PTP_1588_CLOCK
+  KCONFIG:= \
+	CONFIG_PTP_1588_CLOCK \
+	CONFIG_NET_PTP_CLASSIFY=y
   FILES:=$(LINUX_DIR)/drivers/ptp/ptp.ko
   AUTOLOAD:=$(call AutoLoad,18,ptp,1)
 endef
@@ -955,13 +979,13 @@ $(eval $(call KernelPackage,thermal-kirkwood))
 define KernelPackage/gpio-beeper
   SUBMENU:=$(OTHER_MENU)
   TITLE:=GPIO beeper support
+  DEPENDS:=+kmod-input-core
   KCONFIG:= \
 	CONFIG_INPUT_MISC=y \
 	CONFIG_INPUT_GPIO_BEEPER
   FILES:= \
 	$(LINUX_DIR)/drivers/input/misc/gpio-beeper.ko
   AUTOLOAD:=$(call AutoLoad,50,gpio-beeper)
-  $(call AddDepends/input)
 endef
 
 define KernelPackage/gpio-beeper/description
@@ -969,3 +993,19 @@ define KernelPackage/gpio-beeper/description
 endef
 
 $(eval $(call KernelPackage,gpio-beeper))
+
+
+define KernelPackage/echo
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Line Echo Canceller
+  KCONFIG:=CONFIG_ECHO
+  FILES:=$(LINUX_DIR)/drivers/misc/echo/echo.ko
+  AUTOLOAD:=$(call AutoLoad,50,echo)
+endef
+
+define KernelPackage/echo/description
+ This driver provides line echo cancelling support for mISDN and
+ DAHDI drivers
+endef
+
+$(eval $(call KernelPackage,echo))

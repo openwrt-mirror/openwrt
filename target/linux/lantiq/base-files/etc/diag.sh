@@ -1,42 +1,34 @@
 #!/bin/sh
-# Copyright (C) 2012-2013 OpenWrt.org
+# Copyright (C) 2010-2015 OpenWrt.org
 
 . /lib/functions/leds.sh
+. /lib/functions/lantiq.sh
 
-status_led="power"
+boot="$(lantiq_get_dt_led_chosen boot)"
+failsafe="$(lantiq_get_dt_led_chosen failsafe)"
+running="$(lantiq_get_dt_led_chosen running)"
 
 set_state() {
-	[ -d /sys/class/leds/power2/ ] && {
-
-		case "$1" in
-		preinit)
-			led_set_attr "power2" "trigger" "heartbeat"
-			status_led_on
-			;;
-		failsafe)
-			led_off "power2"
-			status_led_set_timer 100 100
-			;;
-		done)
-			led_off "power2"
-			;;
-		esac
-		return
-	}
+    status_led="$boot"
 
 	case "$1" in
 	preinit)
-		status_led_set_heartbeat
+		status_led_blink_preinit
 		;;
 	failsafe)
-		[ -d /sys/class/leds/power1 ] && {
-			status_led_off
-			led_timer "power1" 100 100
-		} || status_led_set_timer 100 100
+		status_led_off
+		status_led="$failsafe"
+		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
-		status_led_on
-		led_off "power1"
+		status_led_off
+		[ -n "$running" ] && {
+			status_led="$running"
+			status_led_on
+		}
 		;;
 	esac
 }

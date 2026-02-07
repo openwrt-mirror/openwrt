@@ -10,13 +10,18 @@ ARCH:=powerpc
 BOARD:=mpc85xx
 BOARDNAME:=Freescale MPC85xx
 CPU_TYPE:=8540
-FEATURES:=spe_fpu squashfs
+FEATURES:=squashfs
 MAINTAINER:=Imre Kaloz <kaloz@openwrt.org>
 SUBTARGETS=generic p1020
 
-KERNEL_PATCHVER:=3.14
+KERNEL_PATCHVER:=4.4
 
 include $(INCLUDE_DIR)/target.mk
+
+KERNEL_IMAGES := zImage
+ifeq ($(SUBTARGET),generic)
+KERNEL_IMAGES += cuImage.tl-wdr4900-v1
+endif
 
 DEFAULT_PACKAGES += \
 	kmod-input-core kmod-input-gpio-keys kmod-button-hotplug \

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2010 OpenWrt.org
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -13,11 +13,16 @@ PKG_VERSION:=2.02~beta2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub
+PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub \
+	http://gnualpha.uib.no/grub/ \
+	http://mirrors.fe.up.pt/pub/gnu-alpha/grub/ \
+	http://www.nic.funet.fi/pub/gnu/alpha/gnu/grub/
 PKG_MD5SUM:=be62932eade308a364ea4bbc91295930
 
 HOST_BUILD_PARALLEL:=1
 PKG_BUILD_DEPENDS:=grub2/host
+
+PKG_SSP:=0
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
@@ -42,6 +47,8 @@ endef
 define Package/grub2-editenv/description
 	Edit grub2 environment files.
 endef
+
+HOST_BUILD_PREFIX := $(STAGING_DIR_HOST)
 
 CONFIGURE_ARGS += \
 	--target=$(REAL_GNU_TARGET_NAME) \

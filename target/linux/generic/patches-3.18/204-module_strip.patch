@@ -1,7 +1,7 @@
-From: Felix Fietkau <nbd@openwrt.org>
+From: Felix Fietkau <nbd@nbd.name>
 Subject: [PATCH] build: add a hack for removing non-essential module info
 
-Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 ---
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
@@ -72,7 +72,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  #ifdef MODULE
  #define __MODULE_INFO(tag, name, info)					  \
  static const char __UNIQUE_ID(name)[]					  \
-@@ -23,8 +33,7 @@ static const char __UNIQUE_ID(name)[]			
+@@ -23,8 +33,7 @@ static const char __UNIQUE_ID(name)[]
    = __stringify(tag) "=" info
  #else  /* !MODULE */
  /* This struct is here for syntactic coherency, it is not used */
@@ -82,7 +82,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  #endif
  #define __MODULE_PARM_TYPE(name, _type)					  \
    __MODULE_INFO(parmtype, name##type, #name ":" _type)
-@@ -32,7 +41,7 @@ static const char __UNIQUE_ID(name)[]			
+@@ -32,7 +41,7 @@ static const char __UNIQUE_ID(name)[]
  /* One for each parameter, describing how to use it.  Some files do
     multiple of these per line, so can't just use MODULE_INFO. */
  #define MODULE_PARM_DESC(_parm, desc) \
@@ -109,7 +109,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  config INIT_ALL_POSSIBLE
 --- a/kernel/module.c
 +++ b/kernel/module.c
-@@ -2665,6 +2665,7 @@ static struct module *setup_load_info(st
+@@ -2674,6 +2674,7 @@ static struct module *setup_load_info(st
  
  static int check_modinfo(struct module *mod, struct load_info *info, int flags)
  {
@@ -117,7 +117,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  	const char *modmagic = get_modinfo(info, "vermagic");
  	int err;
  
-@@ -2690,6 +2691,7 @@ static int check_modinfo(struct module *
+@@ -2699,6 +2700,7 @@ static int check_modinfo(struct module *
  		pr_warn("%s: module is from the staging directory, the quality "
  			"is unknown, you have been warned.\n", mod->name);
  	}

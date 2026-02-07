@@ -16,9 +16,10 @@ open FIND, "find \"$PATH\" -name Config.in |";
 while (<FIND>) {
 	chomp;
 	my $input = $_;
-	s/^$PATH\///g;
-	s/sysdeps\/linux\///g;
-	my $output = $_;
+	my $output = $input;
+	my $replace = quotemeta($PATH);
+	$output =~ s/^$replace\///g;
+	$output =~ s/sysdeps\/linux\///g;
 	print STDERR "$input => $output\n";
 	$output =~ /^(.+)\/[^\/]+$/ and system("mkdir -p $1");
 
@@ -40,7 +41,15 @@ while (<FIND>) {
 			undef $cur;
 			undef $default_set;
 		}
-		$line =~ s/^(\s*source\s+)/$1package\/utils\/busybox\/config\//;
+		$line =~ s/^(\s*source\s+)([^\/]+\/)*([^\/]+\/[^\/]+)$/$1$3/;
+		if ($line =~ /^(\s*range\s*)(\w+)(\s+)(\w+)\s*$/) {
+			my $prefix = $1;
+			my $r1 = $2;
+			my $r2 = $4;
+			$r1 =~ s/^([a-zA-Z]+)/BUSYBOX_CONFIG_$1/;
+			$r2 =~ s/^([a-zA-Z]+)/BUSYBOX_CONFIG_$1/;
+			$line = "$prefix$r1 $r2\n";
+		}
 
 		$line =~ s/^(\s*(prompt "[^"]+" if|config|depends|depends on|select|default|default \w if)\s+\!?)([A-Z_])/$1BUSYBOX_CONFIG_$3/g;
 		$line =~ s/(( \|\| | \&\& | \( )!?)([A-Z_])/$1BUSYBOX_CONFIG_$3/g;

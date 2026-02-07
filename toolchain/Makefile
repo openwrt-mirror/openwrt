@@ -28,7 +28,7 @@
 curdir:=toolchain
 
 # subdirectories to descend into
-$(curdir)/builddirs := $(if $(CONFIG_GDB),gdb) $(if $(CONFIG_INSIGHT),insight) $(if $(CONFIG_EXTERNAL_TOOLCHAIN),wrapper,kernel-headers binutils gcc/minimal gcc/initial gcc/final $(LIBC)/headers $(LIBC))
+$(curdir)/builddirs := $(if $(CONFIG_GDB),gdb) $(if $(CONFIG_INSIGHT),insight) $(if $(CONFIG_EXTERNAL_TOOLCHAIN),wrapper,kernel-headers binutils gcc/minimal gcc/initial gcc/final $(LIBC)/headers $(LIBC) fortify-headers)
 ifdef CONFIG_USE_UCLIBC
   $(curdir)/builddirs += $(LIBC)/utils
 endif
@@ -51,11 +51,6 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
   $(curdir)/$(LIBC)/utils/prepare:=$(curdir)/$(LIBC)/headers/prepare
 endif
 
-ifdef CONFIG_GCC_VERSION_LLVM
-  $(curdir)/builddirs += llvm
-  $(curdir)/gcc/minimal/compile += $(curdir)/llvm/install
-endif
-
 ifndef DUMP_TARGET_DB
 ifneq ($(ARCH),)
   $(TOOLCHAIN_DIR)/info.mk: .config
@@ -74,7 +69,7 @@ endif
 
 # prerequisites for the individual targets
 $(curdir)/ := .config prereq
-$(curdir)//prepare = $(STAGING_DIR)/.prepared $(TOOLCHAIN_DIR)/info.mk
+$(curdir)//prepare = $(STAGING_DIR)/.prepared $(TOOLCHAIN_DIR)/info.mk $(tools/stamp-install)
 $(curdir)//compile = $(1)/prepare
 $(curdir)//install = $(1)/compile
 

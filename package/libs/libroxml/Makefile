@@ -11,11 +11,10 @@ PKG_NAME:=libroxml
 PKG_VERSION:=2.3.0
 PKG_RELEASE:=2
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://download.libroxml.net/pool/v2.x
 PKG_MD5SUM:=a975f91be150f7a19168a45ce15769ca
-PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1

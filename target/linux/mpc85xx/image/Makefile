@@ -21,20 +21,20 @@ endef
 
 zImage:=$(BIN_DIR)/$(IMG_PREFIX)-zImage
 
-DTS_TARGETS = mpc8548cds_32b p1010rdb-pa tl-wdr4900-v1 p1020rdb
-BOOT_IMAGES:=zImage cuImage.tl-wdr4900-v1
+DTS_TARGETS = fsl/p1010rdb-pa tl-wdr4900-v1 fsl/p1020rdb
 
-define Image/Prepare
-	$(foreach image,$(BOOT_IMAGES),
-		cp $(LINUX_DIR)/arch/powerpc/boot/$(image) $(KDIR)/$(image)
+define Image/BuildKernel
+	cp $(KDIR)/zImage $(BIN_DIR)/$(IMG_PREFIX)-zImage
+	$(foreach dts,$(DTS_TARGETS),
+		$(LINUX_DIR)/scripts/dtc/dtc -I dts -O dtb $(DTS_DIR)/$(dts).dts > $(BIN_DIR)/$(IMG_PREFIX)-$(notdir $(dts)).fdt
 	)
 endef
 
-define Image/BuildKernel
-	cp $(KDIR)/zImage $(zImage)
-	$(foreach dts,$(DTS_TARGETS),
-		$(LINUX_DIR)/scripts/dtc/dtc -I dts -O dtb $(DTS_DIR)/$(dts).dts > $(BIN_DIR)/$(IMG_PREFIX)-$(dts).fdt
-	)
+define Image/BuildKernel/Initramfs
+	cp $(KDIR)/zImage-initramfs $(BIN_DIR)/$(IMG_PREFIX)-initramfs-zImage
+ifeq ($(SUBTARGET),generic)
+	cp $(KDIR)/cuImage.tl-wdr4900-v1-initramfs $(BIN_DIR)/$(IMG_PREFIX)-tl-wdr4900-v1-initramfs.uImage
+endif
 endef
 
 define Image/Build/TPLINK

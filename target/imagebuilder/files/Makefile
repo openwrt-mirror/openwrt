@@ -1,6 +1,6 @@
 # Makefile for OpenWrt
 #
-# Copyright (C) 2007-2010 OpenWrt.org
+# Copyright (C) 2007-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -43,7 +43,7 @@ Building images:
 	make image PACKAGES="<pkg1> [<pkg2> [<pkg3> ...]]" # include extra packages
 	make image FILES="<path>" # include extra files from <path>
 	make image BIN_DIR="<path>" # alternative output directory for the images
-
+	make image EXTRA_IMAGE_NAME="<string>" # Add this to the output image filename (sanitized)
 endef
 $(eval $(call shexport,Helptext))
 
@@ -53,18 +53,20 @@ help: FORCE
 
 # override variables from rules.mk
 PACKAGE_DIR:=$(TOPDIR)/packages
+LISTS_DIR:=$(subst $(space),/,$(patsubst %,..,$(subst /,$(space),$(TARGET_DIR))))$(DL_DIR)
 OPKG:= \
   IPKG_NO_SCRIPT=1 \
-  IPKG_TMP="$(TOPDIR)/tmp/ipkgtmp" \
+  IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
   IPKG_INSTROOT="$(TARGET_DIR)" \
-  IPKG_CONF_DIR="$(TOPDIR)/tmp" \
+  IPKG_CONF_DIR="$(TMP_DIR)" \
   IPKG_OFFLINE_ROOT="$(TARGET_DIR)" \
   $(STAGING_DIR_HOST)/bin/opkg \
 	-f $(TOPDIR)/repositories.conf \
 	--force-depends \
 	--force-overwrite \
 	--force-postinstall \
-	--cache $(TOPDIR)/dl \
+	--cache $(DL_DIR) \
+	--lists-dir $(LISTS_DIR) \
 	--offline-root $(TARGET_DIR) \
 	--add-dest root:/ \
 	--add-arch all:100 \
@@ -78,11 +80,27 @@ define Profile
   endif
   $(1)_NAME:=$(NAME)
   $(1)_PACKAGES:=$(PACKAGES)
+  PROFILE_NAMES += $(1)
   PROFILE_LIST += \
   	echo '$(1):'; [ -z '$(NAME)' ] || echo '	$(NAME)'; echo '	Packages: $(PACKAGES)';
 endef
 
 include $(INCLUDE_DIR)/target.mk
+
+staging_dir/host/.prereq-build: include/prereq-build.mk
+	mkdir -p tmp
+	rm -f tmp/.host.mk
+	@$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f $(TOPDIR)/include/prereq-build.mk prereq 2>/dev/null || { \
+		echo "Prerequisite check failed. Use FORCE=1 to override."; \
+		false; \
+	}
+  ifneq ($(realpath $(TOPDIR)/include/prepare.mk),)
+	@$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f $(TOPDIR)/include/prepare.mk prepare 2>/dev/null || { \
+		echo "Preparation failed."; \
+		false; \
+	}
+  endif
+	touch $@
 
 _call_info: FORCE
 	echo 'Current Target: "$(BOARD)$(if $(SUBTARGET), ($(BOARDNAME)))"'
@@ -95,18 +113,18 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $(USER_PACKAGES) $($(USER_PROFILE)_PA
 BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
 PACKAGES:=
 
-_call_image:
+_call_image: staging_dir/host/.prereq-build
 	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'
 	echo 'Packages: $(BUILD_PACKAGES)'
 	echo
 	rm -rf $(TARGET_DIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR)
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(DL_DIR)
 	if [ ! -f "$(PACKAGE_DIR)/Packages" ] || [ ! -f "$(PACKAGE_DIR)/Packages.gz" ] || [ "`find $(PACKAGE_DIR) -cnewer $(PACKAGE_DIR)/Packages.gz`" ]; then \
 		echo "Package list missing or not up-to-date, generating it.";\
 		$(MAKE) package_index; \
 	else \
 		mkdir -p $(TARGET_DIR)/tmp; \
-		$(OPKG) update; \
+		$(OPKG) update || true; \
 	fi
 	$(MAKE) package_install
 ifneq ($(USER_FILES),)
@@ -118,11 +136,11 @@ endif
 package_index: FORCE
 	@echo
 	@echo Building package index...
-	@mkdir -p $(TOPDIR)/tmp $(TOPDIR)/dl $(TARGET_DIR)/tmp
+	@mkdir -p $(TMP_DIR) $(TARGET_DIR)/tmp
 	(cd $(PACKAGE_DIR); $(SCRIPT_DIR)/ipkg-make-index.sh . > Packages && \
-		gzip -9c Packages > Packages.gz \
+		gzip -9nc Packages > Packages.gz \
 	) >/dev/null 2>/dev/null
-	$(OPKG) update
+	$(OPKG) update || true
 
 package_install: FORCE
 	@echo
@@ -156,17 +174,24 @@ package_postinst: FORCE
 build_image: FORCE
 	@echo
 	@echo Building images...
-	$(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 \
+	$(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
 		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
 
 clean:
-	rm -rf $(TOPDIR)/tmp $(TOPDIR)/dl $(TARGET_DIR) $(BIN_DIR)
+	rm -rf $(TMP_DIR) $(DL_DIR) $(TARGET_DIR) $(BIN_DIR)
 
 
 info:
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; $(MAKE) -s _call_info)
 
 image:
+ifneq ($(PROFILE),)
+  ifeq ($(filter $(PROFILE),$(PROFILE_NAMES)),)
+	@echo 'Profile "$(PROFILE)" does not exist!'
+	@echo 'Use "make info" to get a list of available profile names.'
+	@exit 1
+  endif
+endif
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
 	$(MAKE) _call_image \
 		$(if $(PROFILE),USER_PROFILE="$(PROFILE)") \

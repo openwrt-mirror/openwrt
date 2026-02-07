@@ -12,9 +12,9 @@ BOARDNAME:=Cavium Networks Econa CNS3xxx
 FEATURES:=squashfs fpu gpio pcie usb usbgadget
 CPU_TYPE:=mpcore
 CPU_SUBTYPE:=vfp
-MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
-KERNEL_PATCHVER:=3.14
+KERNEL_PATCHVER:=4.4
 
 include $(INCLUDE_DIR)/target.mk
 

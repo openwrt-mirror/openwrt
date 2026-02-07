@@ -18,19 +18,30 @@ config TARGET_PREINIT_SUPPRESS_STDERR
 	default y
 	help
 		Sends stderr to null during preinit.  This is the default behaviour
-		in previous versions of OpenWRT.  This also prevents init process
+		in previous versions of OpenWrt.  This also prevents init process
 		itself from displaying stderr, however processes launched by init
 		in multiuser through inittab will use the current terminal (e.g.
 		the ash shell launched by inittab will display stderr).  That's
-		the same behaviour as seen in previous version of OpenWRT.
+		the same behaviour as seen in previous version of OpenWrt.
+
+config TARGET_PREINIT_DISABLE_FAILSAFE
+	bool
+	prompt "Disable failsafe" if PREINITOPT
+	default n
+	help
+		Disable failsafe mode.  While it is very handy while
+		experimenting or developing it really ought to be
+		disabled in production environments as it is a major
+		security loophole.
 
 config TARGET_PREINIT_TIMEOUT
 	int
-	prompt "Failsafe wait timeout" if PREINITOPT
+	prompt "Failsafe/Debug wait timeout" if PREINITOPT
 	default 2
 	help
-		How long to wait for failsafe mode to be entered before
-		continuing with a regular boot if failsafe not selected.
+		How long to wait for failsafe mode to be entered or for
+		a debug option to be pressed before continuing with a
+		regular boot.
 
 config TARGET_PREINIT_SHOW_NETMSG
 	bool
@@ -45,7 +56,7 @@ config TARGET_PREINIT_SHOW_NETMSG
 
 config TARGET_PREINIT_SUPPRESS_FAILSAFE_NETMSG
 	bool
-	prompt "Suppress network message indicating failsafe" if PREINITOPT
+	prompt "Suppress network message indicating failsafe" if ( PREINITOPT && !TARGET_PREINIT_SHOW_NETMSG && !TARGET_PREINIT_DISABLE_FAILSAFE )
 	default n
 	help
 		If "Show all preinit network messages" above is not set, then
@@ -99,7 +110,7 @@ menuconfig INITOPT
 	config TARGET_INIT_PATH
 		string
 		prompt "PATH for regular boot" if INITOPT
-		default "/bin:/sbin:/usr/bin:/usr/sbin"
+		default "/usr/sbin:/usr/bin:/sbin:/bin"
 		help
 			Default PATH used during normal operation
 
@@ -128,7 +139,7 @@ menuconfig INITOPT
 		help
 			Prevents showing stderr messages for init command if not already
 			suppressed during preinit.  This is the default behaviour in
-			previous versions of OpenWRT.  Removing this does nothing if
+			previous versions of OpenWrt.  Removing this does nothing if
 			stderr is suppressed during preinit (which is the default).
 
 
@@ -170,7 +181,7 @@ if VERSIONOPT
 	config VERSION_REPO
 		string
 		prompt "Release repository"
-		default "http://downloads.openwrt.org/snapshots/trunk/%T/packages"
+		default "http://downloads.openwrt.org/snapshots/trunk/%S/packages"
 		help
 			This is the repository address embedded in the image, it defaults
 			to the trunk snapshot repo; the url may contain the following placeholders:
@@ -185,12 +196,23 @@ if VERSIONOPT
 			 %d .. Distribution name or "openwrt", lowercase
 			 %T .. Target name
 			 %S .. Target/Subtarget name
+			 %t .. Build taint flags, e.g. "no-all busybox"
+			 %M .. Manufacturer name or "OpenWrt"
+			 %P .. Product name or "Generic"
+			 %h .. Hardware revision or "v0"
 
 	config VERSION_MANUFACTURER
 		string
 		prompt "Manufacturer name"
 		help
 			This is the manufacturer name embedded in /etc/device_info
+			Useful for OEMs building OpenWrt based firmware
+
+	config VERSION_MANUFACTURER_URL
+		string
+		prompt "Manufacturer URL"
+		help
+			This is an URL to the manufacturer's website embedded in /etc/device_info
 			Useful for OEMs building OpenWrt based firmware
 
 	config VERSION_PRODUCT
@@ -206,6 +228,14 @@ if VERSIONOPT
 		help
 			This is the hardware revision string embedded in /etc/device_info
 			Useful for OEMs building OpenWrt based firmware
+
+	config VERSION_FILENAMES
+		bool
+		prompt "Version number in filenames"
+		default y
+		help
+			Enable this to include the version number in firmware image, SDK-
+			and Image Builder archive file names
 endif
 
 

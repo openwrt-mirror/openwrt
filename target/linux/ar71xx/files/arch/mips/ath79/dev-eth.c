@@ -183,7 +183,8 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 	    ath79_soc == ATH79_SOC_AR9342 ||
 	    ath79_soc == ATH79_SOC_AR9344 ||
 	    ath79_soc == ATH79_SOC_QCA9556 ||
-	    ath79_soc == ATH79_SOC_QCA9558)
+	    ath79_soc == ATH79_SOC_QCA9558 ||
+	    ath79_soc == ATH79_SOC_QCA956X)
 		max_id = 1;
 	else
 		max_id = 0;
@@ -198,6 +199,7 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 	case ATH79_SOC_AR9330:
 	case ATH79_SOC_AR9331:
 	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_TP9343:
 		mdio_dev = &ath79_mdio1_device;
 		mdio_data = &ath79_mdio1_data;
 		break;
@@ -207,6 +209,7 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 	case ATH79_SOC_AR9344:
 	case ATH79_SOC_QCA9556:
 	case ATH79_SOC_QCA9558:
+	case ATH79_SOC_QCA956X:
 		if (id == 0) {
 			mdio_dev = &ath79_mdio0_device;
 			mdio_data = &ath79_mdio0_data;
@@ -256,11 +259,18 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)
 		break;
 
 	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_TP9343:
 		mdio_data->builtin_switch = 1;
 		break;
 
 	case ATH79_SOC_QCA9556:
 	case ATH79_SOC_QCA9558:
+		mdio_data->is_ar934x = 1;
+		break;
+
+	case ATH79_SOC_QCA956X:
+		if (id == 1)
+			mdio_data->builtin_switch = 1;
 		mdio_data->is_ar934x = 1;
 		break;
 
@@ -377,6 +387,16 @@ static void qca955x_set_speed_sgmii(int speed)
 {
 	void __iomem *base;
 	u32 val = ath79_get_eth_pll(1, speed);
+
+	base = ioremap_nocache(AR71XX_PLL_BASE, AR71XX_PLL_SIZE);
+	__raw_writel(val, base + QCA955X_PLL_ETH_SGMII_CONTROL_REG);
+	iounmap(base);
+}
+
+static void qca956x_set_speed_sgmii(int speed)
+{
+	void __iomem *base;
+	u32 val = ath79_get_eth_pll(0, speed);
 
 	base = ioremap_nocache(AR71XX_PLL_BASE, AR71XX_PLL_SIZE);
 	__raw_writel(val, base + QCA955X_PLL_ETH_SGMII_CONTROL_REG);
@@ -513,6 +533,10 @@ struct ag71xx_switch_platform_data ath79_switch_data;
 #define AR934X_PLL_VAL_100	0x00000101
 #define AR934X_PLL_VAL_10	0x00001616
 
+#define QCA956X_PLL_VAL_1000	0x03000000
+#define QCA956X_PLL_VAL_100	0x00000101
+#define QCA956X_PLL_VAL_10	0x00001919
+
 static void __init ath79_init_eth_pll_data(unsigned int id)
 {
 	struct ath79_eth_pll_data *pll_data;
@@ -571,9 +595,16 @@ static void __init ath79_init_eth_pll_data(unsigned int id)
 	case ATH79_SOC_QCA9533:
 	case ATH79_SOC_QCA9556:
 	case ATH79_SOC_QCA9558:
+	case ATH79_SOC_TP9343:
 		pll_10 = AR934X_PLL_VAL_10;
 		pll_100 = AR934X_PLL_VAL_100;
 		pll_1000 = AR934X_PLL_VAL_1000;
+		break;
+
+	case ATH79_SOC_QCA956X:
+		pll_10 = QCA956X_PLL_VAL_10;
+		pll_100 = QCA956X_PLL_VAL_100;
+		pll_1000 = QCA956X_PLL_VAL_1000;
 		break;
 
 	default:
@@ -627,6 +658,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
 		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_TP9343:
 			pdata->phy_if_mode = PHY_INTERFACE_MODE_MII;
 			break;
 
@@ -649,6 +681,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 
 		case ATH79_SOC_QCA9556:
 		case ATH79_SOC_QCA9558:
+		case ATH79_SOC_QCA956X:
 			switch (pdata->phy_if_mode) {
 			case PHY_INTERFACE_MODE_MII:
 			case PHY_INTERFACE_MODE_RGMII:
@@ -687,7 +720,8 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR7241:
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
-		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_QCA956X:
+		case ATH79_SOC_TP9343:
 			pdata->phy_if_mode = PHY_INTERFACE_MODE_GMII;
 			break;
 
@@ -697,6 +731,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
 		case ATH79_SOC_AR9341:
 		case ATH79_SOC_AR9342:
 		case ATH79_SOC_AR9344:
+		case ATH79_SOC_QCA9533:
 			switch (pdata->phy_if_mode) {
 			case PHY_INTERFACE_MODE_MII:
 			case PHY_INTERFACE_MODE_GMII:
@@ -761,6 +796,32 @@ void __init ath79_setup_ar934x_eth_cfg(u32 mask)
 	       AR934X_ETH_CFG_SW_PHY_SWAP);
 
 	t |= mask;
+
+	__raw_writel(t, base + AR934X_GMAC_REG_ETH_CFG);
+	/* flush write */
+	__raw_readl(base + AR934X_GMAC_REG_ETH_CFG);
+
+	iounmap(base);
+}
+
+void __init ath79_setup_ar934x_eth_rx_delay(unsigned int rxd,
+					    unsigned int rxdv)
+{
+	void __iomem *base;
+	u32 t;
+
+	rxd &= AR934X_ETH_CFG_RXD_DELAY_MASK;
+	rxdv &= AR934X_ETH_CFG_RDV_DELAY_MASK;
+
+	base = ioremap(AR934X_GMAC_BASE, AR934X_GMAC_SIZE);
+
+	t = __raw_readl(base + AR934X_GMAC_REG_ETH_CFG);
+
+	t &= ~(AR934X_ETH_CFG_RXD_DELAY_MASK << AR934X_ETH_CFG_RXD_DELAY_SHIFT |
+	       AR934X_ETH_CFG_RDV_DELAY_MASK << AR934X_ETH_CFG_RDV_DELAY_SHIFT);
+
+	t |= (rxd << AR934X_ETH_CFG_RXD_DELAY_SHIFT |
+	      rxdv << AR934X_ETH_CFG_RDV_DELAY_SHIFT);
 
 	__raw_writel(t, base + AR934X_GMAC_REG_ETH_CFG);
 	/* flush write */
@@ -960,6 +1021,7 @@ void __init ath79_register_eth(unsigned int id)
 	case ATH79_SOC_AR9341:
 	case ATH79_SOC_AR9342:
 	case ATH79_SOC_AR9344:
+	case ATH79_SOC_QCA9533:
 		if (id == 0) {
 			pdata->reset_bit = AR934X_RESET_GE0_MAC |
 					   AR934X_RESET_GE0_MDIO;
@@ -991,13 +1053,14 @@ void __init ath79_register_eth(unsigned int id)
 			pdata->fifo_cfg3 = 0x01f00140;
 		break;
 
-	case ATH79_SOC_QCA9533:
+	case ATH79_SOC_TP9343:
 		if (id == 0) {
 			pdata->reset_bit = AR933X_RESET_GE0_MAC |
 					   AR933X_RESET_GE0_MDIO;
 			pdata->set_speed = ath79_set_speed_dummy;
 
-			pdata->phy_mask = BIT(4);
+			if (!pdata->phy_mask)
+				pdata->phy_mask = BIT(4);
 		} else {
 			pdata->reset_bit = AR933X_RESET_GE1_MAC |
 					   AR933X_RESET_GE1_MDIO;
@@ -1057,6 +1120,43 @@ void __init ath79_register_eth(unsigned int id)
 			pdata->fifo_cfg3 = 0x01f00140;
 		break;
 
+	case ATH79_SOC_QCA956X:
+		if (id == 0) {
+			pdata->reset_bit = QCA955X_RESET_GE0_MAC |
+					   QCA955X_RESET_GE0_MDIO;
+
+			if (pdata->phy_if_mode == PHY_INTERFACE_MODE_SGMII)
+				pdata->set_speed = qca956x_set_speed_sgmii;
+			else
+				pdata->set_speed = ath79_set_speed_ge0;
+		} else {
+			pdata->reset_bit = QCA955X_RESET_GE1_MAC |
+					   QCA955X_RESET_GE1_MDIO;
+
+			pdata->set_speed = ath79_set_speed_dummy;
+
+			pdata->switch_data = &ath79_switch_data;
+
+			pdata->speed = SPEED_1000;
+			pdata->duplex = DUPLEX_FULL;
+
+			/* reset the built-in switch */
+			ath79_device_reset_set(AR934X_RESET_ETH_SWITCH);
+			ath79_device_reset_clear(AR934X_RESET_ETH_SWITCH);
+		}
+
+		pdata->ddr_flush = ath79_ddr_no_flush;
+		pdata->has_gbit = 1;
+		pdata->is_ar724x = 1;
+
+		if (!pdata->fifo_cfg1)
+			pdata->fifo_cfg1 = 0x0010ffff;
+		if (!pdata->fifo_cfg2)
+			pdata->fifo_cfg2 = 0x015500aa;
+		if (!pdata->fifo_cfg3)
+			pdata->fifo_cfg3 = 0x01f00140;
+		break;
+
 	default:
 		BUG();
 	}
@@ -1097,12 +1197,18 @@ void __init ath79_register_eth(unsigned int id)
 		case ATH79_SOC_AR9330:
 		case ATH79_SOC_AR9331:
 		case ATH79_SOC_QCA9533:
+		case ATH79_SOC_TP9343:
 			pdata->mii_bus_dev = &ath79_mdio1_device.dev;
 			break;
 
 		case ATH79_SOC_QCA9556:
 		case ATH79_SOC_QCA9558:
 			/* don't assign any MDIO device by default */
+			break;
+
+		case ATH79_SOC_QCA956X:
+			if (pdata->phy_if_mode != PHY_INTERFACE_MODE_SGMII)
+				pdata->mii_bus_dev = &ath79_mdio1_device.dev;
 			break;
 
 		default:
@@ -1113,10 +1219,10 @@ void __init ath79_register_eth(unsigned int id)
 
 	/* Reset the device */
 	ath79_device_reset_set(pdata->reset_bit);
-	mdelay(100);
+	msleep(100);
 
 	ath79_device_reset_clear(pdata->reset_bit);
-	mdelay(100);
+	msleep(100);
 
 	platform_device_register(pdev);
 	ath79_eth_instance++;

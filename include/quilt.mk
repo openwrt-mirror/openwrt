@@ -1,4 +1,4 @@
-# 
+#
 # Copyright (C) 2007-2009 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
@@ -17,6 +17,7 @@ HOST_FILES_DIR?=$(FILES_DIR)
 
 ifeq ($(MAKECMDGOALS),refresh)
   override QUILT=1
+  override HOST_QUILT=1
 endif
 
 QUILT_CMD:=quilt --quiltrc=-

@@ -1,6 +1,6 @@
 --- a/include/applets.src.h
 +++ b/include/applets.src.h
-@@ -255,6 +255,7 @@ IF_MT(APPLET(mt, BB_DIR_BIN, BB_SUID_DRO
+@@ -254,6 +254,7 @@ IF_MT(APPLET(mt, BB_DIR_BIN, BB_SUID_DRO
  IF_MV(APPLET(mv, BB_DIR_BIN, BB_SUID_DROP))
  IF_NAMEIF(APPLET(nameif, BB_DIR_SBIN, BB_SUID_DROP))
  IF_NC(APPLET(nc, BB_DIR_USR_BIN, BB_SUID_DROP))
@@ -10,7 +10,7 @@
  IF_NOHUP(APPLET(nohup, BB_DIR_USR_BIN, BB_SUID_DROP))
 --- a/networking/Config.src
 +++ b/networking/Config.src
-@@ -620,6 +620,12 @@ config FEATURE_IPCALC_LONG_OPTIONS
+@@ -626,6 +626,12 @@ config FEATURE_IPCALC_LONG_OPTIONS
  	help
  	  Support long options for the ipcalc applet.
  
@@ -37,7 +37,7 @@
 +++ b/networking/netmsg.c
 @@ -0,0 +1,65 @@
 +/*
-+ * Copyright (C) 2006 Felix Fietkau <nbd@openwrt.org>
++ * Copyright (C) 2006 Felix Fietkau <nbd@nbd.name>
 + *
 + * This is free software, licensed under the GNU General Public License v2.
 + */

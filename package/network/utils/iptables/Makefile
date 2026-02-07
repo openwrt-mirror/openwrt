@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2013 OpenWrt.org
+# Copyright (C) 2006-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=iptables
 PKG_VERSION:=1.4.21
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://www.netfilter.org/projects/iptables/files \
@@ -23,10 +23,6 @@ PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 PKG_LICENSE:=GPL-2.0
-
-ifneq ($(CONFIG_EXTERNAL_KERNEL_TREE),"")
-PATCH_DIR:=
-endif
 
 include $(INCLUDE_DIR)/package.mk
 ifeq ($(DUMP),)
@@ -124,7 +120,6 @@ iptables extensions for packet content inspection.
 Includes support for:
 
  Matches:
-  - layer7
   - string
 
 endef
@@ -393,7 +388,7 @@ define Package/libiptc
 $(call Package/iptables/Default)
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+libip4tc +IPV6:libip6tc
+  DEPENDS:=+libip4tc +libip6tc +libxtables
   TITLE:=IPv4/IPv6 firewall - shared libiptc library (compatibility stub)
 endef
 
@@ -402,6 +397,7 @@ $(call Package/iptables/Default)
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=IPv4 firewall - shared libiptc library
+  DEPENDS:=+libxtables
 endef
 
 define Package/libip6tc
@@ -409,6 +405,7 @@ $(call Package/iptables/Default)
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=IPv6 firewall - shared libiptc library
+  DEPENDS:=+libxtables
 endef
 
 define Package/libxtables
@@ -426,7 +423,8 @@ TARGET_CPPFLAGS := \
 TARGET_CFLAGS += \
 	-I$(PKG_BUILD_DIR)/include \
 	-I$(LINUX_DIR)/user_headers/include \
-	-ffunction-sections -fdata-sections
+	-ffunction-sections -fdata-sections \
+	-DNO_LEGACY
 
 TARGET_LDFLAGS += \
 	-Wl,--gc-sections
@@ -445,6 +443,20 @@ MAKE_FLAGS := \
 	KERNEL_DIR="$(LINUX_DIR)/user_headers/" PREFIX=/usr \
 	KBUILD_OUTPUT="$(LINUX_DIR)" \
 	BUILTIN_MODULES="$(patsubst ip6t_%,%,$(patsubst ipt_%,%,$(patsubst xt_%,%,$(IPT_BUILTIN) $(IPT_CONNTRACK-m) $(IPT_NAT-m))))"
+
+ifneq ($(wildcard $(PKG_BUILD_DIR)/.config_*),$(subst .configured_,.config_,$(STAMP_CONFIGURED)))
+  define Build/Configure/rebuild
+	$(FIND) $(PKG_BUILD_DIR) -name \*.o -or -name \*.\?o -or -name \*.a | $(XARGS) rm -f
+	rm -f $(PKG_BUILD_DIR)/.config_*
+	rm -f $(PKG_BUILD_DIR)/.configured_*
+	touch $(subst .configured_,.config_,$(STAMP_CONFIGURED))
+  endef
+endif
+
+define Build/Configure
+$(Build/Configure/rebuild)
+$(Build/Configure/Default)
+endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
@@ -467,8 +479,7 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libip*tc.pc $(1)/usr/lib/pkgconfig/
 
 	# XXX: needed by firewall3
-	$(INSTALL_DIR) $(1)/usr/lib/iptables
-	$(CP) $(PKG_BUILD_DIR)/extensions/libext*.a $(1)/usr/lib/iptables/
+	$(CP) $(PKG_BUILD_DIR)/extensions/libiptext*.so $(1)/usr/lib/
 endef
 
 define Package/iptables/install
@@ -491,16 +502,19 @@ endef
 define Package/libip4tc/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libip4tc.so* $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/extensions/libiptext4.so $(1)/usr/lib/
 endef
 
 define Package/libip6tc/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libip6tc.so* $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/extensions/libiptext6.so $(1)/usr/lib/
 endef
 
 define Package/libxtables/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libxtables.so* $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/extensions/libiptext.so $(1)/usr/lib/
 endef
 
 define BuildPlugin
@@ -517,15 +531,10 @@ define BuildPlugin
   $$(eval $$(call BuildPackage,$(1)))
 endef
 
-L7_INSTALL:=\
-	$(INSTALL_DIR) $$(1)/etc/l7-protocols; \
-	$(CP) files/l7/*.pat $$(1)/etc/l7-protocols/
-
-
 $(eval $(call BuildPackage,iptables))
 $(eval $(call BuildPlugin,iptables-mod-conntrack-extra,$(IPT_CONNTRACK_EXTRA-m)))
 $(eval $(call BuildPlugin,iptables-mod-extra,$(IPT_EXTRA-m)))
-$(eval $(call BuildPlugin,iptables-mod-filter,$(IPT_FILTER-m),$(L7_INSTALL)))
+$(eval $(call BuildPlugin,iptables-mod-filter,$(IPT_FILTER-m)))
 $(eval $(call BuildPlugin,iptables-mod-ipopt,$(IPT_IPOPT-m)))
 $(eval $(call BuildPlugin,iptables-mod-ipsec,$(IPT_IPSEC-m)))
 $(eval $(call BuildPlugin,iptables-mod-nat-extra,$(IPT_NAT_EXTRA-m)))

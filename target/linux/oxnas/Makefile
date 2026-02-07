@@ -10,18 +10,19 @@ ARCH:=arm
 BOARD:=oxnas
 BOARDNAME:=PLXTECH/Oxford NAS782x/OX82x
 DEVICE_TYPE:=nas
-FEATURES:=gpio nand pcie usb usbgadget ramdisk rtc squashfs
+FEATURES:=gpio nand pcie usb ramdisk rtc squashfs ubifs
 CPU_TYPE:=mpcore
 
 MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 
-KERNEL_PATCHVER:=3.18
+KERNEL_PATCHVER:=4.4
 
 include $(INCLUDE_DIR)/target.mk
 
 DEFAULT_PACKAGES += \
-	kmod-button-hotplug kmod-input-gpio-keys-polled kmod-leds-gpio		\
-	kmod-i2c-gpio uboot-envtools uboot-oxnas-ox820
+	kmod-ata-core kmod-ata-oxnas-sata kmod-button-hotplug \
+	kmod-input-gpio-keys-polled kmod-leds-gpio kmod-usb2-oxnas \
+	uboot-envtools uboot-oxnas-ox820
 
 KERNELNAME:=zImage dtbs
 

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2013 OpenWrt.org
+# Copyright (C) 2006-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -7,34 +7,50 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gdb
-PKG_REV:=7.6-2013.05
-PKG_VERSION_MAJOR:=7.6
-PKG_VERSION:=linaro-$(PKG_REV)
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_MD5SUM:=816290b91cff03912320089d353e8a12
-PKG_SOURCE_URL:=https://releases.linaro.org/13.05/components/toolchain/gdb-linaro/
+ifeq ($(CONFIG_arc),y)
+PKG_VERSION:=arc-2015.06-gdb
+
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/arc-2015.06-gdb/
+PKG_MD5SUM:=d318829bfd2ed62714817f0d25706825
+GDB_DIR:=binutils-$(PKG_NAME)-$(PKG_VERSION)
+else
+PKG_VERSION:=7.11
+
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+PKG_SOURCE_URL:=@GNU/gdb
+PKG_MD5SUM:=b5c784685e1cde65ba135feea86b6d75
+GDB_DIR:=$(PKG_NAME)-$(PKG_VERSION)
+endif
+
+PATCH_DIR:=./patches/$(PKG_VERSION)
+
+HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(GDB_DIR)
 
 HOST_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/toolchain-build.mk
 
-define Host/Configure
-	(cd $(HOST_BUILD_DIR); \
-		gdb_cv_func_sigsetjmp=yes \
-		CFLAGS="-O2" \
-		$(HOST_BUILD_DIR)/configure \
-		--prefix=$(TOOLCHAIN_DIR) \
-		--build=$(GNU_HOST_NAME) \
-		--host=$(GNU_HOST_NAME) \
-		--target=$(REAL_GNU_TARGET_NAME) \
-		--disable-werror \
-		--without-uiout \
-		--disable-tui --disable-gdbtk --without-x \
-		--without-included-gettext \
-		--enable-threads \
-	);
-endef
+HOST_CONFIGURE_VARS += \
+	gdb_cv_func_sigsetjmp=yes
+
+HOST_CONFIGURE_ARGS = \
+	--prefix=$(TOOLCHAIN_DIR) \
+	--build=$(GNU_HOST_NAME) \
+	--host=$(GNU_HOST_NAME) \
+	--target=$(REAL_GNU_TARGET_NAME) \
+	--disable-werror \
+	--without-uiout \
+	--disable-tui --disable-gdbtk --without-x \
+	--without-included-gettext \
+	--enable-threads \
+	--with-expat \
+	--without-python \
+	--disable-binutils \
+	--disable-ld \
+	--disable-gas \
+	--disable-sim
 
 define Host/Install
 	mkdir -p $(TOOLCHAIN_DIR)/bin

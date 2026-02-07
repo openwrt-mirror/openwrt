@@ -154,15 +154,18 @@ config_list_foreach() {
 }
 
 insert_modules() {
-	[ -d /etc/modules.d ] && {
-		cd /etc/modules.d
-		sed 's/^[^#]/insmod &/' $* | ash 2>&- || :
-	}
+	for m in $*; do
+		if [ -f /etc/modules.d/$m ]; then
+			sed 's/^[^#]/insmod &/' /etc/modules.d/$m | ash 2>&- || :
+		else
+			modprobe $m
+		fi
+	done
 }
 
 default_prerm() {
 	local name
-	name=$(echo $(basename $1) | cut -d. -f1)
+	name=$(basename ${1%.*})
 	[ -f /usr/lib/opkg/info/${name}.prerm-pkg ] && . /usr/lib/opkg/info/${name}.prerm-pkg
 	for i in `cat /usr/lib/opkg/info/${name}.list | grep "^/etc/init.d/"`; do
 		$i disable
@@ -170,59 +173,90 @@ default_prerm() {
 	done
 }
 
-default_postinst() {
-	local name rusers
-	name=$(echo $(basename $1) | cut -d. -f1)
-	rusers=$(grep "Require-User:" ${IPKG_INSTROOT}/usr/lib/opkg/info/${name}.control)
-	[ -n "$rusers" ] && {
-		local user group uid gid
-		for a in $(echo $rusers | sed "s/Require-User://g"); do
-			user=""
-			group=""
-			for b in $(echo $a | sed "s/:/ /g"); do
-				local name id
+add_group_and_user() {
+	local pkgname="$1"
+	local rusers="$(sed -ne 's/^Require-User: *//p' $root/usr/lib/opkg/info/${pkgname}.control 2>/dev/null)"
 
-				name=$(echo $b | cut -d= -f1)
-				id=$(echo $b | cut -d= -f2)
+	if [ -n "$rusers" ]; then
+		local tuple oIFS="$IFS"
+		for tuple in $rusers; do
+			local uid gid uname gname
 
-				[ -z "$user" ] && {
-					user=$name
-					uid=$id
-					continue
-				}
+			IFS=":"
+			set -- $tuple; uname="$1"; gname="$2"
+			IFS="="
+			set -- $uname; uname="$1"; uid="$2"
+			set -- $gname; gname="$1"; gid="$2"
+			IFS="$oIFS"
 
-				gid=$id
-				[ -n "$gid" ] && {
-					group_exists $name || group_add $name $gid
-				}
+			if [ -n "$gname" ] && [ -n "$gid" ]; then
+				group_exists "$gname" || group_add "$gname" "$gid"
+			elif [ -n "$gname" ]; then
+				group_add_next "$gname"; gid=$?
+			fi
 
-				[ -z "$gid" ] && {
-					group_add_next $name
-					gid=$?
-				}
+			if [ -n "$uname" ]; then
+				user_exists "$uname" || user_add "$uname" "$uid" "$gid"
+			fi
 
-				[ -z "$group" ] && {
-					user_exists $user || user_add $user "$uid" $gid
-					group=$name
-					continue
-				}
+			if [ -n "$uname" ] && [ -n "$gname" ]; then
+				group_add_user "$gname" "$uname"
+			fi
 
-				group_add_user $name $user
-			done
+			unset uid gid uname gname
 		done
-	}
+	fi
+}
 
-	[ -f ${IPKG_INSTROOT}/usr/lib/opkg/info/${name}.postinst-pkg ] && ( . ${IPKG_INSTROOT}/usr/lib/opkg/info/${name}.postinst-pkg )
-	[ -n "${IPKG_INSTROOT}" ] || rm -f /tmp/luci-indexcache 2>/dev/null
+default_postinst() {
+	local root="${IPKG_INSTROOT}"
+	local pkgname="$(basename ${1%.*})"
+	local ret=0
 
-	[ "$PKG_UPGRADE" = "1" ] || for i in `cat ${IPKG_INSTROOT}/usr/lib/opkg/info/${name}.list | grep "^/etc/init.d/"`; do
-		[ -n "${IPKG_INSTROOT}" ] && $(which bash) ${IPKG_INSTROOT}/etc/rc.common ${IPKG_INSTROOT}$i enable; \
-		[ -n "${IPKG_INSTROOT}" ] || {
-			$i enable
-			$i start
-		}
-	done
-	return 0
+	add_group_and_user "${pkgname}"
+
+	if [ -f "$root/usr/lib/opkg/info/${pkgname}.postinst-pkg" ]; then
+		( . "$root/usr/lib/opkg/info/${pkgname}.postinst-pkg" )
+		ret=$?
+	fi
+
+	if [ -z "$root" ] && grep -q -s "^/etc/uci-defaults/" "$root/usr/lib/opkg/info/${pkgname}.list"; then
+		. /lib/functions/system.sh
+		[ -d /tmp/.uci ] || mkdir -p /tmp/.uci
+		cd /etc/uci-defaults
+		for i in $(grep -s "^/etc/uci-defaults/" "$root/usr/lib/opkg/info/${pkgname}.list"); do
+			( . "./$(basename $i)" ) && rm -f "$i"
+		done
+		uci commit
+		cd $OLDPWD
+	fi
+
+	if [ -z "$root" ] && grep -q -s "^/etc/uci-defaults/" "/usr/lib/opkg/info/${pkgname}.list"; then
+		. /lib/functions/system.sh
+		[ -d /tmp/.uci ] || mkdir -p /tmp/.uci
+		cd /etc/uci-defaults
+		for i in $(grep -s "^/etc/uci-defaults/" "/usr/lib/opkg/info/${pkgname}.list"); do
+			( . "./$(basename $i)" ) && rm -f "$i"
+		done
+		uci commit
+		cd $OLDPWD
+	fi
+
+	[ -n "$root" ] || rm -f /tmp/luci-indexcache 2>/dev/null
+
+	if [ "$PKG_UPGRADE" != "1" ]; then
+		local shell="$(which bash)"
+		for i in $(grep -s "^/etc/init.d/" "$root/usr/lib/opkg/info/${pkgname}.list"); do
+			if [ -n "$root" ]; then
+				${shell:-/bin/sh} "$root/etc/rc.common" "$root$i" enable
+			else
+				"$i" enable
+				"$i" start
+			fi
+		done
+	fi
+
+	return $ret
 }
 
 include() {

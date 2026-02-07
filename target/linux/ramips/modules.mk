@@ -9,7 +9,7 @@ OTHER_MENU:=Other modules
 define KernelPackage/sdhci-mt7620
   SUBMENU:=Other modules
   TITLE:=MT7620 SDCI
-  DEPENDS:=@(TARGET_ramips_mt7620||TARGET_ramips_mt7628||TARGET_ramips_mt7621) +kmod-sdhci
+  DEPENDS:=@(TARGET_ramips_mt7620||TARGET_ramips_mt7628||TARGET_ramips_mt7621||TARGET_ramips_mt7688) +kmod-sdhci
   KCONFIG:= \
 	CONFIG_MTK_MMC \
 	CONFIG_MTK_AEE_KDUMP=n \
@@ -27,7 +27,7 @@ I2C_RALINK_MODULES:= \
 define KernelPackage/i2c-ralink
   $(call i2c_defaults,$(I2C_RALINK_MODULES),59)
   TITLE:=Ralink I2C Controller
-  DEPENDS:=@TARGET_ramips kmod-i2c-core
+  DEPENDS:=@TARGET_ramips @(!TARGET_ramips_mt7621) kmod-i2c-core
 endef
 
 define KernelPackage/i2c-ralink/description
@@ -36,9 +36,27 @@ endef
 
 $(eval $(call KernelPackage,i2c-ralink))
 
+
+I2C_MT7621_MODULES:= \
+  CONFIG_I2C_MT7621:drivers/i2c/busses/i2c-mt7621
+
+define KernelPackage/i2c-mt7621
+  $(call i2c_defaults,$(I2C_MT7621_MODULES),59)
+  TITLE:=MT7621 I2C Controller
+  DEPENDS:=@TARGET_ramips @TARGET_ramips_mt7621 kmod-i2c-core
+endef
+
+define KernelPackage/i2c-mt7621/description
+ Kernel modules for enable mt7621 i2c controller.
+endef
+
+$(eval $(call KernelPackage,i2c-mt7621))
+
+
+
 define KernelPackage/sound-mt7620
   TITLE:=MT7620 PCM/I2S Alsa Driver
-  DEPENDS:=@TARGET_ramips_mt7620 +kmod-sound-soc-core +kmod-regmap
+  DEPENDS:=@TARGET_ramips_mt7620 +kmod-sound-soc-core +kmod-regmap @BROKEN
   KCONFIG:= \
 	CONFIG_SND_MT7620_SOC_I2S \
 	CONFIG_SND_MT7620_SOC_WM8960

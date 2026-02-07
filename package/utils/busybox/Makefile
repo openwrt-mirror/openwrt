@@ -1,5 +1,5 @@
-# 
-# Copyright (C) 2006-2014 OpenWrt.org
+#
+# Copyright (C) 2006-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=busybox
-PKG_VERSION:=1.22.1
-PKG_RELEASE:=5
+PKG_VERSION:=1.24.2
+PKG_RELEASE:=1
 PKG_FLAGS:=essential
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://www.busybox.net/downloads \
 		http://distfiles.gentoo.org/distfiles/
-PKG_MD5SUM:=337d1a15ab1cb1d4ed423168b1eb7d7e
+PKG_MD5SUM:=2eaae519cac1143bcf583636a745381f
 
 PKG_BUILD_DEPENDS:=BUSYBOX_USE_LIBRPC:librpc BUSYBOX_CONFIG_PAM:libpam
 PKG_BUILD_PARALLEL:=1
@@ -39,7 +39,7 @@ endif
 define Package/busybox
   SECTION:=base
   CATEGORY:=Base system
-  MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+  MAINTAINER:=Felix Fietkau <nbd@nbd.name>
   TITLE:=Core utilities for embedded Linux
   URL:=http://busybox.net/
   DEPENDS:=+BUSYBOX_USE_LIBRPC:librpc +BUSYBOX_CONFIG_PAM:libpam
@@ -57,6 +57,9 @@ endef
 
 BUSYBOX_SYM=$(if $(CONFIG_BUSYBOX_CUSTOM),CONFIG,DEFAULT)
 
+# don't create a version string containing the actual timestamp
+export KCONFIG_NOTIMESTAMP=1
+
 define Build/Configure
 	rm -f $(PKG_BUILD_DIR)/.configured*
 	grep 'CONFIG_BUSYBOX_$(BUSYBOX_SYM)' $(TOPDIR)/.config | sed -e "s,\\(# \)\\?CONFIG_BUSYBOX_$(BUSYBOX_SYM)_\\(.*\\),\\1CONFIG_\\2,g" > $(PKG_BUILD_DIR)/.config
@@ -68,10 +71,6 @@ define Build/Configure
 		$(BB_MAKE_VERBOSE) \
 		oldconfig
 endef
-
-ifdef CONFIG_GCC_VERSION_LLVM
-  TARGET_CFLAGS += -fnested-functions
-endif
 
 LDLIBS:=m crypt
 ifdef CONFIG_BUSYBOX_USE_LIBRPC
@@ -114,7 +113,6 @@ define Package/busybox/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 	$(INSTALL_BIN) ./files/cron $(1)/etc/init.d/cron
-	$(INSTALL_BIN) ./files/telnet $(1)/etc/init.d/telnet
 	$(INSTALL_BIN) ./files/sysntpd $(1)/etc/init.d/sysntpd
 	$(INSTALL_BIN) ./files/ntpd-hotplug $(1)/usr/sbin/ntpd-hotplug
 	-rm -rf $(1)/lib64

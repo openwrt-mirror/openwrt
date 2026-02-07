@@ -1,4 +1,4 @@
-# 
+#
 # Copyright (C) 2006-2013 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
@@ -9,6 +9,9 @@ include $(INCLUDE_DIR)/image.mk
 
 UBIFS_OPTS = -F -m 2048 -e 126KiB -c 2048 -U
 UBI_OPTS = -m 2048 -p 128KiB -s 512
+
+AT91SAMA5D3XPLAINED_UBIFS_OPTS = -m 2048 -e 124KiB -c 2048
+AT91SAMA5D3XPLAINED_UBI_OPTS = -m 2048 -p 128KiB -s 2048
 
 define Build/Clean
 	$(MAKE) -C u-boot clean
@@ -21,6 +24,7 @@ define Build/Compile
 endef
 
 define Image/Prepare
+	cp $(LINUX_DIR)/arch/arm/boot/Image $(KDIR)/Image
 	cp $(LINUX_DIR)/arch/arm/boot/zImage $(KDIR)/zImage
 endef
 
@@ -58,6 +62,9 @@ Image/Build/Kernel/USBA9263=$(call MkuImageDtb,usb_a9263,usb_a9263)
 Image/Build/Kernel/USBA9G20=$(call MkuImageDtb,usb_a9g20,usb_a9g20)
 # Ethernut
 Image/Build/Kernel/ETHERNUT5=$(call MkuImageDtb,ethernut5,ethernut5)
+# Exegin
+Image/Build/Kernel/Q5XR5=$(call MkOftree,q5xr5,at91-q5xr5)
+
 
 define Image/Build/Kernel/Default
 	$(call Image/Build/Kernel/AT91SAM9263EK)
@@ -69,7 +76,6 @@ define Image/Build/Kernel/Default
 	$(call Image/Build/Kernel/AT91SAM9M10G45EK)
 	$(call Image/Build/Kernel/AT91SAM9X25EK)
 	$(call Image/Build/Kernel/AT91SAM9X35EK)
-	$(call Image/Build/Kernel/AT91SAMA5D3XPLAINED)
 	$(call Image/Build/Kernel/LMU5000)
 	$(call Image/Build/Kernel/TNYA9260)
 	$(call Image/Build/Kernel/TNYA9263)
@@ -78,13 +84,14 @@ define Image/Build/Kernel/Default
 	$(call Image/Build/Kernel/USBA9263)
 	$(call Image/Build/Kernel/USBA9G20)
 	$(call Image/Build/Kernel/ETHERNUT5)
+	$(call Image/Build/Kernel/Q5XR5)
 endef
 
 define Image/BuildKernel
 	mkimage -A arm -T kernel -C none -a 0x20008000 -e 0x20008000 -n linux-2.6 \
-		-d $(LINUX_DIR)/arch/arm/boot/Image $(BIN_DIR)/uImage
+		-d $(KDIR)/Image $(BIN_DIR)/$(IMG_PREFIX)-uImage
 	if [ $(CONFIG_FLEXIBITY_ROOT) ]; then \
-		$(INSTALL_BIN) $(BIN_DIR)/uImage $(TARGET_DIR)/uImage ; \
+		$(INSTALL_BIN) $(BIN_DIR)/$(IMG_PREFIX)-uImage $(TARGET_DIR)/uImage ; \
 	fi
 	$(call Image/Build/Kernel/$(PROFILE))
 endef

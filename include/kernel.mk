@@ -1,5 +1,5 @@
-# 
-# Copyright (C) 2006-2011 OpenWrt.org
+#
+# Copyright (C) 2006-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -35,9 +35,7 @@ else
   endif
   KERNEL_BUILD_DIR ?= $(BUILD_DIR)/linux-$(BOARD)$(if $(SUBTARGET),_$(SUBTARGET))
   LINUX_DIR ?= $(KERNEL_BUILD_DIR)/linux-$(LINUX_VERSION)
-  ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,3.7.0)),1)
-    LINUX_UAPI_DIR=uapi/
-  endif
+  LINUX_UAPI_DIR=uapi/
   LINUX_VERMAGIC:=$(strip $(shell cat $(LINUX_DIR)/.vermagic 2>/dev/null))
   LINUX_VERMAGIC:=$(if $(LINUX_VERMAGIC),$(LINUX_VERMAGIC),unknown)
 
@@ -54,7 +52,7 @@ else
   LINUX_SOURCE:=linux-$(LINUX_VERSION).tar.xz
   TESTING:=$(if $(findstring -rc,$(LINUX_VERSION)),/testing,)
   ifeq ($(call qstrip,$(CONFIG_EXTERNAL_KERNEL_TREE))$(call qstrip,$(CONFIG_KERNEL_GIT_CLONE_URI)),)
-      LINUX_SITE:=@KERNEL/linux/kernel/v3.x$(TESTING)
+      LINUX_SITE:=@KERNEL/linux/kernel/v$(word 1,$(subst ., ,$(KERNEL_BASE))).x$(TESTING)
   endif
 
   ifneq ($(TARGET_BUILD),1)
@@ -64,12 +62,21 @@ endif
 
 ifneq (,$(findstring uml,$(BOARD)))
   LINUX_KARCH=um
+else ifneq (,$(findstring $(ARCH) , aarch64 aarch64_be ))
+  LINUX_KARCH := arm64
+else ifneq (,$(findstring $(ARCH) , arceb ))
+  LINUX_KARCH := arc
+else ifneq (,$(findstring $(ARCH) , armeb ))
+  LINUX_KARCH := arm
+else ifneq (,$(findstring $(ARCH) , mipsel mips64 mips64el ))
+  LINUX_KARCH := mips
+else ifneq (,$(findstring $(ARCH) , sh2 sh3 sh4 ))
+  LINUX_KARCH := sh
+else ifneq (,$(findstring $(ARCH) , i386 x86_64 ))
+  LINUX_KARCH := x86
 else
-  ifeq (,$(LINUX_KARCH))
-    LINUX_KARCH=$(strip $(subst i386,x86,$(subst armeb,arm,$(subst mipsel,mips,$(subst mips64,mips,$(subst mips64el,mips,$(subst sh2,sh,$(subst sh3,sh,$(subst sh4,sh,$(subst aarch64,arm64,$(subst aarch64_be,arm64,$(ARCH))))))))))))
-  endif
+  LINUX_KARCH := $(ARCH)
 endif
-
 
 define KernelPackage/Defaults
   FILES:=
@@ -83,7 +90,7 @@ define ModuleAutoLoad
 		mods="$$$$$$$$1"; \
 		boot="$$$$$$$$2"; \
 		shift 2; \
-		for mod in $$$$$$$$mods; do \
+		for mod in $(sort $$$$$$$$mods); do \
 			mkdir -p $(2)/etc/modules.d; \
 			echo "$$$$$$$$mod" >> $(2)/etc/modules.d/$(1); \
 		done; \
@@ -92,7 +99,7 @@ define ModuleAutoLoad
 				mkdir -p $(2)/etc/modules-boot.d; \
 				ln -s ../modules.d/$(1) $(2)/etc/modules-boot.d/; \
 			fi; \
-			modules="$$$$$$$${modules:+$$$$$$$$modules}"; \
+			modules="$$$$$$$${modules:+$$$$$$$$modules }$$$$$$$$mods"; \
 		fi; \
 	}; \
 	add_module() { \
@@ -100,7 +107,7 @@ define ModuleAutoLoad
 		mods="$$$$$$$$2"; \
 		boot="$$$$$$$$3"; \
 		shift 3; \
-		for mod in $$$$$$$$mods; do \
+		for mod in $(sort $$$$$$$$mods); do \
 			mkdir -p $(2)/etc/modules.d; \
 			echo "$$$$$$$$mod" >> $(2)/etc/modules.d/$$$$$$$$priority-$(1); \
 		done; \
@@ -116,11 +123,11 @@ define ModuleAutoLoad
 	if [ -n "$$$$$$$$modules" ]; then \
 		mkdir -p $(2)/etc/modules.d; \
 		mkdir -p $(2)/CONTROL; \
-		echo "#!/bin/sh" > $(2)/CONTROL/postinst; \
-		echo "[ -z \"\$$$$$$$$IPKG_INSTROOT\" ] || exit 0" >> $(2)/CONTROL/postinst; \
-		echo ". /lib/functions.sh" >> $(2)/CONTROL/postinst; \
-		echo "insert_modules $$$$$$$$modules" >> $(2)/CONTROL/postinst; \
-		chmod 0755 $(2)/CONTROL/postinst; \
+		echo "#!/bin/sh" > $(2)/CONTROL/postinst-pkg; \
+		echo "[ -z \"\$$$$$$$$IPKG_INSTROOT\" ] || exit 0" >> $(2)/CONTROL/postinst-pkg; \
+		echo ". /lib/functions.sh" >> $(2)/CONTROL/postinst-pkg; \
+		echo "insert_modules $$$$$$$$modules" >> $(2)/CONTROL/postinst-pkg; \
+		chmod 0755 $(2)/CONTROL/postinst-pkg; \
 	fi
 endef
 
@@ -148,9 +155,16 @@ define KernelPackage
     DESCRIPTION:=$(DESCRIPTION)
     EXTRA_DEPENDS:=kernel (=$(LINUX_VERSION)-$(LINUX_RELEASE)-$(LINUX_VERMAGIC))
     VERSION:=$(LINUX_VERSION)$(if $(PKG_VERSION),+$(PKG_VERSION))-$(if $(PKG_RELEASE),$(PKG_RELEASE),$(LINUX_RELEASE))
+    PACKAGE_SUBDIR:=$(if $(FEED),$(FEED),kernel)
     $(call KernelPackage/$(1))
     $(call KernelPackage/$(1)/$(BOARD))
   endef
+
+  ifdef KernelPackage/$(1)/conffiles
+    define Package/kmod-$(1)/conffiles
+$(call KernelPackage/$(1)/conffiles)
+    endef
+  endif
 
   ifdef KernelPackage/$(1)/description
     define Package/kmod-$(1)/description
@@ -169,19 +183,15 @@ $(call KernelPackage/$(1)/config)
   ifneq ($(if $(filter-out %=y %=n %=m,$(KCONFIG)),$(filter m y,$(foreach c,$(filter-out %=y %=n %=m,$(KCONFIG)),$($(c)))),.),)
     ifneq ($(strip $(FILES)),)
       define Package/kmod-$(1)/install
-		  @for mod in $$(FILES); do \
-			if [ -e $$$$$$$$mod ]; then \
+		  @for mod in $$(call version_filter,$$(FILES)); do \
+			if grep -q "$$$$$$$${mod##$(LINUX_DIR)/}" "$(LINUX_DIR)/modules.builtin"; then \
+				echo "NOTICE: module '$$$$$$$$mod' is built-in."; \
+			elif [ -e $$$$$$$$mod ]; then \
 				mkdir -p $$(1)/$(MODULES_SUBDIR) ; \
 				$(CP) -L $$$$$$$$mod $$(1)/$(MODULES_SUBDIR)/ ; \
-			elif [ -e "$(LINUX_DIR)/modules.builtin" ]; then \
-				if grep -q "$$$$$$$${mod##$(LINUX_DIR)/}" "$(LINUX_DIR)/modules.builtin"; then \
-					echo "NOTICE: module '$$$$$$$$mod' is built-in."; \
-				else \
-					echo "ERROR: module '$$$$$$$$mod' is missing." >&2; \
-					exit 1; \
-				fi; \
 			else \
-				echo "WARNING: module '$$$$$$$$mod' missing and modules.builtin not available, assuming built-in." >&2; \
+				echo "ERROR: module '$$$$$$$$mod' is missing." >&2; \
+				exit 1; \
 			fi; \
 		  done;
 		  $(call ModuleAutoLoad,$(1),$$(1),$(AUTOLOAD))
@@ -204,12 +214,14 @@ $(call KernelPackage/$(1)/config)
   $$(IPKG_kmod-$(1)): $$(wildcard $$(FILES))
 endef
 
+version_filter=$(if $(findstring @,$(1)),$(shell $(SCRIPT_DIR)/metadata.pl version_filter $(KERNEL_PATCHVER) $(1)),$(1))
+
 define AutoLoad
-  add_module "$(1)" "$(2)" "$(3)";
+  add_module "$(1)" "$(call version_filter,$(2))" "$(3)";
 endef
 
 define AutoProbe
-  probe_module "$(1)" "$(2)";
+  probe_module "$(call version_filter,$(1))" "$(2)";
 endef
 
 version_field=$(if $(word $(1),$(2)),$(word $(1),$(2)),0)

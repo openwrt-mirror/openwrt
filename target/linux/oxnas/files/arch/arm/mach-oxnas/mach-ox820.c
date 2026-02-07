@@ -5,10 +5,10 @@
 #include <linux/clocksource.h>
 #include <linux/clk-provider.h>
 #include <linux/clk.h>
-#include <linux/stmmac.h>
 #include <linux/slab.h>
 #include <linux/gfp.h>
 #include <linux/reset.h>
+#include <linux/version.h>
 #include <asm/mach-types.h>
 #include <asm/mach/map.h>
 #include <asm/mach/arch.h>
@@ -57,102 +57,6 @@ void __init ox820_map_common_io(void)
 	iotable_init(ox820_io_desc, ARRAY_SIZE(ox820_io_desc));
 }
 
-struct plat_gmac_data {
-	struct plat_stmmacenet_data stmmac;
-	struct clk *clk;
-};
-
-void *ox820_gmac_setup(struct platform_device *pdev)
-{
-	struct plat_gmac_data *pdata = pdev->dev.platform_data;
-
-	pdata->clk = clk_get(&pdev->dev, "gmac");
-	return (void *) pdata->clk;
-};
-
-int ox820_gmac_init(struct platform_device *pdev, void *priv)
-{
-	int ret;
-	unsigned value;
-
-	ret = device_reset(&pdev->dev);
-	if (ret)
-		return ret;
-
-	if (IS_ERR(priv))
-		return PTR_ERR(priv);
-	clk_prepare_enable(priv);
-
-	value = readl(SYS_CTRL_GMAC_CTRL);
-
-	/* Enable GMII_GTXCLK to follow GMII_REFCLK, required for gigabit PHY */
-	value |= BIT(SYS_CTRL_GMAC_CKEN_GTX);
-	/* Use simple mux for 25/125 Mhz clock switching */
-	value |= BIT(SYS_CTRL_GMAC_SIMPLE_MUX);
-	/* set auto switch tx clock source */
-	value |= BIT(SYS_CTRL_GMAC_AUTO_TX_SOURCE);
-	/* enable tx & rx vardelay */
-	value |= BIT(SYS_CTRL_GMAC_CKEN_TX_OUT);
-	value |= BIT(SYS_CTRL_GMAC_CKEN_TXN_OUT);
-	value |= BIT(SYS_CTRL_GMAC_CKEN_TX_IN);
-	value |= BIT(SYS_CTRL_GMAC_CKEN_RX_OUT);
-	value |= BIT(SYS_CTRL_GMAC_CKEN_RXN_OUT);
-	value |= BIT(SYS_CTRL_GMAC_CKEN_RX_IN);
-	writel(value, SYS_CTRL_GMAC_CTRL);
-
-	/* set tx & rx vardelay */
-	value = 0;
-	value |= SYS_CTRL_GMAC_TX_VARDELAY(4);
-	value |= SYS_CTRL_GMAC_TXN_VARDELAY(2);
-	value |= SYS_CTRL_GMAC_RX_VARDELAY(10);
-	value |= SYS_CTRL_GMAC_RXN_VARDELAY(8);
-	writel(value, SYS_CTRL_GMAC_DELAY_CTRL);
-
-	return 0;
-}
-
-void ox820_gmac_exit(struct platform_device *pdev, void *priv)
-{
-	struct reset_control *rstc;
-
-	clk_disable_unprepare(priv);
-	clk_put(priv);
-
-	rstc = reset_control_get(&pdev->dev, NULL);
-	if (!IS_ERR(rstc)) {
-		reset_control_assert(rstc);
-		reset_control_put(rstc);
-	}
-}
-
-static int __init ox820_ether_init(void)
-{
-	struct device_node *node;
-	struct platform_device *pdev;
-	struct plat_gmac_data *pdata;
-
-	node = of_find_compatible_node(NULL, NULL, "plxtech,nas782x-gmac");
-	if (!node)
-		return -ENOENT;
-
-	pdev = of_find_device_by_node(node);
-	of_node_put(node);
-
-	if (!pdev)
-		return -EINVAL;
-
-	pdata = kzalloc(sizeof(struct plat_gmac_data), GFP_KERNEL);
-	if (!pdata)
-		return -ENOMEM;
-
-	pdata->stmmac.setup = ox820_gmac_setup;
-	pdata->stmmac.init = ox820_gmac_init;
-	pdata->stmmac.exit = ox820_gmac_exit;
-	pdev->dev.platform_data = pdata;
-
-	return 0;
-}
-
 static void __init ox820_dt_init(void)
 {
 	int ret;
@@ -165,16 +69,16 @@ static void __init ox820_dt_init(void)
 		BUG();
 	}
 
-	ret = ox820_ether_init();
-
-	if (ret)
-		pr_info("ox820_ether_init failed: %d\n", ret);
 }
 
 static void __init ox820_timer_init(void)
 {
 	of_clk_init(NULL);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,3,0)
 	clocksource_of_init();
+#else
+	clocksource_probe();
+#endif
 }
 
 void ox820_init_early(void)
@@ -248,12 +152,12 @@ void ox820_assert_system_reset(enum reboot_mode mode, const char *cmd)
 	writel(0, SYS_CTRL_ALTERNATIVE_SEL);
 	writel(0, SYS_CTRL_PULLUP_SEL);
 
-	writel(0, SYS_CTRL_SECONDARY_SEL);
-	writel(0, SYS_CTRL_TERTIARY_SEL);
-	writel(0, SYS_CTRL_QUATERNARY_SEL);
-	writel(0, SYS_CTRL_DEBUG_SEL);
-	writel(0, SYS_CTRL_ALTERNATIVE_SEL);
-	writel(0, SYS_CTRL_PULLUP_SEL);
+	writel(0, SEC_CTRL_SECONDARY_SEL);
+	writel(0, SEC_CTRL_TERTIARY_SEL);
+	writel(0, SEC_CTRL_QUATERNARY_SEL);
+	writel(0, SEC_CTRL_DEBUG_SEL);
+	writel(0, SEC_CTRL_ALTERNATIVE_SEL);
+	writel(0, SEC_CTRL_PULLUP_SEL);
 
 	/* No need to save any state, as the ROM loader can determine whether
 	 * reset is due to power cycling or programatic action, just hit the

@@ -32,6 +32,7 @@
 #include <linux/ioctl.h>
 #include <linux/etherdevice.h>
 #include <linux/interrupt.h>
+#include <linux/netdevice.h>
 
 #include "ifxmips_ptm_vdsl.h"
 #include <lantiq_soc.h>
@@ -136,6 +137,8 @@ unsigned int ifx_ptm_dbg_enable = DBG_ENABLE_MASK_ERR;
 
 static void ptm_setup(struct net_device *dev, int ndev)
 {
+    netif_carrier_off(dev);
+
     dev->netdev_ops      = &g_ptm_netdev_ops;
     netif_napi_add(dev, &g_ptm_priv_data.itf[ndev].napi, ptm_napi_poll, 16);
     dev->watchdog_timeo  = ETH_WATCHDOG_TIMEOUT;
@@ -888,6 +891,8 @@ static inline void clear_tables(void)
 
 static int ptm_showtime_enter(struct port_cell_info *port_cell, void *xdata_addr)
 {
+	int i;
+
 	ASSERT(port_cell != NULL, "port_cell is NULL");
 	ASSERT(xdata_addr != NULL, "xdata_addr is NULL");
 
@@ -895,6 +900,9 @@ static int ptm_showtime_enter(struct port_cell_info *port_cell, void *xdata_addr
 	g_xdata_addr = xdata_addr;
 
 	g_showtime = 1;
+
+	for ( i = 0; i < ARRAY_SIZE(g_net_dev); i++ )
+		netif_carrier_on(g_net_dev[i]);
 
 	IFX_REG_W32(0x0F, UTP_CFG);
 
@@ -909,6 +917,8 @@ static int ptm_showtime_enter(struct port_cell_info *port_cell, void *xdata_addr
 
 static int ptm_showtime_exit(void)
 {
+	int i;
+
 	if ( !g_showtime )
 		return -1;
 
@@ -917,6 +927,9 @@ static int ptm_showtime_exit(void)
 	//#endif
 
 	IFX_REG_W32(0x00, UTP_CFG);
+
+	for ( i = 0; i < ARRAY_SIZE(g_net_dev); i++ )
+		netif_carrier_off(g_net_dev[i]);
 
 	g_showtime = 0;
 
@@ -951,7 +964,7 @@ static int ifx_ptm_init(void)
     }
 
     for ( i = 0; i < ARRAY_SIZE(g_net_dev); i++ ) {
-        g_net_dev[i] = alloc_netdev(0, g_net_dev_name[i], ether_setup);
+        g_net_dev[i] = alloc_netdev(0, g_net_dev_name[i], NET_NAME_UNKNOWN, ether_setup);
         if ( g_net_dev[i] == NULL )
             goto ALLOC_NETDEV_FAIL;
         ptm_setup(g_net_dev[i], i);
@@ -964,7 +977,11 @@ static int ifx_ptm_init(void)
     }
 
     /*  register interrupt handler  */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0)
+    ret = request_irq(PPE_MAILBOX_IGU1_INT, mailbox_irq_handler, 0, "ptm_mailbox_isr", &g_ptm_priv_data);
+#else
     ret = request_irq(PPE_MAILBOX_IGU1_INT, mailbox_irq_handler, IRQF_DISABLED, "ptm_mailbox_isr", &g_ptm_priv_data);
+#endif
     if ( ret ) {
         if ( ret == -EBUSY ) {
             err("IRQ may be occupied by other driver, please reconfig to disable it.");

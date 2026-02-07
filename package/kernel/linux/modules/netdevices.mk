@@ -114,7 +114,8 @@ define KernelPackage/et131x
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Agere ET131x Gigabit Ethernet driver
   URL:=http://sourceforge.net/projects/et131x
-  FILES:=$(LINUX_DIR)/drivers/staging/et131x/et131x.$(LINUX_KMOD_SUFFIX)
+  FILES:= \
+	$(LINUX_DIR)/drivers/net/ethernet/agere/et131x.ko
   KCONFIG:= \
 	CONFIG_ET131X \
 	CONFIG_ET131X_DEBUG=n
@@ -147,6 +148,36 @@ endef
 $(eval $(call KernelPackage,gw16083))
 
 
+define KernelPackage/phylib-broadcom
+   SUBMENU:=$(NETWORK_DEVICES_MENU)
+   TITLE:=Broadcom Ethernet PHY library
+   KCONFIG:=CONFIG_BCM_NET_PHYLIB
+   HIDDEN:=1
+   DEPENDS:=+kmod-libphy
+   FILES:=$(LINUX_DIR)/drivers/net/phy/bcm-phy-lib.ko
+   AUTOLOAD:=$(call AutoLoad,17,bcm-phy-lib)
+endef
+
+$(eval $(call KernelPackage,phylib-broadcom))
+
+
+define KernelPackage/phy-broadcom
+   SUBMENU:=$(NETWORK_DEVICES_MENU)
+   TITLE:=Broadcom Ethernet PHY driver
+   KCONFIG:=CONFIG_BROADCOM_PHY
+   DEPENDS:=+kmod-libphy +kmod-phylib-broadcom
+   FILES:=$(LINUX_DIR)/drivers/net/phy/broadcom.ko
+   AUTOLOAD:=$(call AutoLoad,18,broadcom)
+endef
+
+define KernelPackage/phy-broadcom/description
+   Currently supports the BCM5411, BCM5421, BCM5461, BCM5464, BCM5481,
+   BCM5482 and BCM57780 PHYs.
+endef
+
+$(eval $(call KernelPackage,phy-broadcom))
+
+
 define KernelPackage/swconfig
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=switch configuration API
@@ -162,6 +193,20 @@ endef
 
 $(eval $(call KernelPackage,swconfig))
 
+define KernelPackage/switch-mvsw61xx
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Marvell 88E61xx switch support
+  DEPENDS:=+kmod-swconfig
+  KCONFIG:=CONFIG_MVSW61XX_PHY
+  FILES:=$(LINUX_DIR)/drivers/net/phy/mvsw61xx.ko
+  AUTOLOAD:=$(call AutoLoad,42,mvsw61xx)
+endef
+
+define KernelPackage/switch-mvsw61xx/description
+ Marvell 88E61xx switch support
+endef
+
+$(eval $(call KernelPackage,switch-mvsw61xx))
 
 define KernelPackage/switch-ip17xx
   SUBMENU:=$(NETWORK_DEVICES_MENU)
@@ -448,7 +493,7 @@ $(eval $(call KernelPackage,e1000))
 define KernelPackage/e1000e
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Intel(R) PRO/1000 PCIe cards kernel support
-  DEPENDS:=@PCIE_SUPPORT +(!LINUX_3_3&&!LINUX_3_6):kmod-ptp
+  DEPENDS:=@PCIE_SUPPORT +kmod-ptp
   KCONFIG:=CONFIG_E1000E
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/intel/e1000e/e1000e.ko
   AUTOLOAD:=$(call AutoProbe,e1000e)
@@ -482,7 +527,7 @@ $(eval $(call KernelPackage,igb))
 define KernelPackage/b44
   TITLE:=Broadcom 44xx driver
   KCONFIG:=CONFIG_B44
-  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx_mips74k +!TARGET_brcm47xx:kmod-ssb +kmod-mii +(!LINUX_3_3&&!LINUX_3_8&&!LINUX_3_10&&!LINUX_3_13):kmod-libphy
+  DEPENDS:=@PCI_SUPPORT @!TARGET_brcm47xx_mips74k +!TARGET_brcm47xx:kmod-ssb +kmod-mii +kmod-libphy
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/broadcom/b44.ko
   AUTOLOAD:=$(call AutoLoad,19,b44,1)
@@ -536,7 +581,7 @@ $(eval $(call KernelPackage,pcnet32))
 define KernelPackage/tg3
   TITLE:=Broadcom Tigon3 Gigabit Ethernet
   KCONFIG:=CONFIG_TIGON3
-  DEPENDS:=+!TARGET_brcm47xx:kmod-libphy +!LINUX_3_3:kmod-hwmon-core +(!LINUX_3_3&&!LINUX_3_6):kmod-ptp
+  DEPENDS:=+!TARGET_brcm47xx:kmod-libphy +kmod-hwmon-core +kmod-ptp
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/broadcom/tg3.ko
   AUTOLOAD:=$(call AutoLoad,19,tg3,1)
@@ -808,3 +853,20 @@ define KernelPackage/vmxnet3/description
 endef
 
 $(eval $(call KernelPackage,vmxnet3))
+
+
+define KernelPackage/spi-ks8995
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Micrel/Kendin KS8995 Ethernet switch control
+  FILES:=$(LINUX_DIR)/drivers/net/phy/spi_ks8995.ko
+  KCONFIG:=CONFIG_MICREL_KS8995MA \
+	CONFIG_SPI=y \
+	CONFIG_SPI_MASTER=y
+  AUTOLOAD:=$(call AutoLoad,50,spi_ks8995)
+endef
+
+define KernelPackage/spi-ks8995/description
+  Kernel module for Micrel/Kendin KS8995 ethernet switch
+endef
+
+$(eval $(call KernelPackage,spi-ks8995))

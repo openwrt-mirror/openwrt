@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012 OpenWrt.org
+# Copyright (C) 2012-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -14,6 +14,7 @@ PKG_CONFIG_DEPENDS += \
 	CONFIG_VERSION_REPO \
 	CONFIG_VERSION_DIST \
 	CONFIG_VERSION_MANUFACTURER \
+	CONFIG_VERSION_MANUFACTURER_URL \
 	CONFIG_VERSION_PRODUCT \
 	CONFIG_VERSION_HWREV \
 
@@ -30,13 +31,16 @@ VERSION_NICK:=$(call qstrip_escape,$(CONFIG_VERSION_NICK))
 VERSION_NICK:=$(if $(VERSION_NICK),$(VERSION_NICK),$(RELEASE))
 
 VERSION_REPO:=$(call qstrip_escape,$(CONFIG_VERSION_REPO))
-VERSION_REPO:=$(if $(VERSION_REPO),$(VERSION_REPO),http://downloads.openwrt.org/snapshots/trunk/%T/packages)
+VERSION_REPO:=$(if $(VERSION_REPO),$(VERSION_REPO),http://downloads.openwrt.org/snapshots/trunk/%S/packages)
 
 VERSION_DIST:=$(call qstrip_escape,$(CONFIG_VERSION_DIST))
 VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),OpenWrt)
 
 VERSION_MANUFACTURER:=$(call qstrip_escape,$(CONFIG_VERSION_MANUFACTURER))
 VERSION_MANUFACTURER:=$(if $(VERSION_MANUFACTURER),$(VERSION_MANUFACTURER),OpenWrt)
+
+VERSION_MANUFACTURER_URL:=$(call qstrip_escape,$(CONFIG_VERSION_MANUFACTURER_URL))
+VERSION_MANUFACTURER_URL:=$(if $(VERSION_MANUFACTURER_URL),$(VERSION_MANUFACTURER_URL),http://www.openwrt.org/)
 
 VERSION_PRODUCT:=$(call qstrip_escape,$(CONFIG_VERSION_PRODUCT))
 VERSION_PRODUCT:=$(if $(VERSION_PRODUCT),$(VERSION_PRODUCT),Generic)
@@ -53,11 +57,12 @@ $(lastword $(subst :, ,$(1)))
 endef
 
 VERSION_TAINT_SPECS := \
-	-ALL:no-all \
+	-ALL_KMODS:no-all \
 	-IPV6:no-ipv6 \
-	+USE_EGLIBC:eglibc \
+	+USE_GLIBC:glibc \
 	+USE_MKLIBS:mklibs \
 	+BUSYBOX_CUSTOM:busybox \
+	+OVERRIDE_PKGS:override \
 
 VERSION_TAINTS := $(strip $(foreach taint,$(VERSION_TAINT_SPECS), \
 	$(if $(findstring +,$(taint)), \
@@ -81,6 +86,7 @@ VERSION_SED:=$(SED) 's,%U,$(VERSION_REPO),g' \
 	-e 's,%S,$(BOARD)/$(if $(SUBTARGET),$(SUBTARGET),generic),g' \
 	-e 's,%t,$(VERSION_TAINTS),g' \
 	-e 's,%M,$(VERSION_MANUFACTURER),g' \
+	-e 's,%m,$(VERSION_MANUFACTURER_URL),g' \
 	-e 's,%P,$(VERSION_PRODUCT),g' \
 	-e 's,%h,$(VERSION_HWREV),g'
 

@@ -1,4 +1,4 @@
-# 
+#
 # Copyright (C) 2006 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
@@ -51,7 +51,7 @@ $(if $(PKG_LICENSE),License: $(PKG_LICENSE)
 $(if $(KCONFIG),Kernel-Config: $(KCONFIG)
 )$(if $(BUILDONLY),Build-Only: $(BUILDONLY)
 )$(if $(HIDDEN),Hidden: $(HIDDEN)
-)$(if $(FEED),Feed: $(FEED)
+)$(if $(PACKAGE_SUBDIR),Package-Subdir: $(PACKAGE_SUBDIR)
 )Description: $(if $(Package/$(1)/description),$(Package/$(1)/description),$(TITLE))
 $(if $(URL),$(URL)
 )$(MAINTAINER)
