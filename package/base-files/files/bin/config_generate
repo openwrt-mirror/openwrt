@@ -341,7 +341,7 @@ generate_gpioswitch() {
 
 json_init
 json_load "$(cat ${CFG})"
-
+mkdir -p /etc/config
 generate_static_network
 
 json_get_keys keys network
